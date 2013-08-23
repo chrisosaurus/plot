@@ -16,11 +16,13 @@ plot: ${OBJ}
 	@echo more compiling CC -o $@
 	@${CC} src/main.c -o $@ ${LDFLAGS} ${OBJ}
 
-compile_tests: ${OBJ}
+# compile tests
+tests: ${OBJ}
 	@echo test_parse CC -o tests/test_llist.c
 	@${CC} -o test_main t/test_main.c ${OBJ} -lcheck
 
-test: compile_tests
+# run tests
+test: tests
 	@echo running test_llist
 	./test_main
 
@@ -29,4 +31,4 @@ clean:
 	@rm -f src/*.o t/*.o
 	@rm -f plot test_main
 
-.PHONY: all clean test test_parse obj
+.PHONY: all clean test tests obj
