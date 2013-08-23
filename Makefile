@@ -3,7 +3,7 @@
 include config.mk
 
 HEADERS = src/read.h src/parse.h src/execute.h
-SRC = src/main.c src/read.c src/parse.c src/execute.c
+SRC = src/read.c src/parse.c src/execute.c
 OBJ = ${SRC:.c=.o}
 
 all: plot
@@ -14,19 +14,19 @@ all: plot
 
 plot: ${OBJ}
 	@echo more compiling CC -o $@
-	@${CC} -o $@ ${LDFLAGS} ${OBJ}
+	@${CC} src/main.c -o $@ ${LDFLAGS} ${OBJ}
 
-test_parse: src/parse.o
+compile_tests: ${OBJ}
 	@echo test_parse CC -o tests/test_llist.c
-	@${CC} -o t/test_parse t/test_parse.c src/parse.o -lcheck
+	@${CC} -o test_main t/test_main.c ${OBJ} -lcheck
 
-test: test_parse
+test: compile_tests
 	@echo running test_llist
-	./t/test_parse
+	./test_main
 
 clean:
 	@echo cleaning
-	@rm -f ${OBJ} t/*.o
-	@rm -f plot t/test_parse
+	@rm -f src/*.o t/*.o
+	@rm -f plot test_main
 
 .PHONY: all clean test test_parse obj

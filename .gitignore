@@ -1,0 +1,4 @@
+plot
+test_main
+src/*.o
+t/*.o
