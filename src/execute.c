@@ -1,5 +1,5 @@
 #include "execute.h"
 
-int execute_test(void){
+int plot_execute_test(void){
     return 1;
 }

@@ -1,3 +1,3 @@
 /* executes an AST */
 
-int execute_test(void);
+int plot_execute_test(void);

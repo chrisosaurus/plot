@@ -7,7 +7,7 @@
 #include "../src/execute.h"
 
 START_TEST (test_execute_linkage){
-    fail_unless( execute_test() == 1 );
+    fail_unless( plot_execute_test() == 1 );
 }
 END_TEST
 
