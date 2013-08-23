@@ -2,8 +2,8 @@
 
 include config.mk
 
-HEADERS = src/pase.h
-SRC = src/main.c src/parse.c
+HEADERS = src/read.h src/parse.h src/execute.h
+SRC = src/main.c src/read.c src/parse.c src/execute.c
 OBJ = ${SRC:.c=.o}
 
 all: plot
