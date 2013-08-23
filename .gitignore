@@ -1,4 +1,4 @@
 plot
-test_main
+run_tests
 src/*.o
 t/*.o

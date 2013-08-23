@@ -17,18 +17,18 @@ plot: ${OBJ}
 	@${CC} src/main.c -o $@ ${LDFLAGS} ${OBJ}
 
 # compile tests
-tests: ${OBJ}
+tests: clean ${OBJ}
 	@echo test_parse CC -o tests/test_llist.c
-	@${CC} -o test_main t/test_main.c ${OBJ} -lcheck
+	@${CC} -o run_tests t/test_main.c ${OBJ} -lcheck
 
 # run tests
 test: tests
 	@echo running test_llist
-	./test_main
+	./run_tests
 
 clean:
 	@echo cleaning
 	@rm -f src/*.o t/*.o
-	@rm -f plot test_main
+	@rm -f plot run_tests
 
 .PHONY: all clean test tests obj

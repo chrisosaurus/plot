@@ -1,5 +1,6 @@
 #include "parse.h"
 
-int parse_test(void){
-    return 1;
+/* return an AST* or 0 for error */
+void * parse(char *source){
+    return 0;
 }
