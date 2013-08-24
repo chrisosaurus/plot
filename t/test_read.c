@@ -1,3 +1,6 @@
+#include <stdlib.h> /* free */
+#include <stdio.h> /* printf */
+
 /* don't included libcheck when I am included as part of test_main.c */
 #ifndef PLOT_TEST_MAIN
 #define PLOT_TEST_MAIN
@@ -6,8 +9,12 @@
 
 #include "../src/read.h"
 
+static const char * const filename = "Makefile";
+
 START_TEST (test_read){
-    fail_if( plot_read("") == 0 );
+    char *b = plot_read(filename);
+    fail_if( b == 0 );
+    free(b);
 }
 END_TEST
 
