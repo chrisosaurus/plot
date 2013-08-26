@@ -4,6 +4,8 @@
 #include <check.h>
 #endif
 
+#include <stdio.h>
+
 #include "../src/parse.h"
 
 static char *simple = "(define x 10) (+ x 5)";
@@ -14,12 +16,18 @@ START_TEST (test_parse){
 END_TEST
 
 START_TEST(test_parse_sexpr){
-    fail_if( plot_parse_sexpr("(+ x 5)") == 0 );
+    int i = 0;
+    char *ch = "(+ y 11)";
+    fail_if( plot_parse_sexpr(ch, &i) == 0 );
+    fail_if( i != strlen(ch) );
 }
 END_TEST
 
 START_TEST(test_parse_expr){
-    fail_if( plot_parse_expr("5") == 0 );
+    int i = 0;
+    char *ch = "14";
+    fail_if( plot_parse_expr(ch, &i) == 0 );
+    fail_if( i != strlen(ch) );
 }
 END_TEST
 
