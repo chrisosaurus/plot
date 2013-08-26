@@ -2,7 +2,6 @@
 
 include config.mk
 
-HEADERS = src/read.h src/parse.h src/execute.h
 SRC = src/read.c src/parse.c src/execute.c
 OBJ = ${SRC:.c=.o}
 

@@ -6,6 +6,9 @@
 #include "parse.h"
 #include "execute.h"
 
+#include "value.h"
+#include "variable.h"
+
 void usage(void);
 
 int main(int argc, char **argv){
