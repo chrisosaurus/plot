@@ -38,6 +38,7 @@ plot_program * plot_parse(char *source){
     return 0;
 }
 
+/* plot_parse_sexpr will consume a token upto a the matching close paren and will consume that close paren */
 plot_sexpr * plot_parse_sexpr(char *source, int *upto){
     plot_sexpr *sexpr = calloc(1, sizeof(*sexpr));
     plot_expr *expr;
@@ -56,7 +57,6 @@ plot_sexpr * plot_parse_sexpr(char *source, int *upto){
         switch( source[ *upto ] ){
             case '\0':
                 /* end of the line */
-                printf("found end of line, matching '%d'\n", matching);
                 matching = 0;
                 break;
                 return 0;
@@ -93,6 +93,7 @@ plot_sexpr * plot_parse_sexpr(char *source, int *upto){
     // return sexpr; // FIXME should only return non-0 when properly allocating children
 }
 
+/* plot_parse_expr will consume a token upto a separator but will not consume the separator */
 plot_expr * plot_parse_expr(char *source, int *upto){
     int start = *upto;
 
@@ -107,7 +108,7 @@ plot_expr * plot_parse_expr(char *source, int *upto){
             case '\r':
             case '\t':
             case '\n':
-                /* whitespace is the end of a token, leave it for parent and return*/
+                /* whitespace is the end of a token, leave it for parent and return */
                 cont = 0;
                 break;
             case ')':
