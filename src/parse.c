@@ -12,15 +12,21 @@
  */
 plot_program * plot_parse(char *source){
     int i=0;
-    plot_sexpr *r;
+    plot_program *prog = calloc(1, sizeof(*prog));
+    prog->nchildren = 0;
+    prog->max_children = 10;
+    prog->exprs = calloc(prog->max_children, sizeof(*(prog->exprs)));
 
     /* a plot_program is a colletion of s-expressions */
     while( source[i] != '\0' ){
         switch( source[i] ){
             case '(':
-                r = plot_parse_sexpr(source, &i);
-                if( ! r ){
-                    puts("\t\t error in plot_parse calling plot_parse_sexpr, breaking");
+                if( prog->nchildren >= prog->max_children ){
+                    puts("\t\t error in plot_parse, max_children exceeded, breadking");
+                }
+                prog->exprs[prog->nchildren++] = plot_parse_expr(source, &i);
+                if( ! prog->exprs[prog->nchildren -1] ){
+                    puts("\t\t error in plot_parse calling plot_parse_expr, breaking");
                     break;
                 }
                 break;
@@ -37,7 +43,7 @@ plot_program * plot_parse(char *source){
                 break;
         }
     }
-    return 0;
+    return prog;
 }
 
 /* plot_parse_expr will consume a token upto a separator (but will not consume the separator)
@@ -47,8 +53,11 @@ plot_program * plot_parse(char *source){
  * */
 plot_expr * plot_parse_expr(char *source, int *upto){
     int start = *upto;
-
     int cont = 1;
+    plot_expr *expr = calloc(1, sizeof(*expr));
+    if( ! expr )
+        return 0;
+
     while( cont ){
         switch( source[ *upto ] ){
             case '\0':
@@ -61,6 +70,13 @@ plot_expr * plot_parse_expr(char *source, int *upto){
             case '\n':
                 /* whitespace is the end of a token, leave it for parent and return */
                 cont = 0;
+                break;
+            case '(':
+                /* ( start of s_expr */
+                expr->type = plot_expr_sexpr;
+                if( ! plot_parse_sexpr(&(expr->u.sexpr), source, upto) ){
+                    puts("\t\t Error in plot_parse_expr when calling plot_parse_sexpr, breaking\n");
+                }
                 break;
             case ')':
                 /* ) is the end of a token, leave it for parent to consume */
@@ -78,22 +94,23 @@ plot_expr * plot_parse_expr(char *source, int *upto){
     printf("\t\tConsumed expr '%s'\n", ch);
     free(ch);
 
-    return 0;
+    return expr;
 }
 
 /* plot_parse_sexpr will consume a token upto and including the matching close paren
  * *upto is an offset into the source
  * *upto represents where plot_parse_sexpr starts and it will update it to match where it got up to
- * return a plot_sexpr* or 0 for errors
+ * *sexpr is the allocated location to save parsed s_expr
+ * return the plot_sexpr* (same as *sexpr) or 0 for errors
  */
-plot_sexpr * plot_parse_sexpr(char *source, int *upto){
-    plot_sexpr *sexpr = calloc(1, sizeof(*sexpr));
-    plot_expr *expr;
-    if( ! sexpr )
-        return 0;
-
+plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, char *source, int *upto){
     int start = *upto;
     int matching = 1; /* brackets are matches when 0 */
+
+    int nchildren = 0;
+    int max_children = 10;
+    plot_expr **children = calloc(max_children, sizeof(*children)); /* FIXME fixed size */
+
     if( source[start] != '(' ){
         printf("\t\tERROR: asked to consume token which is not an sexpr, char is '%c' and start is '%d'\n", source[start], start);
         return 0;
@@ -123,21 +140,21 @@ plot_sexpr * plot_parse_sexpr(char *source, int *upto){
                 ++ *upto;
                 break;
             default:
-                expr = plot_parse_expr(source, upto);
-                if( ! expr ){
-                    puts("\t\t error in plot_parse_sexpr calling plot_parse_expr, breaking");
-                    break;
-                }
+                children[nchildren++] = plot_parse_expr(source, upto);
                 break;
         }
     }
+
+    /* only modufy *sexpr if there were no errors */
+    sexpr->nchildren = nchildren;
+    sexpr->subforms = children;
+
     char *ch = calloc( (*upto) - start + 1, 1);
     strncpy(ch, &source[start], (*upto) - start);
     printf("\t\tConsumed sexpr '%s'\n", ch);
     free(ch);
 
-    return 0;
-    // return sexpr; // FIXME should only return non-0 when properly allocating children
+    return sexpr;
 }
 
 

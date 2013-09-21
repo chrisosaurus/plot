@@ -18,8 +18,9 @@ plot_expr * plot_parse_expr(char *source, int *upto);
 /* plot_parse_sexpr will consume a token upto and including the matching close paren
  * *upto is an offset into the source
  * *upto represents where plot_parse_sexpr starts and it will update it to match where it got up to
- * return a plot_sexpr* or 0 for errors
+ * *sexpr is the allocated location to save parsed s_expr
+ * return the plot_sexpr* (same as *sexpr) or 0 for errors
  */
-plot_sexpr * plot_parse_sexpr(char *source, int *upto);
+plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, char *source, int *upto);
 
 #endif
