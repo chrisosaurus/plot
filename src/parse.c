@@ -7,7 +7,9 @@
  * so we also need for them to take an int* which is one past the place they finished reading
  */
 
-/* return an plot_program* or 0 for error */
+/* provides an interface to convert a string to a plot_program (AST)
+ * return a plot_program* or 0 for error
+ */
 plot_program * plot_parse(char *source){
     int i=0;
     plot_sexpr *r;
@@ -38,7 +40,52 @@ plot_program * plot_parse(char *source){
     return 0;
 }
 
-/* plot_parse_sexpr will consume a token upto a the matching close paren and will consume that close paren */
+/* plot_parse_expr will consume a token upto a separator (but will not consume the separator)
+ * *upto is an offset into the source
+ * *upto represents where plot_parse_sexpr starts and it will update it to match where it got up to
+ * return a plot_expr* or 0 for errors
+ * */
+plot_expr * plot_parse_expr(char *source, int *upto){
+    int start = *upto;
+
+    int cont = 1;
+    while( cont ){
+        switch( source[ *upto ] ){
+            case '\0':
+                /* end of the line */
+                cont = 0;
+                break;
+            case ' ':
+            case '\r':
+            case '\t':
+            case '\n':
+                /* whitespace is the end of a token, leave it for parent and return */
+                cont = 0;
+                break;
+            case ')':
+                /* ) is the end of a token, leave it for parent to consume */
+                cont = 0;
+                break;
+            default:
+                /* otherwise keep going */
+                ++ *upto;
+                break;
+        }
+    }
+
+    char *ch = calloc( (*upto) - start + 1, 1);
+    strncpy(ch, &source[start], (*upto) - start);
+    printf("\t\tConsumed expr '%s'\n", ch);
+    free(ch);
+
+    return 0;
+}
+
+/* plot_parse_sexpr will consume a token upto and including the matching close paren
+ * *upto is an offset into the source
+ * *upto represents where plot_parse_sexpr starts and it will update it to match where it got up to
+ * return a plot_sexpr* or 0 for errors
+ */
 plot_sexpr * plot_parse_sexpr(char *source, int *upto){
     plot_sexpr *sexpr = calloc(1, sizeof(*sexpr));
     plot_expr *expr;
@@ -93,40 +140,4 @@ plot_sexpr * plot_parse_sexpr(char *source, int *upto){
     // return sexpr; // FIXME should only return non-0 when properly allocating children
 }
 
-/* plot_parse_expr will consume a token upto a separator but will not consume the separator */
-plot_expr * plot_parse_expr(char *source, int *upto){
-    int start = *upto;
-
-    int cont = 1;
-    while( cont ){
-        switch( source[ *upto ] ){
-            case '\0':
-                /* end of the line */
-                cont = 0;
-                break;
-            case ' ':
-            case '\r':
-            case '\t':
-            case '\n':
-                /* whitespace is the end of a token, leave it for parent and return */
-                cont = 0;
-                break;
-            case ')':
-                /* ) is the end of a token, leave it for parent to consume */
-                cont = 0;
-                break;
-            default:
-                /* otherwise keep going */
-                ++ *upto;
-                break;
-        }
-    }
-
-    char *ch = calloc( (*upto) - start + 1, 1);
-    strncpy(ch, &source[start], (*upto) - start);
-    printf("\t\tConsumed expr '%s'\n", ch);
-    free(ch);
-
-    return 0;
-}
 

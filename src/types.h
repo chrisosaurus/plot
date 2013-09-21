@@ -28,7 +28,7 @@ typedef struct plot_expr {
     } u;
 } plot_expr;
 
-/* a program is list of s-expressions */
+/* a program is list of expressions */
 typedef struct plot_program {
     plot_sexpr * sexprs;
     int nelems;
