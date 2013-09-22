@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define DEBUG 1
+
 /* we need a way for _sexpr and _expr to express 'here is the result, and here is where I got up to'
  * so we also need for them to take an int* which is one past the place they finished reading
  */
@@ -15,7 +17,7 @@ plot_program * plot_parse(char *source){
     plot_program *prog = calloc(1, sizeof(*prog));
     prog->nchildren = 0;
     prog->max_children = 10;
-    prog->exprs = calloc(prog->max_children, sizeof(*(prog->exprs)));
+    prog->exprs = calloc(prog->max_children, sizeof(*(prog->exprs))); /* FIXME fixed size */
 
     /* a plot_program is a colletion of s-expressions */
     while( source[i] != '\0' ){
@@ -85,10 +87,13 @@ plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto){
         }
     }
 
+#if DEBUG
+    /* debugging only */
     char *ch = calloc( (*upto) - start + 1, 1);
     strncpy(ch, &source[start], (*upto) - start);
     printf("\t\tConsumed expr '%s'\n", ch);
     free(ch);
+#endif
 
     return expr;
 }
@@ -147,10 +152,13 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, char *source, int *upto){
     sexpr->nchildren = nchildren;
     sexpr->subforms = children;
 
+#if DEBUG
+    /* debugging only */
     char *ch = calloc( (*upto) - start + 1, 1);
     strncpy(ch, &source[start], (*upto) - start);
     printf("\t\tConsumed sexpr '%s'\n", ch);
     free(ch);
+#endif
 
     return sexpr;
 }

@@ -23,6 +23,8 @@ START_TEST (test_parse){
     puts("\trunning test_parse");
 
     fail_if( plot_parse(simple) == 0 );
+
+    fail_if( plot_parse(hard) == 0 );
 }
 END_TEST
 
