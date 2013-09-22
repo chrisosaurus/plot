@@ -20,20 +20,21 @@ static char *hard = "(define a 5) \
 
 START_TEST (test_parse){
 
-    puts("\trunning test_parse");
-
+    puts("\trunning test_parse for 'simple'");
     fail_if( plot_parse(simple) == 0 );
 
+    puts("\trunning test_parse for 'hard'");
     fail_if( plot_parse(hard) == 0 );
 }
 END_TEST
 
 START_TEST(test_parse_sexpr){
     int i = 0;
-    char *ch = "(+ y 11)";
+#define SEXPR_TEST "(+ y 11)"
+    char *ch = SEXPR_TEST;
     plot_sexpr sexpr;
 
-    puts("\trunning test_parse_sexpr");
+    puts("\trunning test_parse_sexpr on '" SEXPR_TEST "'");
 
     fail_if( plot_parse_sexpr(&sexpr, ch, &i) == 0 );
     fail_if( i != strlen(ch) );
@@ -43,10 +44,11 @@ END_TEST
 
 START_TEST(test_parse_expr){
     int i = 0;
-    char *ch = "14";
+#define EXPR_TEST "14"
+    char *ch = EXPR_TEST;
     plot_expr expr;
 
-    puts("\trunning test_parse_expr");
+    puts("\trunning test_parse_expr on '" EXPR_TEST "'");
 
     fail_if( plot_parse_expr(&expr, ch, &i) == 0 );
     fail_if( i != strlen(ch) );
