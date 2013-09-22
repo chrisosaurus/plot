@@ -16,7 +16,7 @@ struct plot_expr;
 
 /* an s-expr is list of expr */
 typedef struct plot_sexpr {
-    struct plot_expr ** subforms;
+    struct plot_expr * subforms;
     int nchildren;
 } plot_sexpr;
 
@@ -31,7 +31,7 @@ typedef struct plot_expr {
 
 /* a program is list of expressions */
 typedef struct plot_program {
-    plot_expr ** exprs;
+    plot_expr * exprs;
     int nchildren;
     int max_children;
 } plot_program;

@@ -42,10 +42,11 @@ END_TEST
 START_TEST(test_parse_expr){
     int i = 0;
     char *ch = "14";
+    plot_expr expr;
 
     puts("\trunning test_parse_expr");
 
-    fail_if( plot_parse_expr(ch, &i) == 0 );
+    fail_if( plot_parse_expr(&expr, ch, &i) == 0 );
     fail_if( i != strlen(ch) );
 }
 END_TEST

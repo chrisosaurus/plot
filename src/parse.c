@@ -24,8 +24,7 @@ plot_program * plot_parse(char *source){
                 if( prog->nchildren >= prog->max_children ){
                     puts("\t\t error in plot_parse, max_children exceeded, breadking");
                 }
-                prog->exprs[prog->nchildren++] = plot_parse_expr(source, &i);
-                if( ! prog->exprs[prog->nchildren -1] ){
+                if( ! plot_parse_expr(&(prog->exprs[prog->nchildren++]),source, &i) ){
                     puts("\t\t error in plot_parse calling plot_parse_expr, breaking");
                     break;
                 }
@@ -51,12 +50,9 @@ plot_program * plot_parse(char *source){
  * *upto represents where plot_parse_sexpr starts and it will update it to match where it got up to
  * return a plot_expr* or 0 for errors
  * */
-plot_expr * plot_parse_expr(char *source, int *upto){
+plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto){
     int start = *upto;
     int cont = 1;
-    plot_expr *expr = calloc(1, sizeof(*expr));
-    if( ! expr )
-        return 0;
 
     while( cont ){
         switch( source[ *upto ] ){
@@ -109,7 +105,7 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, char *source, int *upto){
 
     int nchildren = 0;
     int max_children = 10;
-    plot_expr **children = calloc(max_children, sizeof(*children)); /* FIXME fixed size */
+    plot_expr *children = calloc(max_children, sizeof(*children)); /* FIXME fixed size */
 
     if( source[start] != '(' ){
         printf("\t\tERROR: asked to consume token which is not an sexpr, char is '%c' and start is '%d'\n", source[start], start);
@@ -140,7 +136,9 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, char *source, int *upto){
                 ++ *upto;
                 break;
             default:
-                children[nchildren++] = plot_parse_expr(source, upto);
+                if( ! plot_parse_expr(&(children[nchildren++]), source, upto) ){
+                    puts("\t\tError in plot_parse_sexpr, called to plot_parse_expr failed\n");
+                }
                 break;
         }
     }
