@@ -5,6 +5,7 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "../src/parse.h"
 
@@ -19,12 +20,17 @@ static char *hard = "(define a 5) \
 
 
 START_TEST (test_parse){
+    plot_program *prog;
 
     puts("\trunning test_parse for 'simple'");
-    fail_if( plot_parse(simple) == 0 );
+    prog = plot_parse(simple);
+    fail_if( prog == 0 );
+    free(prog);
 
     puts("\trunning test_parse for 'hard'");
-    fail_if( plot_parse(hard) == 0 );
+    prog = plot_parse(hard);
+    fail_if( prog == 0 );
+    free(prog);
 }
 END_TEST
 
@@ -44,14 +50,23 @@ END_TEST
 
 START_TEST(test_parse_expr){
     int i = 0;
-#define EXPR_TEST "14"
-    char *ch = EXPR_TEST;
+#define EXPR_TEST_NUMBER "14"
+    char *ch = EXPR_TEST_NUMBER;
     plot_expr expr;
 
-    puts("\trunning test_parse_expr on '" EXPR_TEST "'");
-
+    puts("\trunning test_parse_expr on '" EXPR_TEST_NUMBER "'");
     fail_if( plot_parse_expr(&expr, ch, &i) == 0 );
     fail_if( i != strlen(ch) );
+    fail_unless( expr.u.value.u.number.val == 14 );
+
+#define EXPR_TEST_SYMBOL "some_symbol"
+    i=0;
+    ch = EXPR_TEST_SYMBOL;
+
+    puts("\trunning test_parse_expr on '" EXPR_TEST_SYMBOL "'");
+    fail_if( plot_parse_expr(&expr, ch, &i) == 0 );
+    fail_if( i != strlen(ch) );
+    fail_if( strcmp(expr.u.value.u.symbol.val, ch) );
 }
 END_TEST
 

@@ -1,7 +1,8 @@
 #include "parse.h"
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdlib.h> /* strtol */
 #include <string.h>
+#include <ctype.h> /* isdigit */
 
 #define DEBUG 1
 
@@ -55,6 +56,10 @@ plot_program * plot_parse(char *source){
 plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto){
     int start = *upto;
     int cont = 1;
+    /* set to true if we are within a value
+     * if we are inside a value then only numbers or characters are allowed
+     */
+    int inside_value = 0;
 
     while( cont ){
         switch( source[ *upto ] ){
@@ -70,6 +75,13 @@ plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto){
                 cont = 0;
                 break;
             case '(':
+                /* if we are inside a value then ( is not a valid char to consume
+                 * it must be the start of the next token
+                 */
+                if( inside_value ){
+                    cont = 0;
+                    break;
+                }
                 /* ( start of s_expr */
                 expr->type = plot_expr_sexpr;
                 if( ! plot_parse_sexpr(&(expr->u.sexpr), source, upto) ){
@@ -81,9 +93,31 @@ plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto){
                 cont = 0;
                 break;
             default:
-                /* otherwise keep going */
+                /* either symbol or number
+                 * keep going *
+                 */
+                inside_value = 1;
                 ++ *upto;
                 break;
+        }
+    }
+
+    /* if inside_value then a value was consumed */
+    if( inside_value ){
+        char *invalid;
+        if( isdigit(source[start]) ){
+            /* if digit then number */
+            expr->u.value.u.number.val = strtol( &source[start], &invalid, 10 );
+            if( invalid != &source[*upto] ){
+                puts("ERROR: conversion of token to t via strtol encountered na error\n");
+            }
+        } else {
+            /* otherwise it is a symbol */
+            int len = (*upto) - start + 1;
+            expr->u.value.u.symbol.val = calloc(len, sizeof(char));
+            expr->u.value.u.symbol.len = len;
+            expr->u.value.u.symbol.size = len;
+            strncpy(expr->u.value.u.symbol.val, &source[start], (*upto) - start);
         }
     }
 
