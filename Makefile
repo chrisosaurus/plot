@@ -2,7 +2,7 @@
 
 include config.mk
 
-SRC = src/read.c src/parse.c src/execute.c
+SRC = src/read.c src/parse.c src/execute.c src/hash.c
 OBJ = ${SRC:.c=.o}
 
 all: plot

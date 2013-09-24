@@ -4,6 +4,17 @@
 
 #include <check.h>
 
+#define TEST_CASE_NEW(name) Suite *\
+    name##_suite(void){\
+        Suite *s = suite_create("suite_" #name);\
+        TCase *tc_##name = tcase_create("test_" #name);
+
+#define TEST_CASE_ADD(name, test) tcase_add_test(tc_##name, test_##test);
+
+#define TEST_CASE_END(name) suite_add_tcase(s, tc_##name);\
+        return s;\
+    }
+
 /* test_*.c want to include check themselves in order to allow better
  * editor feedback
  * INCLUDED_CHECK prevents them including it
@@ -12,6 +23,7 @@
 #include "test_read.c"
 #include "test_parse.c"
 #include "test_execute.c"
+#include "test_hash.c"
 
 int main(void){
     int number_failed = 0;
@@ -36,6 +48,13 @@ int main(void){
 
     puts("\nTesting execute");
     s = execute_suite();
+    sr = srunner_create(s);
+    srunner_run_all(sr, CK_NORMAL);
+    number_failed += srunner_ntests_failed(sr);
+    srunner_free(sr);
+
+    puts("\nTesting hash");
+    s = hash_suite();
     sr = srunner_create(s);
     srunner_run_all(sr, CK_NORMAL);
     number_failed += srunner_ntests_failed(sr);

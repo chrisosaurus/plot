@@ -70,6 +70,7 @@ START_TEST(test_parse_expr){
 }
 END_TEST
 
+/*
 Suite *
 parse_suite(void){
     Suite *s = suite_create("suite_parse");
@@ -84,4 +85,12 @@ parse_suite(void){
 
     return s;
 }
+*/
+
+TEST_CASE_NEW(parse)
+TEST_CASE_ADD(parse, parse_sexpr)
+TEST_CASE_ADD(parse, parse_expr)
+TEST_CASE_ADD(parse, parse)
+TEST_CASE_END(parse)
+
 
