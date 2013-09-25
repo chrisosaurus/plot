@@ -37,8 +37,9 @@ void plot_hash_cleanup(plot_hash *hash){
 }
 
 
-/* return value for key or 0 if key was not found */
-/* FIXME define ownership of key */
+/* get value stored at key within hash
+ * return value for key or 0 if key was not found
+ */
 plot_value * plot_hash_get(plot_hash *hash, const char * const key){
     plot_hash_entry *e;
 
@@ -60,9 +61,12 @@ plot_value * plot_hash_get(plot_hash *hash, const char * const key){
  * keys must be unique within the hash
  * and keys cannot be overwritten once set (no mutation)
  *
+ * this hash will NOT make copies of either key or value
+ * therefore both key and value must not be freed until
+ *  cleanup is called on this hash
+ *
  * return 1 on success and 0 on error
  */
-/* FIXME define ownership of key and value */
 int plot_hash_insert(plot_hash *hash, const char * const key, plot_value *value){
     plot_hash_entry **e, *n;
 
