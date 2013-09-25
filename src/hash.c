@@ -56,13 +56,21 @@ plot_value * plot_hash_get(plot_hash *hash, const char * const key){
     return 0;
 }
 
-/* FIXME we may want a way of getting old value at key */
-/* set value to key, return 1 on success and 0 on error */
+/* set key to key
+ * keys must be unique within the hash
+ * and keys cannot be overwritten once set (no mutation)
+ *
+ * return 1 on success and 0 on error
+ */
 /* FIXME define ownership of key and value */
 int plot_hash_insert(plot_hash *hash, const char * const key, plot_value *value){
     plot_hash_entry **e, *n;
 
     if( ! hash )
+        return 0;
+
+    /* disallow mutation of existing entry(s) */
+    if( plot_hash_get(hash, key) )
         return 0;
 
     for( e=&hash->head; e && (*e); e = &(*e)->next ){

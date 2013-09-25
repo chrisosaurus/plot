@@ -36,6 +36,11 @@ START_TEST (test_hash){
     fail_unless( hash->head->next->next->next == 0 );
     fail_unless( hash->n_elems == 3);
 
+    puts("Testing (lack of) mutation");
+    fail_if( plot_hash_insert(hash, key1, 0) );
+    fail_if( plot_hash_get(hash, key1) == 0 );
+    fail_unless( hash->n_elems == 3);
+
     plot_hash_cleanup(hash);
 }
 END_TEST
