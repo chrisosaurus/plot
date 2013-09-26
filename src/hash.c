@@ -107,7 +107,39 @@ int plot_hash_insert(plot_hash *hash, plot_symbol * const key, plot_value *value
  */
 int plot_hash_set(plot_hash *hash, plot_symbol * const key, plot_value *value){
     /* FIXME TODO implement... without duplication... */
-    return 0;
+
+    plot_hash_entry **e, *n;
+    int sc=0;
+
+    if( ! hash )
+        return 0;
+
+    for( e=&hash->head; e && (*e); e = &(*e)->next ){
+        sc = strcmp(key->val, (*e)->key->val);
+        /* stop iterating when we find an existing entry with a key 'after' us
+         */
+        if(  sc < 0 || sc == 0 ) /* TRUE IFF key < (*e)->key */
+            break;
+        if( sc == 0 ) /* TRUE IFF key == (*e)->key */
+            break; /* allow set to overwrite */
+    }
+
+    /* if *e is null then we have either reached the end of the list
+     * of we are the first element
+     *
+     * regardless, *e is our next and *e is where we store ourselves
+     */
+    n = calloc(1, sizeof(*n));
+    if( ! n )
+        return 0;/* ERROR: calloc failed */
+    n->key = key;
+    n->value = value;
+    n->next = *e;
+    *e = n;
+
+    hash->n_elems++;
+    return 1;
+
 }
 
 
