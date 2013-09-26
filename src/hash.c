@@ -38,14 +38,14 @@ void plot_hash_cleanup(plot_hash *hash){
 /* get value stored at key within hash
  * return value for key or 0 if key was not found
  */
-plot_value * plot_hash_get(plot_hash *hash, const char * const key){
+plot_value * plot_hash_get(plot_hash *hash, plot_symbol * const key){
     plot_hash_entry *e;
 
     if( ! hash || ! key )
         return 0; /* ERROR no hash or key specified */
 
     for( e = hash->head; e; e = e->next ){
-        if( ! strcmp(key, e->key) )
+        if( ! strcmp(key->val, e->key->val) )
             return e->value;
     }
 
@@ -65,7 +65,7 @@ plot_value * plot_hash_get(plot_hash *hash, const char * const key){
  *
  * return 1 on success and 0 on error
  */
-int plot_hash_insert(plot_hash *hash, const char * const key, plot_value *value){
+int plot_hash_insert(plot_hash *hash, plot_symbol * const key, plot_value *value){
     plot_hash_entry **e, *n;
 
     if( ! hash )
@@ -78,7 +78,7 @@ int plot_hash_insert(plot_hash *hash, const char * const key, plot_value *value)
     for( e=&hash->head; e && (*e); e = &(*e)->next ){
         /* stop iterating when we find an existing entry with a key 'after' us
          */
-        if( strcmp(key, (*e)->key) < 0 ) /* TRUE IFF key < (*e)->key */
+        if( strcmp(key->val, (*e)->key->val) < 0 ) /* TRUE IFF key < (*e)->key */
             break;
     }
 

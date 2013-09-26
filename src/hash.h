@@ -23,8 +23,7 @@ typedef struct plot_hash {
  * in strcmp order of keys
  */
 typedef struct plot_hash_entry {
-    const char * key;
-    int key_len;
+    plot_symbol * key;
     plot_value *value;
     struct plot_hash_entry *next;
 } plot_hash_entry;
@@ -45,7 +44,7 @@ void plot_hash_cleanup(plot_hash *hash);
 /* get value stored at key within hash
  * return value for key or 0 if key was not found
  */
-plot_value * plot_hash_get(plot_hash *hash, const char * const key);
+plot_value * plot_hash_get(plot_hash *hash, plot_symbol * const key);
 
 /* set value to hash under key
  * keys must be unique within the hash
@@ -57,7 +56,7 @@ plot_value * plot_hash_get(plot_hash *hash, const char * const key);
  *
  * return 1 on success and 0 on error
  */
-int plot_hash_insert(plot_hash *hash, const char * const key, plot_value *value);
+int plot_hash_insert(plot_hash *hash, plot_symbol * const key, plot_value *value);
 
 #endif
 
