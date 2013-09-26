@@ -4,18 +4,16 @@
 #include "hash.h"
 
 /* create a new hash
- * if *hash is 0 then a new plot_hash will be allocated using calloc
- * if *hash is non-0 then it will be used as the location of the hash
+ * allocate a new hash using calloc
  *
- * a pointer to the hash is returned
+ * a pointer to the new hash is returned
  * or 0 if an error was encountered
  */
-plot_hash * plot_hash_init(plot_hash *hash){
-    if( ! hash ){
-        hash = calloc(1, sizeof(*hash));
-        if( ! hash )
-            return 0; /* ERROR: calloc failed */
-    }
+plot_hash * plot_hash_init(){
+    plot_hash *hash;
+    hash = calloc(1, sizeof(*hash));
+    if( ! hash )
+        return 0; /* ERROR: calloc failed */
     return hash;
 }
 

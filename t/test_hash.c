@@ -17,7 +17,7 @@ START_TEST (test_hash){
     plot_hash *hash;
 
     puts("Testing hash construction");
-    fail_if( 0 == (hash = plot_hash_init(0)) );
+    fail_if( 0 == (hash = plot_hash_init()) );
 
     puts("Testing basic hash get and insert");
     fail_if( plot_hash_get(hash, key1) );

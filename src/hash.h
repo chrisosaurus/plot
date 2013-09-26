@@ -30,13 +30,12 @@ typedef struct plot_hash_entry {
 } plot_hash_entry;
 
 /* create a new hash
- * if *hash is 0 then a new plot_hash will be allocated using calloc
- * if *hash is non-0 then it will be used as the location of the hash
+ * allocate a new hash using calloc
  *
- * a pointer to the hash is returned
+ * a pointer to the new hash is returned
  * or 0 if an error was encountered
  */
-plot_hash * plot_hash_init(plot_hash *hash);
+plot_hash * plot_hash_init();
 
 /* destroy hash
  * frees all plot_hash_entry(s) and then finally the plot_hash
