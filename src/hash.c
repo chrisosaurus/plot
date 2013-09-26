@@ -55,7 +55,7 @@ plot_value * plot_hash_get(plot_hash *hash, plot_symbol * const key){
     return 0;
 }
 
-/* set key to key
+/* set value to hash under key
  * keys must be unique within the hash
  * and keys cannot be overwritten once set (no mutation)
  *
@@ -63,23 +63,23 @@ plot_value * plot_hash_get(plot_hash *hash, plot_symbol * const key){
  * therefore both key and value must not be freed until
  *  cleanup is called on this hash
  *
- * return 1 on success and 0 on error
+ * returns 1 on success, 0 on error
  */
 int plot_hash_insert(plot_hash *hash, plot_symbol * const key, plot_value *value){
     plot_hash_entry **e, *n;
+    int sc=0;
 
     if( ! hash )
         return 0;
 
-    /* disallow mutation of existing entry(s) */
-    if( plot_hash_get(hash, key) )
-        return 0;
-
     for( e=&hash->head; e && (*e); e = &(*e)->next ){
+        sc = strcmp(key->val, (*e)->key->val);
         /* stop iterating when we find an existing entry with a key 'after' us
          */
-        if( strcmp(key->val, (*e)->key->val) < 0 ) /* TRUE IFF key < (*e)->key */
+        if(  sc < 0 ) /* TRUE IFF key < (*e)->key */
             break;
+        if( sc == 0 ) /* TRUE IFF key == (*e)->key */
+            return 0; /* ERROR cannot overwrite key */
     }
 
     /* if *e is null then we have either reached the end of the list
@@ -97,6 +97,17 @@ int plot_hash_insert(plot_hash *hash, plot_symbol * const key, plot_value *value
 
     hash->n_elems++;
     return 1;
+}
+
+/* set value in hash under key
+ * keys must be unique within the hash
+ * will overwrite any existing value
+ *
+ * returns 1 on success, 0 on error
+ */
+int plot_hash_set(plot_hash *hash, plot_symbol * const key, plot_value *value){
+    /* FIXME TODO implement... without duplication... */
+    return 0;
 }
 
 

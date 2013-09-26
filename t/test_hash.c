@@ -10,9 +10,9 @@
 #include "../src/hash.h"
 
 START_TEST (test_hash){
-    plot_symbol a = (plot_symbol){"a", 1, 1};
-    plot_symbol b = (plot_symbol){"b", 1, 1};
-    plot_symbol c = (plot_symbol){"c", 1, 1};
+    plot_symbol a = (plot_symbol){"a", 2, 2};
+    plot_symbol b = (plot_symbol){"b", 2, 2};
+    plot_symbol c = (plot_symbol){"c", 2, 2};
 
     plot_value value;
     plot_hash *hash;
@@ -41,6 +41,10 @@ START_TEST (test_hash){
     fail_if( plot_hash_insert(hash, &b, 0) );
     fail_if( plot_hash_get(hash, &b) == 0 );
     fail_unless( hash->n_elems == 3);
+
+    puts("Testing mutation");
+    fail_unless( plot_hash_set(hash, &b, &value) );
+    fail_unless( plot_hash_get(hash, &b) == &value );
 
     plot_hash_cleanup(hash);
 }

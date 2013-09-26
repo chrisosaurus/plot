@@ -54,9 +54,17 @@ plot_value * plot_hash_get(plot_hash *hash, plot_symbol * const key);
  * therefore both key and value must not be freed until
  *  cleanup is called on this hash
  *
- * return 1 on success and 0 on error
+ * returns 1 on success, 0 on error
  */
 int plot_hash_insert(plot_hash *hash, plot_symbol * const key, plot_value *value);
+
+/* set value in hash under key
+ * keys must be unique within the hash
+ * will overwrite any existing value
+ *
+ * returns 1 on success, 0 on error
+ */
+int plot_hash_set(plot_hash *hash, plot_symbol * const key, plot_value *value);
 
 #endif
 

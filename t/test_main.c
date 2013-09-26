@@ -24,6 +24,7 @@
 #include "test_parse.c"
 #include "test_execute.c"
 #include "test_hash.c"
+#include "test_env.c"
 
 int main(void){
     int number_failed = 0;
@@ -59,6 +60,14 @@ int main(void){
     srunner_run_all(sr, CK_NORMAL);
     number_failed += srunner_ntests_failed(sr);
     srunner_free(sr);
+
+    puts("\nTesting env");
+    s = env_suite();
+    sr = srunner_create(s);
+    srunner_run_all(sr, CK_NORMAL);
+    number_failed += srunner_ntests_failed(sr);
+    srunner_free(sr);
+
 
     puts("\nFinished testing.");
     return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
