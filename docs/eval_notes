@@ -1,0 +1,6 @@
+a function is
+    an environment (set of bound variables)
+    a set of unbound variables (args)
+    a body to eval
+
+

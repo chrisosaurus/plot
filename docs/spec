@@ -1,0 +1,45 @@
+minimal subset of scheme to get started:
+
+variable:
+    string
+
+value:
+    number (int)
+
+ops:
+    +
+    display
+    newline
+
+forms:
+    define (variable only)
+
+env:
+    global only (as there are no functions or let blocks)
+
+
+example:
+    (define a 5)
+    (define b (+ a 4))
+    (display a)
+    (newline)
+    (display b)
+    (newline)
+
+
+prog:
+    expr[]
+
+expr:
+    union{
+        value
+        s_expr
+    }
+
+value:
+    int
+
+s_expr
+    expr[]
+
+
