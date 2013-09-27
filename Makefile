@@ -18,7 +18,8 @@ plot: ${OBJ}
 # compile tests
 tests: clean ${OBJ}
 	@echo test_parse CC -o tests/test_llist.c
-	@${CC} -o run_tests t/test_main.c ${OBJ} -lcheck
+	# pthread, rt and m are all needed by certain versions of libcheck 
+	@${CC} -o run_tests t/test_main.c ${OBJ} -lpthread -lrt -lm -lcheck
 
 # run tests
 test: tests
