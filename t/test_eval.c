@@ -28,6 +28,7 @@ START_TEST (test_eval_add){
 
     add.type = plot_type_function;
     add.u.function.func = plot_func_add;
+    add.u.function.env = env;
 
     /* FIXME TODO need to setup env to know about addition */
     puts("\tdefining function add");
@@ -45,6 +46,8 @@ START_TEST (test_eval_add){
     fail_unless( i == strlen(ch) );
     fail_unless( val->type == plot_type_number );
     fail_unless( val->u.number.val == 9 );
+
+    printf("Expected number '9', got number '%d'\n", val->u.number.val);
 
     free(val);
     plot_env_cleanup(env);
