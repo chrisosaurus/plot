@@ -114,9 +114,11 @@ plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto){
     /* if inside_value then a value was consumed */
     if( inside_value ){
         char *invalid;
+        expr->type = plot_expr_value;
         if( isdigit(source[start]) ){
             /* if digit then number */
             expr->u.value.u.number.val = strtol( &source[start], &invalid, 10 );
+            expr->u.value.type = plot_type_number;
             if( invalid != &source[*upto] ){
                 puts("ERROR: conversion of token to t via strtol encountered an error\n");
                 return 0;
@@ -128,6 +130,7 @@ plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto){
             expr->u.value.u.symbol.len = len;
             expr->u.value.u.symbol.size = len;
             strncpy(expr->u.value.u.symbol.val, &source[start], (*upto) - start);
+            expr->u.value.type = plot_type_symbol;
         }
     }
 

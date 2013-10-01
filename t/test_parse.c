@@ -45,8 +45,14 @@ START_TEST(test_parse_sexpr){
     puts("\trunning test_parse_sexpr on '" SEXPR_TEST "'");
 
     fail_if( plot_parse_sexpr(&sexpr, ch, &i) == 0 );
-    fail_if( i != strlen(ch) );
-    fail_unless( sexpr.nchildren );
+    fail_unless( i == strlen(ch) );
+    fail_unless( sexpr.nchildren == 3 );
+    fail_unless( sexpr.subforms[0].type == plot_expr_value );
+    fail_unless( sexpr.subforms[0].u.value.type == plot_type_symbol );
+    fail_unless( sexpr.subforms[1].type == plot_expr_value );
+    fail_unless( sexpr.subforms[1].u.value.type == plot_type_symbol );
+    fail_unless( sexpr.subforms[2].type == plot_expr_value );
+    fail_unless( sexpr.subforms[2].u.value.type == plot_type_number );
 }
 END_TEST
 
