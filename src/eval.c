@@ -9,10 +9,10 @@ plot_value * plot_eval(plot_env *env, plot_expr *expr){
 
     switch( expr->type ){
         case plot_expr_value:
-            return plot_eval_value(env, expr);
+            return plot_eval_value(env, &(expr->u.value));
             break;
         case plot_expr_sexpr:
-            return plot_eval_sexpr(env, expr);
+            return plot_eval_sexpr(env, &(expr->u.sexpr));
             break;
         default:
             puts("ERROR: error in plot_eval: unknown plot_expr_type, returning");
@@ -23,22 +23,19 @@ plot_value * plot_eval(plot_env *env, plot_expr *expr){
     return 0;
 }
 
-plot_value * plot_eval_value(plot_env *env, plot_expr *expr){
-    if( !env || !expr )
+plot_value * plot_eval_value(plot_env *env, plot_value *val){
+    if( !env || !val )
         return 0; /* ERROR */
 
-    if( expr->type != plot_expr_value )
-        return 0; /* ERROR */
-
-    switch( expr->u.value.type ){
+    switch( val->type ){
         case plot_type_number:
-            return &(expr->u.value);
+            return val;
             break;
         case plot_type_symbol:
-            return plot_env_get(env, &(expr->u.value.u.symbol));
+            return plot_env_get(env, &(val->u.symbol));
             break;
         case plot_type_function:
-            return &(expr->u.value);
+            return val;
             break;
         default:
             puts("ERROR: error in plot_eval_value: unknown value type, returning");
@@ -49,13 +46,10 @@ plot_value * plot_eval_value(plot_env *env, plot_expr *expr){
     return 0;
 }
 
-plot_value * plot_eval_sexpr(plot_env *env, plot_expr *expr){
+plot_value * plot_eval_sexpr(plot_env *env, plot_sexpr *sexpr){
     plot_value *res;
 
-    if( !env || !expr )
-        return 0; /* ERROR */
-
-    if( expr->type != plot_expr_sexpr )
+    if( ! env || ! sexpr )
         return 0; /* ERROR */
 
     res = calloc(1, sizeof *res);
@@ -66,3 +60,22 @@ plot_value * plot_eval_sexpr(plot_env *env, plot_expr *expr){
 
     return 0;
 }
+
+plot_value * plot_eval_form(plot_env *env, plot_sexpr *sexpr){
+    if( ! env || ! sexpr )
+        return 0; /* ERROR */
+
+    /* TODO FIXME */
+
+    return 0;
+}
+
+plot_value * plot_eval_func_call(plot_env *env, plot_sexpr *sexpr){
+    if( ! env || ! sexpr )
+        return 0; /* ERROR */
+
+    /* TODO FIXME */
+
+    return 0;
+}
+
