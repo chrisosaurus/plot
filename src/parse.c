@@ -26,10 +26,12 @@ plot_program * plot_parse(char *source){
             case '[':
             case '(':
                 if( prog->nchildren >= prog->max_children ){
-                    puts("\t\t error in plot_parse, max_children exceeded, breadking");
+                    puts("\t\t error in plot_parse, max_children exceeded, returning");
+                    return 0;
                 }
                 if( ! plot_parse_expr(&(prog->exprs[prog->nchildren++]),source, &i) ){
-                    puts("\t\t error in plot_parse calling plot_parse_expr, breaking");
+                    puts("\t\t error in plot_parse calling plot_parse_expr, returning");
+                    return 0;
                     break;
                 }
                 break;
@@ -87,7 +89,8 @@ plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto){
                 /* ( start of s_expr */
                 expr->type = plot_expr_sexpr;
                 if( ! plot_parse_sexpr(&(expr->u.sexpr), source, upto) ){
-                    puts("\t\t Error in plot_parse_expr when calling plot_parse_sexpr, breaking\n");
+                    puts("\t\t Error in plot_parse_expr when calling plot_parse_sexpr, returning\n");
+                    return 0;
                 }
                 break;
             case ']':
@@ -112,7 +115,8 @@ plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto){
             /* if digit then number */
             expr->u.value.u.number.val = strtol( &source[start], &invalid, 10 );
             if( invalid != &source[*upto] ){
-                puts("ERROR: conversion of token to t via strtol encountered na error\n");
+                puts("ERROR: conversion of token to t via strtol encountered an error\n");
+                return 0;
             }
         } else {
             /* otherwise it is a symbol */
@@ -187,6 +191,7 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, char *source, int *upto){
             default:
                 if( ! plot_parse_expr(&(children[nchildren++]), source, upto) ){
                     puts("\t\tError in plot_parse_sexpr, called to plot_parse_expr failed\n");
+                    return 0;
                 }
                 break;
         }
