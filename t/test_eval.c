@@ -25,7 +25,7 @@ START_TEST (test_eval_linkage){
     fail_if( 0 == plot_parse_expr(&expr, ch, &i) );
 
     puts("\teval of '" PLOT_EVAL_SIMPLE "'");
-    fail_if( 0 == (val = plot_eval_test(env, &expr)) );
+    fail_if( 0 == (val = plot_eval(env, &expr)) );
     fail_unless( i == strlen(ch) );
     fail_unless( val->type == plot_type_number );
     fail_unless( val->u.number.val == 9 );

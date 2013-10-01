@@ -6,6 +6,6 @@
 #include "env.h"
 
 /* evals an expr in an environment */
-plot_value * plot_eval_test(plot_env *env, plot_expr *expr);
+plot_value * plot_eval(plot_env *env, plot_expr *expr);
 
 #endif
