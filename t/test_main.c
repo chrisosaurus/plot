@@ -25,6 +25,7 @@
 #include "test_eval.c"
 #include "test_hash.c"
 #include "test_env.c"
+#include "test_funcs.c"
 
 int main(void){
     int number_failed = 0;
@@ -63,6 +64,13 @@ int main(void){
 
     puts("\nTesting env");
     s = env_suite();
+    sr = srunner_create(s);
+    srunner_run_all(sr, CK_NORMAL);
+    number_failed += srunner_ntests_failed(sr);
+    srunner_free(sr);
+
+    puts("\nTesting funcs");
+    s = funcs_suite();
     sr = srunner_create(s);
     srunner_run_all(sr, CK_NORMAL);
     number_failed += srunner_ntests_failed(sr);
