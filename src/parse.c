@@ -23,6 +23,7 @@ plot_program * plot_parse(char *source){
     /* a plot_program is a colletion of s-expressions */
     while( source[i] != '\0' ){
         switch( source[i] ){
+            case '[':
             case '(':
                 if( prog->nchildren >= prog->max_children ){
                     puts("\t\t error in plot_parse, max_children exceeded, breadking");
@@ -75,6 +76,7 @@ plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto){
                 cont = 0;
                 break;
             case '(':
+            case '[':
                 /* if we are inside a value then ( is not a valid char to consume
                  * it must be the start of the next token
                  */
@@ -88,6 +90,7 @@ plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto){
                     puts("\t\t Error in plot_parse_expr when calling plot_parse_sexpr, breaking\n");
                 }
                 break;
+            case ']':
             case ')':
                 /* ) is the end of a token, leave it for parent to consume */
                 cont = 0;
@@ -146,7 +149,10 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, char *source, int *upto){
     int max_children = 10;
     plot_expr *children = calloc(max_children, sizeof(*children)); /* FIXME fixed size */
 
-    if( source[start] != '(' ){
+    /* opening bracket we encountered, if ( then closing bracket must be ), if [ the closing must be ] */
+    char bracket;
+
+    if( source[start] != '(' && source[start] != '[' ){
         printf("\t\tERROR: asked to consume token which is not an sexpr, char is '%c' and start is '%d'\n", source[start], start);
         return 0;
     }
@@ -159,11 +165,15 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, char *source, int *upto){
                 matching = 0;
                 break;
                 return 0;
+            case '[':
             case '(':
+                bracket = source[*upto];
                 ++ matching;
                 ++ *upto;
                 break;
+            case ']':
             case ')':
+                /* TODO FIXME check this bracket matches bracket */
                 -- matching;
                 ++ *upto;
                 break;

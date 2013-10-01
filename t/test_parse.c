@@ -11,9 +11,9 @@
 
 static char *simple = "(define x 10) (+ x 5)";
 static char *hard = "(define a 5) \
-                     (define b (+ a 4)) \
+                     (define b [+ a 4]) \
                      (display a) \
-                     (newline) \
+                     [newline] \
                      (disply b) \
                      (newline) \
                      ";
@@ -67,6 +67,15 @@ START_TEST(test_parse_expr){
     fail_if( plot_parse_expr(&expr, ch, &i) == 0 );
     fail_if( i != strlen(ch) );
     fail_if( strcmp(expr.u.value.u.symbol.val, ch) );
+
+#define EXPR_TEST_SEXPR "(symbol1 symbol2 symbol3)"
+    ch = EXPR_TEST_SEXPR;
+    i=0;
+
+    puts("\trunning test_parse_expr on '" EXPR_TEST_SEXPR "'");
+    fail_if( plot_parse_expr(&expr, ch, &i) == 0 );
+    fail_if( i != strlen(ch) );
+    fail_if( strcmp(expr.u.sexpr.subforms[0].u.value.u.symbol.val, "symbol1") );
 }
 END_TEST
 
