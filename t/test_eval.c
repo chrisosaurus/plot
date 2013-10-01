@@ -4,14 +4,34 @@
 #include <check.h>
 #endif
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "../src/eval.h"
+#include "../src/parse.h"
 
 START_TEST (test_eval_linkage){
-    plot_env env;
+    plot_value *val;
+    plot_env *env = plot_env_init(0);
     plot_expr expr;
-    plot_value val;
 
-    val = plot_eval_test(&env, &expr);
+    /* FIXME TODO need to setup env to know about addition */
+
+#define PLOT_EVAL_SIMPLE "(+ 5 4)"
+    char *ch = PLOT_EVAL_SIMPLE;
+    int i=0;
+
+    puts("\tparsing expression for eval test");
+    fail_if( 0 == plot_parse_expr(&expr, ch, &i) );
+
+    puts("\teval of '" PLOT_EVAL_SIMPLE "'");
+    fail_if( 0 == (val = plot_eval_test(env, &expr)) );
+    fail_unless( i == strlen(ch) );
+    fail_unless( val->type == plot_type_number );
+    fail_unless( val->u.number.val == 9 );
+
+    free(val);
+    plot_env_cleanup(env);
 }
 END_TEST
 

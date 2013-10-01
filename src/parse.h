@@ -11,7 +11,7 @@ plot_program * plot_parse(char *source);
 /* plot_parse_expr will consume a token upto a separator (but will not consume the separator)
  * *upto is an offset into the source
  * *upto represents where plot_parse_sexpr starts and it will update it to match where it got up to
- * *expr is allocated locate to save parsed expr
+ * *expr is pre-allocated location to save parsed expr
  * return a plot_expr* (same as *expr) or 0 for errors
  * */
 plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto);
