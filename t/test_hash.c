@@ -7,6 +7,7 @@
 #include <check.h>
 #endif
 
+#include "../src/value.h"
 #include "../src/hash.h"
 
 START_TEST (test_hash){

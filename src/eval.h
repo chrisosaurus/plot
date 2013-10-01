@@ -2,6 +2,7 @@
 #define PLOT_EVAL_H
 
 #include "value.h"
+#include "hash.h"
 #include "types.h"
 #include "env.h"
 

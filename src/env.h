@@ -1,8 +1,7 @@
 #ifndef PLOT_ENV_H
 #define PLOT_ENV_H
 
-#include "value.h"
-#include "hash.h"
+/* requires hash.h and value.h */
 
 typedef struct plot_env {
     struct plot_env *parent;

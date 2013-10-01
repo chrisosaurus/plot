@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../src/types.h"
 #include "../src/parse.h"
 
 static char *simple = "(define x 10) (+ x 5)";

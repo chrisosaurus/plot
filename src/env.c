@@ -1,5 +1,7 @@
 #include <stdlib.h> /* calloc, free */
 
+#include "values.h"
+#include "hash.h"
 #include "env.h"
 
 /* allocated a new plot_env using calloc

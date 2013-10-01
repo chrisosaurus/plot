@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../src/value.h"
+#include "../src/hash.h"
+#include "../src/env.h"
 #include "../src/eval.h"
 #include "../src/parse.h"
 

@@ -7,6 +7,8 @@
 #include <check.h>
 #endif
 
+#include "../src/value.h"
+#include "../src/hash.h"
 #include "../src/env.h"
 
 START_TEST (test_env){
