@@ -20,6 +20,7 @@ START_TEST (test_eval_linkage){
 
     /* FIXME TODO need to setup env to know about addition */
 
+
 #define PLOT_EVAL_SIMPLE "(+ 5 4)"
     char *ch = PLOT_EVAL_SIMPLE;
     int i=0;

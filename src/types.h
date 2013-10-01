@@ -1,9 +1,10 @@
 #ifndef PLOT_TYPES_H
 #define PLOT_TYPES_H
 
-/* declaration of types used for parsing and execution */
+/* requires value.h */
 
-#include "value.h"
+
+/* declaration of types used for parsing and execution */
 
 /* type of expression */
 typedef enum plot_expr_type {

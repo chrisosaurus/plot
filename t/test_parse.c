@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../src/value.h"
 #include "../src/types.h"
 #include "../src/parse.h"
 

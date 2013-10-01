@@ -1,8 +1,11 @@
-#include "parse.h"
 #include <stdio.h>
 #include <stdlib.h> /* strtol */
 #include <string.h>
 #include <ctype.h> /* isdigit */
+
+#include "value.h"
+#include "types.h"
+#include "parse.h"
 
 #define DEBUG 1
 
