@@ -63,12 +63,12 @@ typedef struct plot_value {
     union {
         plot_number    number;
         plot_symbol    symbol;
+        plot_function  function;
 #if 0
         plot_boolean   boolean;
         plot_character character;
         plot_string    string;
         plot_pair      pair;
-        plot_function  function;
 #endif
     } u;
 } plot_value;

@@ -12,14 +12,26 @@
 #include "../src/env.h"
 #include "../src/eval.h"
 #include "../src/parse.h"
+#include "../src/funcs.h"
 
-START_TEST (test_eval_linkage){
+START_TEST (test_eval_add){
     plot_value *val;
     plot_env *env = plot_env_init(0);
     plot_expr expr;
 
-    /* FIXME TODO need to setup env to know about addition */
+    plot_symbol sym;
+    plot_value add;
 
+    sym.val = "+";
+    sym.len = 2;
+    sym.size = 2;
+
+    add.type = plot_type_function;
+    add.u.function.func = plot_func_add;
+
+    /* FIXME TODO need to setup env to know about addition */
+    puts("\tdefining function add");
+    fail_unless( 1 == plot_env_define(env, &sym, &add) );
 
 #define PLOT_EVAL_SIMPLE "(+ 5 4)"
     char *ch = PLOT_EVAL_SIMPLE;
@@ -45,7 +57,7 @@ eval_suite(void){
 
     TCase *tc_eval = tcase_create("test_eval");
 
-    tcase_add_test(tc_eval, test_eval_linkage);
+    tcase_add_test(tc_eval, test_eval_add);
 
     suite_add_tcase(s, tc_eval);
 
