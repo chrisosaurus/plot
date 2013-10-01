@@ -20,10 +20,10 @@ env:
 
 example:
     (define a 5)
-    (define b (+ a 4))
+    (define b [+ a 4])
     (display a)
     (newline)
-    (display b)
+    [display b]
     (newline)
 
 

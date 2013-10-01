@@ -22,7 +22,7 @@
 #define PLOT_TEST_MAIN
 #include "test_read.c"
 #include "test_parse.c"
-#include "test_execute.c"
+#include "test_eval.c"
 #include "test_hash.c"
 #include "test_env.c"
 
@@ -47,8 +47,8 @@ int main(void){
     number_failed += srunner_ntests_failed(sr);
     srunner_free(sr);
 
-    puts("\nTesting execute");
-    s = execute_suite();
+    puts("\nTesting eval");
+    s = eval_suite();
     sr = srunner_create(s);
     srunner_run_all(sr, CK_NORMAL);
     number_failed += srunner_ntests_failed(sr);
