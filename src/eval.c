@@ -5,7 +5,9 @@
 
 #define DEBUG 0
 
-plot_value * plot_eval(plot_env *env, plot_expr *expr){
+/* evals an expr in an environment
+ */
+plot_value * plot_eval(plot_env *env, const plot_expr * expr){
     if( !env || !expr )
         return 0; /* ERROR */
 
@@ -34,7 +36,13 @@ plot_value * plot_eval(plot_env *env, plot_expr *expr){
     return 0;
 }
 
-plot_value * plot_eval_value(plot_env *env, plot_value *val){
+/* if symbol then resolve in env, otherwise return value
+ * cannot modify the env
+ *
+ * returned value cannot be freed, it is either the same value you passed in OR
+ *  the value stored under that symbol in the env.
+ */
+plot_value * plot_eval_value(const plot_env *env, const plot_value * val){
     if( !env || !val )
         return 0; /* ERROR */
 
@@ -68,7 +76,11 @@ int plot_is_form(const char *name){
     return 0;
 }
 
-plot_value * plot_eval_sexpr(plot_env *env, plot_sexpr *sexpr){
+/* eval a sexpr in an environment
+ * if sexpr is a form then plot_eval_form may be called which can
+ *  modify the env
+ */
+plot_value * plot_eval_sexpr(plot_env *env, const plot_sexpr * sexpr){
     plot_value *res;
 
     if( ! env || ! sexpr )
@@ -76,14 +88,6 @@ plot_value * plot_eval_sexpr(plot_env *env, plot_sexpr *sexpr){
 
     #if DEBUG
     puts("inside plot_eval_sexpr");
-    #endif
-
-    res = calloc(1, sizeof *res);
-    if( !res )
-        return 0; /* ERROR */
-
-    #if DEBUG
-    puts("still inside plot_eval_sexpr");
     #endif
 
     /* TODO FIXME this is all horribly hacky and error-prone */
@@ -151,7 +155,10 @@ plot_value * plot_eval_sexpr(plot_env *env, plot_sexpr *sexpr){
     return 0;
 }
 
-plot_value * plot_eval_form(plot_env *env, plot_sexpr *sexpr){
+/* eval a form in an environment
+ * can modify the environment (e.g. define)
+ */
+plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
     if( ! env || ! sexpr )
         return 0; /* ERROR */
 
@@ -160,7 +167,9 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr *sexpr){
     return 0;
 }
 
-plot_value * plot_eval_func_call(plot_env *env, plot_sexpr *sexpr){
+/* eval a function call in an environment
+ */
+plot_value * plot_eval_func_call(const plot_env *env, const plot_sexpr * sexpr){
     if( ! env || ! sexpr )
         return 0; /* ERROR */
 

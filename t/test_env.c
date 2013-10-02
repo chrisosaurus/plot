@@ -17,18 +17,18 @@ START_TEST (test_env){
     plot_value v2;
     plot_symbol s = (plot_symbol){"sym", 4, 4};
 
-    puts("Testing construction");
+    puts("\tTesting construction");
     fail_if( 0 == (e = plot_env_init(0)) );
 
-    puts("Testing basic define");
+    puts("\tTesting basic define");
     fail_if( plot_env_get(e, &s) );
     fail_unless( plot_env_define(e, &s, &v) );
     fail_unless( &v == plot_env_get(e, &s) );
 
-    puts("Testing invalid define");
+    puts("\tTesting invalid define");
     fail_if( plot_env_define(e, &s, &v) );
 
-    puts("Testing set");
+    puts("\tTesting set");
     fail_unless( plot_env_set(e, &s, &v2) );
     fail_unless( &v2 == plot_env_get(e, &s) );
 

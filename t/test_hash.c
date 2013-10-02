@@ -18,32 +18,32 @@ START_TEST (test_hash){
     plot_value value;
     plot_hash *hash;
 
-    puts("Testing hash construction");
+    puts("\tTesting hash construction");
     fail_if( 0 == (hash = plot_hash_init()) );
 
-    puts("Testing basic hash get and insert");
+    puts("\tTesting basic hash get and insert");
     fail_if( plot_hash_get(hash, &b) );
     fail_unless( plot_hash_insert(hash, &b, &value) );
     fail_if( plot_hash_get(hash, &b) != &value );
     fail_if( plot_hash_get(hash, &a) );
 
-    puts("Testing for correct key ordering");
+    puts("\tTesting for correct key ordering");
     fail_unless( plot_hash_insert(hash, &a, &value) );
     fail_unless( plot_hash_insert(hash, &c, &value) );
     fail_if( strcmp(a.val, hash->head->key->val) );
     fail_if( strcmp(b.val, hash->head->next->key->val) );
     fail_if( strcmp(c.val, hash->head->next->next->key->val) );
 
-    puts("Testing correct number of elements");
+    puts("\tTesting correct number of elements");
     fail_unless( hash->head->next->next->next == 0 );
     fail_unless( hash->n_elems == 3);
 
-    puts("Testing (lack of) mutation");
+    puts("\tTesting (lack of) mutation");
     fail_if( plot_hash_insert(hash, &b, 0) );
     fail_if( plot_hash_get(hash, &b) == 0 );
     fail_unless( hash->n_elems == 3);
 
-    puts("Testing mutation");
+    puts("\tTesting mutation");
     fail_unless( plot_hash_set(hash, &b, &value) );
     fail_unless( plot_hash_get(hash, &b) == &value );
 
