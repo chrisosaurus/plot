@@ -7,7 +7,7 @@
 #include "types.h"
 #include "parse.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 /* we need a way for _sexpr and _expr to express 'here is the result, and here is where I got up to'
  * so we also need for them to take an int* which is one past the place they finished reading
