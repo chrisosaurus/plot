@@ -7,7 +7,7 @@
 
 /* evals an expr in an environment
  */
-plot_value * plot_eval(plot_env *env, const plot_expr * expr){
+const plot_value * plot_eval(plot_env *env, const plot_expr * expr){
     if( !env || !expr )
         return 0; /* ERROR */
 
@@ -42,7 +42,7 @@ plot_value * plot_eval(plot_env *env, const plot_expr * expr){
  * returned value cannot be freed, it is either the same value you passed in OR
  *  the value stored under that symbol in the env.
  */
-plot_value * plot_eval_value(const plot_env *env, const plot_value * val){
+const plot_value * plot_eval_value(const plot_env *env, const plot_value * val){
     if( !env || !val )
         return 0; /* ERROR */
 
@@ -80,8 +80,8 @@ int plot_is_form(const char *name){
  * if sexpr is a form then plot_eval_form may be called which can
  *  modify the env
  */
-plot_value * plot_eval_sexpr(plot_env *env, const plot_sexpr * sexpr){
-    plot_value *res;
+const plot_value * plot_eval_sexpr(plot_env *env, const plot_sexpr * sexpr){
+    const plot_value *res;
 
     if( ! env || ! sexpr )
         return 0; /* ERROR */
@@ -158,7 +158,7 @@ plot_value * plot_eval_sexpr(plot_env *env, const plot_sexpr * sexpr){
 /* eval a form in an environment
  * can modify the environment (e.g. define)
  */
-plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
+const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
     if( ! env || ! sexpr )
         return 0; /* ERROR */
 
@@ -169,7 +169,7 @@ plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
 
 /* eval a function call in an environment
  */
-plot_value * plot_eval_func_call(const plot_env *env, const plot_sexpr * sexpr){
+const plot_value * plot_eval_func_call(const plot_env *env, const plot_sexpr * sexpr){
     if( ! env || ! sexpr )
         return 0; /* ERROR */
 

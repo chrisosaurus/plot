@@ -13,7 +13,7 @@
 #include "../src/funcs.h"
 
 START_TEST (test_funcs_add){
-    plot_value *res;
+    const plot_value *res;
     plot_value v1, v2;
     plot_env *env;
 
@@ -33,7 +33,6 @@ START_TEST (test_funcs_add){
     fail_unless( res->u.number.val == 9 );
 
     plot_env_cleanup(env);
-    free(res);
 }
 END_TEST
 
@@ -42,8 +41,9 @@ START_TEST (test_funcs_env){
     plot_value add;
     plot_env *env = plot_env_init(0);
 
-    plot_value *res, v1, v2;
-    plot_value *f;
+    const plot_value *res;
+    plot_value v1, v2;
+    const plot_value *f;
 
     sym.val = "+";
     sym.len = 2;
@@ -70,7 +70,6 @@ START_TEST (test_funcs_env){
     fail_unless( res->u.number.val == 9 );
 
     plot_env_cleanup(env);
-    free(res);
 }
 END_TEST
 

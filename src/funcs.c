@@ -8,7 +8,7 @@
 
 #define DEBUG 0
 
-plot_value * plot_func_add(plot_env *env, plot_value *v1, plot_value *v2){
+const plot_value * plot_func_add(const plot_env *env, const plot_value *v1, const plot_value *v2){
     plot_value *res;
 
     #if DEBUG

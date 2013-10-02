@@ -15,7 +15,7 @@
 #include "../src/funcs.h"
 
 START_TEST (test_eval_add){
-    plot_value *val;
+    const plot_value *val;
     plot_env *env = plot_env_init(0);
     plot_expr expr;
 
@@ -49,7 +49,6 @@ START_TEST (test_eval_add){
 
     printf("Expected number '9', got number '%d'\n", val->u.number.val);
 
-    free(val);
     plot_env_cleanup(env);
 }
 END_TEST

@@ -38,7 +38,7 @@ void plot_hash_cleanup(plot_hash *hash){
 /* get value stored at key within hash
  * return value for key or 0 if key was not found
  */
-plot_value * plot_hash_get(plot_hash *hash, plot_symbol * const key){
+const plot_value * plot_hash_get(plot_hash *hash, const plot_symbol * key){
     plot_hash_entry *e;
 
     if( ! hash || ! key )
@@ -65,7 +65,7 @@ plot_value * plot_hash_get(plot_hash *hash, plot_symbol * const key){
  *
  * returns 1 on success, 0 on error
  */
-int plot_hash_insert(plot_hash *hash, plot_symbol * const key, plot_value *value){
+int plot_hash_insert(plot_hash *hash, const plot_symbol * key, const plot_value *value){
     plot_hash_entry **e, *n;
     int sc=0;
 
@@ -105,7 +105,7 @@ int plot_hash_insert(plot_hash *hash, plot_symbol * const key, plot_value *value
  *
  * returns 1 on success, 0 on error
  */
-int plot_hash_set(plot_hash *hash, plot_symbol * const key, plot_value *value){
+int plot_hash_set(plot_hash *hash, const plot_symbol * key, const plot_value *value){
     /* FIXME TODO implement... without duplication... */
 
     plot_hash_entry **e, *n;

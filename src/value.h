@@ -55,7 +55,7 @@ typedef struct plot_function {
      * need to support arbitrary number of arguments
      * need to also support plot-defined functions (via lambda)
      */
-    struct plot_value * (*func)(struct plot_env *env, struct plot_value *v1, struct plot_value *v2);
+    const struct plot_value * (*func)(const struct plot_env *env, const struct plot_value *v1, const struct plot_value *v2);
 } plot_function;
 
 typedef struct plot_value {
