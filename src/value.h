@@ -48,6 +48,7 @@ typedef struct plot_pair {
 #endif
 
 struct plot_value;
+struct plot_expr;
 
 typedef struct plot_function {
     struct plot_env *env;
@@ -55,7 +56,7 @@ typedef struct plot_function {
      * need to support arbitrary number of arguments
      * need to also support plot-defined functions (via lambda)
      */
-    const struct plot_value * (*func)(const struct plot_env *env, const struct plot_value *v1, const struct plot_value *v2);
+    const struct plot_value * (*func)(struct plot_env *env, const struct plot_expr *args, int argc);
 } plot_function;
 
 typedef struct plot_value {

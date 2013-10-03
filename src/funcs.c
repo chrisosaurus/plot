@@ -2,41 +2,49 @@
 #include <stdio.h>
 
 #include "value.h"
+#include "types.h"
 #include "hash.h"
 #include "env.h"
 #include "funcs.h"
+#include "eval.h"
 
-#define DEBUG 0
+#define DEBUG 1
 
-const plot_value * plot_func_add(const plot_env *env, const plot_value *v1, const plot_value *v2){
+const plot_value * plot_func_add(plot_env *env, const plot_expr *args, int argc){
     plot_value *res;
+    const plot_value *tmp;
+    const plot_expr *arg;
+    int sum=0, i;
 
     #if DEBUG
     puts("inside plot_func_add");
     #endif
 
-    if( !env || !v1 || !v2 ){
+    if( !env ){
         #if DEBUG
-        puts("env, v1 or v2 are null");
+        puts("env is null");
         #endif
         return 0; /* ERROR */
     }
 
+    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
+        tmp = plot_eval(env, arg);
+        if( ! tmp ){
+            #if DEBUG
+            puts("value returned by plot_eval is null");
+            #endif
+            return 0; /* ERROR */
+        }
 
-    if( ! (v1->type == plot_type_number) ){
-        #if DEBUG
-        puts("v1 is not a number");
-        #endif
-        return 0; /* ERROR */
+        if( ! (tmp->type == plot_type_number) ){
+            #if DEBUG
+            puts("value returned by plot_eval is not a number");
+            #endif
+            return 0; /* ERROR */
+        }
+
+        sum += tmp->u.number.val;
     }
-
-    if( ! (v2->type == plot_type_number) ){
-        #if DEBUG
-        puts("v2 is not a number");
-        #endif
-        return 0; /* ERROR */
-    }
-
 
     res = calloc(1, sizeof *res);
     if( !res ){
@@ -47,7 +55,7 @@ const plot_value * plot_func_add(const plot_env *env, const plot_value *v1, cons
     }
 
     res->type = plot_type_number;
-    res->u.number.val = v1->u.number.val + v2->u.number.val;
+    res->u.number.val = sum;
 
     #if DEBUG
     puts("returning sum of 2 numbers");

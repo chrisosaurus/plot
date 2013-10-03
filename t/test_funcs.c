@@ -8,27 +8,30 @@
 #include <stdlib.h>
 
 #include "../src/value.h"
+#include "../src/types.h"
 #include "../src/hash.h"
 #include "../src/env.h"
 #include "../src/funcs.h"
 
 START_TEST (test_funcs_add){
     const plot_value *res;
-    plot_value v1, v2;
+    plot_expr vals[2];
     plot_env *env;
 
-    v1.type = plot_type_number;
-    v1.u.number.val = 4;
+    vals[0].type = plot_expr_value;
+    vals[0].u.value.type = plot_type_number;
+    vals[0].u.value.u.number.val = 4;
 
-    v2.type = plot_type_number;
-    v2.u.number.val = 5;
+    vals[1].type = plot_expr_value;
+    vals[1].u.value.type = plot_type_number;
+    vals[1].u.value.u.number.val = 5;
 
     puts("\tsetting up env for test_funcs_add");
     env = plot_env_init(0);
     fail_if( 0 == env );
 
     puts("\ttesting basic addition");
-    fail_if( 0 == (res = plot_func_add(env, &v1, &v2)) );
+    fail_if( 0 == (res = plot_func_add(env, vals, 2)) );
     fail_unless( res->type == plot_type_number );
     fail_unless( res->u.number.val == 9 );
 
@@ -42,7 +45,7 @@ START_TEST (test_funcs_env){
     plot_env *env = plot_env_init(0);
 
     const plot_value *res;
-    plot_value v1, v2;
+    plot_expr vals[2];
     const plot_value *f;
 
     sym.val = "+";
@@ -54,18 +57,21 @@ START_TEST (test_funcs_env){
     puts("\tdefining function add");
     fail_unless( 1 == plot_env_define(env, &sym, &add) );
 
-    v1.type = plot_type_number;
-    v1.u.number.val = 4;
+    vals[0].type = plot_expr_value;
+    vals[0].u.value.type = plot_type_number;
+    vals[0].u.value.u.number.val = 4;
 
-    v2.type = plot_type_number;
-    v2.u.number.val = 5;
+    vals[1].type = plot_expr_value;
+    vals[1].u.value.type = plot_type_number;
+    vals[1].u.value.u.number.val = 5;
+
     puts("\ttesting fetching function");
     fail_if( 0 == (f = plot_env_get(env, &sym)) );
     fail_unless( f->type == plot_type_function );
     fail_unless( f->u.function.func == plot_func_add );
 
     puts("\ttesting function call");
-    fail_if( 0 == (res = f->u.function.func(env, &v1, &v2)) );
+    fail_if( 0 == (res = f->u.function.func(env, vals, 2)) );
     fail_unless( res->type == plot_type_number );
     fail_unless( res->u.number.val == 9 );
 

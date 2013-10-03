@@ -3,7 +3,8 @@
 
 struct plot_env;
 struct plot_value;
+struct plot_expr;
 
-const struct plot_value * plot_func_add(const struct plot_env *env, const struct plot_value *v1, const struct plot_value *v2);
+const struct plot_value * plot_func_add(struct plot_env *env, const struct plot_expr *args, int argc);
 
 #endif
