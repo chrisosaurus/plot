@@ -79,6 +79,27 @@ START_TEST (test_funcs_env){
 }
 END_TEST
 
+START_TEST (test_error_alloc_failed){
+    puts("Testing alloc failed error handling:");
+    plot_value v;
+    v.type = plot_type_error;
+    v.u.error.type = plot_error_alloc_failed;
+    v.u.error.msg = "testing error";
+    plot_handle_error(&v, "test_error");
+}
+END_TEST
+
+START_TEST (test_error_bad_args){
+    puts("Testing bad args error handling:");
+    plot_value v;
+    v.type = plot_type_error;
+    v.u.error.type = plot_error_bad_args;
+    v.u.error.msg = "testing error";
+    plot_handle_error(&v, "test_error");
+}
+END_TEST
+
+
 Suite *
 funcs_suite(void){
     Suite *s = suite_create("suite_funcs");
@@ -88,8 +109,10 @@ funcs_suite(void){
     tcase_add_test(tc_funcs, test_funcs_add);
     tcase_add_test(tc_funcs, test_funcs_env);
 
+    tcase_add_exit_test(tc_funcs, test_error_alloc_failed, 1);
+    tcase_add_exit_test(tc_funcs, test_error_bad_args, 1);
+
     suite_add_tcase(s, tc_funcs);
 
     return s;
 }
-

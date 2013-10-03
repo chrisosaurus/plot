@@ -6,7 +6,8 @@
 typedef enum plot_value_type{
     plot_type_number,
     plot_type_symbol,
-    plot_type_function
+    plot_type_function,
+    plot_type_error
 #if 0
     plot_type_boolean
     plot_type_character
@@ -14,6 +15,16 @@ typedef enum plot_value_type{
     plot_type_pair
 #endif
 } plot_value_type;
+
+typedef enum plot_error_type{
+    plot_error_alloc_failed,
+    plot_error_bad_args
+} plot_error_type;
+
+typedef struct plot_error {
+    plot_error_type type;
+    char *msg;
+} plot_error;
 
 typedef struct plot_number {
     int val;
@@ -65,6 +76,7 @@ typedef struct plot_value {
         plot_number    number;
         plot_symbol    symbol;
         plot_function  function;
+        plot_error     error;
 #if 0
         plot_boolean   boolean;
         plot_character character;

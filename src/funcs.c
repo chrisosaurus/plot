@@ -10,6 +10,11 @@
 
 #define DEBUG 1
 
+/* takes a list of expressions
+ * evals each and then adds the expression's value if it is a number
+ * if any of the expressions evaluate to something other than an error
+ * throw plot_error_bad_args
+ */
 const plot_value * plot_func_add(plot_env *env, const plot_expr *args, int argc){
     plot_value *res;
     const plot_value *tmp;
@@ -62,3 +67,27 @@ const plot_value * plot_func_add(plot_env *env, const plot_expr *args, int argc)
     #endif
     return res;
 }
+
+/* print error information and then exit
+ */
+void plot_handle_error(const plot_value *error, const char *place){
+    char *type = "unknown";
+    if( ! error->type == plot_type_error ){
+        printf("Error encountered in '%s', invalid error value supplied\n", place);
+        exit(1);
+    }
+
+    switch(error->u.error.type){
+        case plot_error_alloc_failed:
+            type = "alloc failed";
+            break;
+        case plot_error_bad_args:
+            type = "bad args";
+            break;
+    }
+
+    printf("Error encountered in '%s', error message: '%s', error type: '%s'\n", place, error->u.error.msg, type);
+    exit(1);
+}
+
+
