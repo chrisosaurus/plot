@@ -142,7 +142,7 @@ const plot_value * plot_eval_sexpr(plot_env *env, const plot_sexpr * sexpr){
         printf("env is '%x', v1 is '%x', v2 is '%x'\n", res->u.function.env, &(sexpr->subforms[1].u.value), &(sexpr->subforms[2].u.value) );
         #endif
         /* call function */
-        res = res->u.function.func( res->u.function.env,
+        res = res->u.function.func( res->u.function.env ? res->u.function.env : env,
                                     &(sexpr->subforms[1].u.value),
                                     &(sexpr->subforms[2].u.value)); /* FIXME need to generalise */
         return res;
