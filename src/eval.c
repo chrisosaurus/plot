@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "value.h"
+#include "env.h"
+#include "types.h"
 #include "eval.h"
 
 #define DEBUG 0

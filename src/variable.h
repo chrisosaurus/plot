@@ -1,7 +1,7 @@
 #ifndef PLOT_VARIABLE_H
 #define PLOT_VARIABLE_H
 
-#include "value.h"
+/* requires value.h for plot_variable */
 
 /* a plot_variable is a mapping of name
  * to a value

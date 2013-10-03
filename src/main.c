@@ -4,7 +4,6 @@
 
 #include "read.h"
 #include "parse.h"
-#include "execute.h"
 
 #include "value.h"
 #include "variable.h"

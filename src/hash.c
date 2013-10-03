@@ -1,6 +1,7 @@
 #include <string.h> /* strcmp */
 #include <stdlib.h> /* calloc, free */
 
+#include "value.h"
 #include "hash.h"
 
 /* create a new hash

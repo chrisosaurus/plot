@@ -1,7 +1,8 @@
 #ifndef PLOT_HASH_H
 #define PLOT_HASH_H
 
-#include "value.h"
+struct plot_symbol;
+struct plot_value;
 
 /* a plot_hash is a singly linked-list of plot_hash_entry (s)
  * and a count of the number of elements
@@ -23,8 +24,8 @@ typedef struct plot_hash {
  * in strcmp order of keys
  */
 typedef struct plot_hash_entry {
-    const plot_symbol * key;
-    const plot_value *value;
+    const struct plot_symbol * key;
+    const struct plot_value *value;
     struct plot_hash_entry *next;
 } plot_hash_entry;
 
@@ -44,7 +45,7 @@ void plot_hash_cleanup(plot_hash *hash);
 /* get value stored at key within hash
  * return value for key or 0 if key was not found
  */
-const plot_value * plot_hash_get(plot_hash *hash, const plot_symbol * key);
+const struct plot_value * plot_hash_get(plot_hash *hash, const struct plot_symbol * key);
 
 /* set value to hash under key
  * keys must be unique within the hash
@@ -56,7 +57,7 @@ const plot_value * plot_hash_get(plot_hash *hash, const plot_symbol * key);
  *
  * returns 1 on success, 0 on error
  */
-int plot_hash_insert(plot_hash *hash, const plot_symbol * key, const plot_value *value);
+int plot_hash_insert(plot_hash *hash, const struct plot_symbol * key, const struct plot_value *value);
 
 /* set value in hash under key
  * keys must be unique within the hash
@@ -64,7 +65,7 @@ int plot_hash_insert(plot_hash *hash, const plot_symbol * key, const plot_value 
  *
  * returns 1 on success, 0 on error
  */
-int plot_hash_set(plot_hash *hash, const plot_symbol * key, const plot_value *value);
+int plot_hash_set(plot_hash *hash, const struct plot_symbol * key, const struct plot_value *value);
 
 #endif
 

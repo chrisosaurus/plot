@@ -1,8 +1,8 @@
 #ifndef PLOT_TYPES_H
 #define PLOT_TYPES_H
 
-/* requires value.h */
-
+/* requires value.h for plot_expr
+ */
 
 /* declaration of types used for parsing and execution */
 
