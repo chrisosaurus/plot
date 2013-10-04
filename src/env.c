@@ -1,8 +1,11 @@
 #include <stdlib.h> /* calloc, free */
+#include <stdio.h> /* puts */
 
 #include "value.h"
 #include "hash.h"
 #include "env.h"
+
+#define DEBUG 0
 
 /* allocated a new plot_env using calloc
  * *parent is pointer to parent env, or 0
@@ -60,10 +63,22 @@ const plot_value * plot_env_get(const plot_env *env, const plot_symbol * sym){
  * returns 1 on success, 0 on error
  */
 int plot_env_define(plot_env *env, const plot_symbol * sym, const plot_value * val){
-    if( ! env || ! sym || ! val )
+    #if DEBUG
+    puts("inside plot_env_define");
+    #endif
+
+    if( ! env || ! sym || ! val ){
+        #if DEBUG
+        puts("\tbad args");
         return 0;
-    if( ! env->hash )
+        #endif
+    }
+    if( ! env->hash ){
+        #if DEBUG
+        puts("\tbad args");
         return 0;
+        #endif
+    }
 
     return plot_hash_insert(env->hash, sym, val);
 }

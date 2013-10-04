@@ -6,6 +6,7 @@ eval:
 * define eval pointer ownership (currently returned values are a mess....)
 * eval documentation
 * add some heavier unit testing coverage for eval (test each individual func)
+* remove plot_is_form, plot_eval_form can be tried first (and fail)
 
 features:
 ---------

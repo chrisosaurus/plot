@@ -1,8 +1,11 @@
 #include <string.h> /* strcmp */
 #include <stdlib.h> /* calloc, free */
+#include <stdio.h> /* puts */
 
 #include "value.h"
 #include "hash.h"
+
+#define DEBUG 0
 
 /* create a new hash
  * allocate a new hash using calloc
@@ -42,13 +45,29 @@ void plot_hash_cleanup(plot_hash *hash){
 const plot_value * plot_hash_get(plot_hash *hash, const plot_symbol * key){
     plot_hash_entry *e;
 
-    if( ! hash || ! key )
+    #if DEBUG
+    puts("inside plot_hash_get");
+    #endif
+
+    if( ! hash || ! key ){
+        #if DEBUG
+        puts("\tnull hash or key");
+        #endif
         return 0; /* ERROR no hash or key specified */
+    }
 
     for( e = hash->head; e; e = e->next ){
-        if( ! strcmp(key->val, e->key->val) )
+        #if DEBUG
+        printf("\tcomparing: key is '%s', search string is '%s'\n", key->val, e->key->val);
+        #endif
+        if( ! strcmp(key->val, e->key->val) ){
             return e->value;
+        }
     }
+
+    #if DEBUG
+    puts("\tno matching key found");
+    #endif
 
     /* null was encountered
      * element not found
@@ -70,8 +89,16 @@ int plot_hash_insert(plot_hash *hash, const plot_symbol * key, const plot_value 
     plot_hash_entry **e, *n;
     int sc=0;
 
-    if( ! hash )
+    #if DEBUG
+    puts("inside plot_hash_insert");
+    #endif
+
+    if( ! hash ){
+        #if DEBUG
+        puts("\tnull hash provided");
+        #endif
         return 0;
+    }
 
     for( e=&hash->head; e && (*e); e = &(*e)->next ){
         sc = strcmp(key->val, (*e)->key->val);
@@ -97,6 +124,11 @@ int plot_hash_insert(plot_hash *hash, const plot_symbol * key, const plot_value 
     *e = n;
 
     hash->n_elems++;
+
+    #if DEBUG
+    puts("\teverything seemed fine");
+    #endif
+
     return 1;
 }
 

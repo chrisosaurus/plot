@@ -85,6 +85,10 @@ const plot_value * plot_eval_value(plot_env *env, const plot_value * val){
  */
 static int plot_is_form(const plot_sexpr * sexpr){
     const plot_value *val;
+    #if DEBUG
+    puts("inside plot_is_form");
+    #endif
+
     if( ! sexpr )
         return 0;
 
@@ -97,15 +101,26 @@ static int plot_is_form(const plot_sexpr * sexpr){
     val = &(sexpr->subforms[0].u.value);
     switch( val->type){
         case plot_type_symbol:
-            if( ! strcmp(val->u.symbol.val, "define") )
+            if( ! strcmp(val->u.symbol.val, "define") ){
+                #if DEBUG
+                puts("define form found");
+                #endif
                 return 1;
-            if( ! strcmp(val->u.symbol.val, "lambda") )
+                }
+            if( ! strcmp(val->u.symbol.val, "lambda") ){
+                #if DEBUG
+                puts("lambda form found");
+                #endif
                 return 1;
+                }
             break;
         default:
             break;
     }
 
+    #if DEBUG
+    puts("no form found");
+    #endif
     return 0;
 }
 
@@ -140,12 +155,81 @@ const plot_value * plot_eval_sexpr(plot_env *env, const plot_sexpr * sexpr){
  * can modify the environment (e.g. define)
  */
 const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
-    if( ! env || ! sexpr )
-        return 0; /* ERROR */
+    const plot_value *form;
+    const plot_value *name;
+    const plot_value *value;
 
-    /* TODO FIXME */
+    #if DEBUG
+    puts("inside plot_eval_form");
+    #endif
 
-    return 0;
+    if( ! env || ! sexpr ){
+        #if DEBUG
+        puts("DEFINE: bad args");
+        #endif
+        return 0; /* FIXME ERROR */
+    }
+
+    if( ! sexpr->nchildren ){
+        #if DEBUG
+        puts("DEFINE: bad nchildren");
+        #endif
+        return 0; /* FIXME ERROR */
+    }
+
+    if( sexpr->subforms[0].type != plot_expr_value ){
+        #if DEBUG
+        puts("DEFINE: bad subform[0] type");
+        #endif
+        return 0; /* FIXME ERROR */
+    }
+
+    form = &(sexpr->subforms[0].u.value);
+    switch( form->type){
+        case plot_type_symbol:
+            if( ! strcmp(form->u.symbol.val, "define") ){
+                if( sexpr->nchildren != 3 ){
+                    #if DEBUG
+                    puts("DEFINE: incorect number of children");
+                    #endif
+                    return 0; /* FIXME ERROR */
+                }
+
+                name = &(sexpr->subforms[1].u.value);
+                if( name->type != plot_type_symbol ){
+                    #if DEBUG
+                    puts("DEFINE: incorrect 1st arg type");
+                    #endif
+                    return 0; /* FIXME ERROR */
+                }
+
+                value = plot_eval_value(env, &(sexpr->subforms[2].u.value));
+                if( ! value ){
+                    #if DEBUG
+                    puts("DEFINE: faled to eval_value");
+                    #endif
+                    return 0; /* FIXME ERROR */
+                }
+
+                plot_env_define(env, &(name->u.symbol), value);
+                return 0;
+            }
+            if( ! strcmp(form->u.symbol.val, "lambda") ){
+                #if DEBUG
+                puts("'lambda' form is not currently implemented");
+                #endif
+                return 0; /* FIXME ERROR */
+            }
+            break;
+        default:
+            break;
+    }
+
+    #if DEBUG
+    puts("leaving plot_eval_form");
+    #endif
+
+    return 0; /* FIXME ERROR */
 }
 
 /* eval a function call in an environment
