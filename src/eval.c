@@ -1,16 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h> /* strcmp */
 
 #include "value.h"
 #include "env.h"
 #include "types.h"
 #include "eval.h"
+#include "funcs.h"
 
 #define DEBUG 0
 
 /* evals an expr in an environment
  */
 const plot_value * plot_eval(plot_env *env, const plot_expr * expr){
+    plot_value err;
+
     if( !env || !expr )
         return 0; /* ERROR */
 
@@ -31,8 +35,12 @@ const plot_value * plot_eval(plot_env *env, const plot_expr * expr){
             return plot_eval_sexpr(env, &(expr->u.sexpr));
             break;
         default:
-            puts("ERROR: error in plot_eval: unknown plot_expr_type, returning");
-            return 0;
+            /* TODO FIXME most likely a bad error usage pattern, revise later */
+            err.type = plot_type_error;
+            err.u.error.type = plot_error_internal;
+            err.u.error.msg - "unknown plot_expr_type";
+            /* plot_handle_error will not return */
+            plot_handle_error(&err, "plot_eval");
             break;
     }
 
@@ -45,7 +53,7 @@ const plot_value * plot_eval(plot_env *env, const plot_expr * expr){
  * returned value cannot be freed, it is either the same value you passed in OR
  *  the value stored under that symbol in the env.
  */
-const plot_value * plot_eval_value(const plot_env *env, const plot_value * val){
+const plot_value * plot_eval_value(plot_env *env, const plot_value * val){
     if( !env || !val )
         return 0; /* ERROR */
 
@@ -75,7 +83,29 @@ const plot_value * plot_eval_value(const plot_env *env, const plot_value * val){
 /* return 1 if string names a form
  * oterwise returns 0
  */
-int plot_is_form(const char *name){
+static int plot_is_form(const plot_sexpr * sexpr){
+    const plot_value *val;
+    if( ! sexpr )
+        return 0;
+
+    if( ! sexpr->nchildren )
+        return 0;
+
+    if( sexpr->subforms[0].type != plot_expr_value )
+        return 0;
+
+    val = &(sexpr->subforms[0].u.value);
+    switch( val->type){
+        case plot_type_symbol:
+            if( ! strcmp(val->u.symbol.val, "define") )
+                return 1;
+            if( ! strcmp(val->u.symbol.val, "lambda") )
+                return 1;
+            break;
+        default:
+            break;
+    }
+
     return 0;
 }
 
@@ -84,8 +114,6 @@ int plot_is_form(const char *name){
  *  modify the env
  */
 const plot_value * plot_eval_sexpr(plot_env *env, const plot_sexpr * sexpr){
-    const plot_value *res;
-
     if( ! env || ! sexpr )
         return 0; /* ERROR */
 
@@ -93,69 +121,19 @@ const plot_value * plot_eval_sexpr(plot_env *env, const plot_sexpr * sexpr){
     puts("inside plot_eval_sexpr");
     #endif
 
-    /* TODO FIXME this is all horribly hacky and error-prone */
-
-    /* can either be a form or a function lookup
-     * NB: the first value could be compound (itself an s_expr)
+    /* if first child is an s_expr then it must be a function call
+     * if first child is a symbol we have 2 cases:
+     *      is_form? -> eval_form
+     *      else     -> eval func_call
      */
-
-    if( sexpr->nchildren && sexpr->subforms[0].type == plot_expr_sexpr ){
-        #if DEBUG
-        puts("compound s_expr, dispatching to plot_eval_sexpr");
-        #endif
-        res = plot_eval_sexpr( env, &(sexpr->subforms[0].u.sexpr) );
-    } else {
-        #if DEBUG
-        puts("value found, assigning address");
-        #endif
-        /* must be a value */
-        res = &(sexpr->subforms[0].u.value);
+    if( ! sexpr->nchildren ){
+        return 0; /* FIXME error, empty s-expr */
     }
 
-    if( ! res )
-        return 0; /* ERROR */
+    if( plot_is_form(sexpr) )
+        return plot_eval_form(env, sexpr);
 
-    /* check for form */
-    if( res->type == plot_type_symbol && plot_is_form(res->u.symbol.val) ){
-        #if DEBUG
-        puts("form detected, doing nothing...");
-        #endif
-    } else {
-        /* must be a function or a symbol that resolves to a function */
-
-        /* if this is a symbol unpack it for us
-         * otherwise this will leave it unchanged
-         */
-        res = plot_eval_value(env, res);
-        switch( res->type ){
-            case plot_type_function:
-                break;
-            case plot_type_symbol:
-                break;
-            case plot_type_number:
-                break;
-        }
-        if( res->type != plot_type_function ){
-            puts("ERROR in plot_eval_sexpr; function expected but found another type, returning");
-            return 0;
-        }
-
-        #if DEBUG
-        puts("calling function");
-        printf("env is '%x', v1 is '%x', v2 is '%x'\n", res->u.function.env, &(sexpr->subforms[1].u.value), &(sexpr->subforms[2].u.value) );
-        #endif
-        /* call function */
-        res = res->u.function.func( res->u.function.env ? res->u.function.env : env,
-                                    sexpr->subforms + 1,
-                                    2);
-        return res;
-    }
-
-        #if DEBUG
-        puts("returning 0...");
-        #endif
-
-    return 0;
+    return plot_eval_func_call(env, sexpr);
 }
 
 /* eval a form in an environment
@@ -172,11 +150,48 @@ const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
 
 /* eval a function call in an environment
  */
-const plot_value * plot_eval_func_call(const plot_env *env, const plot_sexpr * sexpr){
-    if( ! env || ! sexpr )
-        return 0; /* ERROR */
+const plot_value * plot_eval_func_call(plot_env *env, const plot_sexpr * sexpr){
+    const plot_value *val;
+    const plot_value *func;
 
-    /* TODO FIXME */
+    if( ! env || ! sexpr )
+        return 0; /* FIXME ERROR */
+
+    if( ! sexpr->nchildren )
+        return 0; /* FIXME ERROR */
+
+    if( sexpr->subforms[0].type == plot_expr_sexpr ){
+        puts("Sorry compound sexpr(s) are currently not supported");
+        return 0; /* FIXME ERROR */
+    }
+
+    if( sexpr->subforms[0].type == plot_expr_sexpr ){
+        puts("ERROR: impossible sexpr subform [0] type");
+        return 0; /* FIXME ERROR */
+    }
+
+    val = &(sexpr->subforms[0].u.value);
+
+    switch( val->type ){
+        case plot_type_symbol:
+            func = plot_eval_value(env, val);
+            if( func->type != plot_type_function ){
+                puts("ERROR: unknown syntax");
+                return 0; /* FIXME ERROR */
+            }
+            return func->u.function.func( func->u.function.env ? func->u.function.env : env,
+                                          sexpr->subforms + 1,
+                                          sexpr->nchildren - 1);
+            break;
+        case plot_type_function:
+            puts("Sorry function values are not currently supported");
+            return 0; /* FIXME ERROR */
+            break;
+        default:
+            puts("ERROR: unknown syntax");
+            return 0; /* FIXME ERROR */
+            break;
+    }
 
     return 0;
 }

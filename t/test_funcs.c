@@ -80,7 +80,7 @@ START_TEST (test_funcs_env){
 END_TEST
 
 START_TEST (test_error_alloc_failed){
-    puts("Testing alloc failed error handling (error expected):");
+    puts("\tTesting alloc failed error handling (error expected):");
     plot_value v;
     v.type = plot_type_error;
     v.u.error.type = plot_error_alloc_failed;
@@ -90,7 +90,7 @@ START_TEST (test_error_alloc_failed){
 END_TEST
 
 START_TEST (test_error_bad_args){
-    puts("Testing bad args error handling (error expected):");
+    puts("\tTesting bad args error handling (error expected):");
     plot_value v;
     v.type = plot_type_error;
     v.u.error.type = plot_error_bad_args;
@@ -101,7 +101,7 @@ END_TEST
 
 START_TEST (test_error_internal){
     plot_value v;
-    puts("Testing internal error handling (error expected):");
+    puts("\tTesting internal error handling (error expected):");
 
     v.type = plot_type_error;
     v.u.error.type = plot_error_internal;
@@ -112,7 +112,7 @@ END_TEST
 
 START_TEST (test_error_unbound_symbol){
     plot_value v;
-    puts("Testing 'unbound symbol' error handling (error expected):");
+    puts("\tTesting 'unbound symbol' error handling (error expected):");
 
     v.type = plot_type_error;
     v.u.error.type = plot_error_unbound_symbol;
@@ -129,14 +129,14 @@ START_TEST (test_display){
 
     e.type = plot_expr_value;
 
-    puts("\nTesting display of values");
+    puts("\n\tTesting display of values");
 
-    puts("\ttesting display of number");
+    puts("\t\ttesting display of number");
     e.u.value.type = plot_type_number;
     e.u.value.u.number.val = 3;
     plot_func_display(&env, &e, 1);
 
-    puts("\ttesting display of symbol");
+    puts("\t\ttesting display of symbol");
     e.u.value.type = plot_type_symbol;
 #define TEST_DISPLAY_STRING "testing display or function"
     e.u.value.u.symbol.val = TEST_DISPLAY_STRING;
@@ -144,13 +144,13 @@ START_TEST (test_display){
     e.u.value.u.symbol.len = strlen(TEST_DISPLAY_STRING);
     plot_func_display(&env, &e, 1);
 
-    puts("\ttesting display of function");
+    puts("\t\ttesting display of function");
     e.u.value.type = plot_type_function;
     e.u.value.u.function.env = 0;
     e.u.value.u.function.func = 0;
     plot_func_display(&env, &e, 1);
 
-    puts("\ttesting display of error (error expected)");
+    puts("\t\ttesting display of error (error expected)");
     e.u.value.type = plot_type_error;
     e.u.value.u.error.type = plot_error_internal;
     e.u.value.u.error.msg = "testing display of error";

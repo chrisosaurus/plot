@@ -12,7 +12,7 @@ struct plot_env;
  * returned value cannot be freed, it is either the same value you passed in OR
  *  the value stored under that symbol in the env.
  */
-const struct plot_value * plot_eval_value(const struct plot_env * env, const struct plot_value * value);
+const struct plot_value * plot_eval_value(struct plot_env * env, const struct plot_value * value);
 
 /* eval a sexpr in an environment
  * if sexpr is a form then plot_eval_form may be called which can
@@ -34,7 +34,7 @@ const struct plot_value * plot_eval_form(struct plot_env *env, const struct plot
  *
  * TODO FIXME
  */
-const struct plot_value * plot_eval_func_call(const struct plot_env * env, const struct plot_sexpr * sexpr);
+const struct plot_value * plot_eval_func_call(struct plot_env * env, const struct plot_sexpr * sexpr);
 
 /* evals an expr in an environment
  *

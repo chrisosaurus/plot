@@ -8,7 +8,7 @@
 #include "funcs.h"
 #include "eval.h"
 
-#define DEBUG 1
+#define DEBUG 0
 
 /* takes a list of expressions
  * evals each and then adds the expression's value if it is a number

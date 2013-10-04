@@ -5,7 +5,6 @@ eval:
 -----
 * define eval pointer ownership (currently returned values are a mess....)
 * eval documentation
-* eval tidy up - move plot_is_foo out of there, eval_sexpr should be using call func and form
 * add some heavier unit testing coverage for eval (test each individual func)
 
 features:
@@ -19,7 +18,8 @@ features:
 * add * and - functions
 
 runtime:
---------
+---------
+* devise error handling strategy - should functions call plot_handle_error or return plot_values (or type plot_error) ?
 * need an init routine to create initial env (including loading all built-in functions in)
 * think a bit more about memory allocation and ref counting / garbage collection
 * improve plot_error
