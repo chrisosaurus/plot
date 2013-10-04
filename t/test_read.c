@@ -5,29 +5,21 @@
 #ifndef PLOT_TEST_MAIN
 #define PLOT_TEST_MAIN
 #include <check.h>
+#include "test.h"
 #endif
 
 #include "../src/read.h"
 
-static const char * const filename = "Makefile";
+static const char * const test_read_filename = "Makefile";
 
 START_TEST (test_read){
-    char *b = plot_read(filename);
+    char *b = plot_read(test_read_filename);
     fail_if( b == 0 );
     free(b);
 }
 END_TEST
 
-Suite *
-read_suite(void){
-    Suite *s = suite_create("suite_read");
-
-    TCase *tc_read = tcase_create("test_read");
-
-    tcase_add_test(tc_read, test_read);
-
-    suite_add_tcase(s, tc_read);
-
-    return s;
-}
+TEST_CASE_NEW(read)
+TEST_CASE_ADD(read, read)
+TEST_CASE_END(read)
 

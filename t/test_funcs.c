@@ -2,6 +2,7 @@
 #ifndef PLOT_TEST_MAIN
 #define PLOT_TEST_MAIN
 #include <check.h>
+#include "test.h"
 #endif
 
 #include <stdio.h>
@@ -160,22 +161,11 @@ START_TEST (test_display){
 END_TEST
 
 
-Suite *
-funcs_suite(void){
-    Suite *s = suite_create("suite_funcs");
-
-    TCase *tc_funcs = tcase_create("test_funcs");
-
-    tcase_add_test(tc_funcs, test_funcs_add);
-    tcase_add_test(tc_funcs, test_funcs_env);
-
+TEST_CASE_NEW(funcs)
+TEST_CASE_ADD(funcs, funcs_add)
+TEST_CASE_ADD(funcs, funcs_env)
     tcase_add_exit_test(tc_funcs, test_error_alloc_failed, 1);
     tcase_add_exit_test(tc_funcs, test_error_bad_args, 1);
     tcase_add_exit_test(tc_funcs, test_error_internal, 1);
     tcase_add_exit_test(tc_funcs, test_error_unbound_symbol, 1);
-
-    tcase_add_exit_test(tc_funcs, test_display, 1);
-    suite_add_tcase(s, tc_funcs);
-
-    return s;
-}
+TEST_CASE_END(funcs)

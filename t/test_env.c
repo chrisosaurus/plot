@@ -5,6 +5,7 @@
 #ifndef PLOT_TEST_MAIN
 #define PLOT_TEST_MAIN
 #include <check.h>
+#include "test.h"
 #endif
 
 #include "../src/value.h"

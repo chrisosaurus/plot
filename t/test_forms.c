@@ -2,6 +2,7 @@
 #ifndef PLOT_TEST_MAIN
 #define PLOT_TEST_MAIN
 #include <check.h>
+#include "test.h"
 #endif
 
 #include <stdio.h>
@@ -49,15 +50,7 @@ START_TEST (test_forms_define){
 }
 END_TEST
 
-Suite *
-forms_suite(void){
-    Suite *s = suite_create("suite_forms");
+TEST_CASE_NEW(forms)
+TEST_CASE_ADD(forms, forms_define)
+TEST_CASE_END(forms)
 
-    TCase *tc_forms = tcase_create("test_forms");
-
-    tcase_add_test(tc_forms, test_forms_define);
-
-    suite_add_tcase(s, tc_forms);
-
-    return s;
-}

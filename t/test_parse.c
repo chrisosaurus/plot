@@ -2,6 +2,7 @@
 #ifndef PLOT_TEST_MAIN
 #define PLOT_TEST_MAIN
 #include <check.h>
+#include "test.h"
 #endif
 
 #include <stdio.h>
@@ -11,26 +12,26 @@
 #include "../src/types.h"
 #include "../src/parse.h"
 
-static char *simple = "(define x 10) (+ x 5)";
-static char *hard = "(define a 5) \
-                     (define b [+ a 4]) \
-                     (display a) \
-                     [newline] \
-                     (disply b) \
-                     (newline) \
-                     ";
+static char *test_parse_simple = "(define x 10) (+ x 5)";
+static char *test_parse_hard = "(define a 5) \
+                                (define b [+ a 4]) \
+                                (display a) \
+                                [newline] \
+                                (disply b) \
+                                (newline) \
+                                ";
 
 
 START_TEST (test_parse){
     plot_program *prog;
 
     puts("\trunning test_parse for 'simple'");
-    prog = plot_parse(simple);
+    prog = plot_parse(test_parse_simple);
     fail_if( prog == 0 );
     free(prog);
 
     puts("\trunning test_parse for 'hard'");
-    prog = plot_parse(hard);
+    prog = plot_parse(test_parse_hard);
     fail_if( prog == 0 );
     free(prog);
 }

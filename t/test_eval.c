@@ -2,12 +2,14 @@
 #ifndef PLOT_TEST_MAIN
 #define PLOT_TEST_MAIN
 #include <check.h>
+#include "test.h"
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "../src/value.h"
+#include "../src/types.h"
 #include "../src/hash.h"
 #include "../src/env.h"
 #include "../src/eval.h"
@@ -53,16 +55,7 @@ START_TEST (test_eval_add){
 }
 END_TEST
 
-Suite *
-eval_suite(void){
-    Suite *s = suite_create("suite_eval");
-
-    TCase *tc_eval = tcase_create("test_eval");
-
-    tcase_add_test(tc_eval, test_eval_add);
-
-    suite_add_tcase(s, tc_eval);
-
-    return s;
-}
+TEST_CASE_NEW(eval)
+TEST_CASE_ADD(eval, eval_add)
+TEST_CASE_END(eval)
 
