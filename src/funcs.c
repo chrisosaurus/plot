@@ -84,10 +84,76 @@ void plot_handle_error(const plot_value *error, const char *place){
         case plot_error_bad_args:
             type = "bad args";
             break;
+        case plot_error_internal:
+            type = "internal error";
+            break;
+        case plot_error_unbound_symbol:
+            type = "unbound symbol";
+            break;
+        default:
+            type = "IMPOSSIBLE ERROR";
+            break;
     }
 
     printf("Error encountered in '%s', error message: '%s', error type: '%s'\n", place, error->u.error.msg, type);
     exit(1);
 }
 
+/* internal routine for displaying a value
+ */
+static void plot_func_display_value(plot_env *env, const plot_value *val){
+    plot_value err;
+
+    if( ! val )
+        return;
+
+    switch(val->type){
+        case plot_type_number:
+            puts("Unable to print a number at this point in time");
+            break;
+        case plot_type_symbol:
+            puts("Unable to print a symbol at this point in time");
+            break;
+        case plot_type_function:
+            puts("Unable to print a function at this point in time");
+            break;
+        case plot_type_error:
+            plot_handle_error(val, "plot_func_display_value");
+            break;
+        default:
+            err.type = plot_type_error;
+            err.u.error.type = plot_error_internal;
+            err.u.error.msg = "impossible type for value";
+            plot_handle_error(&err, "plot_func_display_value");
+            break;
+    }
+}
+
+/* print value to stdout
+ */
+void plot_func_display(plot_env *env, const plot_expr *args, int argc){
+    const plot_expr *arg;
+    const plot_value *val;
+    int i;
+
+    /* FIXME TODO should only care about first arg */
+    for(arg=args, i=0; i<argc; ++i, arg=(args+1)){
+        val = plot_eval(env, arg);
+        if( ! val ){
+            /* TODO FIXME handle error cases
+             */
+            puts( "OOPS" );
+        }
+        plot_func_display_value(env, val);
+    }
+
+}
+
+/* print a newline to stdout
+ */
+void plot_func_newline(const plot_env *env, const plot_expr *args, int argc){
+    /* FIXME currently ignores arguments, only there to match plot_func interface
+     */
+    puts("");
+}
 

@@ -16,4 +16,12 @@ const struct plot_value * plot_func_add(struct plot_env *env, const struct plot_
  */
 void plot_handle_error(const plot_value *error, const char *place);
 
+/* print value to stdout
+ */
+void plot_func_display(struct plot_env *env, const struct plot_expr *args, int argc);
+
+/* print a newline to stdout
+ */
+void plot_func_newline(const struct plot_env *env, const struct plot_expr *args, int argc);
+
 #endif

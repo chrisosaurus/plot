@@ -17,8 +17,14 @@ typedef enum plot_value_type{
 } plot_value_type;
 
 typedef enum plot_error_type{
+    /* allocation failed */
     plot_error_alloc_failed,
-    plot_error_bad_args
+    /* arguments provided were incorrect */
+    plot_error_bad_args,
+    /* unknown internal error, in theory an impossible state */
+    plot_error_internal,
+    /* unbound symbol encountered */
+    plot_error_unbound_symbol
 } plot_error_type;
 
 typedef struct plot_error {

@@ -20,6 +20,7 @@ features:
 
 runtime:
 --------
+* need an init routine to create initial env (including loading all built-in functions in)
 * think a bit more about memory allocation and ref counting / garbage collection
 * improve plot_error
 * use plot_error
