@@ -9,7 +9,6 @@ misc:
 
 parse:
 ------
-* test_parse unit test needs to better test the output
 
 eval:
 -----
@@ -29,8 +28,10 @@ features:
 
 runtime:
 ---------
-* devise error handling strategy - should functions call plot_handle_error or return plot_values (or type plot_error) ?
+* eval should keep a stack of the internal functions it uses (for internal debugging)
+* eval should keep a stack of the programs functions (for program debugging)
 * need an init routine to create initial env (including loading all built-in functions in)
+* devise error handling strategy - should functions call plot_handle_error or return plot_values (or type plot_error) ?
 * think a bit more about memory allocation and ref counting / garbage collection
 * improve plot_error
 * use plot_error

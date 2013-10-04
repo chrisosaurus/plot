@@ -20,6 +20,9 @@ static char *test_parse_hard = "(define a 5) \
                                 (disply b) \
                                 (newline) \
                                 ";
+static char *test_parse_harder = "(define a (+ (+ 3 5) 2))\
+                                  (define b (+ (+ b b) (+ 3 b) b))\
+                                  ";
 
 
 START_TEST (test_parse){
@@ -27,19 +30,52 @@ START_TEST (test_parse){
 
     puts("\trunning test_parse for 'simple'");
     prog = plot_parse(test_parse_simple);
+    /* check prog */
     fail_if( prog == 0 );
+    fail_if( prog->nchildren != 2 );
+    fail_if( prog->max_children != 10 ); /* FIXME current hard coded limit */
+    /* check children */
+    fail_if( prog->exprs[0].type != plot_expr_sexpr );
+    fail_if( prog->exprs[0].u.sexpr.nchildren != 3 );
     free(prog);
 
     puts("\trunning test_parse for 'hard'");
     prog = plot_parse(test_parse_hard);
+    /* check prog */
     fail_if( prog == 0 );
+    fail_if( prog->nchildren != 6 );
+    fail_if( prog->max_children != 10 ); /* FIXME current hard coded limit */
+    /* check children */
+    fail_if( prog->exprs[0].type != plot_expr_sexpr );
+    fail_if( prog->exprs[0].u.sexpr.nchildren != 3 );
+    fail_if( prog->exprs[1].type != plot_expr_sexpr );
+    fail_if( prog->exprs[1].u.sexpr.nchildren != 3 ); /* FIXME currently 5 */
+    free(prog);
+
+    puts("\trunning test_parse for 'harder'");
+    prog = plot_parse(test_parse_harder);
+    /* check prog */
+    fail_if( prog == 0 );
+    fail_if( prog->nchildren != 2 );
+    fail_if( prog->max_children != 10 ); /* FIXME current hard coded limit */
+    /* check children */
+    fail_if( prog->exprs[0].type != plot_expr_sexpr );
+    fail_if( prog->exprs[0].u.sexpr.nchildren != 3 ); /* FIXME currently 7 */
+    /* check grand children */
+    fail_if( prog->exprs[0].u.sexpr.subforms[0].type != plot_expr_value ); /* define */
+    fail_if( prog->exprs[0].u.sexpr.subforms[1].type != plot_expr_value ); /* a */
+    fail_if( prog->exprs[0].u.sexpr.subforms[2].type != plot_expr_sexpr ); /* (+ (+ 3 5) 2) */
+    printf("INTERESTING: nchildren '%d'\n", prog->exprs[0].u.sexpr.subforms[2].u.sexpr.nchildren); /* 28170752 */
+    fail_if( prog->exprs[0].u.sexpr.subforms[2].u.sexpr.nchildren != 3 ); /* (+ (+ 3 5) 2) */
+
+    /* FIXME update test_parse_expr and test_parse_sexpr with compound and nchildren testing */
     free(prog);
 }
 END_TEST
 
 START_TEST(test_parse_sexpr){
     int i = 0;
-#define SEXPR_TEST "(+ y 11)"
+#define SEXPR_TEST "(+ y (+ 4 5))"
     char *ch = SEXPR_TEST;
     plot_sexpr sexpr;
 
@@ -52,8 +88,8 @@ START_TEST(test_parse_sexpr){
     fail_unless( sexpr.subforms[0].u.value.type == plot_type_symbol );
     fail_unless( sexpr.subforms[1].type == plot_expr_value );
     fail_unless( sexpr.subforms[1].u.value.type == plot_type_symbol );
-    fail_unless( sexpr.subforms[2].type == plot_expr_value );
-    fail_unless( sexpr.subforms[2].u.value.type == plot_type_number );
+    fail_unless( sexpr.subforms[2].type == plot_expr_sexpr );
+    fail_unless( sexpr.subforms[2].u.sexpr.nchildren == 3 );
 }
 END_TEST
 
@@ -85,6 +121,7 @@ START_TEST(test_parse_expr){
     fail_if( plot_parse_expr(&expr, ch, &i) == 0 );
     fail_if( i != strlen(ch) );
     fail_if( strcmp(expr.u.sexpr.subforms[0].u.value.u.symbol.val, "symbol1") );
+    fail_unless( expr.u.sexpr.nchildren == 3 );
 }
 END_TEST
 
