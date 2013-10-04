@@ -135,6 +135,7 @@ START_TEST (test_display){
     e.u.value.type = plot_type_number;
     e.u.value.u.number.val = 3;
     plot_func_display(&env, &e, 1);
+    puts(""); /* trailing \n */
 
     puts("\t\ttesting display of symbol");
     e.u.value.type = plot_type_symbol;

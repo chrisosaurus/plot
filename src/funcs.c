@@ -109,7 +109,7 @@ static void plot_func_display_value(plot_env *env, const plot_value *val){
 
     switch(val->type){
         case plot_type_number:
-            puts("Unable to print a number at this point in time");
+            printf("%d", val->u.number.val);
             break;
         case plot_type_symbol:
             puts("Unable to print a symbol at this point in time");

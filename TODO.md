@@ -11,7 +11,6 @@ features:
 ---------
 * add define form (values only, no define function short-hand)
 * add lambda form
-* add display and newline functions
 * add string data type
 * add value testing functions: string? symbol? number? function?
 * write repl front-end
