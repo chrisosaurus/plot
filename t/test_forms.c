@@ -42,7 +42,7 @@ START_TEST (test_forms_define){
     expr.u.sexpr.subforms[2].u.value.type = plot_type_number;
     expr.u.sexpr.subforms[2].u.value.u.number.val = 7;
 
-    plot_eval(env, &expr);
+    plot_eval_expr(env, &expr);
 
     fail_if( 0 == (val = plot_env_get(env, &(expr.u.sexpr.subforms[1].u.value.u.symbol)) ));
     fail_unless( val->type == plot_type_number );

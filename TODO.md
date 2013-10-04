@@ -1,6 +1,16 @@
 TODO(s):
 =====
 
+misc:
+-----
+* refactor test_main.c, remove silly duplicatation and use a macro (defined in test.h)
+* fix 'DEFINE incorrect number of nchildren' error
+* test_full needs to add display and newline to env
+
+parse:
+------
+* test_parse unit test needs to better test the output
+
 eval:
 -----
 * define eval pointer ownership (currently returned values are a mess....)

@@ -18,6 +18,7 @@
 #include "test_env.c"
 #include "test_funcs.c"
 #include "test_forms.c"
+#include "test_full.c"
 
 int main(void){
     int number_failed = 0;
@@ -26,49 +27,56 @@ int main(void){
 
     puts("\nBegining testing");
 
-    puts("\nTesting read");
+    puts("\n##########\nTesting read");
     s = read_suite();
     sr = srunner_create(s);
     srunner_run_all(sr, CK_NORMAL);
     number_failed += srunner_ntests_failed(sr);
     srunner_free(sr);
 
-    puts("\nTesting parse");
+    puts("\n##########\nTesting parse");
     s = parse_suite();
     sr = srunner_create(s);
     srunner_run_all(sr, CK_NORMAL);
     number_failed += srunner_ntests_failed(sr);
     srunner_free(sr);
 
-    puts("\nTesting eval");
+    puts("\n##########\nTesting eval");
     s = eval_suite();
     sr = srunner_create(s);
     srunner_run_all(sr, CK_NORMAL);
     number_failed += srunner_ntests_failed(sr);
     srunner_free(sr);
 
-    puts("\nTesting forms");
+    puts("\n##########\nTesting full");
+    s = full_suite();
+    sr = srunner_create(s);
+    srunner_run_all(sr, CK_NORMAL);
+    number_failed += srunner_ntests_failed(sr);
+    srunner_free(sr);
+
+    puts("\n##########\nTesting forms");
     s = forms_suite();
     sr = srunner_create(s);
     srunner_run_all(sr, CK_NORMAL);
     number_failed += srunner_ntests_failed(sr);
     srunner_free(sr);
 
-    puts("\nTesting hash");
+    puts("\n##########\nTesting hash");
     s = hash_suite();
     sr = srunner_create(s);
     srunner_run_all(sr, CK_NORMAL);
     number_failed += srunner_ntests_failed(sr);
     srunner_free(sr);
 
-    puts("\nTesting env");
+    puts("\n##########\nTesting env");
     s = env_suite();
     sr = srunner_create(s);
     srunner_run_all(sr, CK_NORMAL);
     number_failed += srunner_ntests_failed(sr);
     srunner_free(sr);
 
-    puts("\nTesting funcs");
+    puts("\n##########\nTesting funcs");
     s = funcs_suite();
     sr = srunner_create(s);
     srunner_run_all(sr, CK_NORMAL);

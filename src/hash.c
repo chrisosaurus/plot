@@ -58,7 +58,7 @@ const plot_value * plot_hash_get(plot_hash *hash, const plot_symbol * key){
 
     for( e = hash->head; e; e = e->next ){
         #if DEBUG
-        printf("\tcomparing: key is '%s', search string is '%s'\n", key->val, e->key->val);
+        printf("\tcomparing: looking at key '%s', search string is '%s'\n", e->key->val, key->val);
         #endif
         if( ! strcmp(key->val, e->key->val) ){
             return e->value;

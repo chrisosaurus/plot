@@ -33,7 +33,7 @@ const plot_value * plot_func_add(plot_env *env, const plot_expr *args, int argc)
     }
 
     for( arg=args, i=0; i<argc; ++i, arg+=1 ){
-        tmp = plot_eval(env, arg);
+        tmp = plot_eval_expr(env, arg);
         if( ! tmp ){
             #if DEBUG
             puts("value returned by plot_eval is null");
@@ -138,7 +138,7 @@ void plot_func_display(plot_env *env, const plot_expr *args, int argc){
 
     /* FIXME TODO should only care about first arg */
     for(arg=args, i=0; i<argc; ++i, arg=(args+1)){
-        val = plot_eval(env, arg);
+        val = plot_eval_expr(env, arg);
         if( ! val ){
             /* TODO FIXME handle error cases
              */

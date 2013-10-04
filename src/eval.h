@@ -2,6 +2,7 @@
 #define PLOT_EVAL_H
 
 struct plot_value;
+struct plot_program;
 struct plot_expr;
 struct plot_sexpr;
 struct plot_env;
@@ -40,6 +41,13 @@ const struct plot_value * plot_eval_func_call(struct plot_env * env, const struc
  *
  * TODO FIXME
  */
-const struct plot_value * plot_eval(struct plot_env * env, const struct plot_expr * expr);
+const struct plot_value * plot_eval_expr(struct plot_env * env, const struct plot_expr * expr);
+
+
+/* evals a program in an environment
+ *
+ * TODO FIXME
+ */
+const struct plot_value * plot_eval(struct plot_env * env, const struct plot_program * prog);
 
 #endif

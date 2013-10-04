@@ -42,8 +42,16 @@ const plot_value * plot_env_get(const plot_env *env, const plot_symbol * sym){
     const plot_env *e;
     const plot_value *v;
 
-    if( ! sym )
+    #if DEBUG
+    puts("inside plot_env_get");
+    #endif
+
+    if( ! sym ){
+        #if DEBUG
+        puts("\tnull sym");
+        #endif
         return 0;
+    }
 
     for( e=env; e; e=e->parent ){
         if( ! e->hash )
@@ -53,6 +61,9 @@ const plot_value * plot_env_get(const plot_env *env, const plot_symbol * sym){
             return v;
     }
 
+    #if DEBUG
+    puts("\tsym not found");
+    #endif
     return 0;
 }
 

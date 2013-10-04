@@ -10,16 +10,42 @@
 
 #define DEBUG 0
 
+/* evals a prog in an environment
+ */
+const plot_value * plot_eval(plot_env *env, const plot_program * prog){
+    plot_expr *expr;
+    int i=0;
+
+    #if DEBUG
+    puts("\ninside plot_eval");
+    #endif
+
+    if( ! env || ! prog )
+        return 0; /* FIXME ERROR */
+
+    if( ! prog->nchildren )
+        return 0; /* FIXME nothing to do */
+
+    for( i=0, expr = prog->exprs; i<prog->nchildren; ++i, expr = expr +1){
+        #if DEBUG
+        printf("\ngoing through expr child (i) '%d' of (nchildren) '%d'\n", i, prog->nchildren);
+        #endif
+        plot_eval_expr(env, expr);
+    }
+
+    return 0; /* what is the return value of a program? success of error? */
+}
+
 /* evals an expr in an environment
  */
-const plot_value * plot_eval(plot_env *env, const plot_expr * expr){
+const plot_value * plot_eval_expr(plot_env *env, const plot_expr * expr){
     plot_value err;
 
     if( !env || !expr )
         return 0; /* ERROR */
 
     #if DEBUG
-    puts("inside plot_eval");
+    puts("inside plot_eval_expr");
     #endif
     switch( expr->type ){
         case plot_expr_value:
@@ -190,7 +216,7 @@ const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
             if( ! strcmp(form->u.symbol.val, "define") ){
                 if( sexpr->nchildren != 3 ){
                     #if DEBUG
-                    puts("DEFINE: incorect number of children");
+                    printf("DEFINE: incorrect number of children '%d'\n", sexpr->nchildren);
                     #endif
                     return 0; /* FIXME ERROR */
                 }
@@ -211,6 +237,9 @@ const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
                     return 0; /* FIXME ERROR */
                 }
 
+                #if DEBUG
+                puts("DEFINE: success!");
+                #endif
                 plot_env_define(env, &(name->u.symbol), value);
                 return 0;
             }
@@ -238,18 +267,34 @@ const plot_value * plot_eval_func_call(plot_env *env, const plot_sexpr * sexpr){
     const plot_value *val;
     const plot_value *func;
 
+    #if DEBUG
+    puts("inside plot_eval_func_call");
+    #endif
+
     if( ! env || ! sexpr )
+        #if DEBUG
+        puts("plot_eval_func_call: bad args");
+        #endif
         return 0; /* FIXME ERROR */
 
     if( ! sexpr->nchildren )
+        #if DEBUG
+        puts("plot_eval_func_call: no children");
+        #endif
         return 0; /* FIXME ERROR */
 
     if( sexpr->subforms[0].type == plot_expr_sexpr ){
+        #if DEBUG
+        puts("plot_eval_func_call: subform is an sexpr");
+        #endif
         puts("Sorry compound sexpr(s) are currently not supported");
         return 0; /* FIXME ERROR */
     }
 
     if( sexpr->subforms[0].type == plot_expr_sexpr ){
+        #if DEBUG
+        puts("plot_eval_func_call: subform is an sexpr");
+        #endif
         puts("ERROR: impossible sexpr subform [0] type");
         return 0; /* FIXME ERROR */
     }
@@ -259,19 +304,37 @@ const plot_value * plot_eval_func_call(plot_env *env, const plot_sexpr * sexpr){
     switch( val->type ){
         case plot_type_symbol:
             func = plot_eval_value(env, val);
+
+            if( ! func ){
+                printf("plot_eval_func_call: no function found for '%s', bailing\n", val->u.symbol.val);
+                return 0; /* FIXME ERROR */
+            }
+            #if DEBUG
+            puts("got a function...");
+            #endif
             if( func->type != plot_type_function ){
                 puts("ERROR: unknown syntax");
                 return 0; /* FIXME ERROR */
             }
+
+            #if DEBUG
+            puts("calling function");
+            #endif
             return func->u.function.func( func->u.function.env ? func->u.function.env : env,
                                           sexpr->subforms + 1,
                                           sexpr->nchildren - 1);
             break;
         case plot_type_function:
+            #if DEBUG
+            puts("plot_eval_func_cal: function values are not currently supported");
+            #endif
             puts("Sorry function values are not currently supported");
             return 0; /* FIXME ERROR */
             break;
         default:
+            #if DEBUG
+            puts("plot_eval_func_call: unknown syntax");
+            #endif
             puts("ERROR: unknown syntax");
             return 0; /* FIXME ERROR */
             break;
