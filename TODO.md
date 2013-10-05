@@ -9,6 +9,7 @@ misc:
 
 parse:
 ------
+* needs to be able to ask for 'more' input (if current input does not properly end a token)
 
 eval:
 -----
@@ -16,6 +17,10 @@ eval:
 * eval documentation
 * add some heavier unit testing coverage for eval (test each individual func)
 * remove plot_is_form, plot_eval_form can be tried first (and fail)
+
+read:
+-----
+* write...
 
 features:
 ---------

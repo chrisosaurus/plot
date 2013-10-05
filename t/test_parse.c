@@ -49,7 +49,7 @@ START_TEST (test_parse){
     fail_if( prog->exprs[0].type != plot_expr_sexpr );
     fail_if( prog->exprs[0].u.sexpr.nchildren != 3 );
     fail_if( prog->exprs[1].type != plot_expr_sexpr );
-    fail_if( prog->exprs[1].u.sexpr.nchildren != 3 ); /* FIXME currently 5 */
+    fail_if( prog->exprs[1].u.sexpr.nchildren != 3 );
     free(prog);
 
     puts("\trunning test_parse for 'harder'");
@@ -60,15 +60,13 @@ START_TEST (test_parse){
     fail_if( prog->max_children != 10 ); /* FIXME current hard coded limit */
     /* check children */
     fail_if( prog->exprs[0].type != plot_expr_sexpr );
-    fail_if( prog->exprs[0].u.sexpr.nchildren != 3 ); /* FIXME currently 7 */
+    fail_if( prog->exprs[0].u.sexpr.nchildren != 3 );
     /* check grand children */
     fail_if( prog->exprs[0].u.sexpr.subforms[0].type != plot_expr_value ); /* define */
     fail_if( prog->exprs[0].u.sexpr.subforms[1].type != plot_expr_value ); /* a */
     fail_if( prog->exprs[0].u.sexpr.subforms[2].type != plot_expr_sexpr ); /* (+ (+ 3 5) 2) */
-    printf("INTERESTING: nchildren '%d'\n", prog->exprs[0].u.sexpr.subforms[2].u.sexpr.nchildren); /* 28170752 */
     fail_if( prog->exprs[0].u.sexpr.subforms[2].u.sexpr.nchildren != 3 ); /* (+ (+ 3 5) 2) */
 
-    /* FIXME update test_parse_expr and test_parse_sexpr with compound and nchildren testing */
     free(prog);
 }
 END_TEST
@@ -125,27 +123,9 @@ START_TEST(test_parse_expr){
 }
 END_TEST
 
-/*
-Suite *
-parse_suite(void){
-    Suite *s = suite_create("suite_parse");
-
-    TCase *tc_parse = tcase_create("test_parse");
-
-    tcase_add_test(tc_parse, test_parse_sexpr);
-    tcase_add_test(tc_parse, test_parse_expr);
-    tcase_add_test(tc_parse, test_parse);
-
-    suite_add_tcase(s, tc_parse);
-
-    return s;
-}
-*/
-
 TEST_CASE_NEW(parse)
 TEST_CASE_ADD(parse, parse_sexpr)
 TEST_CASE_ADD(parse, parse_expr)
 TEST_CASE_ADD(parse, parse)
 TEST_CASE_END(parse)
-
 

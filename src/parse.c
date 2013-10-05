@@ -153,7 +153,7 @@ plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto){
  */
 plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, char *source, int *upto){
     int start = *upto;
-    int matching = 1; /* brackets are matches when 0 */
+    int cont = 1; /* continue */
 
     int nchildren = 0;
     int max_children = 10;
@@ -162,30 +162,25 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, char *source, int *upto){
     /* opening bracket we encountered, if ( then closing bracket must be ), if [ the closing must be ] */
     char bracket;
 
-    if( source[start] != '(' && source[start] != '[' ){
+    bracket = source[start];
+
+    if( bracket != '(' && bracket != '[' ){
         printf("\t\tERROR: asked to consume token which is not an sexpr, char is '%c' and start is '%d'\n", source[start], start);
         return 0;
     }
 
     ++ *upto;
-    while( matching ){
+    while( cont ){
         switch( source[ *upto ] ){
             case '\0':
+                /* FIXME error, can not have \0 when looking for closing bracket */
                 /* end of the line */
-                matching = 0;
+                cont = 0;
                 break;
                 return 0;
-            case '[':
-            case '(':
-                bracket = source[*upto];
-                ++ matching;
-                ++ *upto;
-                break;
             case ']':
             case ')':
-                /* TODO FIXME check this bracket matches bracket */
-                -- matching;
-                ++ *upto;
+                cont = 0;
                 break;
             case ' ':
             case '\r':
@@ -195,6 +190,7 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, char *source, int *upto){
                 ++ *upto;
                 break;
             default:
+                /* ( and [ also use this path (as they are compound sexpressions) */
                 if( ! plot_parse_expr(&(children[nchildren++]), source, upto) ){
                     puts("\t\tError in plot_parse_sexpr, called to plot_parse_expr failed\n");
                     return 0;
@@ -202,6 +198,20 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, char *source, int *upto){
                 break;
         }
     }
+
+    /* check last char to see if bracket matches */
+    if( bracket == '(' ){
+        if( source[ *upto ] != ')' ){
+            /* FIXME bracket miss match */
+        }
+    } else if( bracket == '[' ){
+        if( source[ *upto ] != ']' ){
+            /* FIXME bracket miss match */
+        }
+    } else {
+        /* FIXME impossibru */
+    }
+    ++ *upto;
 
     /* only modufy *sexpr if there were no errors */
     sexpr->nchildren = nchildren;
@@ -217,5 +227,4 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, char *source, int *upto){
 
     return sexpr;
 }
-
 
