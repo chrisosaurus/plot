@@ -36,7 +36,7 @@ START_TEST (test_eval_add){
     puts("\tdefining function add");
     fail_unless( 1 == plot_env_define(env, &sym, &add) );
 
-#define PLOT_EVAL_SIMPLE "(+ 5 4)"
+#define PLOT_EVAL_SIMPLE "(+ 5 (+ 2 2))"
     char *ch = PLOT_EVAL_SIMPLE;
     int i=0;
 

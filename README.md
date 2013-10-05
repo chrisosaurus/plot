@@ -10,13 +10,34 @@ I will also be force pushing here often, so no getting upset.
 
 naming
 -------
-
 scheme - Noun; A large-scale systematic plan or arrangement for attaining some particular object or putting a particular idea into effect.
 
 plot - Noun; A plan made in secret by a group of people to do something illegal or harmful
 
-work
-----
+current state
+-------------
+plot currently has:
+* define form
+* addition (`+`)
+* printing of values (`display`)
+* printing of newline (`newline`)
+
+example:
+
+    (define a (+ 4 5))
+    (define b (+ a 2 3))
+    (display a)
+    (newline)
+    (display b)
+    (newline)
+
+output:
+
+    9
+    14
+
+planned work
+------------
 The initial plan was to try to define a very minimal core language (in c) and implement the rest in plot itself.
 
 planned:

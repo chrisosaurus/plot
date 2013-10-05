@@ -131,7 +131,7 @@ static void plot_func_display_value(plot_env *env, const plot_value *val){
 
 /* print value to stdout
  */
-void plot_func_display(plot_env *env, const plot_expr *args, int argc){
+const plot_value * plot_func_display(plot_env *env, const plot_expr *args, int argc){
     const plot_expr *arg;
     const plot_value *val;
     int i;
@@ -144,6 +144,7 @@ void plot_func_display(plot_env *env, const plot_expr *args, int argc){
              */
             puts( "OOPS" );
         }
+
         plot_func_display_value(env, val);
     }
 
@@ -151,7 +152,7 @@ void plot_func_display(plot_env *env, const plot_expr *args, int argc){
 
 /* print a newline to stdout
  */
-void plot_func_newline(const plot_env *env, const plot_expr *args, int argc){
+const plot_value * plot_func_newline(plot_env *env, const plot_expr *args, int argc){
     /* FIXME currently ignores arguments, only there to match plot_func interface
      */
     puts("");

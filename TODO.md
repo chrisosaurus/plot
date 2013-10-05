@@ -4,8 +4,6 @@ TODO(s):
 misc:
 -----
 * refactor test_main.c, remove silly duplicatation and use a macro (defined in test.h)
-* fix 'DEFINE incorrect number of nchildren' error
-* test_full needs to add display and newline to env
 
 parse:
 ------
@@ -24,7 +22,6 @@ read:
 
 features:
 ---------
-* add define form (values only, no define function short-hand)
 * add lambda form
 * add string data type
 * add value testing functions: string? symbol? number? function?
