@@ -27,62 +27,21 @@ int main(void){
 
     puts("\nBegining testing");
 
-    puts("\n##########\nTesting read");
-    s = read_suite();
-    sr = srunner_create(s);
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed += srunner_ntests_failed(sr);
-    srunner_free(sr);
+    MAIN_ADD_SUITE(read)
 
-    puts("\n##########\nTesting parse");
-    s = parse_suite();
-    sr = srunner_create(s);
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed += srunner_ntests_failed(sr);
-    srunner_free(sr);
+    MAIN_ADD_SUITE(parse)
 
-    puts("\n##########\nTesting eval");
-    s = eval_suite();
-    sr = srunner_create(s);
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed += srunner_ntests_failed(sr);
-    srunner_free(sr);
+    MAIN_ADD_SUITE(eval)
 
-    puts("\n##########\nTesting full");
-    s = full_suite();
-    sr = srunner_create(s);
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed += srunner_ntests_failed(sr);
-    srunner_free(sr);
+    MAIN_ADD_SUITE(full)
 
-    puts("\n##########\nTesting forms");
-    s = forms_suite();
-    sr = srunner_create(s);
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed += srunner_ntests_failed(sr);
-    srunner_free(sr);
+    MAIN_ADD_SUITE(forms)
 
-    puts("\n##########\nTesting hash");
-    s = hash_suite();
-    sr = srunner_create(s);
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed += srunner_ntests_failed(sr);
-    srunner_free(sr);
+    MAIN_ADD_SUITE(hash)
 
-    puts("\n##########\nTesting env");
-    s = env_suite();
-    sr = srunner_create(s);
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed += srunner_ntests_failed(sr);
-    srunner_free(sr);
+    MAIN_ADD_SUITE(env)
 
-    puts("\n##########\nTesting funcs");
-    s = funcs_suite();
-    sr = srunner_create(s);
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed += srunner_ntests_failed(sr);
-    srunner_free(sr);
-
+    MAIN_ADD_SUITE(funcs)
 
     puts("\nFinished testing.");
     return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;

@@ -3,7 +3,6 @@ TODO(s):
 
 misc:
 -----
-* refactor test_main.c, remove silly duplicatation and use a macro (defined in test.h)
 
 parse:
 ------
