@@ -38,3 +38,35 @@ runtime:
 * improve plot_error
 * use plot_error
 
+Milestones:
+===========
+
+first milestone: 'building blocks'
+----------------
+* basic parse and eval
+* integers and ops: +, -, / * and %
+* symbol data type
+* display and newline
+* define (no func form)
+* if and cons forms
+* string datatype
+* value testing functions: string? symbol? number? function?
+* quoting
+* pair datatype
+* lambda forms
+
+second milestone: 'plumbling'
+---------------
+* memory allocation and garbage collection
+* error handling
+* internal stack tracing
+* plot stack tracing
+
+third milestone: 'polish'
+----------------
+* repl
+* front-end
+
+
+
+
