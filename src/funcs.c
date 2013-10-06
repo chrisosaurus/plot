@@ -148,6 +148,7 @@ const plot_value * plot_func_display(plot_env *env, const plot_expr *args, int a
         plot_func_display_value(env, val);
     }
 
+    return 0;
 }
 
 /* print a newline to stdout
@@ -156,5 +157,7 @@ const plot_value * plot_func_newline(plot_env *env, const plot_expr *args, int a
     /* FIXME currently ignores arguments, only there to match plot_func interface
      */
     puts("");
+
+    return 0;
 }
 
