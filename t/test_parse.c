@@ -24,6 +24,10 @@ static char *test_parse_harder = "(define a (+ (+ 3 5) 2))\
                                   (define b (+ (+ b b) (+ 3 b) b))\
                                   ";
 
+static char *test_parse_error_more = "(define a (+ 4 5)"; /* missing closing ) */
+
+static char *test_parse_error_missmatch = "(define b (+ 11 12)]"; /* missmatch of ( and ] */
+
 
 START_TEST (test_parse){
     plot_program *prog;
@@ -123,9 +127,17 @@ START_TEST(test_parse_expr){
 }
 END_TEST
 
+START_TEST(test_parse_error){
+    puts("\ttesting parse error handling : TODO");
+    /* FIXME TODO test more */
+    /* FIXME TODO test missmatch */
+}
+END_TEST
+
 TEST_CASE_NEW(parse)
 TEST_CASE_ADD(parse, parse_sexpr)
 TEST_CASE_ADD(parse, parse_expr)
 TEST_CASE_ADD(parse, parse)
+    tcase_add_exit_test(tc_parse, test_parse_error, 1);
 TEST_CASE_END(parse)
 
