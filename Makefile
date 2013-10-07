@@ -25,6 +25,12 @@ tests: clean ${OBJ}
 	@# pthread, rt and m are all needed by certain versions of libcheck 
 	@${CC} -g -o run_tests t/test_main.c ${OBJ} -lpthread -lrt -lm -lcheck
 
+# harsh version for checking sanity of test code
+tests_harsh: clean ${OBJ}
+	@echo test_parse CC -o tests/test_llist.c
+	@# pthread, rt and m are all needed by certain versions of libcheck 
+	@${CC} -g -o run_tests t/test_main.c ${OBJ} ${TEST_CFLAGS} -lpthread -lrt -lm -lcheck
+
 # run tests
 test: tests
 	@echo running test_llist

@@ -81,8 +81,8 @@ START_TEST (test_funcs_env){
 END_TEST
 
 START_TEST (test_error_alloc_failed){
-    puts("\tTesting alloc failed error handling (error expected):");
     plot_value v;
+    puts("\tTesting alloc failed error handling (error expected):");
     v.type = plot_type_error;
     v.u.error.type = plot_error_alloc_failed;
     v.u.error.msg = "testing alloc failed error";
@@ -91,8 +91,8 @@ START_TEST (test_error_alloc_failed){
 END_TEST
 
 START_TEST (test_error_bad_args){
-    puts("\tTesting bad args error handling (error expected):");
     plot_value v;
+    puts("\tTesting bad args error handling (error expected):");
     v.type = plot_type_error;
     v.u.error.type = plot_error_bad_args;
     v.u.error.msg = "testing bad args error";

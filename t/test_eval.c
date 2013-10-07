@@ -37,7 +37,7 @@ START_TEST (test_eval_add){
     fail_unless( 1 == plot_env_define(env, &sym, &add) );
 
 #define PLOT_EVAL_SIMPLE "(+ 5 (+ 2 2))"
-    char *ch = PLOT_EVAL_SIMPLE;
+    const char *ch = PLOT_EVAL_SIMPLE;
     int i=0;
 
     puts("\tparsing expression for eval test");

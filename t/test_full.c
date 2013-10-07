@@ -15,7 +15,7 @@
 #include "../src/eval.h"
 #include "../src/funcs.h"
 
-static char *test_full_simple = "(define a (+ 4 5))\
+static const char *test_full_simple = "(define a (+ 4 5))\
                                  (define b (+ a 2 3))\
                                  (display a)\
                                  (newline)\
@@ -67,7 +67,7 @@ START_TEST (test_full){
     fail_if( prog == 0 );
 
     puts("\t\ttesting eval");
-    val = plot_eval(env, prog);
+    fail_if( 0 == (val = plot_eval(env, prog)) );
 
     puts("\tCompleted!");
 

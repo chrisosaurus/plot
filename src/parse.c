@@ -16,7 +16,7 @@
 /* provides an interface to convert a string to a plot_program (AST)
  * return a plot_program* or 0 for error
  */
-plot_program * plot_parse(char *source){
+plot_program * plot_parse(const char *source){
     int i=0;
     plot_program *prog = calloc(1, sizeof(*prog));
     prog->nchildren = 0;
@@ -59,7 +59,7 @@ plot_program * plot_parse(char *source){
  * *upto represents where plot_parse_sexpr starts and it will update it to match where it got up to
  * return a plot_expr* or 0 for errors
  * */
-plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto){
+plot_expr * plot_parse_expr(plot_expr *expr, const char *source, int *upto){
     int start = *upto;
     int cont = 1;
     /* set to true if we are within a value
@@ -151,7 +151,7 @@ plot_expr * plot_parse_expr(plot_expr *expr, char *source, int *upto){
  * *sexpr is the allocated location to save parsed s_expr
  * return the plot_sexpr* (same as *sexpr) or 0 for errors
  */
-plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, char *source, int *upto){
+plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, const char *source, int *upto){
     int start = *upto;
     int cont = 1; /* continue */
 

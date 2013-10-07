@@ -12,9 +12,9 @@
 #include "../src/hash.h"
 
 START_TEST (test_hash){
-    plot_symbol a = (plot_symbol){"a", 2, 2};
-    plot_symbol b = (plot_symbol){"b", 2, 2};
-    plot_symbol c = (plot_symbol){"c", 2, 2};
+    const plot_symbol a = (plot_symbol){"a", 2, 2};
+    const plot_symbol b = (plot_symbol){"b", 2, 2};
+    const plot_symbol c = (plot_symbol){"c", 2, 2};
 
     plot_value value;
     plot_hash *hash;

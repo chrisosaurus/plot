@@ -12,21 +12,21 @@
 #include "../src/types.h"
 #include "../src/parse.h"
 
-static char *test_parse_simple = "(define x 10) (+ x 5)";
-static char *test_parse_hard = "(define a 5) \
-                                (define b [+ a 4]) \
-                                (display a) \
-                                [newline] \
-                                (disply b) \
-                                (newline) \
-                                ";
-static char *test_parse_harder = "(define a (+ (+ 3 5) 2))\
-                                  (define b (+ (+ b b) (+ 3 b) b))\
-                                  ";
+static const char *test_parse_simple = "(define x 10) (+ x 5)";
+static const char *test_parse_hard = "(define a 5) \
+                                      (define b [+ a 4]) \
+                                      (display a) \
+                                      [newline] \
+                                      (disply b) \
+                                      (newline) \
+                                      ";
+static const char *test_parse_harder = "(define a (+ (+ 3 5) 2))\
+                                        (define b (+ (+ b b) (+ 3 b) b))\
+                                        ";
 
-static char *test_parse_error_more = "(define a (+ 4 5)"; /* missing closing ) */
+static const char *test_parse_error_more = "(define a (+ 4 5)"; /* missing closing ) */
 
-static char *test_parse_error_missmatch = "(define b (+ 11 12)]"; /* missmatch of ( and ] */
+static const char *test_parse_error_missmatch = "(define b (+ 11 12)]"; /* missmatch of ( and ] */
 
 
 START_TEST (test_parse){
@@ -78,7 +78,7 @@ END_TEST
 START_TEST(test_parse_sexpr){
     int i = 0;
 #define SEXPR_TEST "(+ y (+ 4 5))"
-    char *ch = SEXPR_TEST;
+    const char *ch = SEXPR_TEST;
     plot_sexpr sexpr;
 
     puts("\trunning test_parse_sexpr on '" SEXPR_TEST "'");
@@ -98,7 +98,7 @@ END_TEST
 START_TEST(test_parse_expr){
     int i = 0;
 #define EXPR_TEST_NUMBER "14"
-    char *ch = EXPR_TEST_NUMBER;
+    const char *ch = EXPR_TEST_NUMBER;
     plot_expr expr;
 
     puts("\trunning test_parse_expr on '" EXPR_TEST_NUMBER "'");
