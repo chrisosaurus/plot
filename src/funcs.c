@@ -10,6 +10,9 @@
 
 #define DEBUG 0
 
+/* ignore unused parameter warnings */
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 /* takes a list of expressions
  * evals each and then adds the expression's value if it is a number
  * if any of the expressions evaluate to something other than an error

@@ -17,6 +17,8 @@ plot_env * plot_env_init(plot_env *parent){
     if( ! e )
         return 0;
 
+    e->parent = parent;
+
     e->hash = plot_hash_init();
     if( ! e->hash )
         return 0;

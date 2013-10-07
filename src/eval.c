@@ -71,7 +71,7 @@ const plot_value * plot_eval_expr(plot_env *env, const plot_expr * expr){
             /* TODO FIXME most likely a bad error usage pattern, revise later */
             err.type = plot_type_error;
             err.u.error.type = plot_error_internal;
-            err.u.error.msg - "unknown plot_expr_type";
+            err.u.error.msg = "unknown plot_expr_type";
             /* plot_handle_error will not return */
             plot_handle_error(&err, "plot_eval");
             break;
