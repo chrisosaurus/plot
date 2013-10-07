@@ -74,7 +74,7 @@ const plot_value * plot_func_add(plot_env *env, const plot_expr *args, int argc)
 /* print error information and then exit
  */
 void plot_handle_error(const plot_value *error, const char *place){
-    char *type = "unknown";
+    const char *type = "unknown";
     if( ! error->type == plot_type_error ){
         printf("Error encountered in '%s', invalid error value supplied\n", place);
         exit(1);

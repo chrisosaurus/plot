@@ -29,7 +29,7 @@ typedef enum plot_error_type{
 
 typedef struct plot_error {
     plot_error_type type;
-    char *msg;
+    const char *msg;
 } plot_error;
 
 typedef struct plot_number {

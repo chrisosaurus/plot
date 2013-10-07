@@ -2,3 +2,4 @@ plot
 run_tests
 src/*.o
 t/*.o
+src/*.su
