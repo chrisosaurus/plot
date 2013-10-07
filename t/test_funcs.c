@@ -152,6 +152,7 @@ START_TEST (test_display){
     e.u.value.u.function.func = 0;
     plot_func_display(env, &e, 1);
 
+    /* last as this will cause an exit(1) */
     puts("\t\ttesting display of error (error expected)");
     e.u.value.type = plot_type_error;
     e.u.value.u.error.type = plot_error_internal;
@@ -164,7 +165,8 @@ END_TEST
 TEST_CASE_NEW(funcs)
 TEST_CASE_ADD(funcs, funcs_add)
 TEST_CASE_ADD(funcs, funcs_env)
-TEST_CASE_ADD(funcs, display)
+    /* display of error will cause exit(1) */
+    tcase_add_exit_test(tc_funcs, test_display, 1);
     tcase_add_exit_test(tc_funcs, test_error_alloc_failed, 1);
     tcase_add_exit_test(tc_funcs, test_error_bad_args, 1);
     tcase_add_exit_test(tc_funcs, test_error_internal, 1);

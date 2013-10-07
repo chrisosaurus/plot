@@ -76,7 +76,7 @@ START_TEST (test_parse){
 END_TEST
 
 START_TEST(test_parse_sexpr){
-    int i = 0;
+    size_t i = 0;
 #define SEXPR_TEST "(+ y (+ 4 5))"
     const char *ch = SEXPR_TEST;
     plot_sexpr sexpr;
@@ -96,7 +96,7 @@ START_TEST(test_parse_sexpr){
 END_TEST
 
 START_TEST(test_parse_expr){
-    int i = 0;
+    size_t i = 0;
 #define EXPR_TEST_NUMBER "14"
     const char *ch = EXPR_TEST_NUMBER;
     plot_expr expr;

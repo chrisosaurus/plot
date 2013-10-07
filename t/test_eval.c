@@ -18,6 +18,8 @@
 
 START_TEST (test_eval_add){
     const plot_value *val;
+    const char *ch;
+    size_t i;
     plot_env *env = plot_env_init(0);
     plot_expr expr;
 
@@ -37,8 +39,8 @@ START_TEST (test_eval_add){
     fail_unless( 1 == plot_env_define(env, &sym, &add) );
 
 #define PLOT_EVAL_SIMPLE "(+ 5 (+ 2 2))"
-    const char *ch = PLOT_EVAL_SIMPLE;
-    int i=0;
+    ch = PLOT_EVAL_SIMPLE;
+    i=0;
 
     puts("\tparsing expression for eval test");
     fail_if( 0 == plot_parse_expr(&expr, ch, &i) );

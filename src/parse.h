@@ -16,7 +16,7 @@ struct plot_program * plot_parse(const char *source);
  * *expr is pre-allocated location to save parsed expr
  * return a plot_expr* (same as *expr) or 0 for errors
  * */
-struct plot_expr * plot_parse_expr(struct plot_expr *expr, const char *source, int *upto);
+struct plot_expr * plot_parse_expr(struct plot_expr *expr, const char *source, size_t *upto);
 
 /* plot_parse_sexpr will consume a token upto and including the matching close paren
  * *upto is an offset into the source
@@ -24,6 +24,6 @@ struct plot_expr * plot_parse_expr(struct plot_expr *expr, const char *source, i
  * *sexpr is the allocated location to save parsed s_expr
  * return the plot_sexpr* (same as *sexpr) or 0 for errors
  */
-struct plot_sexpr * plot_parse_sexpr(struct plot_sexpr *sexpr, const char *source, int *upto);
+struct plot_sexpr * plot_parse_sexpr(struct plot_sexpr *sexpr, const char *source, size_t *upto);
 
 #endif
