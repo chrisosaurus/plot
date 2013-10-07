@@ -55,9 +55,21 @@ dependencies
 * libc
 * lib check is used for unit testing, in debian derived system this is simply 'check'
 
-installing
+running
 ----------
-The closest we have to 'installing' is running `make test`, that is to say that there is currently no front-end.
+Plot is still in it's infancy so does not yet offer an automatic installation method.
+
+You are able to compile and run plot manually though:
+
+    cd /devel/plot # or wherever you cloned to
+    make
+    ./plot t/simple.scm
+
+output:
+
+    9
+    27
+
 
 license
 ---------

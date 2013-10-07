@@ -45,9 +45,10 @@ const struct plot_value * plot_eval_expr(struct plot_env * env, const struct plo
 
 
 /* evals a program in an environment
+ * returns 1 on success, 0 on error
  *
  * TODO FIXME
  */
-const struct plot_value * plot_eval(struct plot_env * env, const struct plot_program * prog);
+int plot_eval(struct plot_env * env, const struct plot_program * prog);
 
 #endif

@@ -18,8 +18,9 @@
 
 
 /* evals a prog in an environment
+ * returns 1 for success, 0 for error
  */
-const plot_value * plot_eval(plot_env *env, const plot_program * prog){
+int plot_eval(plot_env *env, const plot_program * prog){
     plot_expr *expr;
     int i=0;
 
@@ -40,7 +41,7 @@ const plot_value * plot_eval(plot_env *env, const plot_program * prog){
         plot_eval_expr(env, expr);
     }
 
-    return 0; /* what is the return value of a program? success of error? */
+    return 1; /* what is the return value of a program? success of error? */
 }
 
 /* evals an expr in an environment

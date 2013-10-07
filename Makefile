@@ -2,7 +2,7 @@
 
 include config.mk
 
-SRC = src/read.c src/parse.c src/eval.c src/hash.c src/env.c src/funcs.c
+SRC = src/read.c src/parse.c src/eval.c src/hash.c src/env.c src/funcs.c src/plot.c
 OBJ = ${SRC:.c=.o}
 
 all: plot
@@ -32,13 +32,15 @@ tests_harsh: clean ${OBJ}
 	@${CC} -g -o run_tests t/test_main.c ${OBJ} ${TEST_CFLAGS} -lpthread -lrt -lm -lcheck
 
 # run tests
-test: tests
+test: tests plot
 	@echo running test_llist
 	./run_tests
+	@echo "\nrunning simple.scm"
+	./plot t/simple.scm
 
 clean:
 	@echo cleaning
-	@rm -f src/*.o t/*.o
+	@rm -f src/*.o t/*.o src/*.su
 	@rm -f plot run_tests
 
 .PHONY: all clean test tests obj
