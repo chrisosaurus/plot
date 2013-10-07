@@ -35,7 +35,7 @@ typedef struct plot_hash_entry {
  * a pointer to the new hash is returned
  * or 0 if an error was encountered
  */
-plot_hash * plot_hash_init();
+plot_hash * plot_hash_init(void);
 
 /* destroy hash
  * frees all plot_hash_entry(s) and then finally the plot_hash

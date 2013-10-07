@@ -13,7 +13,7 @@
  * a pointer to the new hash is returned
  * or 0 if an error was encountered
  */
-plot_hash * plot_hash_init(){
+plot_hash * plot_hash_init(void){
     plot_hash *hash;
     hash = calloc(1, sizeof(*hash));
     if( ! hash )

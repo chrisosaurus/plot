@@ -3,6 +3,7 @@ TODO(s):
 
 misc:
 -----
+* write stack (for runtime and internal stacks)
 
 parse:
 ------
