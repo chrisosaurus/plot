@@ -1,5 +1,6 @@
 plot
 run_tests
+a.out
 src/*.o
 t/*.o
 src/*.su

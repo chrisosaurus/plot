@@ -15,6 +15,10 @@ plot: ${OBJ}
 	@echo more compiling CC -o $@
 	@${CC} src/main.c -o $@ ${LDFLAGS} ${OBJ}
 
+# make with clang to produce different errors, includes testing code
+clang:
+	clang ${SRC} t/test_main.c -lcheck -Wall -Wextra
+
 # compile tests
 tests: clean ${OBJ}
 	@echo test_parse CC -o tests/test_llist.c

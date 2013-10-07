@@ -164,6 +164,7 @@ END_TEST
 TEST_CASE_NEW(funcs)
 TEST_CASE_ADD(funcs, funcs_add)
 TEST_CASE_ADD(funcs, funcs_env)
+TEST_CASE_ADD(funcs, display)
     tcase_add_exit_test(tc_funcs, test_error_alloc_failed, 1);
     tcase_add_exit_test(tc_funcs, test_error_bad_args, 1);
     tcase_add_exit_test(tc_funcs, test_error_internal, 1);
