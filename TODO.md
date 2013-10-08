@@ -41,33 +41,37 @@ runtime:
 
 Milestones:
 ===========
+arbitrary groupings follow
 
-first milestone: 'building blocks'
+first milestone: 'core'
 ----------------
 * basic parse and eval
 * integers and ops: +, -, / * and %
 * symbol data type
 * display and newline
 * define (no func form)
-* if and cons forms
+* lambda forms
+* if form
 * string datatype
 * value testing functions: string? symbol? number? function?
 * quoting
 * pair datatype
-* lambda forms
 
-second milestone: 'plumbling'
+second milestone: 'building blocks'
+-----------------
+* syntax-rules
+* let-syntax
+* define-syntax
+
+third milestone: 'plumbling'
 ---------------
 * memory allocation and garbage collection
 * error handling
 * internal stack tracing
 * plot stack tracing
 
-third milestone: 'polish'
+fourth milestone: 'polish'
 ----------------
 * repl
 * front-end
-
-
-
 
