@@ -18,6 +18,7 @@ current state
 -------------
 plot currently has:
 * define form
+* integer values
 * addition (`+`)
 * printing of values (`display`)
 * printing of newline (`newline`)
