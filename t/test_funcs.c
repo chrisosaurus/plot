@@ -86,7 +86,8 @@ START_TEST (test_error_alloc_failed){
     v.type = plot_type_error;
     v.u.error.type = plot_error_alloc_failed;
     v.u.error.msg = "testing alloc failed error";
-    plot_handle_error(&v, "test_error_alloc_failed");
+    v.u.error.location = "test_error_alloc_failed";
+    plot_handle_error(&v);
 }
 END_TEST
 
@@ -96,7 +97,8 @@ START_TEST (test_error_bad_args){
     v.type = plot_type_error;
     v.u.error.type = plot_error_bad_args;
     v.u.error.msg = "testing bad args error";
-    plot_handle_error(&v, "test_error_bad_args");
+    v.u.error.location = "test_error_bad_args";
+    plot_handle_error(&v);
 }
 END_TEST
 
@@ -107,7 +109,8 @@ START_TEST (test_error_internal){
     v.type = plot_type_error;
     v.u.error.type = plot_error_internal;
     v.u.error.msg = "testing internal error";
-    plot_handle_error(&v, "test_error_internal");
+    v.u.error.location = "test_error_internal";
+    plot_handle_error(&v);
 }
 END_TEST
 
@@ -118,7 +121,8 @@ START_TEST (test_error_unbound_symbol){
     v.type = plot_type_error;
     v.u.error.type = plot_error_unbound_symbol;
     v.u.error.msg = "testing unbound symbol error";
-    plot_handle_error(&v, "test_error_unbound_symbol");
+    v.u.error.location = "test_error_unbound_symbol";
+    plot_handle_error(&v);
 }
 END_TEST
 
@@ -157,6 +161,7 @@ START_TEST (test_display){
     e.u.value.type = plot_type_error;
     e.u.value.u.error.type = plot_error_internal;
     e.u.value.u.error.msg = "testing display of error";
+    e.u.value.u.error.location = "test_display";
     plot_func_display(env, &e, 1);
 }
 END_TEST

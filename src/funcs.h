@@ -14,7 +14,7 @@ const struct plot_value * plot_func_add(struct plot_env *env, const struct plot_
 
 /* print error information and then exit
  */
-void plot_handle_error(const plot_value *error, const char *place);
+void plot_handle_error(const plot_value *error);
 
 /* print value to stdout
  */

@@ -73,10 +73,10 @@ const plot_value * plot_func_add(plot_env *env, const plot_expr *args, int argc)
 
 /* print error information and then exit
  */
-void plot_handle_error(const plot_value *error, const char *place){
+void plot_handle_error(const plot_value *error){
     const char *type = "unknown";
     if( ! error->type == plot_type_error ){
-        printf("Error encountered in '%s', invalid error value supplied\n", place);
+        printf("Error encountered in 'plot_handle_error', invalid error value supplied\n");
         exit(1);
     }
 
@@ -98,7 +98,7 @@ void plot_handle_error(const plot_value *error, const char *place){
             break;
     }
 
-    printf("Error encountered in '%s', error message: '%s', error type: '%s'\n", place, error->u.error.msg, type);
+    printf("Error encountered in '%s', error message: '%s', error type: '%s'\n", error->u.error.location, error->u.error.msg, type);
     exit(1);
 }
 
@@ -121,13 +121,14 @@ static void plot_func_display_value(plot_env *env, const plot_value *val){
             puts("Unable to print a function at this point in time");
             break;
         case plot_type_error:
-            plot_handle_error(val, "plot_func_display_value");
+            plot_handle_error(val);
             break;
         default:
             err.type = plot_type_error;
             err.u.error.type = plot_error_internal;
             err.u.error.msg = "impossible type for value";
-            plot_handle_error(&err, "plot_func_display_value");
+            err.u.error.location = "plot_func_display_value";
+            plot_handle_error(&err);
             break;
     }
 }
