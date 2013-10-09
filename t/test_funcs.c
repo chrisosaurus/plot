@@ -128,41 +128,44 @@ END_TEST
 
 
 START_TEST (test_display){
-    plot_expr e;
+    plot_expr v, s;
     plot_env *env;
     env = plot_env_init(0);
 
-    e.type = plot_expr_value;
 
+    v.type = plot_expr_value;
     puts("\n\tTesting display of values");
 
-    puts("\t\ttesting display of number");
-    e.u.value.type = plot_type_number;
-    e.u.value.u.number.val = 3;
-    plot_func_display(env, &e, 1);
+    puts("\t\ttesting display of number (expected '3')");
+    v.u.value.type = plot_type_number;
+    v.u.value.u.number.val = 3;
+    plot_func_display(env, &v, 1);
     puts(""); /* trailing \n */
 
-    puts("\t\ttesting display of symbol");
-    e.u.value.type = plot_type_symbol;
+    puts("\t\ttesting display of symbol (expected '3')");
+    s.type = plot_expr_value;
+    s.u.value.type = plot_type_symbol;
 #define TEST_DISPLAY_STRING "testing display or function"
-    e.u.value.u.symbol.val = TEST_DISPLAY_STRING;
-    e.u.value.u.symbol.size = strlen(TEST_DISPLAY_STRING);
-    e.u.value.u.symbol.len = strlen(TEST_DISPLAY_STRING);
-    plot_func_display(env, &e, 1);
+    s.u.value.u.symbol.val = TEST_DISPLAY_STRING;
+    s.u.value.u.symbol.size = strlen(TEST_DISPLAY_STRING);
+    s.u.value.u.symbol.len = strlen(TEST_DISPLAY_STRING);
+    fail_unless( 1 == plot_env_define(env, &(s.u.value.u.symbol), &(v.u.value)) );
+    plot_func_display(env, &s, 1);
+    puts(""); /* trailing \n */
 
     puts("\t\ttesting display of function");
-    e.u.value.type = plot_type_function;
-    e.u.value.u.function.env = 0;
-    e.u.value.u.function.func = 0;
-    plot_func_display(env, &e, 1);
+    v.u.value.type = plot_type_function;
+    v.u.value.u.function.env = 0;
+    v.u.value.u.function.func = 0;
+    plot_func_display(env, &v, 1);
 
     /* last as this will cause an exit(1) */
     puts("\t\ttesting display of error (error expected)");
-    e.u.value.type = plot_type_error;
-    e.u.value.u.error.type = plot_error_internal;
-    e.u.value.u.error.msg = "testing display of error";
-    e.u.value.u.error.location = "test_display";
-    plot_func_display(env, &e, 1);
+    v.u.value.type = plot_type_error;
+    v.u.value.u.error.type = plot_error_internal;
+    v.u.value.u.error.msg = "testing display of error";
+    v.u.value.u.error.location = "test_display";
+    plot_func_display(env, &v, 1);
 }
 END_TEST
 
