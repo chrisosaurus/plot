@@ -18,24 +18,29 @@ current state
 -------------
 plot currently has:
 * define form
+* string values
 * integer values
-* addition (`+`)
+* basic integer functions: addition (`+`), subtraction (`-`) and multiplication (`*`)
 * printing of values (`display`)
 * printing of newline (`newline`)
 
 example:
 
     (define a (+ 4 5))
-    (define b (+ a 2 3))
+    (define b (* (- a 3) 4 5 6))
+    (define c "hello ' world")
     (display a)
     (newline)
     (display b)
+    (newline)
+    (display c)
     (newline)
 
 output:
 
     9
-    14
+    720
+    hello ' world
 
 planned work
 ------------
