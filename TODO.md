@@ -26,7 +26,6 @@ features:
 * add lambda form
 * add value testing functions: string? symbol? number? function?
 * write repl front-end
-* add * and - functions
 
 runtime:
 ---------

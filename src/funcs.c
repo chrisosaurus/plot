@@ -71,6 +71,129 @@ const plot_value * plot_func_add(plot_env *env, const plot_expr *args, int argc)
     return res;
 }
 
+/* takes a list of expressions
+ * evals each and then subtracts the expression's value if it is a number
+ * if any of the expressions evaluate to something other than an error
+ * throw plot_error_bad_args
+ */
+const plot_value * plot_func_subtract(plot_env *env, const plot_expr *args, int argc){
+    plot_value *res;
+    const plot_value *tmp;
+    const plot_expr *arg;
+    int difference=0, i;
+
+    #if DEBUG
+    puts("inside plot_func_subtract");
+    #endif
+
+    if( !env ){
+        #if DEBUG
+        puts("env is null");
+        #endif
+        return 0; /* ERROR */
+    }
+
+    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
+        tmp = plot_eval_expr(env, arg);
+        if( ! tmp ){
+            #if DEBUG
+            puts("value returned by plot_eval is null");
+            #endif
+            return 0; /* ERROR */
+        }
+
+        if( ! (tmp->type == plot_type_number) ){
+            #if DEBUG
+            puts("value returned by plot_eval is not a number");
+            #endif
+            return 0; /* ERROR */
+        }
+
+        if( i == 0 ){
+            difference = tmp->u.number.val;
+        } else {
+            difference -= tmp->u.number.val;
+        }
+    }
+
+    res = calloc(1, sizeof *res);
+    if( !res ){
+        #if DEBUG
+        puts("res failed to calloc");
+        #endif
+        return 0; /* ERROR */
+    }
+
+    res->type = plot_type_number;
+    res->u.number.val = difference;
+
+    #if DEBUG
+    puts("returning difference");
+    #endif
+    return res;
+
+    return 0;
+}
+
+/* takes a list of expressions
+ * evals each and then multiplies the expression's value if it is a number
+ * if any of the expressions evaluate to something other than an error
+ * throw plot_error_bad_args
+ */
+const plot_value * plot_func_multiply(plot_env *env, const plot_expr *args, int argc){
+    plot_value *res;
+    const plot_value *tmp;
+    const plot_expr *arg;
+    int product=1, i;
+
+    #if DEBUG
+    puts("inside plot_func_multiply");
+    #endif
+
+    if( !env ){
+        #if DEBUG
+        puts("env is null");
+        #endif
+        return 0; /* ERROR */
+    }
+
+    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
+        tmp = plot_eval_expr(env, arg);
+        if( ! tmp ){
+            #if DEBUG
+            puts("value returned by plot_eval is null");
+            #endif
+            return 0; /* ERROR */
+        }
+
+        if( ! (tmp->type == plot_type_number) ){
+            #if DEBUG
+            puts("value returned by plot_eval is not a number");
+            #endif
+            return 0; /* ERROR */
+        }
+
+        product *= tmp->u.number.val;
+    }
+
+    res = calloc(1, sizeof *res);
+    if( !res ){
+        #if DEBUG
+        puts("res failed to calloc");
+        #endif
+        return 0; /* ERROR */
+    }
+
+    res->type = plot_type_number;
+    res->u.number.val = product;
+
+    #if DEBUG
+    puts("returning product");
+    #endif
+    return res;
+
+}
+
 /* print error information and then exit
  */
 void plot_handle_error(const plot_value *error){

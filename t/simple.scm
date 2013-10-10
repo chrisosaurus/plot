@@ -1,5 +1,5 @@
 (define a (+ 4 5))
-(define b (+ (+ a 3) 4 5 6))
+(define b (* (- a 3) 4 5 6))
 (define c "hello ' world")
 (display a)
 (newline)

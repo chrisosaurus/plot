@@ -31,7 +31,7 @@ START_TEST (test_funcs_add){
     env = plot_env_init(0);
     fail_if( 0 == env );
 
-    puts("\ttesting basic addition");
+    puts("\ttesting basic addition : 4 + 5 == 9");
     fail_if( 0 == (res = plot_func_add(env, vals, 2)) );
     fail_unless( res->type == plot_type_number );
     fail_unless( res->u.number.val == 9 );
@@ -39,6 +39,59 @@ START_TEST (test_funcs_add){
     plot_env_cleanup(env);
 }
 END_TEST
+
+START_TEST (test_funcs_subtract){
+    const plot_value *res;
+    plot_expr vals[2];
+    plot_env *env;
+
+    vals[0].type = plot_expr_value;
+    vals[0].u.value.type = plot_type_number;
+    vals[0].u.value.u.number.val = 4;
+
+    vals[1].type = plot_expr_value;
+    vals[1].u.value.type = plot_type_number;
+    vals[1].u.value.u.number.val = 5;
+
+    puts("\tsetting up env for test_funcs_subtract");
+    env = plot_env_init(0);
+    fail_if( 0 == env );
+
+    puts("\ttesting basic subtraction: 4 - 5 == -1");
+    fail_if( 0 == (res = plot_func_subtract(env, vals, 2)) );
+    fail_unless( res->type == plot_type_number );
+    fail_unless( res->u.number.val == -1 );
+
+    plot_env_cleanup(env);
+}
+END_TEST
+
+START_TEST (test_funcs_multiply){
+    const plot_value *res;
+    plot_expr vals[2];
+    plot_env *env;
+
+    vals[0].type = plot_expr_value;
+    vals[0].u.value.type = plot_type_number;
+    vals[0].u.value.u.number.val = 4;
+
+    vals[1].type = plot_expr_value;
+    vals[1].u.value.type = plot_type_number;
+    vals[1].u.value.u.number.val = 5;
+
+    puts("\tsetting up env for test_funcs_multiply");
+    env = plot_env_init(0);
+    fail_if( 0 == env );
+
+    puts("\ttesting basic multiplication : 4 * 5 == 20");
+    fail_if( 0 == (res = plot_func_multiply(env, vals, 2)) );
+    fail_unless( res->type == plot_type_number );
+    fail_unless( res->u.number.val == 20 );
+
+    plot_env_cleanup(env);
+}
+END_TEST
+
 
 START_TEST (test_funcs_env){
     plot_symbol sym;
@@ -183,6 +236,8 @@ END_TEST
 
 TEST_CASE_NEW(funcs)
 TEST_CASE_ADD(funcs, funcs_add)
+TEST_CASE_ADD(funcs, funcs_subtract)
+TEST_CASE_ADD(funcs, funcs_multiply)
 TEST_CASE_ADD(funcs, funcs_env)
     /* display of error will cause exit(1) */
     tcase_add_exit_test(tc_funcs, test_display, 1);
