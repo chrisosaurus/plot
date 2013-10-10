@@ -60,15 +60,50 @@ plot_program * plot_parse(const char *source){
  * return a plot_expr* or 0 for errors
  * */
 plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
-    int start = *upto;
+    int start;
     int cont = 1;
     /* set to true if we are within a value
      * if we are inside a value then only numbers or characters are allowed
      */
     int inside_value = 0;
+    int inside_string = 0;
+    char quote = 0;
+
+    if( source[ *upto ] == '\'' || source[ *upto ] == '"' ){
+        quote = source[*upto];
+        ++ *upto;
+        inside_string = 1;
+    }
+
+    /* we don't want to include the " or ' inside our copied string */
+    start = *upto;
 
     while( cont ){
         switch( source[ *upto ] ){
+            case '\'':
+            case '"':
+                /* if we are inside a string then this may be the end */
+                if( inside_string ){
+                    /* if quote matches then we are at the end */
+                    if( quote == source[*upto] ) {
+                        cont = 0;
+                    } else {
+                        /* otherwise keep on going */
+                        ++*upto;
+                    }
+                    break;
+                }
+                /* if we are inside a value then ' and " are not valid chars to consume
+                 * and must therefore be start of the nexttoken
+                 */
+                if( inside_value ){
+                    cont = 0;
+                    break;
+                }
+                /* otherwise this is an error */
+                puts("\t\tError in plot_parse_expr; unexpected quote token\n");
+                return 0;
+                break;
             case '\0':
                 /* end of the line */
                 cont = 0;
@@ -77,11 +112,20 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
             case '\r':
             case '\t':
             case '\n':
-                /* whitespace is the end of a token, leave it for parent and return */
+                /* if we are inside a string then consume whitespace as part of string */
+                if( inside_string ){
+                    ++ *upto;
+                    break;
+                }
+                /* ohterwise whitespace is the end of a token, leave it for parent and return */
                 cont = 0;
                 break;
             case '(':
             case '[':
+                /* if we are inside a string then this is just part of the string */
+                if( inside_string ){
+                    break;
+                }
                 /* if we are inside a value then ( is not a valid char to consume
                  * it must be the start of the next token
                  */
@@ -98,21 +142,42 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
                 break;
             case ']':
             case ')':
+                /* if we are inside a string then this is just part of string */
+                if( inside_string ){
+                    break;
+                }
                 /* ) is the end of a token, leave it for parent to consume */
                 cont = 0;
                 break;
             default:
-                /* either symbol or number
+                /* either symbol, number or string
                  * keep going *
                  */
-                inside_value = 1;
+                if( ! inside_string ){
+                    inside_value = 1;
+                }
                 ++ *upto;
                 break;
         }
     }
 
+    /* if inside_string then string was consumed */
+    if( inside_string ){
+        /* our quote symbol has not yet been stepped over
+         * so this logic is the same as that for symbols
+         * + an additional step (++ *upto) to step over quote
+         */
+        int len = (*upto) - start + 1;
+        expr->type = plot_expr_value;
+        expr->u.value.u.string.val = calloc(len, sizeof(char));
+        expr->u.value.u.string.len = len;
+        expr->u.value.u.string.size = len;
+        strncpy(expr->u.value.u.string.val, &source[start], (*upto) - start);
+        expr->u.value.type = plot_type_string;
+        ++ *upto;
+    }
     /* if inside_value then a value was consumed */
-    if( inside_value ){
+    else if( inside_value ){
         char *invalid;
         expr->type = plot_expr_value;
         if( isdigit(source[start]) ){
@@ -134,7 +199,7 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
         }
     }
 
-#if DEBUG
+#if debug
     /* debugging only */
     char *ch = calloc( (*upto) - start + 1, 1);
     strncpy(ch, &source[start], (*upto) - start);

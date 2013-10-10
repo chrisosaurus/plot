@@ -114,6 +114,9 @@ static void plot_func_display_value(plot_env *env, const plot_value *val){
         case plot_type_number:
             printf("%d", val->u.number.val);
             break;
+        case plot_type_string:
+            printf("%s", val->u.string.val);
+            break;
         case plot_type_symbol:
             puts("Unable to print a symbol at this point in time");
             break;

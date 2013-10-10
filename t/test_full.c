@@ -17,9 +17,12 @@
 
 static const char *test_full_simple = "(define a (+ 4 5))\
                                  (define b (+ a 2 3))\
+                                 (define c \"hello ' world\")\
                                  (display a)\
                                  (newline)\
                                  (display b)\
+                                 (newline)\
+                                 (display c)\
                                  (newline)\
                                  ";
 
@@ -67,7 +70,7 @@ START_TEST (test_full){
     fail_if( prog == 0 );
 
     puts("\t\ttesting eval");
-    fail_if( 0 == (val = plot_eval(env, prog)) );
+    fail_if( 0 == plot_eval(env, prog) );
 
     puts("\tCompleted!");
 

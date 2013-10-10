@@ -24,7 +24,6 @@ read:
 features:
 ---------
 * add lambda form
-* add string data type
 * add value testing functions: string? symbol? number? function?
 * write repl front-end
 * add * and - functions

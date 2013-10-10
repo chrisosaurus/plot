@@ -22,6 +22,7 @@ static const char *test_parse_hard = "(define a 5) \
                                       ";
 static const char *test_parse_harder = "(define a (+ (+ 3 5) 2))\
                                         (define b (+ (+ b b) (+ 3 b) b))\
+                                        (define c \"hello world'\")\
                                         ";
 
 static const char *test_parse_error_more = "(define a (+ 4 5)"; /* missing closing ) */
@@ -60,16 +61,36 @@ START_TEST (test_parse){
     prog = plot_parse(test_parse_harder);
     /* check prog */
     fail_if( prog == 0 );
-    fail_if( prog->nchildren != 2 );
-    fail_if( prog->max_children != 10 ); /* FIXME current hard coded limit */
+    fail_unless( prog->nchildren == 3 );
+    fail_unless( prog->max_children == 10 ); /* FIXME current hard coded limit */
+
     /* check children */
-    fail_if( prog->exprs[0].type != plot_expr_sexpr );
-    fail_if( prog->exprs[0].u.sexpr.nchildren != 3 );
+    fail_unless( prog->exprs[0].type == plot_expr_sexpr );
+    fail_unless( prog->exprs[0].u.sexpr.nchildren == 3 );
+    fail_unless( prog->exprs[1].type == plot_expr_sexpr );
+    fail_unless( prog->exprs[1].u.sexpr.nchildren == 3 );
+    fail_unless( prog->exprs[2].type == plot_expr_sexpr );
+    fail_unless( prog->exprs[2].u.sexpr.nchildren == 3);
+
     /* check grand children */
-    fail_if( prog->exprs[0].u.sexpr.subforms[0].type != plot_expr_value ); /* define */
-    fail_if( prog->exprs[0].u.sexpr.subforms[1].type != plot_expr_value ); /* a */
-    fail_if( prog->exprs[0].u.sexpr.subforms[2].type != plot_expr_sexpr ); /* (+ (+ 3 5) 2) */
-    fail_if( prog->exprs[0].u.sexpr.subforms[2].u.sexpr.nchildren != 3 ); /* (+ (+ 3 5) 2) */
+    fail_unless( prog->exprs[0].u.sexpr.subforms[0].type == plot_expr_value ); /* define */
+    fail_unless( prog->exprs[0].u.sexpr.subforms[0].u.value.u.symbol.len == 7 ); /* "hello world'" */
+    fail_unless( prog->exprs[0].u.sexpr.subforms[1].type == plot_expr_value ); /* a */
+    fail_unless( prog->exprs[0].u.sexpr.subforms[2].type == plot_expr_sexpr ); /* (+ (+ 3 5) 2) */
+    fail_unless( prog->exprs[0].u.sexpr.subforms[2].u.sexpr.nchildren == 3 );
+
+    fail_unless( prog->exprs[1].u.sexpr.subforms[0].type == plot_expr_value ); /* define */
+    fail_unless( prog->exprs[1].u.sexpr.subforms[1].type == plot_expr_value ); /* b */
+    fail_unless( prog->exprs[1].u.sexpr.subforms[2].type == plot_expr_sexpr ); /* (+ (+ b b) (+ 3 b) b) */
+    fail_unless( prog->exprs[1].u.sexpr.subforms[2].u.sexpr.nchildren == 4 );
+
+    fail_unless( prog->exprs[2].u.sexpr.subforms[0].type == plot_expr_value ); /* define */
+    fail_unless( prog->exprs[2].u.sexpr.subforms[1].type == plot_expr_value ); /* c */
+    fail_unless( prog->exprs[2].u.sexpr.subforms[2].type == plot_expr_value ); /* "hello world'" */
+    fail_unless( prog->exprs[2].u.sexpr.subforms[2].u.value.type == plot_type_string ); /* "hello world'" */
+    fail_unless( prog->exprs[2].u.sexpr.subforms[2].u.value.u.string.len == 13 ); /* "hello world'" */
+    fail_unless( prog->exprs[2].u.sexpr.subforms[2].u.value.u.string.size == 13 ); /* "hello world'" */
+    fail_unless( 0 == strcmp(prog->exprs[2].u.sexpr.subforms[2].u.value.u.string.val, "hello world'") ); /* "hello world'" */
 
     free(prog);
 }
@@ -128,7 +149,7 @@ START_TEST(test_parse_expr){
 END_TEST
 
 START_TEST(test_parse_error){
-    puts("\ttesting parse error handling : TODO");
+    puts("\ttesting parse error handling : TODO (currently failing with exit status 0)");
     /* FIXME TODO test more */
     /* FIXME TODO test missmatch */
 }

@@ -145,13 +145,24 @@ START_TEST (test_display){
     puts("\t\ttesting display of symbol (expected '3')");
     s.type = plot_expr_value;
     s.u.value.type = plot_type_symbol;
-#define TEST_DISPLAY_STRING "testing display or function"
-    s.u.value.u.symbol.val = TEST_DISPLAY_STRING;
-    s.u.value.u.symbol.size = strlen(TEST_DISPLAY_STRING);
-    s.u.value.u.symbol.len = strlen(TEST_DISPLAY_STRING);
+#define TEST_DISPLAY_SYMBOL "symbol"
+    s.u.value.u.symbol.val = TEST_DISPLAY_SYMBOL;
+    s.u.value.u.symbol.size = strlen(TEST_DISPLAY_SYMBOL) + 1;
+    s.u.value.u.symbol.len = strlen(TEST_DISPLAY_SYMBOL) + 1;
     fail_unless( 1 == plot_env_define(env, &(s.u.value.u.symbol), &(v.u.value)) );
     plot_func_display(env, &s, 1);
     puts(""); /* trailing \n */
+
+    puts("\t\ttesting display of string (expected 'testing display of string')");
+    s.type = plot_expr_value;
+    s.u.value.type = plot_type_string;
+#define TEST_DISPLAY_STRING "testing display of string"
+    s.u.value.u.string.val = TEST_DISPLAY_STRING;
+    s.u.value.u.string.size = strlen(TEST_DISPLAY_STRING) +1;
+    s.u.value.u.string.len = strlen(TEST_DISPLAY_STRING) + 1;
+    plot_func_display(env, &s, 1);
+    puts(""); /* trailing \n */
+
 
     puts("\t\ttesting display of function");
     v.u.value.type = plot_type_function;

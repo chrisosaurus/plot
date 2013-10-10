@@ -249,7 +249,7 @@ const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
                 value = plot_eval_expr(env, &(sexpr->subforms[2]));
                 if( ! value ){
                     #if DEBUG_SEXPR || DEBUG
-                    puts("DEFINE: faled to eval_value");
+                    puts("DEFINE: failed to eval_value");
                     #endif
                     return 0; /* FIXME ERROR */
                 }

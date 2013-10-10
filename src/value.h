@@ -7,11 +7,11 @@ typedef enum plot_value_type{
     plot_type_number,
     plot_type_symbol,
     plot_type_function,
-    plot_type_error
+    plot_type_error,
+    plot_type_string
 #if 0
     plot_type_boolean
     plot_type_character
-    plot_type_string
     plot_type_pair
 #endif
 } plot_value_type;
@@ -39,9 +39,23 @@ typedef struct plot_number {
 
 typedef struct plot_symbol {
     char *val;
+    /* len is number of characters used
+     * including \0 terminator
+     */
     int len;
+    /* size is number of characters allocated */
     int size;
 } plot_symbol;
+
+typedef struct plot_string {
+    char *val;
+    /* len is number of characters used
+     * including \0 terminator
+     */
+    int len;
+    /* size is number of characters allocated */
+    int size;
+} plot_string;
 
 #if 0
 typedef struct plot_boolean {
@@ -51,12 +65,6 @@ typedef struct plot_boolean {
 typedef struct plot_character {
     char val;
 } plot_character;
-
-typedef struct plot_string {
-    char *val;
-    int len;
-    int size;
-} plot_string;
 
 typedef struct plot_pair {
     struct plot_value *left;
@@ -84,10 +92,10 @@ typedef struct plot_value {
         plot_symbol    symbol;
         plot_function  function;
         plot_error     error;
+        plot_string    string;
 #if 0
         plot_boolean   boolean;
         plot_character character;
-        plot_string    string;
         plot_pair      pair;
 #endif
     } u;
