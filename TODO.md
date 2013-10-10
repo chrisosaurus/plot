@@ -12,10 +12,13 @@ parse:
 
 eval:
 -----
+* boolean datatype
+* value testing functions: string? symbol? integer? number? function?
+* if form
 * define eval pointer ownership (currently returned values are a mess....)
 * eval documentation
 * add some heavier unit testing coverage for eval (test each individual func)
-* remove plot_is_form, plot_eval_form can be tried first (and fail)
+* remove plot_is_form, plot_eval_form can be tried first (and fail) - reconsider
 
 read:
 -----
@@ -44,16 +47,17 @@ arbitrary groupings follow
 first milestone: 'core'
 ----------------
 * basic parse and eval
-* integers and ops: +, -, / * and %
+* integers and ops: +, -, /, *, modulo, <, <=, >, >=, =
 * symbol data type
 * display and newline
 * define (no func form)
-* lambda forms
-* if form
 * string datatype
-* value testing functions: string? symbol? number? function?
-* quoting
-* pair datatype
+* boolean datatype
+* value testing functions: string? symbol? integer? number? function?
+* if form
+* lambda forms
+* pair datatype, car, cdr, cons and list constructors
+* quoting and display of quoted data
 
 second milestone: 'building blocks'
 -----------------
