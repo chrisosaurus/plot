@@ -38,6 +38,11 @@ test: tests plot
 	@echo "\nrunning simple.scm"
 	./plot t/simple.scm
 
+example: plot
+	cat t/simple.scm
+	@echo "\n"
+	./plot t/simple.scm
+
 clean:
 	@echo cleaning
 	@rm -f src/*.o t/*.o src/*.su

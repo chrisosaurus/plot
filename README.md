@@ -25,7 +25,7 @@ plot currently has:
 * printing of values (`display`)
 * printing of newline (`newline`)
 
-example:
+example: (see `make example`)
 
     (define a (+ 4 5))
     (define b (* (- a 3) 4 5 6))
