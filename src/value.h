@@ -8,9 +8,9 @@ typedef enum plot_value_type{
     plot_type_symbol,
     plot_type_function,
     plot_type_error,
-    plot_type_string
-#if 0
+    plot_type_string,
     plot_type_boolean
+#if 0
     plot_type_character
     plot_type_pair
 #endif
@@ -57,11 +57,11 @@ typedef struct plot_string {
     int size;
 } plot_string;
 
-#if 0
 typedef struct plot_boolean {
     bool val;
 } plot_boolean;
 
+#if 0
 typedef struct plot_character {
     char val;
 } plot_character;
@@ -93,8 +93,8 @@ typedef struct plot_value {
         plot_function  function;
         plot_error     error;
         plot_string    string;
-#if 0
         plot_boolean   boolean;
+#if 0
         plot_character character;
         plot_pair      pair;
 #endif

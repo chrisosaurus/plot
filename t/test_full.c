@@ -24,6 +24,9 @@ static const char *test_full_simple = "(define a (+ 4 5))\
                                  (newline)\
                                  (display c)\
                                  (newline)\
+                                 (define d #f)\
+                                 (display d)\
+                                 (newline)\
                                  ";
 
 START_TEST (test_full){

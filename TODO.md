@@ -12,7 +12,6 @@ parse:
 
 eval:
 -----
-* boolean datatype
 * value testing functions: string? symbol? integer? number? function?
 * if form
 * define eval pointer ownership (currently returned values are a mess....)

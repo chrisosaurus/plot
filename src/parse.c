@@ -20,7 +20,7 @@ plot_program * plot_parse(const char *source){
     size_t i=0;
     plot_program *prog = calloc(1, sizeof(*prog));
     prog->nchildren = 0;
-    prog->max_children = 10;
+    prog->max_children = 15;
     prog->exprs = calloc(prog->max_children, sizeof(*(prog->exprs))); /* FIXME fixed size */
 
     /* a plot_program is a colletion of s-expressions */
@@ -80,6 +80,22 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
 
     while( cont ){
         switch( source[ *upto ] ){
+            case '#':
+                /* valid character within string */
+                if( inside_string ){
+                    break;
+                }
+                /* valid character inside symbol */
+                if( inside_value ){
+                    break;
+                }
+
+                inside_value = 1;
+                /* otherwise this is the start of a boolean */
+                /* parsing is handled below */
+                ++ *upto;
+                cont = 0;
+                break;
             case '\'':
             case '"':
                 /* if we are inside a string then this may be the end */
@@ -117,7 +133,7 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
                     ++ *upto;
                     break;
                 }
-                /* ohterwise whitespace is the end of a token, leave it for parent and return */
+                /* otherwise whitespace is the end of a token, leave it for parent and return */
                 cont = 0;
                 break;
             case '(':
@@ -180,7 +196,7 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
     else if( inside_value ){
         char *invalid;
         expr->type = plot_expr_value;
-        if( isdigit(source[start]) ){
+        if( isdigit(source[start]) ){ /* FIXME source[start] may not be correct, want to really look at first non-whitespace */
             /* if digit then number */
             expr->u.value.u.number.val = strtol( &source[start], &invalid, 10 );
             expr->u.value.type = plot_type_number;
@@ -188,6 +204,18 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
                 puts("ERROR: conversion of token to t via strtol encountered an error\n");
                 return 0;
             }
+        } else if( source[start] == '#' ){ /* FIXME source[start] may not be correct, want to really look at first non-whitespace */
+            /* boolean */
+            if( source[*upto] == 't' ){
+                expr->u.value.u.boolean.val = true;
+            } else if( source[*upto] == 'f' ){
+                expr->u.value.u.boolean.val = false;
+            } else {
+                puts("ERROR: invalid boolean in plot_parse_expr");
+                return 0;
+            }
+            expr->u.value.type = plot_type_boolean;
+            ++ *upto;
         } else {
             /* otherwise it is a symbol */
             int len = (*upto) - start + 1;

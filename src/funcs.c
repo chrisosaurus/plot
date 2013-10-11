@@ -234,6 +234,9 @@ static void plot_func_display_value(plot_env *env, const plot_value *val){
         return;
 
     switch(val->type){
+        case plot_type_boolean:
+            printf("#%c", val->u.boolean.val ? 't' : 'f' );
+            break;
         case plot_type_number:
             printf("%d", val->u.number.val);
             break;

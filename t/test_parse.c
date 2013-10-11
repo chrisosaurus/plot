@@ -20,9 +20,11 @@ static const char *test_parse_hard = "(define a 5) \
                                       (disply b) \
                                       (newline) \
                                       ";
+
 static const char *test_parse_harder = "(define a (+ (+ 3 5) 2))\
                                         (define b (+ (+ b b) (+ 3 b) b))\
                                         (define c \"hello world'\")\
+                                        (define c #f)\
                                         ";
 
 static const char *test_parse_error_more = "(define a (+ 4 5)"; /* missing closing ) */
@@ -38,7 +40,7 @@ START_TEST (test_parse){
     /* check prog */
     fail_if( prog == 0 );
     fail_if( prog->nchildren != 2 );
-    fail_if( prog->max_children != 10 ); /* FIXME current hard coded limit */
+    fail_if( prog->max_children != 15 ); /* FIXME current hard coded limit */
     /* check children */
     fail_if( prog->exprs[0].type != plot_expr_sexpr );
     fail_if( prog->exprs[0].u.sexpr.nchildren != 3 );
@@ -49,7 +51,7 @@ START_TEST (test_parse){
     /* check prog */
     fail_if( prog == 0 );
     fail_if( prog->nchildren != 6 );
-    fail_if( prog->max_children != 10 ); /* FIXME current hard coded limit */
+    fail_if( prog->max_children != 15 ); /* FIXME current hard coded limit */
     /* check children */
     fail_if( prog->exprs[0].type != plot_expr_sexpr );
     fail_if( prog->exprs[0].u.sexpr.nchildren != 3 );
@@ -61,8 +63,8 @@ START_TEST (test_parse){
     prog = plot_parse(test_parse_harder);
     /* check prog */
     fail_if( prog == 0 );
-    fail_unless( prog->nchildren == 3 );
-    fail_unless( prog->max_children == 10 ); /* FIXME current hard coded limit */
+    fail_unless( prog->nchildren == 4 );
+    fail_unless( prog->max_children == 15 ); /* FIXME current hard coded limit */
 
     /* check children */
     fail_unless( prog->exprs[0].type == plot_expr_sexpr );
@@ -71,6 +73,8 @@ START_TEST (test_parse){
     fail_unless( prog->exprs[1].u.sexpr.nchildren == 3 );
     fail_unless( prog->exprs[2].type == plot_expr_sexpr );
     fail_unless( prog->exprs[2].u.sexpr.nchildren == 3);
+    fail_unless( prog->exprs[3].type == plot_expr_sexpr );
+    fail_unless( prog->exprs[3].u.sexpr.nchildren == 3);
 
     /* check grand children */
     fail_unless( prog->exprs[0].u.sexpr.subforms[0].type == plot_expr_value ); /* define */
@@ -91,6 +95,12 @@ START_TEST (test_parse){
     fail_unless( prog->exprs[2].u.sexpr.subforms[2].u.value.u.string.len == 13 ); /* "hello world'" */
     fail_unless( prog->exprs[2].u.sexpr.subforms[2].u.value.u.string.size == 13 ); /* "hello world'" */
     fail_unless( 0 == strcmp(prog->exprs[2].u.sexpr.subforms[2].u.value.u.string.val, "hello world'") ); /* "hello world'" */
+
+    fail_unless( prog->exprs[3].u.sexpr.subforms[0].type == plot_expr_value ); /* define */
+    fail_unless( prog->exprs[3].u.sexpr.subforms[1].type == plot_expr_value ); /* d */
+    fail_unless( prog->exprs[3].u.sexpr.subforms[2].type == plot_expr_value ); /* #f */
+    fail_unless( prog->exprs[3].u.sexpr.subforms[2].u.value.type == plot_type_boolean ); /* #f */
+    fail_unless( false == prog->exprs[3].u.sexpr.subforms[2].u.value.u.boolean.val ); /* #f */
 
     free(prog);
 }
