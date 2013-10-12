@@ -24,6 +24,10 @@ struct plot_binding bindings[] = {
 
     /* comparison functions */
     {{"=",         2,  2}, {plot_type_function, {.function = {0, plot_func_equal}}}},
+    {{"<",         2,  2}, {plot_type_function, {.function = {0, plot_func_less}}}},
+    {{">",         2,  2}, {plot_type_function, {.function = {0, plot_func_greater}}}},
+    {{"<=",        2,  2}, {plot_type_function, {.function = {0, plot_func_less_equal}}}},
+    {{">=",        2,  2}, {plot_type_function, {.function = {0, plot_func_greater_equal}}}},
 
     /* display functions */
     {{"display",   7,  7}, {plot_type_function, {.function = {0, plot_func_display}}}},

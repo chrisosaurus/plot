@@ -22,7 +22,7 @@ plot currently has:
 * integer values
 * boolean values (`#f` and `#t`)
 * basic integer functions: addition (`+`), subtraction (`-`), multiplication (`*`), division (`/`) and remainder (`remainder`)
-* basic integer comparison functions: equal (`=`)
+* basic integer comparison functions: equal (`=`), less than (`<`), less than or equal (`<=`), greater than (`>`), greater than or equal (`>=`)
 * printing of values (`display`)
 * printing of newline (`newline`)
 * comments (`;`)
@@ -45,6 +45,9 @@ example: (see `make example`)
     (display (= 1 (+ 1 1))) ;; 1 != 2; => #f
     (newline)
 
+    (display (<= 1 1 2 3 5 10)) ;; => #t
+    (newline)
+
     (display (/ 10 2 2)) ;; 10/2 = 5; 5/2 = 2; => 2
     (newline)
 
@@ -57,6 +60,7 @@ output:
     720
     hello ' world
     #f
+    #t
     2
     1
 

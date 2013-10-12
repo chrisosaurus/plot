@@ -14,6 +14,9 @@
 (display (= 1 (+ 1 1))) ;; 1 != 2; => #f
 (newline)
 
+(display (<= 1 1 2 3 5 10)) ;; => #t
+(newline)
+
 (display (/ 10 2 2)) ;; 10/2 = 5; 5/2 = 2; => 2
 (newline)
 

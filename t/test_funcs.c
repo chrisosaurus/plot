@@ -92,14 +92,12 @@ START_TEST (test_funcs_comparison){
     const plot_value *r;
 
     struct plot_test_funcs_tests bindings[] = {
-        /* function                             ( args1,            arg2 )              = expected "failure message" */
-        {PTF_VF(plot_func_equal),               { PTF_EV(PTF_VN(1)),  PTF_EV(PTF_VN(2))  },  {.expected_val = false},     "failed test for plot_func_equal"},
-/*
-        {PTF_VF(plot_func_less),                { PTF_EV(PTF_VN(1)),  PTF_EV(PTF_VN(1))  },  {.expected_val = false},     "failed test for plot_func_less"},
-        {PTF_VF(plot_func_greater),             { PTF_EV(PTF_VN(1)),  PTF_EV(PTF_VN(1))  },  {.expected_val = false},     "failed test for plot_func_greater"},
-        {PTF_VF(plot_func_less_equal),          { PTF_EV(PTF_VN(1)),  PTF_EV(PTF_VN(1))  },  {.expected_val = false},     "failed test for plot_func_less_equal"},
-        {PTF_VF(plot_func_greater_equal),       { PTF_EV(PTF_VN(1)),  PTF_EV(PTF_VN(1))  },  {.expected_val = false},     "failed test for plot_func_greater_equal"},
-*/
+        /* function                             ( args1,               arg2 )                  = expected                   "failure message" */
+        {PTF_VF(plot_func_equal),               { PTF_EV(PTF_VN( 1)),  PTF_EV(PTF_VN( 2))  },  {.expected_val = false},     "failed test for plot_func_equal"},
+        {PTF_VF(plot_func_less),                { PTF_EV(PTF_VN( 3)),  PTF_EV(PTF_VN( 5))  },  {.expected_val = true},      "failed test for plot_func_less"},
+        {PTF_VF(plot_func_greater),             { PTF_EV(PTF_VN( 1)),  PTF_EV(PTF_VN( 1))  },  {.expected_val = false},     "failed test for plot_func_greater"},
+        {PTF_VF(plot_func_less_equal),          { PTF_EV(PTF_VN(10)),  PTF_EV(PTF_VN(10))  },  {.expected_val = true},      "failed test for plot_func_less_equal"},
+        {PTF_VF(plot_func_greater_equal),       { PTF_EV(PTF_VN( 8)),  PTF_EV(PTF_VN( 7))  },  {.expected_val = true},      "failed test for plot_func_greater_equal"}
     };
 
     puts("\ttesting comparison functions");

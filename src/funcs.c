@@ -474,7 +474,7 @@ const struct plot_value * plot_func_equal(struct plot_env *env, const struct plo
         } else {
             if( tmp.u.number.val != val->u.number.val ){
                 #if DEBUG
-                puts("not equal");
+                printf("'not equal' for i '%d'\n", i);
                 #endif
                 return res;
             }
@@ -488,24 +488,269 @@ const struct plot_value * plot_func_equal(struct plot_env *env, const struct plo
 /* <
  */
 const struct plot_value * plot_func_less(struct plot_env *env, const struct plot_expr *args, int argc){
+    plot_value tmp;
+    plot_value *res;
+    const plot_value *val;
+    int i;
+    const plot_expr *arg;
+
+    tmp.type = plot_type_number;
+
+    #if DEBUG
+    puts("inside plot_func_less");
+    #endif
+
+    if( ! env ){
+        #if DEBUG
+        puts("env is NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res = calloc(1, sizeof *res);
+    if( ! res ){
+        #if DEBUG
+        puts("called to calloc failed");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res->type = plot_type_boolean;
+    res->u.boolean.val = false;
+
+    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
+        val = plot_eval_expr(env, arg);
+        if( ! val ){
+            #if DEBUG
+            puts("return val was NULL");
+            #endif
+            return 0; /* FIXME error */
+        }
+
+        if( val->type != plot_type_number ){
+            #if DEBUG
+            puts("evaled expr did not yield number");
+            #endif
+            return 0; /* FIXME error */
+        }
+
+        if( i == 0 ){
+            tmp.u.number.val = val->u.number.val;
+        } else {
+            if( ! (tmp.u.number.val < val->u.number.val) ){
+                #if DEBUG
+                printf("not 'less than' for i '%d'\n", i);
+                #endif
+                return res;
+            }
+            tmp.u.number.val = val->u.number.val;
+        }
+    }
+
+    res->u.boolean.val = true;
+    return res;
+
     return 0;
 }
 
 /* >
  */
 const struct plot_value * plot_func_greater(struct plot_env *env, const struct plot_expr *args, int argc){
+    plot_value tmp;
+    plot_value *res;
+    const plot_value *val;
+    int i;
+    const plot_expr *arg;
+
+    tmp.type = plot_type_number;
+
+    #if DEBUG
+    puts("inside plot_func_greater");
+    #endif
+
+    if( ! env ){
+        #if DEBUG
+        puts("env is NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res = calloc(1, sizeof *res);
+    if( ! res ){
+        #if DEBUG
+        puts("called to calloc failed");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res->type = plot_type_boolean;
+    res->u.boolean.val = false;
+
+    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
+        val = plot_eval_expr(env, arg);
+        if( ! val ){
+            #if DEBUG
+            puts("return val was NULL");
+            #endif
+            return 0; /* FIXME error */
+        }
+
+        if( val->type != plot_type_number ){
+            #if DEBUG
+            puts("evaled expr did not yield number");
+            #endif
+            return 0; /* FIXME error */
+        }
+
+        if( i == 0 ){
+            tmp.u.number.val = val->u.number.val;
+        } else {
+            if( ! (tmp.u.number.val > val->u.number.val) ){
+                #if DEBUG
+                printf("not 'greater than' for i '%d'\n", i);
+                #endif
+                return res;
+            }
+            tmp.u.number.val = val->u.number.val;
+        }
+    }
+
+    res->u.boolean.val = true;
+    return res;
     return 0;
 }
 
 /* <=
  */
 const struct plot_value * plot_func_less_equal(struct plot_env *env, const struct plot_expr *args, int argc){
+    plot_value tmp;
+    plot_value *res;
+    const plot_value *val;
+    int i;
+    const plot_expr *arg;
+
+    tmp.type = plot_type_number;
+
+    #if DEBUG
+    puts("inside plot_func_less_equal");
+    #endif
+
+    if( ! env ){
+        #if DEBUG
+        puts("env is NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res = calloc(1, sizeof *res);
+    if( ! res ){
+        #if DEBUG
+        puts("called to calloc failed");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res->type = plot_type_boolean;
+    res->u.boolean.val = false;
+
+    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
+        val = plot_eval_expr(env, arg);
+        if( ! val ){
+            #if DEBUG
+            puts("return val was NULL");
+            #endif
+            return 0; /* FIXME error */
+        }
+
+        if( val->type != plot_type_number ){
+            #if DEBUG
+            puts("evaled expr did not yield number");
+            #endif
+            return 0; /* FIXME error */
+        }
+
+        if( i == 0 ){
+            tmp.u.number.val = val->u.number.val;
+        } else {
+            if( ! (tmp.u.number.val <= val->u.number.val) ){
+                #if DEBUG
+                printf("not 'less than or equal' for i '%d'\n", i);
+                #endif
+                return res;
+            }
+            tmp.u.number.val = val->u.number.val;
+        }
+    }
+
+    res->u.boolean.val = true;
+    return res;
     return 0;
 }
 
 /* >=
  */
 const struct plot_value * plot_func_greater_equal(struct plot_env *env, const struct plot_expr *args, int argc){
+    plot_value tmp;
+    plot_value *res;
+    const plot_value *val;
+    int i;
+    const plot_expr *arg;
+
+    tmp.type = plot_type_number;
+
+    #if DEBUG
+    puts("inside plot_func_greater_equal");
+    #endif
+
+    if( ! env ){
+        #if DEBUG
+        puts("env is NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res = calloc(1, sizeof *res);
+    if( ! res ){
+        #if DEBUG
+        puts("called to calloc failed");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res->type = plot_type_boolean;
+    res->u.boolean.val = false;
+
+    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
+        val = plot_eval_expr(env, arg);
+        if( ! val ){
+            #if DEBUG
+            puts("return val was NULL");
+            #endif
+            return 0; /* FIXME error */
+        }
+
+        if( val->type != plot_type_number ){
+            #if DEBUG
+            puts("evaled expr did not yield number");
+            #endif
+            return 0; /* FIXME error */
+        }
+
+        if( i == 0 ){
+            tmp.u.number.val = val->u.number.val;
+        } else {
+            if( ! (tmp.u.number.val >= val->u.number.val) ){
+                #if DEBUG
+                printf("not 'less than or equal' for i '%d'\n", i);
+                #endif
+                return res;
+            }
+            tmp.u.number.val = val->u.number.val;
+        }
+    }
+
+    res->u.boolean.val = true;
+    return res;
     return 0;
 }
 
