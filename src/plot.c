@@ -31,6 +31,10 @@ struct plot_binding bindings[] = {
 
     /* value testing functions */
     {{"boolean?",        9,  9}, {plot_type_function, {.function = {0, plot_func_boolean_test}}}},
+    {{"string?",         8,  8}, {plot_type_function, {.function = {0, plot_func_string_test}}}},
+    {{"symbol?",         8,  8}, {plot_type_function, {.function = {0, plot_func_symbol_test}}}},
+    {{"number?",         8,  8}, {plot_type_function, {.function = {0, plot_func_number_test}}}},
+    {{"procedure?",     11, 11}, {plot_type_function, {.function = {0, plot_func_procedure_test}}}},
 
     /* display functions */
     {{"display",   7,  7}, {plot_type_function, {.function = {0, plot_func_display}}}},

@@ -6,7 +6,7 @@ misc:
 * write stack (for runtime and internal stacks)
 * break math and comparison funcs into own files (.h and .c)
 * plot_handle_error should not be in funcs, funcs are things that can be assigned to plot_values
-* define does not currently allow redefintion (even in smaller scope)
+* define does not currently allow redefinition (even in smaller scope)
 
 parse:
 ------
@@ -30,7 +30,6 @@ features:
 ---------
 * add if form
 * add lambda form
-* add value testing functions: string? symbol? number? function?
 * write repl front-end
 
 runtime:

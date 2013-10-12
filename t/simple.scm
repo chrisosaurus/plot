@@ -29,3 +29,9 @@
 (display (boolean? #f)) ;; => #t
 (newline)
 
+(display (procedure? display)) ;; => #t
+(newline)
+
+(display (string? "hello")) ;; => #t
+(newline)
+

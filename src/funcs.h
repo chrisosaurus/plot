@@ -91,6 +91,6 @@ const struct plot_value * plot_func_number_test(struct plot_env *env, const stru
 
 /* function?
  */
-const struct plot_value * plot_func_function_test(struct plot_env *env, const struct plot_expr *args, int argc);
+const struct plot_value * plot_func_procedure_test(struct plot_env *env, const struct plot_expr *args, int argc);
 
 #endif

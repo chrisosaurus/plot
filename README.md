@@ -26,7 +26,7 @@ plot currently has:
 * printing of values (`display`)
 * printing of newline (`newline`)
 * comments (`;`)
-* value testing functions: `boolean?`
+* value testing functions: `boolean?`, `string?`, `number?`, `symbol?`, and `procedure?`
 
 example: (see `make example`)
 
@@ -61,6 +61,12 @@ example: (see `make example`)
     (display (boolean? #f)) ;; => #t
     (newline)
 
+    (display (procedure? display)) ;; => #t
+    (newline)
+
+    (display (string? "hello")) ;; => #t
+    (newline)
+
 output:
 
     9
@@ -71,6 +77,8 @@ output:
     2
     1
     #f
+    #t
+    #t
     #t
 
 planned work
@@ -111,5 +119,4 @@ output:
 license
 ---------
 Plot is released under the terms of the MIT License
-
 

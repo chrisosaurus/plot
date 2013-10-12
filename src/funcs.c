@@ -810,24 +810,204 @@ const struct plot_value * plot_func_boolean_test(struct plot_env *env, const str
 /* symbol?
  */
 const struct plot_value * plot_func_symbol_test(struct plot_env *env, const struct plot_expr *args, int argc){
-    return 0;
+    plot_value *res;
+    const plot_value *val;
+
+    #if DEBUG
+    puts("inside plot_func_symbol_test");
+    #endif
+
+    if( ! env ){
+        #if DEBUG
+        puts("env is NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res = calloc(1, sizeof *res);
+    if( ! res ){
+        #if DEBUG
+        puts("called to calloc failed");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    if( argc != 1 ){
+        #if DEBUG
+        puts("incorrect number of args to plot_func_symbol_test");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    val = plot_eval_expr(env, args);
+
+    if( ! val ){
+        #if DEBUG
+        puts("call to plot_eval_expr returned NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res->type = plot_type_boolean;
+    if( val->type == plot_type_symbol ){
+        res->u.boolean.val = true;
+        return res;
+    } else {
+        res->u.boolean.val = false;
+        return res;
+    }
 }
 
 /* string?
  */
 const struct plot_value * plot_func_string_test(struct plot_env *env, const struct plot_expr *args, int argc){
-    return 0;
+    plot_value *res;
+    const plot_value *val;
+
+    #if DEBUG
+    puts("inside plot_func_boolean_test");
+    #endif
+
+    if( ! env ){
+        #if DEBUG
+        puts("env is NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res = calloc(1, sizeof *res);
+    if( ! res ){
+        #if DEBUG
+        puts("called to calloc failed");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    if( argc != 1 ){
+        #if DEBUG
+        puts("incorrect number of args to plot_func_string_test");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    val = plot_eval_expr(env, args);
+
+    if( ! val ){
+        #if DEBUG
+        puts("call to plot_eval_expr returned NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res->type = plot_type_boolean;
+    if( val->type == plot_type_string ){
+        res->u.boolean.val = true;
+        return res;
+    } else {
+        res->u.boolean.val = false;
+        return res;
+    }
 }
 
 /* number?
  */
 const struct plot_value * plot_func_number_test(struct plot_env *env, const struct plot_expr *args, int argc){
-    return 0;
+    plot_value *res;
+    const plot_value *val;
+
+    #if DEBUG
+    puts("inside plot_func_number_test");
+    #endif
+
+    if( ! env ){
+        #if DEBUG
+        puts("env is NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res = calloc(1, sizeof *res);
+    if( ! res ){
+        #if DEBUG
+        puts("called to calloc failed");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    if( argc != 1 ){
+        #if DEBUG
+        puts("incorrect number of args to plot_func_number_test");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    val = plot_eval_expr(env, args);
+
+    if( ! val ){
+        #if DEBUG
+        puts("call to plot_eval_expr returned NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res->type = plot_type_boolean;
+    if( val->type == plot_type_number ){
+        res->u.boolean.val = true;
+        return res;
+    } else {
+        res->u.boolean.val = false;
+        return res;
+    }
 }
 
 /* function?
  */
-const struct plot_value * plot_func_function_test(struct plot_env *env, const struct plot_expr *args, int argc){
-    return 0;
+const struct plot_value * plot_func_procedure_test(struct plot_env *env, const struct plot_expr *args, int argc){
+    plot_value *res;
+    const plot_value *val;
+
+    #if DEBUG
+    puts("inside plot_func_procedure_test");
+    #endif
+
+    if( ! env ){
+        #if DEBUG
+        puts("env is NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res = calloc(1, sizeof *res);
+    if( ! res ){
+        #if DEBUG
+        puts("called to calloc failed");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    if( argc != 1 ){
+        #if DEBUG
+        puts("incorrect number of args to plot_func_procedure_test");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    val = plot_eval_expr(env, args);
+
+    if( ! val ){
+        #if DEBUG
+        puts("call to plot_eval_expr returned NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res->type = plot_type_boolean;
+    if( val->type == plot_type_function ){
+        res->u.boolean.val = true;
+        return res;
+    } else {
+        res->u.boolean.val = false;
+        return res;
+    }
 }
 

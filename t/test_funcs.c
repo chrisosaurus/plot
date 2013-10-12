@@ -35,6 +35,12 @@ struct plot_test_funcs_tests {
 /* plot test value boolean */
 #define PTF_VB(n) {plot_type_boolean, {.boolean={n}}}
 
+/* plot test value string */
+#define PTF_VST(n) {plot_type_string, {.string={n, 10, 10}}}
+
+/* plot test value symbol */
+#define PTF_VSY(n) {plot_type_symbol, {.symbol={n, 10, 10}}}
+
 /* plot test func value funct */
 #define PTF_VF(f) {plot_type_function, {.function = {0, f}}}
 
@@ -133,15 +139,25 @@ START_TEST (test_funcs_value_tests){
     const plot_value *r;
 
     struct plot_test_funcs_tests bindings[] = {
-        /* function                             ( args1 )                   = expected                   "failure message" */
-        {PTF_VF(plot_func_boolean_test),        { PTF_EV(PTF_VN( 1))},      {.expected_val = false},     "failed test for plot_func_boolean_test"},
-        {PTF_VF(plot_func_boolean_test),        { PTF_EV(PTF_VB( false))},  {.expected_val = true},      "failed test for plot_func_boolean_test"},
-/*
-        {PTF_VF(plot_func_string_test),         { PTF_EV(PTF_VN( 3))},  {.expected_val = true},      "failed test for plot_func_string_test"},
-        {PTF_VF(plot_func_symbol_test),         { PTF_EV(PTF_VN( 1))},  {.expected_val = false},     "failed test for plot_func_symbol_test"},
-        {PTF_VF(plot_func_number_test),         { PTF_EV(PTF_VN(10))},  {.expected_val = true},      "failed test for plot_func_number_test"},
-        {PTF_VF(plot_func_function_test),       { PTF_EV(PTF_VN( 8))},  {.expected_val = true},      "failed test for plot_func_function_test"}
-*/
+        /* function                             ( args1 )                   = expected                  "failure message" */
+        {PTF_VF(plot_func_boolean_test),        { PTF_EV(PTF_VN( 1))},      {.expected_val = false},    "failed test for plot_func_boolean_test (negative)"},
+        {PTF_VF(plot_func_boolean_test),        { PTF_EV(PTF_VB( false))},  {.expected_val = true},     "failed test for plot_func_boolean_test (positive)"},
+
+        {PTF_VF(plot_func_string_test),         { PTF_EV(PTF_VN( 3))},      {.expected_val = false},    "failed test for plot_func_string_test (negative)"},
+        {PTF_VF(plot_func_string_test),         { PTF_EV(PTF_VST("hello"))},{.expected_val = true},     "failed test for plot_func_string_test (positive)"},
+
+/* FIXME TODO we cannot yet properly store a symbol as a value (would require quoting
+ * so symbol? will always be false as it either fails to look up the symbol, or the value returned is not a symbol
+ * this is correct behavior as per the scheme spec
+ */
+//        {PTF_VF(plot_func_symbol_test),         { PTF_EV(PTF_VST("NOPE"))}, {.expected_val = false},    "failed test for plot_func_symbol_test (negative)"},
+//        {PTF_VF(plot_func_symbol_test),         { PTF_EV(PTF_VSY("sym"))},  {.expected_val = true},     "failed test for plot_func_symbol_test (positive)"},
+
+        {PTF_VF(plot_func_number_test),         { PTF_EV(PTF_VB(true))},    {.expected_val = false},    "failed test for plot_func_number_test (negative)"},
+        {PTF_VF(plot_func_number_test),         { PTF_EV(PTF_VN(10))},      {.expected_val = true},     "failed test for plot_func_number_test (positive)"},
+
+        {PTF_VF(plot_func_procedure_test),       { PTF_EV(PTF_VB(true))},    {.expected_val = false},    "failed test for plot_func_procedure_test (negative)"},
+        {PTF_VF(plot_func_procedure_test),       { PTF_EV(PTF_VF(plot_func_procedure_test))},  {.expected_val = true},      "failed test for plot_func_procedure_test (positive)"}
     };
 
     puts("\ttesting comparison functions");
@@ -168,6 +184,8 @@ END_TEST
 #undef PTF_EV
 #undef PTF_VN
 #undef PTF_VB
+#undef PTF_VSY
+#undef PTF_VST
 #undef PTF_VF
 #undef PTF_LENGTH
 #undef PTF_CALL_FUNC
