@@ -71,4 +71,26 @@ const struct plot_value * plot_func_less_equal(struct plot_env *env, const struc
  */
 const struct plot_value * plot_func_greater_equal(struct plot_env *env, const struct plot_expr *args, int argc);
 
+/********* value testing functions ********/
+
+/* boolean?
+ */
+const struct plot_value * plot_func_boolean_test(struct plot_env *env, const struct plot_expr *args, int argc);
+
+/* symbol?
+ */
+const struct plot_value * plot_func_symbol_test(struct plot_env *env, const struct plot_expr *args, int argc);
+
+/* string?
+ */
+const struct plot_value * plot_func_string_test(struct plot_env *env, const struct plot_expr *args, int argc);
+
+/* number?
+ */
+const struct plot_value * plot_func_number_test(struct plot_env *env, const struct plot_expr *args, int argc);
+
+/* function?
+ */
+const struct plot_value * plot_func_function_test(struct plot_env *env, const struct plot_expr *args, int argc);
+
 #endif

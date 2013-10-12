@@ -61,6 +61,7 @@ first milestone: 'core'
 * lambda forms
 * pair datatype, car, cdr, cons and list constructors
 * quoting and display of quoted data
+* display of all values
 
 second milestone: 'building blocks'
 -----------------

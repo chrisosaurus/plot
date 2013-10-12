@@ -754,4 +754,80 @@ const struct plot_value * plot_func_greater_equal(struct plot_env *env, const st
     return 0;
 }
 
+/********* value testing functions ********/
+
+/* boolean?
+ */
+const struct plot_value * plot_func_boolean_test(struct plot_env *env, const struct plot_expr *args, int argc){
+    plot_value *res;
+    const plot_value *val;
+
+    #if DEBUG
+    puts("inside plot_func_boolean_test");
+    #endif
+
+    if( ! env ){
+        #if DEBUG
+        puts("env is NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res = calloc(1, sizeof *res);
+    if( ! res ){
+        #if DEBUG
+        puts("called to calloc failed");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    if( argc != 1 ){
+        #if DEBUG
+        puts("incorrect number of args to plot_func_boolean_test");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    val = plot_eval_expr(env, args);
+
+    if( ! val ){
+        #if DEBUG
+        puts("call to plot_eval_expr returned NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res->type = plot_type_boolean;
+    if( val->type == plot_type_boolean ){
+        res->u.boolean.val = true;
+        return res;
+    } else {
+        res->u.boolean.val = false;
+        return res;
+    }
+}
+
+/* symbol?
+ */
+const struct plot_value * plot_func_symbol_test(struct plot_env *env, const struct plot_expr *args, int argc){
+    return 0;
+}
+
+/* string?
+ */
+const struct plot_value * plot_func_string_test(struct plot_env *env, const struct plot_expr *args, int argc){
+    return 0;
+}
+
+/* number?
+ */
+const struct plot_value * plot_func_number_test(struct plot_env *env, const struct plot_expr *args, int argc){
+    return 0;
+}
+
+/* function?
+ */
+const struct plot_value * plot_func_function_test(struct plot_env *env, const struct plot_expr *args, int argc){
+    return 0;
+}
 

@@ -32,6 +32,9 @@ struct plot_test_funcs_tests {
 /* plot test value number */
 #define PTF_VN(n) {plot_type_number, {.number={n}}}
 
+/* plot test value boolean */
+#define PTF_VB(n) {plot_type_boolean, {.boolean={n}}}
+
 /* plot test func value funct */
 #define PTF_VF(f) {plot_type_function, {.function = {0, f}}}
 
@@ -43,6 +46,9 @@ struct plot_test_funcs_tests {
 
 /* yield args and len given index */
 #define PTF_ARGS(i) bindings[i].args, PTF_LENGTH(bindings[i].args)
+
+/* yield args list from index and provided len */
+#define PTF_ARGS_LEN(i, len) bindings[i].args, len
 
 /* yield expected value given index */
 #define PTF_EXP(i) bindings[i].u.expected
@@ -106,6 +112,44 @@ START_TEST (test_funcs_comparison){
 
     for( i=0; i < PTF_LENGTH(bindings); ++i ){
         r = PTF_CALL_FUNC(i)( pl->env, PTF_ARGS(i) );
+        if( 0 == r ){
+            puts(PTF_ERR(i));
+            puts("received a NULL return value");
+            ck_abort_msg(PTF_ERR(i));
+        }
+        fail_unless( r->type == plot_type_boolean );
+        if( r->u.boolean.val != PTF_EXP_VAL(i) ){
+            puts(PTF_ERR(i));
+            printf("got '%d', expected '%d'\n", r->u.number.val, PTF_EXP(i));
+            ck_abort_msg(PTF_ERR(i));
+        }
+    }
+}
+END_TEST
+
+START_TEST (test_funcs_value_tests){
+    unsigned int i;
+    plot *pl;
+    const plot_value *r;
+
+    struct plot_test_funcs_tests bindings[] = {
+        /* function                             ( args1 )                   = expected                   "failure message" */
+        {PTF_VF(plot_func_boolean_test),        { PTF_EV(PTF_VN( 1))},      {.expected_val = false},     "failed test for plot_func_boolean_test"},
+        {PTF_VF(plot_func_boolean_test),        { PTF_EV(PTF_VB( false))},  {.expected_val = true},      "failed test for plot_func_boolean_test"},
+/*
+        {PTF_VF(plot_func_string_test),         { PTF_EV(PTF_VN( 3))},  {.expected_val = true},      "failed test for plot_func_string_test"},
+        {PTF_VF(plot_func_symbol_test),         { PTF_EV(PTF_VN( 1))},  {.expected_val = false},     "failed test for plot_func_symbol_test"},
+        {PTF_VF(plot_func_number_test),         { PTF_EV(PTF_VN(10))},  {.expected_val = true},      "failed test for plot_func_number_test"},
+        {PTF_VF(plot_func_function_test),       { PTF_EV(PTF_VN( 8))},  {.expected_val = true},      "failed test for plot_func_function_test"}
+*/
+    };
+
+    puts("\ttesting comparison functions");
+
+    fail_if( 0 == (pl = plot_init()) );
+
+    for( i=0; i < PTF_LENGTH(bindings); ++i ){
+        r = PTF_CALL_FUNC(i)( pl->env, PTF_ARGS_LEN(i, 1) );
         if( 0 == r ){
             puts(PTF_ERR(i));
             puts("received a NULL return value");
@@ -276,6 +320,7 @@ END_TEST
 TEST_CASE_NEW(funcs)
 TEST_CASE_ADD(funcs, funcs_math)
 TEST_CASE_ADD(funcs, funcs_comparison)
+TEST_CASE_ADD(funcs, funcs_value_tests)
 TEST_CASE_ADD(funcs, funcs_env)
 TEST_CASE_END(funcs)
 

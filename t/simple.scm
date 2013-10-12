@@ -23,3 +23,9 @@
 (display (remainder 10 3)) ;; => 1
 (newline)
 
+(display (boolean? "hello I am not boolean...")) ;; => #f
+(newline)
+
+(display (boolean? #f)) ;; => #t
+(newline)
+

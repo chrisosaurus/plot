@@ -29,6 +29,9 @@ struct plot_binding bindings[] = {
     {{"<=",        2,  2}, {plot_type_function, {.function = {0, plot_func_less_equal}}}},
     {{">=",        2,  2}, {plot_type_function, {.function = {0, plot_func_greater_equal}}}},
 
+    /* value testing functions */
+    {{"boolean?",        9,  9}, {plot_type_function, {.function = {0, plot_func_boolean_test}}}},
+
     /* display functions */
     {{"display",   7,  7}, {plot_type_function, {.function = {0, plot_func_display}}}},
     {{"newline",   7,  7}, {plot_type_function, {.function = {0, plot_func_newline}}}}
