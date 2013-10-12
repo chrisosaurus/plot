@@ -9,6 +9,8 @@
 
 #define DEBUG 0
 
+void plot_parse_comment(const char *source, size_t *upto);
+
 /* we need a way for _sexpr and _expr to express 'here is the result, and here is where I got up to'
  * so we also need for them to take an int* which is one past the place they finished reading
  */
@@ -26,6 +28,9 @@ plot_program * plot_parse(const char *source){
     /* a plot_program is a colletion of s-expressions */
     while( source[i] != '\0' ){
         switch( source[i] ){
+            case ';':
+                plot_parse_comment(source, &i);
+                break;
             case '[':
             case '(':
                 if( prog->nchildren >= prog->max_children ){
@@ -81,6 +86,18 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
 
     while( cont ){
         switch( source[ *upto ] ){
+            case ';':
+                /* valid character within string */
+                if( inside_string ){
+                    break;
+                }
+                /* if inside value then end of current value */
+                if( inside_value ){
+                    cont =0;
+                    break;
+                }
+                plot_parse_comment(source, upto);
+                break;
             case '#':
                 /* valid character within string */
                 if( inside_string ){
@@ -266,6 +283,9 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, const char *source, size_t *upt
     ++ *upto;
     while( cont ){
         switch( source[ *upto ] ){
+            case ';':
+                plot_parse_comment(source, upto);
+                break;
             case '\0':
                 /* FIXME error, can not have \0 when looking for closing bracket */
                 /* end of the line */
@@ -320,5 +340,20 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, const char *source, size_t *upt
 #endif
 
     return sexpr;
+}
+
+void plot_parse_comment(const char *source, size_t *upto){
+    while( 1 ){
+        switch( source[ *upto ] ){
+            case '\0':
+            case '\r':
+            case '\n':
+                /* end of comment */
+                return;
+            default:
+                break;
+        }
+        ++ *upto;
+    }
 }
 

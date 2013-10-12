@@ -24,6 +24,7 @@ plot currently has:
 * basic integer functions: addition (`+`), subtraction (`-`), multiplication (`*`) and division (`/`)
 * printing of values (`display`)
 * printing of newline (`newline`)
+* comments (`;`)
 
 example: (see `make example`)
 
@@ -43,7 +44,7 @@ example: (see `make example`)
     (display #f)
     (newline)
 
-    (display (/ 10 2 2))
+    (display (/ 10 2 2)) ;; 10/2 = 5; 5/2 = 2; => 2
     (newline)
 
 output:

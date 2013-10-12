@@ -5,10 +5,11 @@ misc:
 -----
 * write stack (for runtime and internal stacks)
 * break math and comparison funcs into own files (.h and .c)
+* plot_handle_error should not be in funcs, funcs are things that can be assigned to plot_values
+* define does not currently allow redefintion (even in smaller scope)
 
 parse:
 ------
-* add comments
 * remove hard coded limit on number of children (max_children for program and sexpr)
 * needs to be able to ask for 'more' input (if current input does not properly end a token)
 * needs to be able to communicate 'failure', e.g. miss matching of brackets in `(define a 5]`

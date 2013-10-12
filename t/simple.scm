@@ -14,6 +14,6 @@
 (display #f)
 (newline)
 
-(display (/ 10 2 2))
+(display (/ 10 2 2)) ;; 10/2 = 5; 5/2 = 2; => 2
 (newline)
 
