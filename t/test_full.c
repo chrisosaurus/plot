@@ -42,27 +42,24 @@ START_TEST (test_full){
     sym_add.val = "+";
     sym_add.len = 2;
     sym_add.size = 2;
-    add.type = plot_type_function;
-    add.u.function.env = 0;
-    add.u.function.func = plot_func_add;
+    add.type = plot_type_builtin;
+    add.u.builtin.func = plot_func_add;
     puts("\t\tdefining function 'add'");
     fail_unless( 1 == plot_env_define(env, &sym_add, &add) );
 
     sym_disp.val = "display";
     sym_disp.len = 7;
     sym_disp.size = 7;
-    disp.type = plot_type_function;
-    disp.u.function.env = 0;
-    disp.u.function.func = plot_func_display;
+    disp.type = plot_type_builtin;
+    disp.u.builtin.func = plot_func_display;
     puts("\t\tdefining function 'display'");
     fail_unless( 1 == plot_env_define(env, &sym_disp, &disp) );
 
     sym_newl.val = "newline";
     sym_newl.len = 7;
     sym_newl.size = 7;
-    newl.type = plot_type_function;
-    newl.u.function.env = 0;
-    newl.u.function.func = plot_func_newline;
+    newl.type = plot_type_builtin;
+    newl.u.builtin.func = plot_func_newline;
     puts("\t\tdefining function 'newline'");
     fail_unless( 1 == plot_env_define(env, &sym_newl, &newl) );
 

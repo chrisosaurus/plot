@@ -6,7 +6,8 @@
 typedef enum plot_value_type{
     plot_type_number,
     plot_type_symbol,
-    plot_type_function,
+//    plot_type_function,
+    plot_type_builtin,
     plot_type_error,
     plot_type_string,
     plot_type_boolean
@@ -75,22 +76,26 @@ typedef struct plot_pair {
 
 struct plot_value;
 struct plot_expr;
+struct plot_env;
 
+/*
 typedef struct plot_function {
     struct plot_env *env;
-    /* TODO FIXME
-     * need to support arbitrary number of arguments
-     * need to also support plot-defined functions (via lambda)
-     */
-    const struct plot_value * (*func)(struct plot_env *env, const struct plot_expr *args, int argc);
+    const plot_sexpr *s;
 } plot_function;
+*/
+
+typedef struct plot_builtin {
+    const struct plot_value * (*func)(struct plot_env *env, const struct plot_expr *args, int argc);
+} plot_builtin;
 
 typedef struct plot_value {
     plot_value_type type;
     union {
         plot_number    number;
         plot_symbol    symbol;
-        plot_function  function;
+//        plot_function  function;
+        plot_builtin   builtin;
         plot_error     error;
         plot_string    string;
         plot_boolean   boolean;

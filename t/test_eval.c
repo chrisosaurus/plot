@@ -30,9 +30,8 @@ START_TEST (test_eval_add){
     sym.len = 2;
     sym.size = 2;
 
-    add.type = plot_type_function;
-    add.u.function.func = plot_func_add;
-    add.u.function.env = 0;
+    add.type = plot_type_builtin;
+    add.u.builtin.func = plot_func_add;
 
     /* FIXME TODO need to setup env to know about addition */
     puts("\tdefining function add");

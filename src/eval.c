@@ -379,9 +379,9 @@ const plot_value * plot_eval_func_call(plot_env *env, const plot_sexpr * sexpr){
                 return 0; /* FIXME ERROR */
             }
             #if DEBUG_FUNC || DEBUG
-            puts("got a function...");
+            puts("got a builtin function...");
             #endif
-            if( func->type != plot_type_function ){
+            if( func->type != plot_type_builtin ){
                 puts("ERROR: unknown syntax");
                 return 0; /* FIXME ERROR */
             }
@@ -389,11 +389,11 @@ const plot_value * plot_eval_func_call(plot_env *env, const plot_sexpr * sexpr){
             #if DEBUG_FUNC || DEBUG
             puts("calling function");
             #endif
-            return func->u.function.func( func->u.function.env ? func->u.function.env : env,
+            return func->u.builtin.func( env,
                                           sexpr->subforms + 1,
                                           sexpr->nchildren - 1);
             break;
-        case plot_type_function:
+        case plot_type_builtin:
             #if DEBUG_FUNC || DEBUG
             puts("plot_eval_func_cal: function values are not currently supported");
             #endif

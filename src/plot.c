@@ -16,29 +16,29 @@ struct plot_binding {
 
 struct plot_binding bindings[] = {
     /* math functions */
-    {{"+",         2,  2}, {plot_type_function, {.function = {0, plot_func_add}}}},
-    {{"-",         2,  2}, {plot_type_function, {.function = {0, plot_func_subtract}}}},
-    {{"*",         2,  2}, {plot_type_function, {.function = {0, plot_func_multiply}}}},
-    {{"/",         2,  2}, {plot_type_function, {.function = {0, plot_func_divide}}}},
-    {{"remainder",10, 10}, {plot_type_function, {.function = {0, plot_func_remainder}}}},
+    {{"+",         2,  2}, {plot_type_builtin, {.builtin = {plot_func_add}}}},
+    {{"-",         2,  2}, {plot_type_builtin, {.builtin = {plot_func_subtract}}}},
+    {{"*",         2,  2}, {plot_type_builtin, {.builtin = {plot_func_multiply}}}},
+    {{"/",         2,  2}, {plot_type_builtin, {.builtin = {plot_func_divide}}}},
+    {{"remainder",10, 10}, {plot_type_builtin, {.builtin = {plot_func_remainder}}}},
 
     /* comparison functions */
-    {{"=",         2,  2}, {plot_type_function, {.function = {0, plot_func_equal}}}},
-    {{"<",         2,  2}, {plot_type_function, {.function = {0, plot_func_less}}}},
-    {{">",         2,  2}, {plot_type_function, {.function = {0, plot_func_greater}}}},
-    {{"<=",        2,  2}, {plot_type_function, {.function = {0, plot_func_less_equal}}}},
-    {{">=",        2,  2}, {plot_type_function, {.function = {0, plot_func_greater_equal}}}},
+    {{"=",         2,  2}, {plot_type_builtin, {.builtin = {plot_func_equal}}}},
+    {{"<",         2,  2}, {plot_type_builtin, {.builtin = {plot_func_less}}}},
+    {{">",         2,  2}, {plot_type_builtin, {.builtin = {plot_func_greater}}}},
+    {{"<=",        2,  2}, {plot_type_builtin, {.builtin = {plot_func_less_equal}}}},
+    {{">=",        2,  2}, {plot_type_builtin, {.builtin = {plot_func_greater_equal}}}},
 
     /* value testing functions */
-    {{"boolean?",        9,  9}, {plot_type_function, {.function = {0, plot_func_boolean_test}}}},
-    {{"string?",         8,  8}, {plot_type_function, {.function = {0, plot_func_string_test}}}},
-    {{"symbol?",         8,  8}, {plot_type_function, {.function = {0, plot_func_symbol_test}}}},
-    {{"number?",         8,  8}, {plot_type_function, {.function = {0, plot_func_number_test}}}},
-    {{"procedure?",     11, 11}, {plot_type_function, {.function = {0, plot_func_procedure_test}}}},
+    {{"boolean?",        9,  9}, {plot_type_builtin, {.builtin = {plot_func_boolean_test}}}},
+    {{"string?",         8,  8}, {plot_type_builtin, {.builtin = {plot_func_string_test}}}},
+    {{"symbol?",         8,  8}, {plot_type_builtin, {.builtin = {plot_func_symbol_test}}}},
+    {{"number?",         8,  8}, {plot_type_builtin, {.builtin = {plot_func_number_test}}}},
+    {{"procedure?",     11, 11}, {plot_type_builtin, {.builtin = {plot_func_procedure_test}}}},
 
     /* display functions */
-    {{"display",   7,  7}, {plot_type_function, {.function = {0, plot_func_display}}}},
-    {{"newline",   7,  7}, {plot_type_function, {.function = {0, plot_func_newline}}}}
+    {{"display",   7,  7}, {plot_type_builtin, {.builtin = {plot_func_display}}}},
+    {{"newline",   7,  7}, {plot_type_builtin, {.builtin = {plot_func_newline}}}}
 };
 
 plot * plot_init(void){

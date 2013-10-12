@@ -65,8 +65,8 @@ static void plot_func_display_value(plot_env *env, const plot_value *val){
         case plot_type_symbol:
             puts("Unable to print a symbol at this point in time");
             break;
-        case plot_type_function:
-            puts("Unable to print a function at this point in time");
+        case plot_type_builtin:
+            puts("Unable to print a builtin function at this point in time");
             break;
         case plot_type_error:
             plot_handle_error(val);
@@ -1002,7 +1002,7 @@ const struct plot_value * plot_func_procedure_test(struct plot_env *env, const s
     }
 
     res->type = plot_type_boolean;
-    if( val->type == plot_type_function ){
+    if( val->type == plot_type_builtin ){
         res->u.boolean.val = true;
         return res;
     } else {
