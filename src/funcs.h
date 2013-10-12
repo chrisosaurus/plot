@@ -57,18 +57,18 @@ const struct plot_value * plot_func_equal(struct plot_env *env, const struct plo
 
 /* <
  */
-const struct plot_value * plot_func_less_than(struct plot_env *env, const struct plot_expr *args, int argc);
+const struct plot_value * plot_func_less(struct plot_env *env, const struct plot_expr *args, int argc);
 
 /* >
  */
-const struct plot_value * plot_func_greater_than(struct plot_env *env, const struct plot_expr *args, int argc);
+const struct plot_value * plot_func_greater(struct plot_env *env, const struct plot_expr *args, int argc);
 
 /* <=
  */
-const struct plot_value * plot_func_less_than_or_equal(struct plot_env *env, const struct plot_expr *args, int argc);
+const struct plot_value * plot_func_less_equal(struct plot_env *env, const struct plot_expr *args, int argc);
 
 /* >=
  */
-const struct plot_value * plot_func_greater_than_or_equal(struct plot_env *env, const struct plot_expr *args, int argc);
+const struct plot_value * plot_func_greater_equal(struct plot_env *env, const struct plot_expr *args, int argc);
 
 #endif
