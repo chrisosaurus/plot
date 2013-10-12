@@ -35,3 +35,6 @@
 (display (string? "hello")) ;; => #t
 (newline)
 
+(display (if #t "hello there" (illegal))) ;; => hello there
+(newline)
+

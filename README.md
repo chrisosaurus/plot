@@ -18,6 +18,7 @@ current state
 -------------
 plot currently has:
 * define form
+* if form
 * string values
 * integer values
 * boolean values (`#f` and `#t`)
@@ -67,6 +68,9 @@ example: (see `make example`)
     (display (string? "hello")) ;; => #t
     (newline)
 
+    (display (if #t "hello there" (illegal))) ;; => hello there
+    (newline)
+
 output:
 
     9
@@ -80,6 +84,7 @@ output:
     #t
     #t
     #t
+    hello there
 
 planned work
 ------------
@@ -119,4 +124,5 @@ output:
 license
 ---------
 Plot is released under the terms of the MIT License
+
 

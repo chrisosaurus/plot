@@ -16,8 +16,7 @@ parse:
 
 eval:
 -----
-* value testing functions: string? symbol? integer? number? function? boolean?
-* if form
+* better form unit testing
 * define eval pointer ownership (currently returned values are a mess....)
 * eval documentation
 * add some heavier unit testing coverage for eval (test each individual func)
@@ -28,7 +27,6 @@ read:
 
 features:
 ---------
-* add if form
 * add lambda form
 * write repl front-end
 

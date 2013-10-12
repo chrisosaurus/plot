@@ -148,6 +148,13 @@ static int plot_is_form(const plot_sexpr * sexpr){
                 #endif
                 return 1;
                 }
+            if( ! strcmp(val->u.symbol.val, "if") ){
+                #if DEBUG_FORM || DEBUG
+                puts("if form found");
+                #endif
+                return 1;
+                }
+
             break;
         default:
             break;
@@ -186,6 +193,19 @@ const plot_value * plot_eval_sexpr(plot_env *env, const plot_sexpr * sexpr){
     return plot_eval_func_call(env, sexpr);
 }
 
+/* returns 1 if value is considered truthy
+ * returns 0 if falsy
+ */
+static int plot_eval_truthy(const plot_value *val){
+    if( ! val )
+        return 0;
+
+    if( val->type == plot_type_boolean && val->u.boolean.val == false )
+        return 0;
+
+    return 1;
+}
+
 /* eval a form in an environment
  * can modify the environment (e.g. define)
  */
@@ -194,26 +214,26 @@ const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
     const plot_value *name;
     const plot_value *value;
 
-    #if DEBUG_SEXPR || DEBUG
+    #if DEBUG_FORM || DEBUG
     puts("inside plot_eval_form");
     #endif
 
     if( ! env || ! sexpr ){
-        #if DEBUG_SEXPR || DEBUG
+        #if DEBUG_FORM || DEBUG
         puts("DEFINE: bad args");
         #endif
         return 0; /* FIXME ERROR */
     }
 
     if( ! sexpr->nchildren ){
-        #if DEBUG_SEXPR || DEBUG
+        #if DEBUG_FORM || DEBUG
         puts("DEFINE: bad nchildren");
         #endif
         return 0; /* FIXME ERROR */
     }
 
     if( sexpr->subforms[0].type != plot_expr_value ){
-        #if DEBUG_SEXPR || DEBUG
+        #if DEBUG_FORM || DEBUG
         puts("DEFINE: bad subform[0] type");
         #endif
         return 0; /* FIXME ERROR */
@@ -224,14 +244,14 @@ const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
         case plot_type_symbol:
             if( ! strcmp(form->u.symbol.val, "define") ){
                 if( sexpr->nchildren != 3 ){
-                    #if DEBUG_SEXPR || DEBUG
+                    #if DEBUG_FORM || DEBUG
                     printf("DEFINE: incorrect number of children '%d'\n", sexpr->nchildren);
                     #endif
                     return 0; /* FIXME ERROR */
                 }
 
                 if( sexpr->subforms[1].type != plot_expr_value ){
-                    #if DEBUG_SEXPR || DEBUG
+                    #if DEBUG_FORM || DEBUG
                     puts("DEFINE: incorrect 1st arg expr type");
                     #endif
                     return 0; /* FIXME ERROR */
@@ -239,7 +259,7 @@ const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
                 /* do we even know this is a value yet ? */
                 name = &(sexpr->subforms[1].u.value);
                 if( name->type != plot_type_symbol ){
-                    #if DEBUG_SEXPR || DEBUG
+                    #if DEBUG_FORM || DEBUG
                     puts("DEFINE: incorrect 1st arg value type");
                     #endif
                     return 0; /* FIXME ERROR */
@@ -248,13 +268,13 @@ const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
                 /* 2nd subform isnt known to be a value ! */
                 value = plot_eval_expr(env, &(sexpr->subforms[2]));
                 if( ! value ){
-                    #if DEBUG_SEXPR || DEBUG
+                    #if DEBUG_FORM || DEBUG
                     puts("DEFINE: failed to eval_value");
                     #endif
                     return 0; /* FIXME ERROR */
                 }
 
-                #if DEBUG_SEXPR || DEBUG
+                #if DEBUG_FORM || DEBUG
                 puts("DEFINE: success!");
                 printf("Storing value type '%d', under name '%s'\n'", value->type, name->u.symbol.val);
                 #endif
@@ -262,17 +282,48 @@ const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
                 return 0;
             }
             if( ! strcmp(form->u.symbol.val, "lambda") ){
-                #if DEBUG_SEXPR || DEBUG
+                #if DEBUG_FORM || DEBUG
                 puts("'lambda' form is not currently implemented");
                 #endif
                 return 0; /* FIXME ERROR */
+            }
+            if( ! strcmp(form->u.symbol.val, "if") ){
+                if( sexpr->nchildren != 4 ){
+                    return 0; /* FIXME ERROR */
+                }
+                value = plot_eval_expr(env, &(sexpr->subforms[1]));
+                if( ! value ){
+                    #if DEBUG_FORM || DEBUG
+                    puts("eval of if condition returned NULL");
+                    #endif
+                    return 0; /* FIXME ERROR */
+                }
+                if( plot_eval_truthy(value) ){
+                    value = plot_eval_expr(env, &(sexpr->subforms[2]));
+                    if( ! value ){
+                        #if DEBUG_FORM || DEBUG
+                        puts("eval of if true branch returned NULL");
+                        #endif
+                        return 0; /* FIXME ERROR */
+                    }
+                } else {
+                    value = plot_eval_expr(env, &(sexpr->subforms[3]));
+                    if( ! value ){
+                        #if DEBUG_FORM || DEBUG
+                        puts("eval of if false branch returned NULL");
+                        #endif
+                        return 0; /* FIXME ERROR */
+                    }
+                }
+
+                return value;
             }
             break;
         default:
             break;
     }
 
-    #if DEBUG_SEXPR || DEBUG
+    #if DEBUG_FORM || DEBUG
     puts("leaving plot_eval_form");
     #endif
 
