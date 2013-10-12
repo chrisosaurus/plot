@@ -42,6 +42,7 @@ int main(void){
     MAIN_ADD_SUITE(env)
 
     MAIN_ADD_SUITE(funcs)
+    MAIN_ADD_SUITE(funcs_error)
 
     puts("\nFinished testing.");
     return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;

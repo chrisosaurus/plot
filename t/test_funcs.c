@@ -13,84 +13,73 @@
 #include "../src/hash.h"
 #include "../src/env.h"
 #include "../src/funcs.h"
+#include "../src/plot.h"
 
-START_TEST (test_funcs_add){
-    const plot_value *res;
-    plot_expr vals[2];
-    plot_env *env;
+/* functions to bind */
+struct plot_test_funcs_error_tests {
+    plot_value func;
+    plot_expr args[2];
+    int expected;
+    char *failure_msg;
+};
 
-    vals[0].type = plot_expr_value;
-    vals[0].u.value.type = plot_type_number;
-    vals[0].u.value.u.number.val = 4;
+/* plot test func expr value */
+#define PTF_EV(e) {plot_expr_value, {.value=e}}
 
-    vals[1].type = plot_expr_value;
-    vals[1].u.value.type = plot_type_number;
-    vals[1].u.value.u.number.val = 5;
+/* plot test value number */
+#define PTF_VN(n) {plot_type_number, {.number={n}}}
 
-    puts("\tsetting up env for test_funcs_add");
-    env = plot_env_init(0);
-    fail_if( 0 == env );
+/* plot test func value funct */
+#define PTF_VF(f) {plot_type_function, {.function = {0, f}}}
 
-    puts("\ttesting basic addition : 4 + 5 == 9");
-    fail_if( 0 == (res = plot_func_add(env, vals, 2)) );
-    fail_unless( res->type == plot_type_number );
-    fail_unless( res->u.number.val == 9 );
+/* length of array */
+#define PTF_LENGTH(x) (sizeof x / sizeof x[0])
 
-    plot_env_cleanup(env);
+/* call function given index */
+#define PTF_CALL_FUNC(i) math_bindings[i].func.u.function.func
+
+/* yield args and len given index */
+#define PTF_ARGS(i) math_bindings[i].args, PTF_LENGTH(math_bindings[i].args)
+
+/* yield expected value given index */
+#define PTF_EXP(i) math_bindings[i].expected
+
+/* yield error message given index */
+#define PTF_ERR(i) math_bindings[i].failure_msg
+
+START_TEST (test_funcs_math){
+    int i;
+    plot *plot;
+    const plot_value *r;
+
+    struct plot_test_funcs_error_tests math_bindings[] = {
+        /* function                   ( args1,            arg2 )              = expected "failure message" */
+        {PTF_VF(plot_func_add),      { PTF_EV(PTF_VN(2)),  PTF_EV(PTF_VN(3))  },  5,     "\tfailed test for plot_func_add"},
+        {PTF_VF(plot_func_subtract), { PTF_EV(PTF_VN(10)), PTF_EV(PTF_VN(7))  },  3,     "\tfailed test for plot_func_subtract"},
+        {PTF_VF(plot_func_multiply), { PTF_EV(PTF_VN(5)),  PTF_EV(PTF_VN(15)) }, 75,     "\tfailed test for plot_func_multiply"},
+        {PTF_VF(plot_func_divide),   { PTF_EV(PTF_VN(10)), PTF_EV(PTF_VN(3))  },  3,     "\tfailed test for plot_func_divide"}
+    };
+
+    puts("\ttesting math functions");
+
+    fail_if( 0 == (plot = plot_init()) );
+
+    for( i=0; i<PTF_LENGTH(math_bindings); ++i ){
+        r = PTF_CALL_FUNC(i)( plot->env, PTF_ARGS(i) );
+        fail_unless( r->type == plot_type_number );
+        ck_assert_msg( r->u.number.val == PTF_EXP(i), PTF_ERR(i));
+    }
 }
 END_TEST
 
-START_TEST (test_funcs_subtract){
-    const plot_value *res;
-    plot_expr vals[2];
-    plot_env *env;
-
-    vals[0].type = plot_expr_value;
-    vals[0].u.value.type = plot_type_number;
-    vals[0].u.value.u.number.val = 4;
-
-    vals[1].type = plot_expr_value;
-    vals[1].u.value.type = plot_type_number;
-    vals[1].u.value.u.number.val = 5;
-
-    puts("\tsetting up env for test_funcs_subtract");
-    env = plot_env_init(0);
-    fail_if( 0 == env );
-
-    puts("\ttesting basic subtraction: 4 - 5 == -1");
-    fail_if( 0 == (res = plot_func_subtract(env, vals, 2)) );
-    fail_unless( res->type == plot_type_number );
-    fail_unless( res->u.number.val == -1 );
-
-    plot_env_cleanup(env);
-}
-END_TEST
-
-START_TEST (test_funcs_multiply){
-    const plot_value *res;
-    plot_expr vals[2];
-    plot_env *env;
-
-    vals[0].type = plot_expr_value;
-    vals[0].u.value.type = plot_type_number;
-    vals[0].u.value.u.number.val = 4;
-
-    vals[1].type = plot_expr_value;
-    vals[1].u.value.type = plot_type_number;
-    vals[1].u.value.u.number.val = 5;
-
-    puts("\tsetting up env for test_funcs_multiply");
-    env = plot_env_init(0);
-    fail_if( 0 == env );
-
-    puts("\ttesting basic multiplication : 4 * 5 == 20");
-    fail_if( 0 == (res = plot_func_multiply(env, vals, 2)) );
-    fail_unless( res->type == plot_type_number );
-    fail_unless( res->u.number.val == 20 );
-
-    plot_env_cleanup(env);
-}
-END_TEST
+#undef PTF_EV
+#undef PTF_VN
+#undef PTF_VF
+#undef PTF_LENGTH
+#undef PTF_CALL_FUNC
+#undef PTF_ARGS
+#undef PTF_EXP
+#undef PTF_ERR
 
 
 START_TEST (test_funcs_env){
@@ -235,14 +224,15 @@ END_TEST
 
 
 TEST_CASE_NEW(funcs)
-TEST_CASE_ADD(funcs, funcs_add)
-TEST_CASE_ADD(funcs, funcs_subtract)
-TEST_CASE_ADD(funcs, funcs_multiply)
+TEST_CASE_ADD(funcs, funcs_math)
 TEST_CASE_ADD(funcs, funcs_env)
-    /* display of error will cause exit(1) */
-    tcase_add_exit_test(tc_funcs, test_display, 1);
-    tcase_add_exit_test(tc_funcs, test_error_alloc_failed, 1);
-    tcase_add_exit_test(tc_funcs, test_error_bad_args, 1);
-    tcase_add_exit_test(tc_funcs, test_error_internal, 1);
-    tcase_add_exit_test(tc_funcs, test_error_unbound_symbol, 1);
 TEST_CASE_END(funcs)
+
+TEST_CASE_NEW(funcs_error)
+    /* FIXME display of error will cause exit(1), functions can also not currently be displayed */
+    tcase_add_exit_test(tc_funcs_error, test_display, 1);
+    tcase_add_exit_test(tc_funcs_error, test_error_alloc_failed, 1);
+    tcase_add_exit_test(tc_funcs_error, test_error_bad_args, 1);
+    tcase_add_exit_test(tc_funcs_error, test_error_internal, 1);
+    tcase_add_exit_test(tc_funcs_error, test_error_unbound_symbol, 1);
+TEST_CASE_END(funcs_error)
