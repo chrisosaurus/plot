@@ -19,14 +19,20 @@ plot: ${OBJ}
 clang:
 	clang ${SRC} t/test_main.c -lcheck -Wall -Wextra
 
-# compile tests
-tests: clean ${OBJ}
+# soft version for testing half baked tests
+tests_soft: clean ${OBJ}
 	@echo test_parse CC -o tests/test_llist.c
 	@# pthread, rt and m are all needed by certain versions of libcheck 
 	@${CC} -g -o run_tests t/test_main.c ${OBJ} -lpthread -lrt -lm -lcheck
 
+test_soft: tests_soft plot
+	@echo running test_llist
+	./run_tests
+	@echo "\nrunning simple.scm"
+	./plot t/simple.scm
+
 # harsh version for checking sanity of test code
-tests_harsh: clean ${OBJ}
+tests: clean ${OBJ}
 	@echo test_parse CC -o tests/test_llist.c
 	@# pthread, rt and m are all needed by certain versions of libcheck 
 	@${CC} -g -o run_tests t/test_main.c ${OBJ} ${TEST_CFLAGS} -lpthread -lrt -lm -lcheck

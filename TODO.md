@@ -4,7 +4,6 @@ TODO(s):
 misc:
 -----
 * write stack (for runtime and internal stacks)
-* refactor func unit testing
 * break math and comparison funcs into own files (.h and .c)
 
 parse:
@@ -28,6 +27,7 @@ read:
 
 features:
 ---------
+* add if form
 * add lambda form
 * add value testing functions: string? symbol? number? function?
 * write repl front-end

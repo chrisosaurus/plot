@@ -31,7 +31,6 @@ static const char *test_full_simple = "(define a (+ 4 5))\
 
 START_TEST (test_full){
     plot_program *prog;
-    const plot_value *val;
     plot_env *env;
 
     plot_value add, disp, newl;

@@ -68,6 +68,7 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
     int inside_value = 0;
     int inside_string = 0;
     char quote = 0;
+    char *tmp;
 
     if( source[ *upto ] == '\'' || source[ *upto ] == '"' ){
         quote = source[*upto];
@@ -185,10 +186,10 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
          */
         int len = (*upto) - start + 1;
         expr->type = plot_expr_value;
-        expr->u.value.u.string.val = calloc(len, sizeof(char));
+        expr->u.value.u.string.val = tmp = calloc(len, sizeof(char));
         expr->u.value.u.string.len = len;
         expr->u.value.u.string.size = len;
-        strncpy(expr->u.value.u.string.val, &source[start], (*upto) - start);
+        strncpy(tmp, &source[start], (*upto) - start);
         expr->u.value.type = plot_type_string;
         ++ *upto;
     }
@@ -219,10 +220,10 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
         } else {
             /* otherwise it is a symbol */
             int len = (*upto) - start + 1;
-            expr->u.value.u.symbol.val = calloc(len, sizeof(char));
+            expr->u.value.u.symbol.val = tmp = calloc(len, sizeof(char));
             expr->u.value.u.symbol.len = len;
             expr->u.value.u.symbol.size = len;
-            strncpy(expr->u.value.u.symbol.val, &source[start], (*upto) - start);
+            strncpy(tmp, &source[start], (*upto) - start);
             expr->u.value.type = plot_type_symbol;
         }
     }

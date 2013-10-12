@@ -38,7 +38,7 @@ typedef struct plot_number {
 } plot_number;
 
 typedef struct plot_symbol {
-    char *val;
+    const char *val;
     /* len is number of characters used
      * including \0 terminator
      */
@@ -48,7 +48,7 @@ typedef struct plot_symbol {
 } plot_symbol;
 
 typedef struct plot_string {
-    char *val;
+    const char *val;
     /* len is number of characters used
      * including \0 terminator
      */

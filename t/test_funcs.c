@@ -17,10 +17,10 @@
 
 /* functions to bind */
 struct plot_test_funcs_error_tests {
-    plot_value func;
-    plot_expr args[2];
-    int expected;
-    char *failure_msg;
+    const plot_value func;
+    const plot_expr args[2];
+    const int expected;
+    const char *failure_msg;
 };
 
 /* plot test func expr value */
@@ -48,8 +48,8 @@ struct plot_test_funcs_error_tests {
 #define PTF_ERR(i) math_bindings[i].failure_msg
 
 START_TEST (test_funcs_math){
-    int i;
-    plot *plot;
+    unsigned int i;
+    plot *pl;
     const plot_value *r;
 
     struct plot_test_funcs_error_tests math_bindings[] = {
@@ -62,10 +62,10 @@ START_TEST (test_funcs_math){
 
     puts("\ttesting math functions");
 
-    fail_if( 0 == (plot = plot_init()) );
+    fail_if( 0 == (pl = plot_init()) );
 
-    for( i=0; i<PTF_LENGTH(math_bindings); ++i ){
-        r = PTF_CALL_FUNC(i)( plot->env, PTF_ARGS(i) );
+    for( i=0; i < PTF_LENGTH(math_bindings); ++i ){
+        r = PTF_CALL_FUNC(i)( pl->env, PTF_ARGS(i) );
         fail_unless( r->type == plot_type_number );
         ck_assert_msg( r->u.number.val == PTF_EXP(i), PTF_ERR(i));
     }
