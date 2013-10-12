@@ -40,7 +40,7 @@ START_TEST (test_parse){
     /* check prog */
     fail_if( prog == 0 );
     fail_if( prog->nchildren != 2 );
-    fail_if( prog->max_children != 15 ); /* FIXME current hard coded limit */
+    fail_if( prog->max_children != 100 ); /* FIXME current hard coded limit */
     /* check children */
     fail_if( prog->exprs[0].type != plot_expr_sexpr );
     fail_if( prog->exprs[0].u.sexpr.nchildren != 3 );
@@ -51,7 +51,7 @@ START_TEST (test_parse){
     /* check prog */
     fail_if( prog == 0 );
     fail_if( prog->nchildren != 6 );
-    fail_if( prog->max_children != 15 ); /* FIXME current hard coded limit */
+    fail_if( prog->max_children != 100 ); /* FIXME current hard coded limit */
     /* check children */
     fail_if( prog->exprs[0].type != plot_expr_sexpr );
     fail_if( prog->exprs[0].u.sexpr.nchildren != 3 );
@@ -64,7 +64,7 @@ START_TEST (test_parse){
     /* check prog */
     fail_if( prog == 0 );
     fail_unless( prog->nchildren == 4 );
-    fail_unless( prog->max_children == 15 ); /* FIXME current hard coded limit */
+    fail_unless( prog->max_children == 100 ); /* FIXME current hard coded limit */
 
     /* check children */
     fail_unless( prog->exprs[0].type == plot_expr_sexpr );

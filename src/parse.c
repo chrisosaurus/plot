@@ -22,7 +22,7 @@ plot_program * plot_parse(const char *source){
     size_t i=0;
     plot_program *prog = calloc(1, sizeof(*prog));
     prog->nchildren = 0;
-    prog->max_children = 15;
+    prog->max_children = 100;
     prog->exprs = calloc(prog->max_children, sizeof(*(prog->exprs))); /* FIXME fixed size */
 
     /* a plot_program is a colletion of s-expressions */
