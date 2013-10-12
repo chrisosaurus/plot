@@ -17,3 +17,6 @@
 (display (/ 10 2 2)) ;; 10/2 = 5; 5/2 = 2; => 2
 (newline)
 
+(display (remainder 10 3)) ;; => 1
+(newline)
+

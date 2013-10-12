@@ -53,11 +53,12 @@ START_TEST (test_funcs_math){
     const plot_value *r;
 
     struct plot_test_funcs_error_tests math_bindings[] = {
-        /* function                   ( args1,            arg2 )              = expected "failure message" */
-        {PTF_VF(plot_func_add),      { PTF_EV(PTF_VN(2)),  PTF_EV(PTF_VN(3))  },  5,     "\tfailed test for plot_func_add"},
-        {PTF_VF(plot_func_subtract), { PTF_EV(PTF_VN(10)), PTF_EV(PTF_VN(7))  },  3,     "\tfailed test for plot_func_subtract"},
-        {PTF_VF(plot_func_multiply), { PTF_EV(PTF_VN(5)),  PTF_EV(PTF_VN(15)) }, 75,     "\tfailed test for plot_func_multiply"},
-        {PTF_VF(plot_func_divide),   { PTF_EV(PTF_VN(10)), PTF_EV(PTF_VN(3))  },  3,     "\tfailed test for plot_func_divide"}
+        /* function                     ( args1,            arg2 )              = expected "failure message" */
+        {PTF_VF(plot_func_add),         { PTF_EV(PTF_VN(2)),  PTF_EV(PTF_VN(3))  },  5,     "failed test for plot_func_add"},
+        {PTF_VF(plot_func_subtract),    { PTF_EV(PTF_VN(10)), PTF_EV(PTF_VN(7))  },  3,     "failed test for plot_func_subtract"},
+        {PTF_VF(plot_func_multiply),    { PTF_EV(PTF_VN(5)),  PTF_EV(PTF_VN(15)) }, 75,     "failed test for plot_func_multiply"},
+        {PTF_VF(plot_func_divide),      { PTF_EV(PTF_VN(10)), PTF_EV(PTF_VN(3))  },  3,     "failed test for plot_func_divide"},
+        {PTF_VF(plot_func_remainder),   { PTF_EV(PTF_VN(10)), PTF_EV(PTF_VN(3))  },  1,     "failed test for plot_func_remainder"}
     };
 
     puts("\ttesting math functions");
@@ -67,7 +68,11 @@ START_TEST (test_funcs_math){
     for( i=0; i < PTF_LENGTH(math_bindings); ++i ){
         r = PTF_CALL_FUNC(i)( pl->env, PTF_ARGS(i) );
         fail_unless( r->type == plot_type_number );
-        ck_assert_msg( r->u.number.val == PTF_EXP(i), PTF_ERR(i));
+        if( r->u.number.val != PTF_EXP(i) ){
+            puts(PTF_ERR(i));
+            printf("got '%d', expected '%d'\n", r->u.number.val, PTF_EXP(i));
+            ck_abort_msg(PTF_ERR(i));
+        }
     }
 }
 END_TEST

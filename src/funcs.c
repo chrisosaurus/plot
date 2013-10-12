@@ -351,13 +351,71 @@ const struct plot_value * plot_func_divide(struct plot_env *env, const struct pl
     #endif
     return res;
 
-
 }
 
 /* remainder
  */
 const struct plot_value * plot_func_remainder(struct plot_env *env, const struct plot_expr *args, int argc){
-    return 0;
+    plot_value *res;
+    const plot_value *tmp;
+    const plot_expr *arg;
+    int remainder=0, i;
+
+    #if DEBUG
+    puts("inside plot_func_remainder");
+    #endif
+
+    if( !env ){
+        #if DEBUG
+        puts("env is null");
+        #endif
+        return 0; /* ERROR */
+    }
+
+    if( argc != 2 ){
+        #if DEBUG
+        puts("exected exactly 2 arguments");
+        #endif
+        return 0; /* FIXME ERROR */
+    }
+
+    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
+        tmp = plot_eval_expr(env, arg);
+        if( ! tmp ){
+            #if DEBUG
+            puts("value returned by plot_eval is null");
+            #endif
+            return 0; /* ERROR */
+        }
+
+        if( ! (tmp->type == plot_type_number) ){
+            #if DEBUG
+            puts("value returned by plot_eval is not a number");
+            #endif
+            return 0; /* ERROR */
+        }
+
+        if( i == 0 )
+            remainder = tmp->u.number.val;
+        else
+            remainder %= tmp->u.number.val;
+    }
+
+    res = calloc(1, sizeof *res);
+    if( !res ){
+        #if DEBUG
+        puts("res failed to calloc");
+        #endif
+        return 0; /* ERROR */
+    }
+
+    res->type = plot_type_number;
+    res->u.number.val = remainder;
+
+    #if DEBUG
+    puts("returning remainder");
+    #endif
+    return res;
 }
 
 /******** comparison functions *******/

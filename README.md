@@ -21,7 +21,7 @@ plot currently has:
 * string values
 * integer values
 * boolean values (`#f` and `#t`)
-* basic integer functions: addition (`+`), subtraction (`-`), multiplication (`*`) and division (`/`)
+* basic integer functions: addition (`+`), subtraction (`-`), multiplication (`*`), division (`/`) and remainder (`remainder`)
 * printing of values (`display`)
 * printing of newline (`newline`)
 * comments (`;`)
@@ -47,6 +47,9 @@ example: (see `make example`)
     (display (/ 10 2 2)) ;; 10/2 = 5; 5/2 = 2; => 2
     (newline)
 
+    (display (remainder 10 3)) ;; => 1
+    (newline)
+
 output:
 
     9
@@ -54,6 +57,7 @@ output:
     hello ' world
     #f
     2
+    1
 
 planned work
 ------------
