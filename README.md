@@ -21,7 +21,7 @@ plot currently has:
 * string values
 * integer values
 * boolean values (`#f` and `#t`)
-* basic integer functions: addition (`+`), subtraction (`-`) and multiplication (`*`)
+* basic integer functions: addition (`+`), subtraction (`-`), multiplication (`*`) and division (`/`)
 * printing of values (`display`)
 * printing of newline (`newline`)
 
@@ -29,15 +29,21 @@ example: (see `make example`)
 
     (define a (+ 4 5))
     (define b (* (- a 3) 4 5 6))
-    (define c "hello ' world")
     (define d #f)
+
     (display a)
     (newline)
+
     (display b)
     (newline)
-    (display c)
+
+    (display "hello ' world")
     (newline)
-    (display d)
+
+    (display #f)
+    (newline)
+
+    (display (/ 10 2 2))
     (newline)
 
 output:
@@ -46,7 +52,7 @@ output:
     720
     hello ' world
     #f
-
+    2
 
 planned work
 ------------
@@ -86,5 +92,4 @@ output:
 license
 ---------
 Plot is released under the terms of the MIT License
-
 

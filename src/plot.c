@@ -18,6 +18,7 @@ struct plot_binding bindings[] = {
     {{"+",        2, 2}, {plot_type_function, {.function = {0, plot_func_add}}}},
     {{"-",        2, 2}, {plot_type_function, {.function = {0, plot_func_subtract}}}},
     {{"*",        2, 2}, {plot_type_function, {.function = {0, plot_func_multiply}}}},
+    {{"/",        2, 2}, {plot_type_function, {.function = {0, plot_func_divide}}}},
     {{"display",  7, 7}, {plot_type_function, {.function = {0, plot_func_display}}}},
     {{"newline",  7, 7}, {plot_type_function, {.function = {0, plot_func_newline}}}}
 };

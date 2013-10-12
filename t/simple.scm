@@ -1,12 +1,19 @@
 (define a (+ 4 5))
 (define b (* (- a 3) 4 5 6))
-(define c "hello ' world")
 (define d #f)
+
 (display a)
 (newline)
+
 (display b)
 (newline)
-(display c)
+
+(display "hello ' world")
 (newline)
-(display d)
+
+(display #f)
 (newline)
+
+(display (/ 10 2 2))
+(newline)
+

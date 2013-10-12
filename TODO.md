@@ -4,20 +4,23 @@ TODO(s):
 misc:
 -----
 * write stack (for runtime and internal stacks)
+* refactor func unit testing
+* break math and comparison funcs into own files (.h and .c)
 
 parse:
 ------
+* add comments
+* remove hard coded limit on number of children (max_children for program and sexpr)
 * needs to be able to ask for 'more' input (if current input does not properly end a token)
 * needs to be able to communicate 'failure', e.g. miss matching of brackets in `(define a 5]`
 
 eval:
 -----
-* value testing functions: string? symbol? integer? number? function?
+* value testing functions: string? symbol? integer? number? function? boolean?
 * if form
 * define eval pointer ownership (currently returned values are a mess....)
 * eval documentation
 * add some heavier unit testing coverage for eval (test each individual func)
-* remove plot_is_form, plot_eval_form can be tried first (and fail) - reconsider
 
 read:
 -----
@@ -46,13 +49,13 @@ arbitrary groupings follow
 first milestone: 'core'
 ----------------
 * basic parse and eval
-* integers and ops: +, -, /, *, modulo, <, <=, >, >=, =
+* integers and ops: +, -, /, *, remainder, <, <=, >, >=, =
 * symbol data type
 * display and newline
 * define (no func form)
 * string datatype
 * boolean datatype
-* value testing functions: string? symbol? integer? number? function?
+* value testing functions: string? symbol? integer? number? function? boolean?
 * if form
 * lambda forms
 * pair datatype, car, cdr, cons and list constructors
