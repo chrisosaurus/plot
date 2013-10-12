@@ -423,7 +423,66 @@ const struct plot_value * plot_func_remainder(struct plot_env *env, const struct
 /* mathmatical =
  */
 const struct plot_value * plot_func_equal(struct plot_env *env, const struct plot_expr *args, int argc){
-    return 0;
+    plot_value tmp;
+    plot_value *res;
+    const plot_value *val;
+    int i;
+    const plot_expr *arg;
+
+    tmp.type = plot_type_number;
+
+    #if DEBUG
+    puts("inside plot_func_equal");
+    #endif
+
+    if( ! env ){
+        #if DEBUG
+        puts("env is NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res = calloc(1, sizeof *res);
+    if( ! res ){
+        #if DEBUG
+        puts("called to calloc failed");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res->type = plot_type_boolean;
+    res->u.boolean.val = false;
+
+    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
+        val = plot_eval_expr(env, arg);
+        if( ! val ){
+            #if DEBUG
+            puts("return val was NULL");
+            #endif
+            return 0; /* FIXME error */
+        }
+
+        if( val->type != plot_type_number ){
+            #if DEBUG
+            puts("evaled expr did not yield number");
+            #endif
+            return 0; /* FIXME error */
+        }
+
+        if( i == 0 ){
+            tmp.u.number.val = val->u.number.val;
+        } else {
+            if( tmp.u.number.val != val->u.number.val ){
+                #if DEBUG
+                puts("not equal");
+                #endif
+                return res;
+            }
+        }
+    }
+
+    res->u.boolean.val = true;
+    return res;
 }
 
 /* <

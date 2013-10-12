@@ -11,7 +11,7 @@
 (display "hello ' world")
 (newline)
 
-(display #f)
+(display (= 1 (+ 1 1))) ;; 1 != 2; => #f
 (newline)
 
 (display (/ 10 2 2)) ;; 10/2 = 5; 5/2 = 2; => 2

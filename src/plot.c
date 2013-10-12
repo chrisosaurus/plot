@@ -15,11 +15,17 @@ struct plot_binding {
 };
 
 struct plot_binding bindings[] = {
+    /* math functions */
     {{"+",         2,  2}, {plot_type_function, {.function = {0, plot_func_add}}}},
     {{"-",         2,  2}, {plot_type_function, {.function = {0, plot_func_subtract}}}},
     {{"*",         2,  2}, {plot_type_function, {.function = {0, plot_func_multiply}}}},
     {{"/",         2,  2}, {plot_type_function, {.function = {0, plot_func_divide}}}},
     {{"remainder",10, 10}, {plot_type_function, {.function = {0, plot_func_remainder}}}},
+
+    /* comparison functions */
+    {{"=",         2,  2}, {plot_type_function, {.function = {0, plot_func_equal}}}},
+
+    /* display functions */
     {{"display",   7,  7}, {plot_type_function, {.function = {0, plot_func_display}}}},
     {{"newline",   7,  7}, {plot_type_function, {.function = {0, plot_func_newline}}}}
 };
