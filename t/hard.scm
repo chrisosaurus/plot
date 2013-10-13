@@ -7,7 +7,7 @@
     (newline)))
 
 
-;; test define, if and simple comparison operators
+;; test define, if and simple comparison functions
 (define one
   (if (< 4 5)
     1
@@ -18,7 +18,7 @@
   (println "fail one"))
 
 
-;; test define, if and more complex comparison operators
+;; test define, if and more complex comparison functions
 (define two
   (if (>= 10 8 6 4 2 0)
     (if (<= 0 2 4 6 8 10)
@@ -64,4 +64,32 @@
 (if (boolean? #f)
   (println "pass seven")
   (println "fail seven"))
+
+
+;; testing define and scope
+(define eight 1)
+(define eight-f
+  (lambda ()
+    (define eight 2)
+    eight))
+
+(if (= eight 1)
+  (if (= (eight-f) 2)
+    (println "pass eight")
+    (println "fail eight: case 2"))
+  (println "fail eight: case 1"))
+
+
+(define nine 1)
+(define nine-f
+  (lambda ()
+    nine))
+(define nine 2)
+
+(if (= nine 2)
+  (if (= (nine-f) 2)
+    (println "pass nine")
+    (println "fail nine case 2"))
+  (println "fail nine case 1"))
+
 

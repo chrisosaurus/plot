@@ -94,7 +94,7 @@ You are able to compile and run plot manually though:
 
     cd /devel/plot # or wherever you cloned to
     make
-    ./plot foo.scm
+    ./plot t/hard.scm
 
 license
 ---------
