@@ -49,12 +49,13 @@ first milestone: 'core'
 * integers and ops: +, -, /, *, remainder, <, <=, >, >=, =
 * symbol data type
 * display and newline
-* define (no func form)
+* define
 * string datatype
 * boolean datatype
 * value testing functions: string? symbol? integer? number? function? boolean?
 * if form
 * lambda forms
+* eq? and equal?
 * pair datatype, car, cdr, cons and list constructors
 * quoting and display of quoted data
 * display of all values

@@ -69,6 +69,8 @@ planned work
 ------------
 The initial plan was to try to define a very minimal core language (in c) and implement the rest in plot itself.
 
+I am not so sure about the current plan...
+
 planned:
 * ref counting
 * define
