@@ -1002,7 +1002,7 @@ const struct plot_value * plot_func_procedure_test(struct plot_env *env, const s
     }
 
     res->type = plot_type_boolean;
-    if( val->type == plot_type_builtin ){
+    if( val->type == plot_type_builtin || val->type == plot_type_lambda ){
         res->u.boolean.val = true;
         return res;
     } else {
