@@ -15,7 +15,6 @@
 START_TEST (test_env){
     plot_env *e;
     plot_value v;
-    plot_value v2;
     plot_symbol s = (plot_symbol){"sym", 4, 4};
 
     puts("\tTesting construction");
