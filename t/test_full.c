@@ -148,10 +148,78 @@ START_TEST (test_full_harder){
 }
 END_TEST
 
-#undef PT_VS
 
+static const char * test_full_forms_input_define = "(define a 5)";
+static const char * test_full_forms_input_lambda = "(define b\
+                                                        (lambda ()\
+                                                            (lambda ()\
+                                                                'hello'";
+static const char * test_full_forms_input_if = "(define c\
+                                                    (if (< 4 5)\
+                                                        'pass'\
+                                                        'fail'))";
+
+START_TEST (test_full_forms){
+    plot_program *prog;
+    plot *pl;
+
+    const plot_value *val;
+
+    puts("\nFull forms test");
+
+
+    puts("\t\ttesting define");
+    pl = plot_init();
+    fail_if( 0 == pl );
+
+    prog = plot_parse(test_full_forms_input_define);
+    fail_if( prog == 0 );
+    fail_if( 0 == plot_eval(pl->env, prog) );
+
+    /* test results */
+    val = plot_env_get(pl->env, PT_VS("a"));
+    ck_assert_msg( 0 != val, "env did not contain 'a'");
+    ck_assert_msg( val->type == plot_type_number, "a was not of type 'plot_type_number'");
+    ck_assert_msg( val->u.number.val == 5, "a did not have the value '5'");
+
+
+    puts("\t\ttesting lambda");
+    pl = plot_init();
+    fail_if( 0 == pl );
+
+    prog = plot_parse(test_full_forms_input_lambda);
+    fail_if( prog == 0 );
+    fail_if( 0 == plot_eval(pl->env, prog) );
+
+    /* test results */
+    val = plot_env_get(pl->env, PT_VS("b"));
+    ck_assert_msg( 0 != val, "env did not contain 'b'");
+    ck_assert_msg( val->type == plot_type_lambda, "b was not of type 'plot_type_lambda'");
+
+
+    puts("\t\ttesting define");
+    pl = plot_init();
+    fail_if( 0 == pl );
+
+    prog = plot_parse(test_full_forms_input_if);
+    fail_if( prog == 0 );
+    fail_if( 0 == plot_eval(pl->env, prog) );
+
+    /* test results */
+    val = plot_env_get(pl->env, PT_VS("c"));
+    ck_assert_msg( 0 != val, "env did not contain 'c'");
+    ck_assert_msg( val->type == plot_type_string, "c was not of type 'plot_type_string'");
+    ck_assert_str_eq( val->u.string.val, "pass" );
+
+
+    puts("Completed!");
+}
+END_TEST
+
+#undef PT_VS
 
 TEST_CASE_NEW(full)
 TEST_CASE_ADD(full, full_simple)
 TEST_CASE_ADD(full, full_harder)
+TEST_CASE_ADD(full, full_forms)
 TEST_CASE_END(full)
