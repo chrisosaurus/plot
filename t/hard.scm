@@ -93,3 +93,14 @@
   (println "fail nine case 1"))
 
 
+(define ten-f
+  (lambda ()
+    ten))
+(define ten 2)
+
+(if (= ten 2)
+  (if (= (ten-f) 2)
+    (println "pass ten")
+    (println "fail ten case 2"))
+  (println "fail ten case 1"))
+
