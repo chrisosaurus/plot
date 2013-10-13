@@ -93,20 +93,6 @@ int plot_env_define(plot_env *env, const plot_symbol * sym, const plot_value * v
         #endif
     }
 
-    return plot_hash_insert(env->hash, sym, val);
-}
-
-/* set a a symbol to a value, it may or may not already exist within this env
- *
- * returns 1 on success, 0 on error
- */
-int plot_env_set(plot_env *env, const plot_symbol * sym, const plot_value * val){
-    if( ! env || ! sym || ! val )
-        return 0;
-    if( ! env->hash )
-        return 0;
-
     return plot_hash_set(env->hash, sym, val);
 }
-
 

@@ -26,12 +26,9 @@ START_TEST (test_env){
     fail_unless( plot_env_define(e, &s, &v) );
     fail_unless( &v == plot_env_get(e, &s) );
 
-    puts("\tTesting invalid define");
-    fail_if( plot_env_define(e, &s, &v) );
-
-    puts("\tTesting set");
-    fail_unless( plot_env_set(e, &s, &v2) );
-    fail_unless( &v2 == plot_env_get(e, &s) );
+    puts("\tTesting define mutation");
+    fail_unless( plot_env_define(e, &s, 0) );
+    fail_unless( 0 == plot_env_get(e, &s) );
 
     plot_env_cleanup(e);
 }

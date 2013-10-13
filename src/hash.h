@@ -49,19 +49,11 @@ const struct plot_value * plot_hash_get(plot_hash *hash, const struct plot_symbo
 
 /* set value to hash under key
  * keys must be unique within the hash
- * and keys cannot be overwritten once set (no mutation)
+ * and keys CAN be overwritten once set (local mutation is allowed)
  *
  * this hash will NOT make copies of either key or value
  * therefore both key and value must not be freed until
  *  cleanup is called on this hash
- *
- * returns 1 on success, 0 on error
- */
-int plot_hash_insert(plot_hash *hash, const struct plot_symbol * key, const struct plot_value *value);
-
-/* set value in hash under key
- * keys must be unique within the hash
- * will overwrite any existing value
  *
  * returns 1 on success, 0 on error
  */

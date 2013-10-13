@@ -77,7 +77,7 @@ const plot_value * plot_hash_get(plot_hash *hash, const plot_symbol * key){
 
 /* set value to hash under key
  * keys must be unique within the hash
- * and keys cannot be overwritten once set (no mutation)
+ * and keys CAN be overwritten once set (local mutation is allowed)
  *
  * this hash will NOT make copies of either key or value
  * therefore both key and value must not be freed until
@@ -85,12 +85,12 @@ const plot_value * plot_hash_get(plot_hash *hash, const plot_symbol * key){
  *
  * returns 1 on success, 0 on error
  */
-int plot_hash_insert(plot_hash *hash, const plot_symbol * key, const plot_value *value){
+int plot_hash_set(plot_hash *hash, const plot_symbol * key, const plot_value *value){
     plot_hash_entry **e, *n;
-    int sc=0;
+    int sc=1; /* default value of 1, 0 is only used to mean we are re-defining a symbol */
 
     #if DEBUG
-    puts("inside plot_hash_insert");
+    puts("inside plot_hash_set");
     #endif
 
     if( ! hash ){
@@ -107,7 +107,7 @@ int plot_hash_insert(plot_hash *hash, const plot_symbol * key, const plot_value 
         if(  sc < 0 ) /* TRUE IFF key < (*e)->key */
             break;
         if( sc == 0 ) /* TRUE IFF key == (*e)->key */
-            return 0; /* ERROR cannot overwrite key */
+            break;
     }
 
     /* if *e is null then we have either reached the end of the list
@@ -123,7 +123,8 @@ int plot_hash_insert(plot_hash *hash, const plot_symbol * key, const plot_value 
     n->next = *e;
     *e = n;
 
-    hash->n_elems++;
+    if( sc ) /* only increment if we are no re-defining */
+        hash->n_elems++;
 
     #if DEBUG
     puts("\teverything seemed fine");
@@ -131,48 +132,4 @@ int plot_hash_insert(plot_hash *hash, const plot_symbol * key, const plot_value 
 
     return 1;
 }
-
-/* set value in hash under key
- * keys must be unique within the hash
- * will overwrite any existing value
- *
- * returns 1 on success, 0 on error
- */
-int plot_hash_set(plot_hash *hash, const plot_symbol * key, const plot_value *value){
-    /* FIXME TODO implement... without duplication... */
-
-    plot_hash_entry **e, *n;
-    int sc=0;
-
-    if( ! hash )
-        return 0;
-
-    for( e=&hash->head; e && (*e); e = &(*e)->next ){
-        sc = strcmp(key->val, (*e)->key->val);
-        /* stop iterating when we find an existing entry with a key 'after' us
-         */
-        if(  sc < 0 || sc == 0 ) /* TRUE IFF key < (*e)->key */
-            break;
-        if( sc == 0 ) /* TRUE IFF key == (*e)->key */
-            break; /* allow set to overwrite */
-    }
-
-    /* if *e is null then we have either reached the end of the list
-     * of we are the first element
-     *
-     * regardless, *e is our next and *e is where we store ourselves
-     */
-    n = calloc(1, sizeof(*n));
-    if( ! n )
-        return 0;/* ERROR: calloc failed */
-    n->key = key;
-    n->value = value;
-    n->next = *e;
-    *e = n;
-
-    hash->n_elems++;
-    return 1;
-
-}
-
 
