@@ -30,6 +30,8 @@ test_soft: tests_soft plot
 	./run_tests
 	@echo "\nrunning simple.scm"
 	./plot t/simple.scm
+	@echo "\nrunning hard.scm"
+	./plot t/hard.scm
 
 # harsh version for checking sanity of test code
 tests: clean ${OBJ}
@@ -43,11 +45,18 @@ test: tests plot
 	./run_tests
 	@echo "\nrunning simple.scm"
 	./plot t/simple.scm
+	@echo "\nrunning hard.scm"
+	./plot t/hard.scm
 
-example: plot
+simple: plot
 	cat t/simple.scm
 	@echo "\n"
 	./plot t/simple.scm
+
+hard: plot
+	cat t/hard.scm
+	@echo "\n"
+	./plot t/hard.scm
 
 clean:
 	@echo cleaning

@@ -30,7 +30,7 @@ plot currently has:
 * comments (`;`)
 * value testing functions: `boolean?`, `string?`, `number?`, `symbol?`, and `procedure?`
 
-example: (see `make example`)
+example: (see `make simple`)
 
     (define println
       (lambda (v)
