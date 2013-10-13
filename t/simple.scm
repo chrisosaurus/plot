@@ -3,12 +3,12 @@
     (display v)
     (newline)))
 
-(define fancy
+(define adder
   (lambda (b)
     (lambda (c)
       (+ b c))))
 
-(define tmp (fancy 10))
+(define tmp (adder 10))
 (println (tmp 15)) ;; => 25
 
 (define b (* (- 12 3) 4 5 6))

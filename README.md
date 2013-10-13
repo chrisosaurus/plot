@@ -37,12 +37,12 @@ example: (see `make example`)
         (display v)
         (newline)))
 
-    (define fancy
+    (define adder
       (lambda (b)
         (lambda (c)
           (+ b c))))
 
-    (define tmp (fancy 10))
+    (define tmp (adder 10))
     (println (tmp 15)) ;; => 25
 
     (define b (* (- 12 3) 4 5 6))
@@ -92,13 +92,7 @@ You are able to compile and run plot manually though:
 
     cd /devel/plot # or wherever you cloned to
     make
-    ./plot t/simple.scm
-
-output:
-
-    9
-    27
-
+    ./plot foo.scm
 
 license
 ---------
