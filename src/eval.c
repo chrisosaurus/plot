@@ -3,6 +3,7 @@
 #include <string.h> /* strcmp */
 
 #include "value.h"
+#include "hash.h"
 #include "env.h"
 #include "types.h"
 #include "eval.h"
@@ -99,7 +100,7 @@ const plot_value * plot_eval_value(plot_env *env, const plot_value * val){
     switch( val->type ){
         case plot_type_symbol:
             #if DEBUG_VALUE || DEBUG
-            puts("symbol found, resolving: dispatching to plot_env_get");
+            printf("symbol found '%s', resolving: dispatching to plot_env_get\n", val->u.symbol.val);
             #endif
             return plot_env_get(env, &(val->u.symbol));
             break;
@@ -213,6 +214,8 @@ const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
     const plot_value *form;
     const plot_value *name;
     const plot_value *value;
+    plot_value *tmp;
+    int i;
 
     #if DEBUG_FORM || DEBUG
     puts("inside plot_eval_form");
@@ -279,13 +282,46 @@ const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
                 printf("Storing value type '%d', under name '%s'\n'", value->type, name->u.symbol.val);
                 #endif
                 plot_env_define(env, &(name->u.symbol), value);
-                return 0;
+                return 0; /* FIXME success */
             }
             if( ! strcmp(form->u.symbol.val, "lambda") ){
-                #if DEBUG_FORM || DEBUG
-                puts("'lambda' form is not currently implemented");
-                #endif
-                return 0; /* FIXME ERROR */
+                if( sexpr->nchildren < 3 ){
+                    #if DEBUG_FORM || DEBUG
+                    printf("LAMBDA: incorrect number of children, need at least 3, got '%d'\n", sexpr->nchildren);
+                    #endif
+                    return 0; /* FIXME error */
+                }
+
+                /* check 2nd subform is an sexpr (param list) */
+                if( sexpr->subforms[1].type != plot_expr_sexpr ){
+                    puts("LAMBDA: param list expected");
+                    return 0; /* FIXME error */
+                }
+
+                /* check all subforms are symbols */
+                for( i=0; i< sexpr->subforms[1].u.sexpr.nchildren; ++i ){
+                    if( sexpr->subforms[1].u.sexpr.subforms[i].type != plot_expr_value ){
+                        puts("LAMBDA: invalid param type, expected value");
+                        return 0; /* FIXME error */
+                    }
+                    if( sexpr->subforms[1].u.sexpr.subforms[i].u.value.type != plot_type_symbol ){
+                        puts("LAMBDA: invalid param type, expected symbol");
+                        return 0; /* FIXME error */
+                    }
+                }
+
+                tmp = calloc(1, sizeof *value);
+                if( ! tmp ){
+                    #if DEBUG_FORM || DEBUG
+                    puts("LAMBDA: failed to calloc");
+                    #endif
+                    return 0; /* FIXME error */
+                }
+
+                tmp->type = plot_type_lambda;
+                tmp->u.lambda.env = env;
+                tmp->u.lambda.body = sexpr;
+                return tmp;
             }
             if( ! strcmp(form->u.symbol.val, "if") ){
                 if( sexpr->nchildren != 4 ){
@@ -335,22 +371,26 @@ const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
 const plot_value * plot_eval_func_call(plot_env *env, const plot_sexpr * sexpr){
     const plot_value *val;
     const plot_value *func;
+    plot_env *new_env;
+    int i;
 
     #if DEBUG_FUNC || DEBUG
     puts("inside plot_eval_func_call");
     #endif
 
-    if( ! env || ! sexpr )
+    if( ! env || ! sexpr ){
         #if DEBUG_FUNC || DEBUG
         puts("plot_eval_func_call: bad args");
         #endif
         return 0; /* FIXME ERROR */
+    }
 
-    if( ! sexpr->nchildren )
+    if( ! sexpr->nchildren ){
         #if DEBUG_FUNC || DEBUG
         puts("plot_eval_func_call: no children");
         #endif
         return 0; /* FIXME ERROR */
+    }
 
     if( sexpr->subforms[0].type == plot_expr_sexpr ){
         #if DEBUG_FUNC || DEBUG
@@ -378,20 +418,71 @@ const plot_value * plot_eval_func_call(plot_env *env, const plot_sexpr * sexpr){
                 printf("plot_eval_func_call: no function found for '%s', bailing\n", val->u.symbol.val);
                 return 0; /* FIXME ERROR */
             }
-            #if DEBUG_FUNC || DEBUG
-            puts("got a builtin function...");
-            #endif
-            if( func->type != plot_type_builtin ){
-                puts("ERROR: unknown syntax");
-                return 0; /* FIXME ERROR */
-            }
+            switch( func->type ){
+                case plot_type_builtin:
+                    #if DEBUG_FUNC || DEBUG
+                    puts("calling a builtin function...");
+                    #endif
+                    return func->u.builtin.func( env, sexpr->subforms + 1, sexpr->nchildren - 1);
+                case plot_type_lambda:
+                    #if DEBUG_FUNC || DEBUG
+                    puts("calling lambda");
+                    #endif
 
-            #if DEBUG_FUNC || DEBUG
-            puts("calling function");
-            #endif
-            return func->u.builtin.func( env,
-                                          sexpr->subforms + 1,
-                                          sexpr->nchildren - 1);
+                    /* create a new env with lambda->env as parent */
+                    new_env = plot_env_init(func->u.lambda.env);
+                    if( ! new_env ){
+                        puts("LAMBDA: call to plot_env_init failed");
+                        return 0; /* FIXME error */
+                    }
+
+                    if( func->u.lambda.body->subforms[1].type != plot_expr_sexpr ){
+                        puts("LAMBDA: plot_eval_func_call parameter list is not an sexpr");
+                        return 0; /* FIXME error */
+                    }
+
+                    /* check number of arguments match number of parameters */
+                    if( func->u.lambda.body->subforms[1].u.sexpr.nchildren != sexpr->nchildren - 1 ){
+                        printf("LAMBDA: incorrect number of arguments, expected '%d' and got '%d'\n", func->u.lambda.body->subforms[1].u.sexpr.nchildren, sexpr->nchildren - 1);
+                    }
+                    /* for each parameter grab an argument
+                     *  if no argument then error
+                     *  define(new-env, parameter, argument)
+                     */
+                    for( i=0; i< func->u.lambda.body->subforms[1].u.sexpr.nchildren ; ++i ){
+                        if( func->u.lambda.body->subforms[1].u.sexpr.subforms[i].type != plot_expr_value ){
+                            puts("LAMBDA: expected value");
+                            return 0; /* FIXME error */
+                        }
+                        if( func->u.lambda.body->subforms[1].u.sexpr.subforms[i].u.value.type != plot_type_symbol ){
+                            puts("LAMBDA: expected symbol");
+                            return 0; /* FIXME error */
+                        }
+                        val = plot_eval_expr(env, &(sexpr->subforms[1+i]));
+                        if( ! val ){
+                            puts("LAMBDA: evaluating argument returned NULL");
+                            return 0; /* FIXME error */
+                        }
+                        if( ! plot_env_define(new_env, &(func->u.lambda.body->subforms[1].u.sexpr.subforms[i].u.value.u.symbol), val) ){
+                            puts("LAMBDA: failed to define argument");
+                            return 0; /* FIXME error */
+                        }
+                    }
+
+                    /* eval each part of the body in new_env
+                     * return value of final expr
+                     */
+                    for( i=2; i < func->u.lambda.body->nchildren; ++i ){
+                        val = plot_eval_expr(new_env, &(func->u.lambda.body->subforms[i]) );
+                    }
+                    return val;
+
+                    break;
+                default:
+                    puts("ERROR: unknown syntax");
+                    return 0; /* FIXME ERROR */
+                    break;
+            }
             break;
         case plot_type_builtin:
             #if DEBUG_FUNC || DEBUG
@@ -408,6 +499,7 @@ const plot_value * plot_eval_func_call(plot_env *env, const plot_sexpr * sexpr){
             return 0; /* FIXME ERROR */
             break;
     }
+    puts("ended");
 
     return 0;
 }

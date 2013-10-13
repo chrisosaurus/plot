@@ -27,7 +27,6 @@ read:
 
 features:
 ---------
-* add lambda form
 * write repl front-end
 
 runtime:

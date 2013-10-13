@@ -1,40 +1,24 @@
-(define a (+ 4 5))
-(define b (* (- a 3) 4 5 6))
-(define d #f)
+(define println
+  (lambda (v)
+    (display v)
+    (newline)))
 
-(display a)
-(newline)
+(define fancy
+  (lambda (b)
+    (lambda (c)
+      (+ b c))))
 
-(display b)
-(newline)
+(define tmp (fancy 10))
+(println (tmp 15)) ;; => 25
 
-(display "hello ' world")
-(newline)
+(define b (* (- 12 3) 4 5 6))
+(println b) ;; => 1080
 
-(display (= 1 (+ 1 1))) ;; 1 != 2; => #f
-(newline)
+(println (<= 1 1 2 3 5 10)) ;; => #t
 
-(display (<= 1 1 2 3 5 10)) ;; => #t
-(newline)
+(println (/ 10 2 2)) ;; 10/2 = 5; 5/2 = 2; => 2
 
-(display (/ 10 2 2)) ;; 10/2 = 5; 5/2 = 2; => 2
-(newline)
+(println (procedure? display)) ;; => #t
 
-(display (remainder 10 3)) ;; => 1
-(newline)
-
-(display (boolean? "hello I am not boolean...")) ;; => #f
-(newline)
-
-(display (boolean? #f)) ;; => #t
-(newline)
-
-(display (procedure? display)) ;; => #t
-(newline)
-
-(display (string? "hello")) ;; => #t
-(newline)
-
-(display (if #t "hello there" (illegal))) ;; => hello there
-(newline)
+(println (if #t "hello there" (illegal))) ;; => hello there
 
