@@ -3,13 +3,16 @@ TODO(s):
 
 misc:
 -----
+* 'Testing parse error handling TODO' error
 * write stack (for runtime and internal stacks)
 * break math and comparison funcs into own files (.h and .c)
+* all math functions should check argument count
 * plot_handle_error should not be in funcs, funcs are things that can be assigned to plot_values
 * define does not currently allow redefinition (even in smaller scope)
 
 parse:
 ------
+* allow negative numbers
 * remove hard coded limit on number of children (max_children for program(100) and sexpr(15))
 * needs to be able to ask for 'more' input (if current input does not properly end a token)
 * needs to be able to communicate 'failure', e.g. miss matching of brackets in `(define a 5]`
