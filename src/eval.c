@@ -396,21 +396,18 @@ const plot_value * plot_eval_func_call(plot_env *env, const plot_sexpr * sexpr){
         #if DEBUG_FUNC || DEBUG
         puts("plot_eval_func_call: subform is an sexpr");
         #endif
-        puts("Sorry compound sexpr(s) are currently not supported");
-        return 0; /* FIXME ERROR */
-    }
-
-    if( sexpr->subforms[0].type == plot_expr_sexpr ){
+        val = plot_eval_sexpr(env, &(sexpr->subforms[0].u.sexpr));
+    } else {
         #if DEBUG_FUNC || DEBUG
-        puts("plot_eval_func_call: subform is an sexpr");
+        puts("plot_eval_func_call: subform is a value");
         #endif
-        puts("ERROR: impossible sexpr subform [0] type");
-        return 0; /* FIXME ERROR */
+        val = &(sexpr->subforms[0].u.value);
     }
 
-    val = &(sexpr->subforms[0].u.value);
 
     switch( val->type ){
+        case plot_type_builtin:
+        case plot_type_lambda:
         case plot_type_symbol:
             func = plot_eval_value(env, val);
 
@@ -483,13 +480,6 @@ const plot_value * plot_eval_func_call(plot_env *env, const plot_sexpr * sexpr){
                     return 0; /* FIXME ERROR */
                     break;
             }
-            break;
-        case plot_type_builtin:
-            #if DEBUG_FUNC || DEBUG
-            puts("plot_eval_func_cal: function values are not currently supported");
-            #endif
-            puts("Sorry function values are not currently supported");
-            return 0; /* FIXME ERROR */
             break;
         default:
             #if DEBUG_FUNC || DEBUG
