@@ -1,6 +1,12 @@
 TODO(s):
 =====
 
+performance:
+------------
+* a lot of program runtime (25%, largest single func) is currently spent in plot_hash_get
+* recursion is currently very expensive (both in terms of stack and memory)
+* memory usage only grows (hoarding)
+
 misc:
 -----
 * 'Testing parse error handling TODO' error
