@@ -12,7 +12,8 @@ misc:
 
 parse:
 ------
-* allow negative numbers
+* parse should record line numbers in AST, all errors should reference these
+* allow parsing of negative numbers
 * remove hard coded limit on number of children (max_children for program(100) and sexpr(15))
 * needs to be able to ask for 'more' input (if current input does not properly end a token)
 * needs to be able to communicate 'failure', e.g. miss matching of brackets in `(define a 5]`
@@ -40,6 +41,8 @@ runtime:
 * think a bit more about memory allocation and ref counting / garbage collection
 * improve plot_error
 * use plot_error
+* tail call optimisation
+* garbage collector
 
 Milestones:
 ===========
