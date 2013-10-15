@@ -3,9 +3,9 @@ TODO(s):
 
 performance:
 ------------
-* a lot of program runtime (25%, largest single func) is currently spent in plot_hash_get
 * recursion is currently very expensive (both in terms of stack and memory)
 * memory usage only grows (hoarding)
+* lots of temporary values are created, used by caller, and then lost.
 
 misc:
 -----
@@ -14,7 +14,6 @@ misc:
 * break math and comparison funcs into own files (.h and .c)
 * all math functions should check argument count
 * plot_handle_error should not be in funcs, funcs are things that can be assigned to plot_values
-* define does not currently allow redefinition (even in smaller scope)
 
 parse:
 ------
