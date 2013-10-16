@@ -5,10 +5,6 @@ struct plot_env;
 struct plot_value;
 struct plot_expr;
 
-/* print error information and then exit
- */
-void plot_handle_error(const plot_value *error);
-
 /* print value to stdout
  */
 const struct plot_value * plot_func_display(struct plot_env *env, const struct plot_expr *args, int argc);

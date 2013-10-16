@@ -8,6 +8,7 @@
 #include "types.h"
 #include "eval.h"
 #include "funcs.h"
+#include "plot.h"
 
 #define DEBUG 0
 #define DEBUG_EVAL 0

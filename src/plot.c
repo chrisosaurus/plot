@@ -85,6 +85,37 @@ void plot_cleanup(){
     free(plot_instance);
 }
 
+/* print error information and then exit
+ */
+void plot_handle_error(const plot_value *error){
+    const char *type = "unknown";
+    if( ! error->type == plot_type_error ){
+        printf("Error encountered in 'plot_handle_error', invalid error value supplied\n");
+        exit(1);
+    }
+
+    switch(error->u.error.type){
+        case plot_error_alloc_failed:
+            type = "alloc failed";
+            break;
+        case plot_error_bad_args:
+            type = "bad args";
+            break;
+        case plot_error_internal:
+            type = "internal error";
+            break;
+        case plot_error_unbound_symbol:
+            type = "unbound symbol";
+            break;
+        default:
+            type = "IMPOSSIBLE ERROR";
+            break;
+    }
+
+    printf("Error encountered in '%s', error message: '%s', error type: '%s'\n", error->u.error.location, error->u.error.msg, type);
+    exit(1);
+}
+
 /* increase reference count on object */
 void plot_incr(struct plot_gc *p){
     if( !p )

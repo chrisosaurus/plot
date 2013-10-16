@@ -6,6 +6,7 @@
 #include "value.h"
 #include "types.h"
 #include "parse.h"
+#include "plot.h"
 
 #define DEBUG 0
 

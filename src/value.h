@@ -75,7 +75,6 @@ typedef struct plot_pair {
 
 #endif
 
-struct plot_value;
 struct plot_expr;
 struct plot_sexpr;
 struct plot_env;
