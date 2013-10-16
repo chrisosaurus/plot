@@ -46,6 +46,7 @@ void plot_incr(struct plot_gc *p);
 void plot_decr(struct plot_gc *p);
 
 /* get new value */
-struct plot_value * plot_value_new(void);
+struct plot_value * plot_new_value(void);
+
 
 #endif
