@@ -92,14 +92,12 @@ static const char *test_full_harder_input = "(define adder\
 
 START_TEST (test_full_harder){
     plot_program *prog;
-    plot *pl;
 
     const plot_value *val;
 
     puts("\nFull harder test");
     puts("\tTesting eval and parse combined");
-    pl = plot_init();
-    fail_if( 0 == pl );
+    fail_if( 0 == plot_init() );
 
 
     puts("\t\ttesting parse");
@@ -122,14 +120,14 @@ START_TEST (test_full_harder){
 
 
     puts("\t\ttesting eval");
-    fail_if( 0 == plot_eval(pl->env, prog) );
+    fail_if( 0 == plot_eval(plot_get_env(), prog) );
 
     /* check env */
-    val = plot_env_get(pl->env, PT_VS("adder"));
+    val = plot_env_get(plot_get_env(), PT_VS("adder"));
     ck_assert_msg( 0 != val, "plot_env did not have 'adder' defined");
     ck_assert_msg( val->type == plot_type_lambda, "adder was not of type 'plot_type_lambda'");
 
-    val = plot_env_get(pl->env, PT_VS("tmp"));
+    val = plot_env_get(plot_get_env(), PT_VS("tmp"));
     ck_assert_msg( 0 != val, "plot_env did not have 'tmp' defined");
     ck_assert_msg( val->type == plot_type_lambda, "tmp was not of type 'plot_type_lambda'");
 
@@ -138,7 +136,7 @@ START_TEST (test_full_harder){
     ck_assert_msg( val->type == plot_type_number, "tmp's env type of 'b' was not 'plot_type_number'");
     ck_assert_msg( val->u.number.val == 10, "tmp's env value of 'b' was not '10'");
 
-    val = plot_env_get(pl->env, PT_VS("end"));
+    val = plot_env_get(plot_get_env(), PT_VS("end"));
     ck_assert_msg( 0 != val, "plot_env did not have 'end' defined");
     ck_assert_msg( val->type == plot_type_number, "end was not of type 'plot_type_number'");
     ck_assert_msg( val->u.number.val == 25, "end did not have value '25'");
@@ -161,7 +159,6 @@ static const char * test_full_forms_input_if = "(define c\
 
 START_TEST (test_full_forms){
     plot_program *prog;
-    plot *pl;
 
     const plot_value *val;
 
@@ -169,44 +166,41 @@ START_TEST (test_full_forms){
 
 
     puts("\t\ttesting define");
-    pl = plot_init();
-    fail_if( 0 == pl );
+    fail_if( 0 == plot_init() );
 
     prog = plot_parse(test_full_forms_input_define);
     fail_if( prog == 0 );
-    fail_if( 0 == plot_eval(pl->env, prog) );
+    fail_if( 0 == plot_eval(plot_get_env(), prog) );
 
     /* test results */
-    val = plot_env_get(pl->env, PT_VS("a"));
+    val = plot_env_get(plot_get_env(), PT_VS("a"));
     ck_assert_msg( 0 != val, "env did not contain 'a'");
     ck_assert_msg( val->type == plot_type_number, "a was not of type 'plot_type_number'");
     ck_assert_msg( val->u.number.val == 5, "a did not have the value '5'");
 
 
     puts("\t\ttesting lambda");
-    pl = plot_init();
-    fail_if( 0 == pl );
+    fail_if( 0 == plot_init() );
 
     prog = plot_parse(test_full_forms_input_lambda);
     fail_if( prog == 0 );
-    fail_if( 0 == plot_eval(pl->env, prog) );
+    fail_if( 0 == plot_eval(plot_get_env(), prog) );
 
     /* test results */
-    val = plot_env_get(pl->env, PT_VS("b"));
+    val = plot_env_get(plot_get_env(), PT_VS("b"));
     ck_assert_msg( 0 != val, "env did not contain 'b'");
     ck_assert_msg( val->type == plot_type_lambda, "b was not of type 'plot_type_lambda'");
 
 
     puts("\t\ttesting define");
-    pl = plot_init();
-    fail_if( 0 == pl );
+    fail_if( 0 == plot_init() );
 
     prog = plot_parse(test_full_forms_input_if);
     fail_if( prog == 0 );
-    fail_if( 0 == plot_eval(pl->env, prog) );
+    fail_if( 0 == plot_eval(plot_get_env(), prog) );
 
     /* test results */
-    val = plot_env_get(pl->env, PT_VS("c"));
+    val = plot_env_get(plot_get_env(), PT_VS("c"));
     ck_assert_msg( 0 != val, "env did not contain 'c'");
     ck_assert_msg( val->type == plot_type_string, "c was not of type 'plot_type_string'");
     ck_assert_str_eq( val->u.string.val, "pass" );

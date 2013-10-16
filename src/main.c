@@ -16,7 +16,6 @@ void usage(void);
 int main(int argc, char **argv){
     char *source, *filename;
     plot_program *prog;
-    plot *plot;
 
     if( argc < 2 ){
         puts("No scheme source file specified");
@@ -31,8 +30,7 @@ int main(int argc, char **argv){
         exit(0);
     }
 
-    plot = plot_init();
-    if( ! plot ){
+    if( ! plot_init() ){
         /* FIXME error */
         puts("error in plot_init");
         exit(1);
@@ -53,7 +51,7 @@ int main(int argc, char **argv){
         exit(1);
     }
 
-    if( ! plot_eval(plot->env, prog) ){
+    if( ! plot_eval(plot_get_env(), prog) ){
         /* FIXME error */
         puts("error occurred in plot_eval");
         exit(1);
@@ -61,7 +59,7 @@ int main(int argc, char **argv){
 
     free(source);
     free(prog);
-    plot_cleanup(plot);
+    plot_cleanup();
 
     return 0;
 }

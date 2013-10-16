@@ -8,6 +8,12 @@
 
 #define LENGTH(x) (sizeof x / sizeof x[0])
 
+typedef struct plot {
+    struct plot_env *env;
+} plot;
+
+static plot *plot_instance;
+
 /* functions to bind */
 struct plot_binding {
     plot_symbol sym;
@@ -41,34 +47,40 @@ struct plot_binding bindings[] = {
     {{"newline",   7,  7}, {plot_type_builtin, {.builtin = {plot_func_newline}}}}
 };
 
-plot * plot_init(void){
-    plot * p;
+int plot_init(void){
     size_t i=0;
 
-    p = calloc(1, sizeof *p);
-    if( ! p ){
+    plot_instance = calloc(1, sizeof *plot_instance);
+    if( ! plot_instance ){
         puts("alloc failed in plot_init");
         return 0;
     }
 
-    p->env = plot_env_init(0);
-    if( ! p->env ){
+    plot_instance->env = plot_env_init(0);
+    if( ! plot_instance->env ){
         puts("call to plot_env_init failed");
-        plot_cleanup(p);
+        plot_cleanup();
         return 0;
     }
 
     for( i=0; i<LENGTH(bindings); ++i ){
-        if( ! plot_env_define( p->env, &(bindings[i].sym), &(bindings[i].func) ) ){
+        if( ! plot_env_define( plot_instance->env, &(bindings[i].sym), &(bindings[i].func) ) ){
             printf("error in plot_init defining symbol '%s'\n", bindings[i].sym.val);
         }
     }
 
-    return p;
+    return 1;
 }
 
-void plot_cleanup(plot * p){
-    plot_env_cleanup(p->env);
-    free(p);
+struct plot_env * plot_get_env(void){
+    if( ! plot_instance )
+        return 0;
+
+    return plot_instance->env;
+}
+
+void plot_cleanup(){
+    plot_env_cleanup(plot_instance->env);
+    free(plot_instance);
 }
 

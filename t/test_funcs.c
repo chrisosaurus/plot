@@ -65,7 +65,6 @@ struct plot_test_funcs_tests {
 
 START_TEST (test_funcs_math){
     unsigned int i;
-    plot *pl;
     const plot_value *r;
 
     struct plot_test_funcs_tests bindings[] = {
@@ -79,10 +78,11 @@ START_TEST (test_funcs_math){
 
     puts("\ttesting math functions");
 
-    fail_if( 0 == (pl = plot_init()) );
+    fail_if( 0 == plot_init() );
+    fail_if( 0 == plot_get_env() );
 
     for( i=0; i < PTF_LENGTH(bindings); ++i ){
-        r = PTF_CALL_BUILTIN(i)( pl->env, PTF_ARGS(i) );
+        r = PTF_CALL_BUILTIN(i)( plot_get_env(), PTF_ARGS(i) );
         if( 0 == r ){
             puts(PTF_ERR(i));
             puts("received a NULL return value");
@@ -100,7 +100,6 @@ END_TEST
 
 START_TEST (test_funcs_comparison){
     unsigned int i;
-    plot *pl;
     const plot_value *r;
 
     struct plot_test_funcs_tests bindings[] = {
@@ -114,10 +113,11 @@ START_TEST (test_funcs_comparison){
 
     puts("\ttesting comparison functions");
 
-    fail_if( 0 == (pl = plot_init()) );
+    fail_if( 0 == plot_init() );
+    fail_if( 0 == plot_get_env() );
 
     for( i=0; i < PTF_LENGTH(bindings); ++i ){
-        r = PTF_CALL_BUILTIN(i)( pl->env, PTF_ARGS(i) );
+        r = PTF_CALL_BUILTIN(i)( plot_get_env(), PTF_ARGS(i) );
         if( 0 == r ){
             puts(PTF_ERR(i));
             puts("received a NULL return value");
@@ -135,7 +135,6 @@ END_TEST
 
 START_TEST (test_funcs_value_tests){
     unsigned int i;
-    plot *pl;
     const plot_value *r;
 
     struct plot_test_funcs_tests bindings[] = {
@@ -162,10 +161,11 @@ START_TEST (test_funcs_value_tests){
 
     puts("\ttesting comparison functions");
 
-    fail_if( 0 == (pl = plot_init()) );
+    fail_if( 0 == plot_init() );
+    fail_if( 0 == plot_get_env() );
 
     for( i=0; i < PTF_LENGTH(bindings); ++i ){
-        r = PTF_CALL_BUILTIN(i)( pl->env, PTF_ARGS_LEN(i, 1) );
+        r = PTF_CALL_BUILTIN(i)( plot_get_env(), PTF_ARGS_LEN(i, 1) );
         if( 0 == r ){
             puts(PTF_ERR(i));
             puts("received a NULL return value");
