@@ -100,7 +100,13 @@ void plot_decr(struct plot_gc *p){
 
 /* get new value */
 struct plot_value * plot_value_new(void){
-    return calloc(1, sizeof(struct plot_value));
+    struct plot_value *v =  calloc(1, sizeof(struct plot_value ));
+    if( ! v ){
+        /* TODO FIXME use plot error handling */
+        puts("plot_value_new: calloc failed, dying");
+        exit(1);
+    }
+    return v;
 }
 
 

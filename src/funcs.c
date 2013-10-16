@@ -154,10 +154,10 @@ const plot_value * plot_func_add(plot_env *env, const plot_expr *args, int argc)
         sum += tmp->u.number.val;
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( !res ){
         #if DEBUG
-        puts("res failed to calloc");
+        puts("res failed call to plot_value_new");
         #endif
         return 0; /* ERROR */
     }
@@ -216,10 +216,10 @@ const plot_value * plot_func_subtract(plot_env *env, const plot_expr *args, int 
         }
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( !res ){
         #if DEBUG
-        puts("res failed to calloc");
+        puts("res failed call to plot_value_new");
         #endif
         return 0; /* ERROR */
     }
@@ -276,10 +276,10 @@ const plot_value * plot_func_multiply(plot_env *env, const plot_expr *args, int 
         product *= tmp->u.number.val;
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( !res ){
         #if DEBUG
-        puts("res failed to calloc");
+        puts("res failed call to plot_value_new");
         #endif
         return 0; /* ERROR */
     }
@@ -335,10 +335,10 @@ const struct plot_value * plot_func_divide(struct plot_env *env, const struct pl
             quotient /= tmp->u.number.val;
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( !res ){
         #if DEBUG
-        puts("res failed to calloc");
+        puts("res failed call to plot_value_new");
         #endif
         return 0; /* ERROR */
     }
@@ -401,10 +401,10 @@ const struct plot_value * plot_func_remainder(struct plot_env *env, const struct
             remainder %= tmp->u.number.val;
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( !res ){
         #if DEBUG
-        puts("res failed to calloc");
+        puts("res failed call to plot_value_new");
         #endif
         return 0; /* ERROR */
     }
@@ -442,10 +442,10 @@ const struct plot_value * plot_func_equal(struct plot_env *env, const struct plo
         return 0; /* FIXME error */
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( ! res ){
         #if DEBUG
-        puts("called to calloc failed");
+        puts("called to plot_value_new failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -507,10 +507,10 @@ const struct plot_value * plot_func_less(struct plot_env *env, const struct plot
         return 0; /* FIXME error */
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( ! res ){
         #if DEBUG
-        puts("called to calloc failed");
+        puts("called to plot_value_new failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -575,10 +575,10 @@ const struct plot_value * plot_func_greater(struct plot_env *env, const struct p
         return 0; /* FIXME error */
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( ! res ){
         #if DEBUG
-        puts("called to calloc failed");
+        puts("called to plot_value_new failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -642,10 +642,10 @@ const struct plot_value * plot_func_less_equal(struct plot_env *env, const struc
         return 0; /* FIXME error */
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( ! res ){
         #if DEBUG
-        puts("called to calloc failed");
+        puts("called to plot_value_new failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -709,10 +709,10 @@ const struct plot_value * plot_func_greater_equal(struct plot_env *env, const st
         return 0; /* FIXME error */
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( ! res ){
         #if DEBUG
-        puts("called to calloc failed");
+        puts("called to plot_value_new failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -773,10 +773,10 @@ const struct plot_value * plot_func_boolean_test(struct plot_env *env, const str
         return 0; /* FIXME error */
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( ! res ){
         #if DEBUG
-        puts("called to calloc failed");
+        puts("called to plot_value_new failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -824,10 +824,10 @@ const struct plot_value * plot_func_symbol_test(struct plot_env *env, const stru
         return 0; /* FIXME error */
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( ! res ){
         #if DEBUG
-        puts("called to calloc failed");
+        puts("called to plot_value_new failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -875,10 +875,10 @@ const struct plot_value * plot_func_string_test(struct plot_env *env, const stru
         return 0; /* FIXME error */
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( ! res ){
         #if DEBUG
-        puts("called to calloc failed");
+        puts("called to plot_value_new failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -926,10 +926,10 @@ const struct plot_value * plot_func_number_test(struct plot_env *env, const stru
         return 0; /* FIXME error */
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( ! res ){
         #if DEBUG
-        puts("called to calloc failed");
+        puts("called to plot_value_new failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -977,10 +977,10 @@ const struct plot_value * plot_func_procedure_test(struct plot_env *env, const s
         return 0; /* FIXME error */
     }
 
-    res = calloc(1, sizeof *res);
+    res = plot_value_new();
     if( ! res ){
         #if DEBUG
-        puts("called to calloc failed");
+        puts("called to plot_value_new failed");
         #endif
         return 0; /* FIXME error */
     }
