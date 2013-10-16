@@ -48,5 +48,16 @@ void plot_decr(struct plot_gc *p);
 /* get new value */
 struct plot_value * plot_new_value(void);
 
+/* get new env */
+struct plot_env * plot_new_env(void);
+
+/* get new hash */
+struct plot_hash * plot_new_hash(void);
+
+/* get new hash entry */
+struct plot_hash_entry * plot_new_hash_entry(void);
+
+/* get new string */
+char * plot_new_string(int len);
 
 #endif

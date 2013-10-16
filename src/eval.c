@@ -310,7 +310,7 @@ const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
                     }
                 }
 
-                tmp = calloc(1, sizeof *value);
+                tmp = plot_new_value();
                 if( ! tmp ){
                     #if DEBUG_FORM || DEBUG
                     puts("LAMBDA: failed to calloc");

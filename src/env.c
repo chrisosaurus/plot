@@ -1,9 +1,9 @@
-#include <stdlib.h> /* calloc, free */
 #include <stdio.h> /* puts */
 
 #include "value.h"
 #include "hash.h"
 #include "env.h"
+#include "plot.h"
 
 #define DEBUG 0
 
@@ -13,7 +13,7 @@
  * returns pointer to new env or 0 on error
  */
 plot_env * plot_env_init(plot_env *parent){
-    plot_env *e = calloc(1, sizeof *e);
+    plot_env *e = plot_new_env();
     if( ! e )
         return 0;
 
@@ -32,7 +32,7 @@ void plot_env_cleanup(plot_env *env){
         return;
 
     plot_hash_cleanup(env->hash);
-    free(env);
+    /* FIXME need to deref */
 }
 
 /* resolve a symbol to a value

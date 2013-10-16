@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 #include "value.h"
+#include "hash.h"
 #include "env.h"
 #include "funcs.h"
 #include "plot.h"
@@ -109,5 +110,51 @@ struct plot_value * plot_new_value(void){
     return v;
 }
 
+/* get new env */
+struct plot_env * plot_new_env(void){
+    struct plot_env *e;
+    e = calloc(1, sizeof *e);
+    if( ! e ){
+        /* TODO FIXME use plot error handling */
+        puts("plot_new_env: calloc failed, dying");
+        exit(1);
+    }
+    return e;
+}
 
+/* get new hash */
+struct plot_hash * plot_new_hash(void){
+    struct plot_hash *h;
+    h = calloc(1, sizeof *h);
+    if( ! h ){
+        /* TODO FIXME use plot error handling */
+        puts("plot_new_hash: calloc failed, dying");
+        exit(1);
+    }
+    return h;
+}
+
+/* get new hash entry */
+struct plot_hash_entry * plot_new_hash_entry(void){
+    struct plot_hash_entry *he;
+    he = calloc(1, sizeof *he);
+    if( ! he ){
+        /* TODO FIXME use plot error handling */
+        puts("plot_new_hash_entry: calloc failed, dying");
+        exit(1);
+    }
+    return he;
+}
+
+/* get new string */
+char * plot_new_string(int len){
+    char * c;
+    c = calloc(len, sizeof *c);
+    if( ! c ){
+        /* TODO FIXME use plot error handling */
+        puts("plot_new_string: calloc failed, dying");
+        exit(1);
+    }
+    return c;
+}
 

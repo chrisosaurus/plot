@@ -1,9 +1,9 @@
 #include <string.h> /* strcmp */
-#include <stdlib.h> /* calloc, free */
 #include <stdio.h> /* puts */
 
 #include "value.h"
 #include "hash.h"
+#include "plot.h"
 
 #define DEBUG 0
 
@@ -15,7 +15,7 @@
  */
 plot_hash * plot_hash_init(void){
     plot_hash *hash;
-    hash = calloc(1, sizeof(*hash));
+    hash = plot_new_hash();
     if( ! hash )
         return 0; /* ERROR: calloc failed */
     return hash;
@@ -32,10 +32,10 @@ void plot_hash_cleanup(plot_hash *hash){
 
     for( cur = hash->head; cur; cur = nxt ){
         nxt = cur->next;
-        free(cur);
+        /* FIXME need to deref each hash_entry */
     }
 
-    free(hash);
+    /* FIXME need to deref */
 }
 
 
@@ -115,7 +115,7 @@ int plot_hash_set(plot_hash *hash, const plot_symbol * key, const plot_value *va
      *
      * regardless, *e is our next and *e is where we store ourselves
      */
-    n = calloc(1, sizeof(*n));
+    n = plot_new_hash_entry();
     if( ! n )
         return 0;/* ERROR: calloc failed */
     n->key = key;
