@@ -2,6 +2,7 @@
 #define PLOT_VALUE_H
 
 #include <stdbool.h>
+#include "plot.h" /* needed for plot_gc */
 
 typedef enum plot_value_type{
     plot_type_number,
@@ -89,6 +90,7 @@ typedef struct plot_builtin {
 } plot_builtin;
 
 typedef struct plot_value {
+    struct plot_gc gc;
     plot_value_type type;
     union {
         plot_number    number;

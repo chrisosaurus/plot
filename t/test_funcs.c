@@ -30,19 +30,19 @@ struct plot_test_funcs_tests {
 #define PTF_EV(e) {plot_expr_value, {.value=e}}
 
 /* plot test value number */
-#define PTF_VN(n) {plot_type_number, {.number={n}}}
+#define PTF_VN(n) {{-1}, plot_type_number, {.number={n}}}
 
 /* plot test value boolean */
-#define PTF_VBO(n) {plot_type_boolean, {.boolean={n}}}
+#define PTF_VBO(n) {{-1}, plot_type_boolean, {.boolean={n}}}
 
 /* plot test value string */
-#define PTF_VST(n) {plot_type_string, {.string={n, 10, 10}}}
+#define PTF_VST(n) {{-1}, plot_type_string, {.string={n, 10, 10}}}
 
 /* plot test value symbol */
-#define PTF_VSY(n) {plot_type_symbol, {.symbol={n, 10, 10}}}
+#define PTF_VSY(n) {{-1}, plot_type_symbol, {.symbol={n, 10, 10}}}
 
 /* plot test builtin value funct */
-#define PTF_VBU(f) {plot_type_builtin, {.builtin = {f}}}
+#define PTF_VBU(f) {{-1}, plot_type_builtin, {.builtin = {f}}}
 
 /* length of array */
 #define PTF_LENGTH(x) (sizeof x / sizeof x[0])
