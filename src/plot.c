@@ -190,7 +190,7 @@ void plot_value_init(void){
 
     plot_instance->num_values_used = 0;
     plot_instance->reclaimed = 0;
-    plot_instance->num_values_allocated = 100; /* FIXME small value, sufficient to pass unit tests */
+    plot_instance->num_values_allocated = 300; /* FIXME small value, sufficient to pass unit tests */
     plot_instance->arena = calloc( plot_instance->num_values_allocated, sizeof (struct plot_value) );
     if( ! plot_instance->arena ){
         puts("plot_value_init ERROR: failed to calloc arena");

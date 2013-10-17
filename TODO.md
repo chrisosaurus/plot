@@ -3,8 +3,6 @@ TODO(s):
 
 garbage collection:
 -------------------
-* most importantly - need to have parse allocated values via plot_new_value
-* if form - eval_value_truthy needs to have a line uncommented one parsing values allocate 'correctly'
 * lambda form
 * func call
 * func_ *

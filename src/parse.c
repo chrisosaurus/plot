@@ -204,21 +204,23 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
          */
         int len = (*upto) - start + 1;
         expr->type = plot_expr_value;
-        expr->u.value.u.string.val = tmp = calloc(len, sizeof(char));
-        expr->u.value.u.string.len = len;
-        expr->u.value.u.string.size = len;
+        expr->u.value = plot_new_value();
+        expr->u.value->u.string.val = tmp = calloc(len, sizeof(char));
+        expr->u.value->u.string.len = len;
+        expr->u.value->u.string.size = len;
         strncpy(tmp, &source[start], (*upto) - start);
-        expr->u.value.type = plot_type_string;
+        expr->u.value->type = plot_type_string;
         ++ *upto;
     }
     /* if inside_value then a value was consumed */
     else if( inside_value ){
         char *invalid;
         expr->type = plot_expr_value;
+        expr->u.value = plot_new_value();
         if( isdigit(source[start]) ){ /* FIXME source[start] may not be correct, want to really look at first non-whitespace */
             /* if digit then number */
-            expr->u.value.u.number.val = strtol( &source[start], &invalid, 10 );
-            expr->u.value.type = plot_type_number;
+            expr->u.value->u.number.val = strtol( &source[start], &invalid, 10 );
+            expr->u.value->type = plot_type_number;
             if( invalid != &source[*upto] ){
                 puts("ERROR: conversion of token to t via strtol encountered an error\n");
                 return 0;
@@ -226,23 +228,23 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
         } else if( source[start] == '#' ){ /* FIXME source[start] may not be correct, want to really look at first non-whitespace */
             /* boolean */
             if( source[*upto] == 't' ){
-                expr->u.value.u.boolean.val = true;
+                expr->u.value->u.boolean.val = true;
             } else if( source[*upto] == 'f' ){
-                expr->u.value.u.boolean.val = false;
+                expr->u.value->u.boolean.val = false;
             } else {
                 puts("ERROR: invalid boolean in plot_parse_expr");
                 return 0;
             }
-            expr->u.value.type = plot_type_boolean;
+            expr->u.value->type = plot_type_boolean;
             ++ *upto;
         } else {
             /* otherwise it is a symbol */
             int len = (*upto) - start + 1;
-            expr->u.value.u.symbol.val = tmp = calloc(len, sizeof(char));
-            expr->u.value.u.symbol.len = len;
-            expr->u.value.u.symbol.size = len;
+            expr->u.value->u.symbol.val = tmp = calloc(len, sizeof(char));
+            expr->u.value->u.symbol.len = len;
+            expr->u.value->u.symbol.size = len;
             strncpy(tmp, &source[start], (*upto) - start);
-            expr->u.value.type = plot_type_symbol;
+            expr->u.value->type = plot_type_symbol;
         }
     }
 

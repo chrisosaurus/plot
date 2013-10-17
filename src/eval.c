@@ -67,7 +67,7 @@ plot_value * plot_eval_expr(plot_env *env, plot_expr * expr){
             #if DEBUG_EXPR || DEBUG
             puts("dispatching to plot_eval_value");
             #endif
-            return plot_eval_value(env, &(expr->u.value));
+            return plot_eval_value(env, expr->u.value);
             break;
         case plot_expr_sexpr:
             #if DEBUG_EXPR || DEBUG
@@ -140,7 +140,7 @@ static int plot_is_form(plot_sexpr * sexpr){
     if( sexpr->subforms[0].type != plot_expr_value )
         return 0;
 
-    val = &(sexpr->subforms[0].u.value);
+    val = sexpr->subforms[0].u.value;
     switch( val->type){
         case plot_type_symbol:
             if( ! strcmp(val->u.symbol.val, "define") ){
@@ -211,10 +211,7 @@ static int plot_eval_truthy(plot_value *val){
     if( val->type == plot_type_boolean && val->u.boolean.val == false )
         ret =  0;
 
-    /* TODO FIXME this would currently break boolean values
-     * as they are allocated within parse and not via plot_new_value
-     */
-    //plot_value_decr(val);
+    plot_value_decr(val);
 
     return ret;
 }
@@ -254,7 +251,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
         return 0; /* FIXME ERROR */
     }
 
-    form = &(sexpr->subforms[0].u.value);
+    form = sexpr->subforms[0].u.value;
     switch( form->type){
         case plot_type_symbol:
             if( ! strcmp(form->u.symbol.val, "define") ){
@@ -272,7 +269,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                     return 0; /* FIXME ERROR */
                 }
                 /* do we even know this is a value yet ? */
-                name = &(sexpr->subforms[1].u.value);
+                name = sexpr->subforms[1].u.value;
                 if( name->type != plot_type_symbol ){
                     #if DEBUG_FORM || DEBUG
                     puts("DEFINE: incorrect 1st arg value type");
@@ -316,7 +313,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                         puts("LAMBDA: invalid param type, expected value");
                         return 0; /* FIXME error */
                     }
-                    if( sexpr->subforms[1].u.sexpr.subforms[i].u.value.type != plot_type_symbol ){
+                    if( sexpr->subforms[1].u.sexpr.subforms[i].u.value->type != plot_type_symbol ){
                         puts("LAMBDA: invalid param type, expected symbol");
                         return 0; /* FIXME error */
                     }
@@ -413,7 +410,7 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
         #if DEBUG_FUNC || DEBUG
         puts("plot_eval_func_call: subform is a value");
         #endif
-        val = &(sexpr->subforms[0].u.value);
+        val = sexpr->subforms[0].u.value;
     }
 
 
@@ -463,7 +460,7 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
                             puts("LAMBDA: expected value");
                             return 0; /* FIXME error */
                         }
-                        if( func->u.lambda.body->subforms[1].u.sexpr.subforms[i].u.value.type != plot_type_symbol ){
+                        if( func->u.lambda.body->subforms[1].u.sexpr.subforms[i].u.value->type != plot_type_symbol ){
                             puts("LAMBDA: expected symbol");
                             return 0; /* FIXME error */
                         }
@@ -472,7 +469,7 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
                             puts("LAMBDA: evaluating argument returned NULL");
                             return 0; /* FIXME error */
                         }
-                        if( ! plot_env_define(new_env, &(func->u.lambda.body->subforms[1].u.sexpr.subforms[i].u.value.u.symbol), val) ){
+                        if( ! plot_env_define(new_env, &(func->u.lambda.body->subforms[1].u.sexpr.subforms[i].u.value->u.symbol), val) ){
                             puts("LAMBDA: failed to define argument");
                             return 0; /* FIXME error */
                         }

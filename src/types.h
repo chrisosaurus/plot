@@ -26,7 +26,7 @@ typedef struct plot_expr {
     plot_expr_type type;
     union {
         plot_sexpr sexpr;
-        plot_value value;
+        plot_value *value;
     } u;
 } plot_expr;
 
