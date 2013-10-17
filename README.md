@@ -29,6 +29,7 @@ plot currently has:
 * printing of newline (`newline`)
 * comments (`;`)
 * value testing functions: `boolean?`, `string?`, `number?`, `symbol?`, and `procedure?`
+* very basic managed memory for values (including garbage collection)
 
 example: (see `make simple`)
 

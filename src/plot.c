@@ -165,9 +165,9 @@ void plot_value_decr(struct plot_value *p){
         --p->gc.refcount;
         if( p->gc.refcount == 0 ){
             /* time to reclaim */
-            //puts("RECLAIMING");
+            //fprintf(stderr, "RECLAIMING\n"); // 2692537
             p->gc.next = (struct plot_gc *) plot_instance->reclaimed;
-            plot_instance->reclaimed = (struct plot_value *) p->gc.next;
+            plot_instance->reclaimed = (struct plot_value *) p;
             p->type = plot_type_reclaimed; /* FIXME useful for testing */
         }
     } else {
@@ -190,7 +190,12 @@ void plot_value_init(void){
 
     plot_instance->num_values_used = 0;
     plot_instance->reclaimed = 0;
-    plot_instance->num_values_allocated = 300; /* FIXME small value, sufficient to pass unit tests */
+    /* FIXME
+     * before gc fibo(31) would require 6731342 plot_values
+     * after tracking waste, this included 2692537 wasted values (mostly from if test position)
+     * this means the minimum size of num)values_allocated must be 6731342 - 2692537 = 4038805
+     */
+    plot_instance->num_values_allocated = 4100000;
     plot_instance->arena = calloc( plot_instance->num_values_allocated, sizeof (struct plot_value) );
     if( ! plot_instance->arena ){
         puts("plot_value_init ERROR: failed to calloc arena");
@@ -208,6 +213,7 @@ struct plot_value * plot_new_value(void){
 
     if( plot_instance->num_values_used >= plot_instance->num_values_allocated ){
         if( plot_instance->reclaimed ){
+            //fprintf(stderr, "reusing\n");
             p = plot_instance->reclaimed;
             /* gc is the first element of plot_value so this is safe */
             plot_instance->reclaimed = (plot_value *) p->gc.next;

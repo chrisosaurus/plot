@@ -6,4 +6,4 @@
         (fibo (- n 1))
         (fibo (- n 2))))))
 
-(display (fibo 30))
+(display (fibo 31))
