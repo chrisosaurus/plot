@@ -3,7 +3,6 @@ TODO(s):
 
 garbage collection:
 -------------------
-* define form
 * if form
 * lambda form
 * func call
