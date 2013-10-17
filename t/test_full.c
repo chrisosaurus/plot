@@ -83,12 +83,12 @@ START_TEST (test_full_harder){
     ck_assert_msg( prog->exprs[2].type == plot_expr_sexpr, "child 2 was not of type 'plot_expr_sexpr'");
 
     ck_assert_msg( prog->exprs[0].u.sexpr.subforms[0].type == plot_expr_value, "grandchild 0 was not of type 'plot_expr_value'");
-    ck_assert_msg( prog->exprs[0].u.sexpr.subforms[0].u.value.type == plot_type_symbol, "grandchild 0 did not contain type 'plot_type_symbol'");
-    ck_assert_str_eq( prog->exprs[0].u.sexpr.subforms[0].u.value.u.symbol.val, "define");
+    ck_assert_msg( prog->exprs[0].u.sexpr.subforms[0].u.value->type == plot_type_symbol, "grandchild 0 did not contain type 'plot_type_symbol'");
+    ck_assert_str_eq( prog->exprs[0].u.sexpr.subforms[0].u.value->u.symbol.val, "define");
 
     ck_assert_msg( prog->exprs[0].u.sexpr.subforms[1].type == plot_expr_value, "grandchild 1 was not of type 'plot_expr_value'");
-    ck_assert_msg( prog->exprs[0].u.sexpr.subforms[1].u.value.type == plot_type_symbol, "grandchild 0 did not contain type 'plot_type_symbol'");
-    ck_assert_str_eq( prog->exprs[0].u.sexpr.subforms[1].u.value.u.symbol.val, "adder");
+    ck_assert_msg( prog->exprs[0].u.sexpr.subforms[1].u.value->type == plot_type_symbol, "grandchild 0 did not contain type 'plot_type_symbol'");
+    ck_assert_str_eq( prog->exprs[0].u.sexpr.subforms[1].u.value->u.symbol.val, "adder");
 
 
     puts("\t\ttesting eval");

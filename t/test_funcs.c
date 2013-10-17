@@ -17,7 +17,7 @@
 
 /* functions to bind */
 struct plot_test_funcs_tests {
-    plot_value func;
+    plot_value *func;
     plot_expr args[2];
     union {
         const int expected;
@@ -30,25 +30,25 @@ struct plot_test_funcs_tests {
 #define PTF_EV(e) {plot_expr_value, {.value=e}}
 
 /* plot test value number */
-#define PTF_VN(n) {{-1, 0}, plot_type_number, {.number={n}}}
+#define PTF_VN(n) &(plot_value){{-1, 0}, plot_type_number, {.number={n}}}
 
 /* plot test value boolean */
-#define PTF_VBO(n) {{-1, 0}, plot_type_boolean, {.boolean={n}}}
+#define PTF_VBO(n) &(plot_value){{-1, 0}, plot_type_boolean, {.boolean={n}}}
 
 /* plot test value string */
-#define PTF_VST(n) {{-1, 0}, plot_type_string, {.string={n, 10, 10}}}
+#define PTF_VST(n) &(plot_value){{-1, 0}, plot_type_string, {.string={n, 10, 10}}}
 
 /* plot test value symbol */
-#define PTF_VSY(n) {{-1, 0}, plot_type_symbol, {.symbol={n, 10, 10}}}
+#define PTF_VSY(n) &(plot_value){{-1, 0}, plot_type_symbol, {.symbol={n, 10, 10}}}
 
 /* plot test builtin value funct */
-#define PTF_VBU(f) {{-1, 0}, plot_type_builtin, {.builtin = {f}}}
+#define PTF_VBU(f) &(plot_value){{-1, 0}, plot_type_builtin, {.builtin = {f}}}
 
 /* length of array */
 #define PTF_LENGTH(x) (sizeof x / sizeof x[0])
 
 /* call builtin given index */
-#define PTF_CALL_BUILTIN(i) bindings[i].func.u.builtin.func
+#define PTF_CALL_BUILTIN(i) bindings[i].func->u.builtin.func
 
 /* yield args and len given index */
 #define PTF_ARGS(i) bindings[i].args, PTF_LENGTH(bindings[i].args)
@@ -274,53 +274,57 @@ END_TEST
 
 START_TEST (test_display){
     plot_expr v, s;
-    plot_env *env;
-    env = plot_env_init(0);
-
 
     v.type = plot_expr_value;
     puts("\n\tTesting display of values");
+    fail_if( 0 == plot_init() );
+
+    /* allocate our values once */
+    v.u.value = plot_new_value();
+    s.u.value = plot_new_value();
 
     puts("\t\ttesting display of number (expected '3')");
-    v.u.value.type = plot_type_number;
-    v.u.value.u.number.val = 3;
-    plot_func_display(env, &v, 1);
+    v.u.value->type = plot_type_number;
+    v.u.value->u.number.val = 3;
+    plot_func_display(plot_get_env(), &v, 1);
     puts(""); /* trailing \n */
 
     puts("\t\ttesting display of symbol (expected '3')");
     s.type = plot_expr_value;
-    s.u.value.type = plot_type_symbol;
+    s.u.value->type = plot_type_symbol;
 #define TEST_DISPLAY_SYMBOL "symbol"
-    s.u.value.u.symbol.val = TEST_DISPLAY_SYMBOL;
-    s.u.value.u.symbol.size = strlen(TEST_DISPLAY_SYMBOL) + 1;
-    s.u.value.u.symbol.len = strlen(TEST_DISPLAY_SYMBOL) + 1;
-    fail_unless( 1 == plot_env_define(env, &(s.u.value.u.symbol), &(v.u.value)) );
-    plot_func_display(env, &s, 1);
+    s.u.value->u.symbol.val = TEST_DISPLAY_SYMBOL;
+    s.u.value->u.symbol.size = strlen(TEST_DISPLAY_SYMBOL) + 1;
+    s.u.value->u.symbol.len = strlen(TEST_DISPLAY_SYMBOL) + 1;
+    fail_unless( 1 == plot_env_define(plot_get_env(), &(s.u.value->u.symbol), v.u.value) );
+    plot_func_display(plot_get_env(), &s, 1);
     puts(""); /* trailing \n */
 
     puts("\t\ttesting display of string (expected 'testing display of string')");
     s.type = plot_expr_value;
-    s.u.value.type = plot_type_string;
+    s.u.value->type = plot_type_string;
 #define TEST_DISPLAY_STRING "testing display of string"
-    s.u.value.u.string.val = TEST_DISPLAY_STRING;
-    s.u.value.u.string.size = strlen(TEST_DISPLAY_STRING) +1;
-    s.u.value.u.string.len = strlen(TEST_DISPLAY_STRING) + 1;
-    plot_func_display(env, &s, 1);
+    s.u.value->u.string.val = TEST_DISPLAY_STRING;
+    s.u.value->u.string.size = strlen(TEST_DISPLAY_STRING) +1;
+    s.u.value->u.string.len = strlen(TEST_DISPLAY_STRING) + 1;
+    plot_func_display(plot_get_env(), &s, 1);
     puts(""); /* trailing \n */
 
 
     puts("\t\ttesting display of function");
-    v.u.value.type = plot_type_builtin;
-    v.u.value.u.builtin.func = 0;
-    plot_func_display(env, &v, 1);
+    v.u.value->type = plot_type_builtin;
+    v.u.value->u.builtin.func = 0;
+    plot_func_display(plot_get_env(), &v, 1);
 
     /* last as this will cause an exit(1) */
     puts("\t\ttesting display of error (error expected)");
-    v.u.value.type = plot_type_error;
-    v.u.value.u.error.type = plot_error_internal;
-    v.u.value.u.error.msg = "testing display of error";
-    v.u.value.u.error.location = "test_display";
-    plot_func_display(env, &v, 1);
+    v.u.value->type = plot_type_error;
+    v.u.value->u.error.type = plot_error_internal;
+    v.u.value->u.error.msg = "testing display of error";
+    v.u.value->u.error.location = "test_display";
+    plot_func_display(plot_get_env(), &v, 1);
+
+    plot_cleanup();
 }
 END_TEST
 
