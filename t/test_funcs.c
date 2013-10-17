@@ -30,19 +30,19 @@ struct plot_test_funcs_tests {
 #define PTF_EV(e) {plot_expr_value, {.value=e}}
 
 /* plot test value number */
-#define PTF_VN(n) {{-1}, plot_type_number, {.number={n}}}
+#define PTF_VN(n) {{-1, 0}, plot_type_number, {.number={n}}}
 
 /* plot test value boolean */
-#define PTF_VBO(n) {{-1}, plot_type_boolean, {.boolean={n}}}
+#define PTF_VBO(n) {{-1, 0}, plot_type_boolean, {.boolean={n}}}
 
 /* plot test value string */
-#define PTF_VST(n) {{-1}, plot_type_string, {.string={n, 10, 10}}}
+#define PTF_VST(n) {{-1, 0}, plot_type_string, {.string={n, 10, 10}}}
 
 /* plot test value symbol */
-#define PTF_VSY(n) {{-1}, plot_type_symbol, {.symbol={n, 10, 10}}}
+#define PTF_VSY(n) {{-1, 0}, plot_type_symbol, {.symbol={n, 10, 10}}}
 
 /* plot test builtin value funct */
-#define PTF_VBU(f) {{-1}, plot_type_builtin, {.builtin = {f}}}
+#define PTF_VBU(f) {{-1, 0}, plot_type_builtin, {.builtin = {f}}}
 
 /* length of array */
 #define PTF_LENGTH(x) (sizeof x / sizeof x[0])
@@ -95,6 +95,8 @@ START_TEST (test_funcs_math){
             ck_abort_msg(PTF_ERR(i));
         }
     }
+
+    plot_cleanup();
 }
 END_TEST
 
@@ -130,6 +132,8 @@ START_TEST (test_funcs_comparison){
             ck_abort_msg(PTF_ERR(i));
         }
     }
+
+    plot_cleanup();
 }
 END_TEST
 
@@ -178,6 +182,8 @@ START_TEST (test_funcs_value_tests){
             ck_abort_msg(PTF_ERR(i));
         }
     }
+
+    plot_cleanup();
 }
 END_TEST
 
@@ -197,11 +203,9 @@ END_TEST
 START_TEST (test_funcs_env){
     plot_symbol sym;
     plot_value add;
+    const plot_value *f;
     plot_env *env = plot_env_init(0);
 
-    const plot_value *res;
-    plot_expr vals[2];
-    const plot_value *f;
 
     sym.val = "+";
     sym.len = 2;
@@ -212,23 +216,10 @@ START_TEST (test_funcs_env){
     puts("\tdefining function add");
     fail_unless( 1 == plot_env_define(env, &sym, &add) );
 
-    vals[0].type = plot_expr_value;
-    vals[0].u.value.type = plot_type_number;
-    vals[0].u.value.u.number.val = 4;
-
-    vals[1].type = plot_expr_value;
-    vals[1].u.value.type = plot_type_number;
-    vals[1].u.value.u.number.val = 5;
-
     puts("\ttesting fetching function");
     fail_if( 0 == (f = plot_env_get(env, &sym)) );
     fail_unless( f->type == plot_type_builtin );
     fail_unless( f->u.builtin.func == plot_func_add );
-
-    puts("\ttesting function call");
-    fail_if( 0 == (res = f->u.builtin.func(env, vals, 2)) );
-    fail_unless( res->type == plot_type_number );
-    fail_unless( res->u.number.val == 9 );
 
     plot_env_cleanup(env);
 }

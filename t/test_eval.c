@@ -20,22 +20,9 @@ START_TEST (test_eval_add){
     const plot_value *val;
     const char *ch;
     size_t i;
-    plot_env *env = plot_env_init(0);
     plot_expr expr;
 
-    plot_symbol sym;
-    plot_value add;
-
-    sym.val = "+";
-    sym.len = 2;
-    sym.size = 2;
-
-    add.type = plot_type_builtin;
-    add.u.builtin.func = plot_func_add;
-
-    /* FIXME TODO need to setup env to know about addition */
-    puts("\tdefining function add");
-    fail_unless( 1 == plot_env_define(env, &sym, &add) );
+    plot_init();
 
 #define PLOT_EVAL_SIMPLE "(+ 5 (+ 2 2))"
     ch = PLOT_EVAL_SIMPLE;
@@ -45,14 +32,14 @@ START_TEST (test_eval_add){
     fail_if( 0 == plot_parse_expr(&expr, ch, &i) );
 
     puts("\teval of '" PLOT_EVAL_SIMPLE "'");
-    fail_if( 0 == (val = plot_eval_expr(env, &expr)) );
+    fail_if( 0 == (val = plot_eval_expr(plot_get_env(), &expr)) );
     fail_unless( i == strlen(ch) );
     fail_unless( val->type == plot_type_number );
     fail_unless( val->u.number.val == 9 );
 
     printf("Expected number '9', got number '%d'\n", val->u.number.val);
 
-    plot_env_cleanup(env);
+    plot_cleanup();
 }
 END_TEST
 

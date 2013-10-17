@@ -39,15 +39,18 @@ struct plot_gc {
      * < = means this is NOT managed
      */
     int refcount;
+
+    /* pointer to next collected object (for reallocation) */
+    struct plot_gc *next;
 };
 
-/* increase reference count on object */
-void plot_incr(struct plot_gc *p);
+/* increase reference count on plot_value */
+void plot_value_incr(struct plot_value *p);
 
-/* decrease reference count on object
+/* decrease reference count on plot_value
  * may trigger collection
  */
-void plot_decr(struct plot_gc *p);
+void plot_value_decr(struct plot_value *p);
 
 /* get new value */
 struct plot_value * plot_new_value(void);

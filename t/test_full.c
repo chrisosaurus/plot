@@ -32,39 +32,10 @@ static const char *test_full_simple_input = "(define a (+ 4 5))\
 
 START_TEST (test_full_simple){
     plot_program *prog;
-    plot_env *env;
-
-    plot_value add, disp, newl;
-    plot_symbol sym_add, sym_disp, sym_newl;;
 
     puts("Full simple test");
     puts("\tTesting eval and parse combined");
-    env = plot_env_init(0);
-
-    sym_add.val = "+";
-    sym_add.len = 2;
-    sym_add.size = 2;
-    add.type = plot_type_builtin;
-    add.u.builtin.func = plot_func_add;
-    puts("\t\tdefining function 'add'");
-    fail_unless( 1 == plot_env_define(env, &sym_add, &add) );
-
-    sym_disp.val = "display";
-    sym_disp.len = 7;
-    sym_disp.size = 7;
-    disp.type = plot_type_builtin;
-    disp.u.builtin.func = plot_func_display;
-    puts("\t\tdefining function 'display'");
-    fail_unless( 1 == plot_env_define(env, &sym_disp, &disp) );
-
-    sym_newl.val = "newline";
-    sym_newl.len = 7;
-    sym_newl.size = 7;
-    newl.type = plot_type_builtin;
-    newl.u.builtin.func = plot_func_newline;
-    puts("\t\tdefining function 'newline'");
-    fail_unless( 1 == plot_env_define(env, &sym_newl, &newl) );
-
+    fail_if( 0 == plot_init() );
 
     puts("\t\ttesting parse");
     prog = plot_parse(test_full_simple_input);
@@ -72,9 +43,10 @@ START_TEST (test_full_simple){
     fail_unless( 12 == prog->nchildren );
 
     puts("\t\ttesting eval");
-    fail_if( 0 == plot_eval(env, prog) );
+    fail_if( 0 == plot_eval(plot_get_env(), prog) );
 
     puts("\tCompleted!");
+    plot_cleanup();
 
 }
 END_TEST
@@ -143,6 +115,7 @@ START_TEST (test_full_harder){
 
 
     puts("\tCompleted!");
+    plot_cleanup();
 }
 END_TEST
 
@@ -207,6 +180,7 @@ START_TEST (test_full_forms){
 
 
     puts("Completed!");
+    plot_cleanup();
 }
 END_TEST
 
