@@ -204,13 +204,19 @@ plot_value * plot_eval_sexpr(plot_env *env, plot_sexpr * sexpr){
  * returns 0 if falsy
  */
 static int plot_eval_truthy(plot_value *val){
+    int ret = 1;
     if( ! val )
         return 0;
 
     if( val->type == plot_type_boolean && val->u.boolean.val == false )
-        return 0;
+        ret =  0;
 
-    return 1;
+    /* TODO FIXME this would currently break boolean values
+     * as they are allocated within parse and not via plot_new_value
+     */
+    //plot_value_decr(val);
+
+    return ret;
 }
 
 /* eval a form in an environment
