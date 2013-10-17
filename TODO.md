@@ -7,7 +7,6 @@ garbage collection:
 * if form
 * lambda form
 * func call
-* eval_*
 * func_ *
 
 performance:

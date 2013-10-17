@@ -23,8 +23,9 @@
  * returns 1 for success, 0 for error
  */
 int plot_eval(plot_env *env, plot_program * prog){
-    plot_expr *expr;
+    plot_expr * expr;
     int i=0;
+    plot_value * val;
 
     #if DEBUG_EVAL || DEBUG
     puts("\ninside plot_eval");
@@ -40,7 +41,11 @@ int plot_eval(plot_env *env, plot_program * prog){
         #if DEBUG_EVAL || DEBUG
         printf("\ngoing through expr child (i) '%d' of (nchildren) '%d'\n", i, prog->nchildren);
         #endif
-        plot_eval_expr(env, expr);
+        val = plot_eval_expr(env, expr);
+        if( val ){
+            puts("TESTING");
+            plot_value_decr(val);
+        }
     }
 
     return 1; /* what is the return value of a program? success of error? */
