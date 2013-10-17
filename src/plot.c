@@ -18,6 +18,9 @@ typedef struct plot {
     int num_values_allocated;
     /* number of values currently in use by callers */
     int num_values_used;
+
+    /* head of list of reclaimed plot_value(s) */
+    struct plot_value *reclaimed;
 } plot;
 
 static plot *plot_instance;
@@ -160,6 +163,13 @@ void plot_value_decr(struct plot_value *p){
 
     if( p->gc.refcount > 0 ){
         --p->gc.refcount;
+        if( p->gc.refcount == 0 ){
+            /* time to reclaim */
+            //puts("RECLAIMING");
+            p->gc.next = (struct plot_gc *) plot_instance->reclaimed;
+            plot_instance->reclaimed = (struct plot_value *) p->gc.next;
+            p->type = plot_type_reclaimed; /* FIXME useful for testing */
+        }
     } else {
         /* this object already has a refcount of 0, ERROR */
         puts("plot_value_decr: This object already has a refcount of 0, ERROR has occurred, terminating");
@@ -179,6 +189,7 @@ void plot_value_init(void){
     }
 
     plot_instance->num_values_used = 0;
+    plot_instance->reclaimed = 0;
     plot_instance->num_values_allocated = 100; /* FIXME small value, sufficient to pass unit tests */
     plot_instance->arena = calloc( plot_instance->num_values_allocated, sizeof (struct plot_value) );
     if( ! plot_instance->arena ){
@@ -189,18 +200,31 @@ void plot_value_init(void){
 
 /* get new value */
 struct plot_value * plot_new_value(void){
+    struct plot_value *p;
     if( ! plot_instance ){
         puts("plot_new_value called without plot_instance being initialised");
         exit(1);
     }
 
     if( plot_instance->num_values_used >= plot_instance->num_values_allocated ){
-        /* FIXME realloc */
-        printf("THE BANK IS EMPTY; allocated all '%d' plot_value(s)\n", plot_instance->num_values_used);
-        exit(1);
+        if( plot_instance->reclaimed ){
+            p = plot_instance->reclaimed;
+            /* gc is the first element of plot_value so this is safe */
+            plot_instance->reclaimed = (plot_value *) p->gc.next;
+            p->gc.refcount = 1;
+            p->gc.next = 0;
+            return p;
+        } else {
+            /* FIXME realloc */
+            printf("THE BANK IS EMPTY; allocated all '%d' plot_value(s)\n", plot_instance->num_values_used);
+            exit(1);
+        }
     } else {
         /* hand out resources */
-        return &(plot_instance->arena[ plot_instance->num_values_used ++]);
+        p = &(plot_instance->arena[ plot_instance->num_values_used ++]);
+        p->gc.refcount = 1;
+        p->gc.next = 0;
+        return p;
     }
 }
 

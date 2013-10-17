@@ -1,6 +1,6 @@
 (define fibo
   (lambda (n)
-    (if (< n 2)
+    (if (<= n 2)
       1
       (+
         (fibo (- n 1))

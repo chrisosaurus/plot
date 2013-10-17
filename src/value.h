@@ -11,7 +11,8 @@ typedef enum plot_value_type{
     plot_type_builtin,
     plot_type_error,
     plot_type_string,
-    plot_type_boolean
+    plot_type_boolean,
+    plot_type_reclaimed /* FIXME useful for testing garbage collection */
 #if 0
     plot_type_character
     plot_type_pair

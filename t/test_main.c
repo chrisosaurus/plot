@@ -19,6 +19,7 @@
 #include "test_funcs.c"
 #include "test_forms.c"
 #include "test_full.c"
+#include "test_garbage.c"
 
 int main(void){
     int number_failed = 0;
@@ -43,6 +44,8 @@ int main(void){
 
     MAIN_ADD_SUITE(funcs)
     MAIN_ADD_SUITE(funcs_error)
+
+    MAIN_ADD_SUITE(garbage)
 
     puts("\nFinished testing.");
     return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
