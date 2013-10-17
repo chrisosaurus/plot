@@ -52,10 +52,7 @@ START_TEST (test_garbage){
     puts("\t\ttesting eval");
     fail_if( 0 == plot_eval(plot_get_env(), prog) );
 
-    /* FIXME TODO this cast is ugly, once we have ref counting and allow mutation
-     * we probably don't want the values inside define to be const
-     */
-    v = (struct plot_value *) plot_env_get(plot_get_env(), PT_VS("result"));
+    v = plot_env_get(plot_get_env(), PT_VS("result"));
     fail_unless( 1 == v->gc.refcount );
     fail_if( plot_type_reclaimed == v->type );
 

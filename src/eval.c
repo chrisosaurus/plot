@@ -22,7 +22,7 @@
 /* evals a prog in an environment
  * returns 1 for success, 0 for error
  */
-int plot_eval(plot_env *env, const plot_program * prog){
+int plot_eval(plot_env *env, plot_program * prog){
     plot_expr *expr;
     int i=0;
 
@@ -48,7 +48,7 @@ int plot_eval(plot_env *env, const plot_program * prog){
 
 /* evals an expr in an environment
  */
-const plot_value * plot_eval_expr(plot_env *env, const plot_expr * expr){
+plot_value * plot_eval_expr(plot_env *env, plot_expr * expr){
     plot_value err;
 
     if( !env || !expr )
@@ -90,7 +90,7 @@ const plot_value * plot_eval_expr(plot_env *env, const plot_expr * expr){
  * returned value cannot be freed, it is either the same value you passed in OR
  *  the value stored under that symbol in the env.
  */
-const plot_value * plot_eval_value(plot_env *env, const plot_value * val){
+plot_value * plot_eval_value(plot_env *env, plot_value * val){
     if( !env || !val )
         return 0; /* ERROR */
 
@@ -120,8 +120,8 @@ const plot_value * plot_eval_value(plot_env *env, const plot_value * val){
 /* return 1 if string names a form
  * oterwise returns 0
  */
-static int plot_is_form(const plot_sexpr * sexpr){
-    const plot_value *val;
+static int plot_is_form(plot_sexpr * sexpr){
+    plot_value *val;
     #if DEBUG_FORM || DEBUG
     puts("inside plot_is_form");
     #endif
@@ -172,7 +172,7 @@ static int plot_is_form(const plot_sexpr * sexpr){
  * if sexpr is a form then plot_eval_form may be called which can
  *  modify the env
  */
-const plot_value * plot_eval_sexpr(plot_env *env, const plot_sexpr * sexpr){
+plot_value * plot_eval_sexpr(plot_env *env, plot_sexpr * sexpr){
     if( ! env || ! sexpr )
         return 0; /* ERROR */
 
@@ -198,7 +198,7 @@ const plot_value * plot_eval_sexpr(plot_env *env, const plot_sexpr * sexpr){
 /* returns 1 if value is considered truthy
  * returns 0 if falsy
  */
-static int plot_eval_truthy(const plot_value *val){
+static int plot_eval_truthy(plot_value *val){
     if( ! val )
         return 0;
 
@@ -211,10 +211,10 @@ static int plot_eval_truthy(const plot_value *val){
 /* eval a form in an environment
  * can modify the environment (e.g. define)
  */
-const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
-    const plot_value *form;
-    const plot_value *name;
-    const plot_value *value;
+plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
+    plot_value *form;
+    plot_value *name;
+    plot_value *value;
     plot_value *tmp;
     int i;
 
@@ -369,9 +369,9 @@ const plot_value * plot_eval_form(plot_env *env, const plot_sexpr * sexpr){
 
 /* eval a function call in an environment
  */
-const plot_value * plot_eval_func_call(plot_env *env, const plot_sexpr * sexpr){
-    const plot_value *val;
-    const plot_value *func;
+plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
+    plot_value *val;
+    plot_value *func;
     plot_env *new_env;
     int i;
 

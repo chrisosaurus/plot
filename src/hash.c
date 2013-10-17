@@ -42,7 +42,7 @@ void plot_hash_cleanup(plot_hash *hash){
 /* get value stored at key within hash
  * return value for key or 0 if key was not found
  */
-const plot_value * plot_hash_get(plot_hash *hash, const plot_symbol * key){
+plot_value * plot_hash_get(plot_hash *hash, const plot_symbol * key){
     plot_hash_entry *e;
 
     #if DEBUG
@@ -85,7 +85,7 @@ const plot_value * plot_hash_get(plot_hash *hash, const plot_symbol * key){
  *
  * returns 1 on success, 0 on error
  */
-int plot_hash_set(plot_hash *hash, const plot_symbol * key, const plot_value *value){
+int plot_hash_set(plot_hash *hash, const plot_symbol * key, plot_value *value){
     plot_hash_entry **e, *n;
     int sc=1; /* default value of 1, 0 is only used to mean we are re-defining a symbol */
 

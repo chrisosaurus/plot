@@ -16,7 +16,7 @@
 
 /* internal routine for displaying a value
  */
-static void plot_func_display_value(plot_env *env, const plot_value *val){
+static void plot_func_display_value(plot_env *env, plot_value *val){
     plot_value err;
 
     if( ! val )
@@ -53,9 +53,9 @@ static void plot_func_display_value(plot_env *env, const plot_value *val){
 
 /* print value to stdout
  */
-const plot_value * plot_func_display(plot_env *env, const plot_expr *args, int argc){
-    const plot_expr *arg;
-    const plot_value *val;
+plot_value * plot_func_display(plot_env *env, plot_expr *args, int argc){
+    plot_expr *arg;
+    plot_value *val;
     int i;
 
     /* FIXME TODO should only care about first arg */
@@ -75,7 +75,7 @@ const plot_value * plot_func_display(plot_env *env, const plot_expr *args, int a
 
 /* print a newline to stdout
  */
-const plot_value * plot_func_newline(plot_env *env, const plot_expr *args, int argc){
+plot_value * plot_func_newline(plot_env *env, plot_expr *args, int argc){
     /* FIXME currently ignores arguments, only there to match plot_func interface
      */
     puts("");
@@ -88,10 +88,10 @@ const plot_value * plot_func_newline(plot_env *env, const plot_expr *args, int a
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
  */
-const plot_value * plot_func_add(plot_env *env, const plot_expr *args, int argc){
+plot_value * plot_func_add(plot_env *env, plot_expr *args, int argc){
     plot_value *res;
-    const plot_value *tmp;
-    const plot_expr *arg;
+    plot_value *tmp;
+    plot_expr *arg;
     int sum=0, i;
 
     #if DEBUG
@@ -146,10 +146,10 @@ const plot_value * plot_func_add(plot_env *env, const plot_expr *args, int argc)
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
  */
-const plot_value * plot_func_subtract(plot_env *env, const plot_expr *args, int argc){
+plot_value * plot_func_subtract(plot_env *env, plot_expr *args, int argc){
     plot_value *res;
-    const plot_value *tmp;
-    const plot_expr *arg;
+    plot_value *tmp;
+    plot_expr *arg;
     int difference=0, i;
 
     #if DEBUG
@@ -210,10 +210,10 @@ const plot_value * plot_func_subtract(plot_env *env, const plot_expr *args, int 
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
  */
-const plot_value * plot_func_multiply(plot_env *env, const plot_expr *args, int argc){
+plot_value * plot_func_multiply(plot_env *env, plot_expr *args, int argc){
     plot_value *res;
-    const plot_value *tmp;
-    const plot_expr *arg;
+    plot_value *tmp;
+    plot_expr *arg;
     int product=1, i;
 
     #if DEBUG
@@ -266,10 +266,10 @@ const plot_value * plot_func_multiply(plot_env *env, const plot_expr *args, int 
 /* integer division
  * exact only
  */
-const struct plot_value * plot_func_divide(struct plot_env *env, const struct plot_expr *args, int argc){
+struct plot_value * plot_func_divide(struct plot_env *env, struct plot_expr *args, int argc){
     plot_value *res;
-    const plot_value *tmp;
-    const plot_expr *arg;
+    plot_value *tmp;
+    plot_expr *arg;
     int quotient=0, i;
 
     #if DEBUG
@@ -325,10 +325,10 @@ const struct plot_value * plot_func_divide(struct plot_env *env, const struct pl
 
 /* remainder
  */
-const struct plot_value * plot_func_remainder(struct plot_env *env, const struct plot_expr *args, int argc){
+struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_expr *args, int argc){
     plot_value *res;
-    const plot_value *tmp;
-    const plot_expr *arg;
+    plot_value *tmp;
+    plot_expr *arg;
     int remainder=0, i;
 
     #if DEBUG
@@ -392,12 +392,12 @@ const struct plot_value * plot_func_remainder(struct plot_env *env, const struct
 
 /* mathmatical =
  */
-const struct plot_value * plot_func_equal(struct plot_env *env, const struct plot_expr *args, int argc){
+struct plot_value * plot_func_equal(struct plot_env *env, struct plot_expr *args, int argc){
     plot_value tmp;
     plot_value *res;
-    const plot_value *val;
+    plot_value *val;
     int i;
-    const plot_expr *arg;
+    plot_expr *arg;
 
     tmp.type = plot_type_number;
 
@@ -457,12 +457,12 @@ const struct plot_value * plot_func_equal(struct plot_env *env, const struct plo
 
 /* <
  */
-const struct plot_value * plot_func_less(struct plot_env *env, const struct plot_expr *args, int argc){
+struct plot_value * plot_func_less(struct plot_env *env, struct plot_expr *args, int argc){
     plot_value tmp;
     plot_value *res;
-    const plot_value *val;
+    plot_value *val;
     int i;
-    const plot_expr *arg;
+    plot_expr *arg;
 
     tmp.type = plot_type_number;
 
@@ -525,12 +525,12 @@ const struct plot_value * plot_func_less(struct plot_env *env, const struct plot
 
 /* >
  */
-const struct plot_value * plot_func_greater(struct plot_env *env, const struct plot_expr *args, int argc){
+struct plot_value * plot_func_greater(struct plot_env *env, struct plot_expr *args, int argc){
     plot_value tmp;
     plot_value *res;
-    const plot_value *val;
+    plot_value *val;
     int i;
-    const plot_expr *arg;
+    plot_expr *arg;
 
     tmp.type = plot_type_number;
 
@@ -592,12 +592,12 @@ const struct plot_value * plot_func_greater(struct plot_env *env, const struct p
 
 /* <=
  */
-const struct plot_value * plot_func_less_equal(struct plot_env *env, const struct plot_expr *args, int argc){
+struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_expr *args, int argc){
     plot_value tmp;
     plot_value *res;
-    const plot_value *val;
+    plot_value *val;
     int i;
-    const plot_expr *arg;
+    plot_expr *arg;
 
     tmp.type = plot_type_number;
 
@@ -659,12 +659,12 @@ const struct plot_value * plot_func_less_equal(struct plot_env *env, const struc
 
 /* >=
  */
-const struct plot_value * plot_func_greater_equal(struct plot_env *env, const struct plot_expr *args, int argc){
+struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_expr *args, int argc){
     plot_value tmp;
     plot_value *res;
-    const plot_value *val;
+    plot_value *val;
     int i;
-    const plot_expr *arg;
+    plot_expr *arg;
 
     tmp.type = plot_type_number;
 
@@ -728,9 +728,9 @@ const struct plot_value * plot_func_greater_equal(struct plot_env *env, const st
 
 /* boolean?
  */
-const struct plot_value * plot_func_boolean_test(struct plot_env *env, const struct plot_expr *args, int argc){
+struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_expr *args, int argc){
     plot_value *res;
-    const plot_value *val;
+    plot_value *val;
 
     #if DEBUG
     puts("inside plot_func_boolean_test");
@@ -779,9 +779,9 @@ const struct plot_value * plot_func_boolean_test(struct plot_env *env, const str
 
 /* symbol?
  */
-const struct plot_value * plot_func_symbol_test(struct plot_env *env, const struct plot_expr *args, int argc){
+struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_expr *args, int argc){
     plot_value *res;
-    const plot_value *val;
+    plot_value *val;
 
     #if DEBUG
     puts("inside plot_func_symbol_test");
@@ -830,9 +830,9 @@ const struct plot_value * plot_func_symbol_test(struct plot_env *env, const stru
 
 /* string?
  */
-const struct plot_value * plot_func_string_test(struct plot_env *env, const struct plot_expr *args, int argc){
+struct plot_value * plot_func_string_test(struct plot_env *env, struct plot_expr *args, int argc){
     plot_value *res;
-    const plot_value *val;
+    plot_value *val;
 
     #if DEBUG
     puts("inside plot_func_boolean_test");
@@ -881,9 +881,9 @@ const struct plot_value * plot_func_string_test(struct plot_env *env, const stru
 
 /* number?
  */
-const struct plot_value * plot_func_number_test(struct plot_env *env, const struct plot_expr *args, int argc){
+struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_expr *args, int argc){
     plot_value *res;
-    const plot_value *val;
+    plot_value *val;
 
     #if DEBUG
     puts("inside plot_func_number_test");
@@ -932,9 +932,9 @@ const struct plot_value * plot_func_number_test(struct plot_env *env, const stru
 
 /* function?
  */
-const struct plot_value * plot_func_procedure_test(struct plot_env *env, const struct plot_expr *args, int argc){
+struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_expr *args, int argc){
     plot_value *res;
-    const plot_value *val;
+    plot_value *val;
 
     #if DEBUG
     puts("inside plot_func_procedure_test");

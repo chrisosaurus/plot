@@ -86,7 +86,7 @@ typedef struct plot_lambda {
 } plot_lambda;
 
 typedef struct plot_builtin {
-    const struct plot_value * (*func)(struct plot_env *env, const struct plot_expr *args, int argc);
+    struct plot_value * (*func)(struct plot_env *env, struct plot_expr *args, int argc);
 } plot_builtin;
 
 typedef struct plot_value {

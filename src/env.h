@@ -25,7 +25,7 @@ void plot_env_cleanup(plot_env *env);
  *
  * return plot_value* or 0 when symbol is not found
  */
-const struct plot_value * plot_env_get(const plot_env *env, const struct plot_symbol * sym);
+struct plot_value * plot_env_get(const plot_env *env, const struct plot_symbol * sym);
 
 /* add a new symbol to this env
  * it can 'mask' a symbol from another env,
@@ -33,12 +33,6 @@ const struct plot_value * plot_env_get(const plot_env *env, const struct plot_sy
  *
  * returns 1 on success, 0 on error
  */
-int plot_env_define(plot_env *env, const struct plot_symbol * sym, const struct plot_value * val);
-
-/* set a a symbol to a value, it may or may not already exist within this env
- *
- * returns 1 on success, 0 on error
- */
-int plot_env_set(plot_env *env, const struct plot_symbol * sym, const struct plot_value * val);
+int plot_env_define(plot_env *env, const struct plot_symbol * sym, struct plot_value * val);
 
 #endif

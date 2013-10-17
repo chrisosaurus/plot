@@ -25,7 +25,7 @@ typedef struct plot_hash {
  */
 typedef struct plot_hash_entry {
     const struct plot_symbol * key;
-    const struct plot_value *value;
+    struct plot_value *value;
     struct plot_hash_entry *next;
 } plot_hash_entry;
 
@@ -45,7 +45,7 @@ void plot_hash_cleanup(plot_hash *hash);
 /* get value stored at key within hash
  * return value for key or 0 if key was not found
  */
-const struct plot_value * plot_hash_get(plot_hash *hash, const struct plot_symbol * key);
+struct plot_value * plot_hash_get(plot_hash *hash, const struct plot_symbol * key);
 
 /* set value to hash under key
  * keys must be unique within the hash
@@ -57,7 +57,7 @@ const struct plot_value * plot_hash_get(plot_hash *hash, const struct plot_symbo
  *
  * returns 1 on success, 0 on error
  */
-int plot_hash_set(plot_hash *hash, const struct plot_symbol * key, const struct plot_value *value);
+int plot_hash_set(plot_hash *hash, const struct plot_symbol * key, struct plot_value *value);
 
 #endif
 

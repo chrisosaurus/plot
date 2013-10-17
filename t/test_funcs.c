@@ -17,8 +17,8 @@
 
 /* functions to bind */
 struct plot_test_funcs_tests {
-    const plot_value func;
-    const plot_expr args[2];
+    plot_value func;
+    plot_expr args[2];
     union {
         const int expected;
         const bool expected_val;
@@ -65,7 +65,7 @@ struct plot_test_funcs_tests {
 
 START_TEST (test_funcs_math){
     unsigned int i;
-    const plot_value *r;
+    plot_value *r;
 
     struct plot_test_funcs_tests bindings[] = {
         /* function                     ( args1,            arg2 )                   = expected            "failure message" */
