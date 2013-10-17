@@ -4,8 +4,10 @@ TODO(s):
 garbage collection:
 -------------------
 * lambda form
-* func call
-* func_ *
+* func call - decr arguments post-use
+* func_ * - decr arguments post-use
+* consider preferring garbage-reuse (reclaimed) over new (arena)
+* implement arena growth
 
 performance:
 ------------
