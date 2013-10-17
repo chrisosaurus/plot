@@ -1,6 +1,15 @@
 TODO(s):
 =====
 
+garbage collection:
+-------------------
+* define form
+* if form
+* lambda form
+* func call
+* eval_*
+* func_ *
+
 performance:
 ------------
 * recursion is currently very expensive (both in terms of stack and memory)
