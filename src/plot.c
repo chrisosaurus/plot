@@ -21,6 +21,12 @@ typedef struct plot {
 
     /* head of list of reclaimed plot_value(s) */
     struct plot_value *reclaimed;
+
+    /**** garbage stats ****/
+    /* number of plot_value(s) reclaimed (garbage collected) */
+    int num_reclaimed;
+    /* number of plot_value(s) recycling (handed back out after GC) */
+    int num_recycled;
 } plot;
 
 static plot *plot_instance;
@@ -95,6 +101,8 @@ struct plot_env * plot_get_env(void){
 }
 
 void plot_cleanup(){
+    printf("Still had in the bank: '%d'\n", plot_instance->num_values_allocated - plot_instance->num_values_used );
+    printf("num recycled '%d', reclaimed '%d'\n", plot_instance->num_recycled, plot_instance->num_reclaimed);
     plot_env_cleanup(plot_instance->env);
     free(plot_instance);
 }
@@ -164,6 +172,7 @@ void plot_value_decr(struct plot_value *p){
     if( p->gc.refcount > 0 ){
         --p->gc.refcount;
         if( p->gc.refcount == 0 ){
+            ++plot_instance->num_reclaimed;
             /* time to reclaim */
             //fprintf(stderr, "RECLAIMING\n"); // 2692537
             p->gc.next = (struct plot_gc *) plot_instance->reclaimed;
@@ -211,20 +220,20 @@ struct plot_value * plot_new_value(void){
         exit(1);
     }
 
+    if( plot_instance->reclaimed ){
+        ++plot_instance->num_recycled;
+        //fprintf(stderr, "reusing\n");
+        p = plot_instance->reclaimed;
+        /* gc is the first element of plot_value so this is safe */
+        plot_instance->reclaimed = (plot_value *) p->gc.next;
+        p->gc.refcount = 1;
+        p->gc.next = 0;
+        return p;
+    }
     if( plot_instance->num_values_used >= plot_instance->num_values_allocated ){
-        if( plot_instance->reclaimed ){
-            //fprintf(stderr, "reusing\n");
-            p = plot_instance->reclaimed;
-            /* gc is the first element of plot_value so this is safe */
-            plot_instance->reclaimed = (plot_value *) p->gc.next;
-            p->gc.refcount = 1;
-            p->gc.next = 0;
-            return p;
-        } else {
-            /* FIXME realloc */
-            printf("THE BANK IS EMPTY; allocated all '%d' plot_value(s)\n", plot_instance->num_values_used);
-            exit(1);
-        }
+        /* FIXME realloc */
+        printf("THE BANK IS EMPTY; allocated all '%d' plot_value(s)\n", plot_instance->num_values_used);
+        exit(1);
     } else {
         /* hand out resources */
         p = &(plot_instance->arena[ plot_instance->num_values_used ++]);

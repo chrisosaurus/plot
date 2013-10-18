@@ -59,8 +59,10 @@ plot_value * plot_env_get(const plot_env *env, const plot_symbol * sym){
         if( ! e->hash )
             break;
         v = plot_hash_get(e->hash, sym);
-        if( v )
+        if( v ){
+            plot_value_incr(v);
             return v;
+        }
     }
 
     #if DEBUG

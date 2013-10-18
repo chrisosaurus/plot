@@ -11,8 +11,7 @@ garbage collection:
 
 performance:
 ------------
-* => fibo(31) now takes 2.3 seconds total, pre-gc it took 2.9s this is a gain of 20%
-* => fibo(31) used to require 6731342 plot_values, not it uses 4038805, saving of 40%
+* need to more aggressively incr/decr values
 * recursion is currently very expensive (both in terms of stack and memory) -> need tail call optimisation
 
 misc:
