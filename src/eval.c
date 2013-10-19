@@ -442,7 +442,11 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
                         }
                         vals[i] = val;
                     }
-                    return func->u.builtin.func( env, vals, sexpr->nchildren - 1);
+                    val = func->u.builtin.func( env, vals, sexpr->nchildren - 1);
+                    for( i=0; i < sexpr->nchildren - 1; ++i ){
+                        plot_value_decr(vals[i]);
+                    }
+                    return val;
                 case plot_type_lambda:
                     #if DEBUG_FUNC || DEBUG
                     puts("calling lambda");
