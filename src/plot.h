@@ -61,6 +61,15 @@ struct plot_value * plot_new_value(void);
  */
 struct plot_value * plot_new_constant(void);
 
+/* increase reference count on plot_env */
+void plot_env_incr(struct plot_env *e);
+
+/* decrease reference count on plot_env
+ * may trigger collection of the env,
+ * it's parents and it's stored values
+ */
+void plot_env_decr(struct plot_env *e);
+
 /* get new env */
 struct plot_env * plot_new_env(void);
 

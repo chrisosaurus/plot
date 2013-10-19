@@ -77,8 +77,9 @@ struct plot_binding bindings[] = {
     {{"newline",   7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_newline}}}}
 };
 
-void plot_gc_value_init(void);
-void plot_gc_env_init(void);
+static void plot_gc_incr(struct plot_gc *g);
+static void plot_gc_value_init(void);
+static void plot_gc_env_init(void);
 
 int plot_init(void){
     size_t i=0;
@@ -180,23 +181,27 @@ void plot_handle_error(const plot_value *error){
     exit(1);
 }
 
-/* increase reference count on plot_value */
-void plot_value_incr(struct plot_value *p){
-    if( !p )
+void plot_gc_incr(struct plot_gc *g){
+    if( !g )
         return;
 
-    if( p->gc.refcount < 0 ){
+    if( g->refcount < 0 ){
         /* object is NOT under control of gc, do not touch */
         return;
     }
 
-    if( p->gc.refcount > 0 ){
-        ++p->gc.refcount;
+    if( g->refcount > 0 ){
+        ++g->refcount;
     } else {
         /* this object already has a refcount of 0, this should be impossible, ERROR */
         puts("plot_value_incr: This object already has a refcount of 0, ERROR has occurred, terminating");
         exit(1);
     }
+}
+
+/* increase reference count on plot_value */
+void plot_value_incr(struct plot_value *p){
+    plot_gc_incr( (struct plot_gc *) p);
 }
 
 /* decrease reference count on plot_value
@@ -252,6 +257,40 @@ void plot_gc_value_init(void){
     plot_instance->value_arena = calloc( plot_instance->num_value_allocated, sizeof (struct plot_value) );
     if( ! plot_instance->value_arena ){
         puts("plot_gc_value_init ERROR: failed to calloc value arena");
+        exit(1);
+    }
+}
+
+/* increase reference count on plot_env */
+void plot_env_incr(struct plot_env *e){
+    plot_gc_incr( (struct plot_gc *) e);
+}
+
+/* decrease reference count on plot_env
+ * may trigger collection of the env,
+ * it's parents and it's stored values
+ */
+void plot_env_decr(struct plot_env *e){
+    if( !e )
+        return;
+
+    if( e->gc.refcount < 0 ){
+        /* object is NOT under control of gc, do not touch */
+        return;
+    }
+
+    if( e->gc.refcount > 0 ){
+        --e->gc.refcount;
+        if( e->gc.refcount == 0 ){
+            ++plot_instance->num_env_reclaimed;
+            /* time to reclaim */
+            //fprintf(stderr, "RECLAIMING\n"); // 2692537
+            e->gc.next = (struct plot_gc *) plot_instance->env_reclaimed;
+            plot_instance->env_reclaimed = (struct plot_env *) e;
+        }
+    } else {
+        /* this object already has a refcount of 0, ERROR */
+        puts("plot_env_decr: This object already has a refcount of 0, ERROR has occurred, terminating");
         exit(1);
     }
 }
