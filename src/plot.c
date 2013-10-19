@@ -9,7 +9,9 @@
 
 #define LENGTH(x) (sizeof x / sizeof x[0])
 
+#ifndef PLOT_TESTS
 #define GC_STATS 1
+#endif
 
 typedef struct plot {
     struct plot_env *env;
