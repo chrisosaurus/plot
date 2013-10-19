@@ -113,7 +113,7 @@ void plot_cleanup(){
     printf("\tMax in use '%d'\n", plot_instance->num_values_used);
     printf("\tStill had in the bank: '%d'\n", plot_instance->num_values_allocated - plot_instance->num_values_used );
     printf("\tnum recycled '%d', reclaimed '%d'\n", plot_instance->num_recycled, plot_instance->num_reclaimed);
-    printf("\tused - reclaimed '%d'\n", plot_instance->num_values_used - plot_instance->num_reclaimed);
+    printf("\tused - reclaimed = '%d'\n", plot_instance->num_values_used - plot_instance->num_reclaimed);
     for( v = plot_instance->reclaimed; v; v = (plot_value *) v->gc.next )
         ++lost;
     printf("\tnon-reclaimed (still in use at cleanup) '%d'\n\n", lost);
@@ -219,8 +219,10 @@ void plot_value_init(void){
      * before gc fibo(31) would require 6731342 plot_values
      * after tracking waste, this included 2692537 wasted values (mostly from if test position)
      * this means the minimum size of num)values_allocated must be 6731342 - 2692537 = 4038805
+     *
+     * now after func-call-temp-reclaiming this value can be reduced to 2692574
      */
-    plot_instance->num_values_allocated = 4100000;
+    plot_instance->num_values_allocated = 2700000;
     plot_instance->arena = calloc( plot_instance->num_values_allocated, sizeof (struct plot_value) );
     if( ! plot_instance->arena ){
         puts("plot_value_init ERROR: failed to calloc arena");
