@@ -53,29 +53,31 @@ static void plot_func_display_value(plot_env *env, plot_value *val){
 
 /* print value to stdout
  */
-plot_value * plot_func_display(plot_env *env, plot_expr *args, int argc){
-    plot_expr *arg;
-    plot_value *val;
-    int i;
+plot_value * plot_func_display(plot_env *env, plot_value **args, int argc){
+    plot_value *arg;
 
-    /* FIXME TODO should only care about first arg */
-    for(arg=args, i=0; i<argc; ++i, arg=(args+1)){
-        val = plot_eval_expr(env, arg);
-        if( ! val ){
-            /* TODO FIXME handle error cases
-             */
-            puts( "OOPS" );
-        }
-
-        plot_func_display_value(env, val);
+    if( argc != 1 ){
+        #if DEBUG
+        puts("incorrect number of args to plot_func_display");
+        #endif
+        return 0; /* FIXME error */
     }
 
+    arg = args[0];
+
+    if( ! arg ){
+        puts("argument was NULL");
+        return 0;
+    }
+
+
+    plot_func_display_value(env, arg);
     return 0;
 }
 
 /* print a newline to stdout
  */
-plot_value * plot_func_newline(plot_env *env, plot_expr *args, int argc){
+plot_value * plot_func_newline(plot_env *env, plot_value **args, int argc){
     /* FIXME currently ignores arguments, only there to match plot_func interface
      */
     puts("");
@@ -88,10 +90,9 @@ plot_value * plot_func_newline(plot_env *env, plot_expr *args, int argc){
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
  */
-plot_value * plot_func_add(plot_env *env, plot_expr *args, int argc){
+plot_value * plot_func_add(plot_env *env, plot_value **args, int argc){
     plot_value *res;
-    plot_value *tmp;
-    plot_expr *arg;
+    plot_value *arg;
     int sum=0, i;
 
     #if DEBUG
@@ -105,23 +106,23 @@ plot_value * plot_func_add(plot_env *env, plot_expr *args, int argc){
         return 0; /* ERROR */
     }
 
-    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
-        tmp = plot_eval_expr(env, arg);
-        if( ! tmp ){
+    for( i=0; i<argc; ++i ){
+        arg = args[i];
+        if( ! arg ){
             #if DEBUG
-            puts("value returned by plot_eval is null");
+            puts("argument to plot_func_add was null");
             #endif
             return 0; /* ERROR */
         }
 
-        if( ! (tmp->type == plot_type_number) ){
+        if( ! (arg->type == plot_type_number) ){
             #if DEBUG
-            puts("value returned by plot_eval is not a number");
+            puts("arg is not a number");
             #endif
             return 0; /* ERROR */
         }
 
-        sum += tmp->u.number.val;
+        sum += arg->u.number.val;
     }
 
     res = plot_new_value();
@@ -146,10 +147,9 @@ plot_value * plot_func_add(plot_env *env, plot_expr *args, int argc){
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
  */
-plot_value * plot_func_subtract(plot_env *env, plot_expr *args, int argc){
+plot_value * plot_func_subtract(plot_env *env, plot_value **args, int argc){
     plot_value *res;
-    plot_value *tmp;
-    plot_expr *arg;
+    plot_value *arg;
     int difference=0, i;
 
     #if DEBUG
@@ -163,16 +163,16 @@ plot_value * plot_func_subtract(plot_env *env, plot_expr *args, int argc){
         return 0; /* ERROR */
     }
 
-    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
-        tmp = plot_eval_expr(env, arg);
-        if( ! tmp ){
+    for( i=0; i<argc; ++i ){
+        arg = args[i];
+        if( ! arg ){
             #if DEBUG
-            puts("value returned by plot_eval is null");
+            puts("arg was NULL");
             #endif
             return 0; /* ERROR */
         }
 
-        if( ! (tmp->type == plot_type_number) ){
+        if( ! (arg->type == plot_type_number) ){
             #if DEBUG
             puts("value returned by plot_eval is not a number");
             #endif
@@ -180,9 +180,9 @@ plot_value * plot_func_subtract(plot_env *env, plot_expr *args, int argc){
         }
 
         if( i == 0 ){
-            difference = tmp->u.number.val;
+            difference = arg->u.number.val;
         } else {
-            difference -= tmp->u.number.val;
+            difference -= arg->u.number.val;
         }
     }
 
@@ -210,10 +210,9 @@ plot_value * plot_func_subtract(plot_env *env, plot_expr *args, int argc){
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
  */
-plot_value * plot_func_multiply(plot_env *env, plot_expr *args, int argc){
+plot_value * plot_func_multiply(plot_env *env, plot_value **args, int argc){
     plot_value *res;
-    plot_value *tmp;
-    plot_expr *arg;
+    plot_value *arg;
     int product=1, i;
 
     #if DEBUG
@@ -227,23 +226,23 @@ plot_value * plot_func_multiply(plot_env *env, plot_expr *args, int argc){
         return 0; /* ERROR */
     }
 
-    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
-        tmp = plot_eval_expr(env, arg);
-        if( ! tmp ){
+    for( i=0; i<argc; ++i ){
+        arg = args[i];
+        if( ! arg ){
             #if DEBUG
-            puts("value returned by plot_eval is null");
+            puts("arg was NULL");
             #endif
             return 0; /* ERROR */
         }
 
-        if( ! (tmp->type == plot_type_number) ){
+        if( ! (arg->type == plot_type_number) ){
             #if DEBUG
             puts("value returned by plot_eval is not a number");
             #endif
             return 0; /* ERROR */
         }
 
-        product *= tmp->u.number.val;
+        product *= arg->u.number.val;
     }
 
     res = plot_new_value();
@@ -266,10 +265,9 @@ plot_value * plot_func_multiply(plot_env *env, plot_expr *args, int argc){
 /* integer division
  * exact only
  */
-struct plot_value * plot_func_divide(struct plot_env *env, struct plot_expr *args, int argc){
+struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
-    plot_value *tmp;
-    plot_expr *arg;
+    plot_value *arg;
     int quotient=0, i;
 
     #if DEBUG
@@ -283,16 +281,16 @@ struct plot_value * plot_func_divide(struct plot_env *env, struct plot_expr *arg
         return 0; /* ERROR */
     }
 
-    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
-        tmp = plot_eval_expr(env, arg);
-        if( ! tmp ){
+    for( i=0; i<argc; ++i ){
+        arg = args[i];
+        if( ! arg ){
             #if DEBUG
-            puts("value returned by plot_eval is null");
+            puts("arg was NULL");
             #endif
             return 0; /* ERROR */
         }
 
-        if( ! (tmp->type == plot_type_number) ){
+        if( ! (arg->type == plot_type_number) ){
             #if DEBUG
             puts("value returned by plot_eval is not a number");
             #endif
@@ -300,9 +298,9 @@ struct plot_value * plot_func_divide(struct plot_env *env, struct plot_expr *arg
         }
 
         if( i == 0 )
-            quotient = tmp->u.number.val;
+            quotient = arg->u.number.val;
         else
-            quotient /= tmp->u.number.val;
+            quotient /= arg->u.number.val;
     }
 
     res = plot_new_value();
@@ -325,10 +323,9 @@ struct plot_value * plot_func_divide(struct plot_env *env, struct plot_expr *arg
 
 /* remainder
  */
-struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_expr *args, int argc){
+struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
-    plot_value *tmp;
-    plot_expr *arg;
+    plot_value *arg;
     int remainder=0, i;
 
     #if DEBUG
@@ -349,16 +346,16 @@ struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_expr *
         return 0; /* FIXME ERROR */
     }
 
-    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
-        tmp = plot_eval_expr(env, arg);
-        if( ! tmp ){
+    for( i=0; i<argc; ++i ){
+        arg = args[i];
+        if( ! arg ){
             #if DEBUG
-            puts("value returned by plot_eval is null");
+            puts("arg was NULL");
             #endif
             return 0; /* ERROR */
         }
 
-        if( ! (tmp->type == plot_type_number) ){
+        if( ! (arg->type == plot_type_number) ){
             #if DEBUG
             puts("value returned by plot_eval is not a number");
             #endif
@@ -366,9 +363,9 @@ struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_expr *
         }
 
         if( i == 0 )
-            remainder = tmp->u.number.val;
+            remainder = arg->u.number.val;
         else
-            remainder %= tmp->u.number.val;
+            remainder %= arg->u.number.val;
     }
 
     res = plot_new_value();
@@ -392,12 +389,11 @@ struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_expr *
 
 /* mathmatical =
  */
-struct plot_value * plot_func_equal(struct plot_env *env, struct plot_expr *args, int argc){
+struct plot_value * plot_func_equal(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
     plot_value *res;
-    plot_value *val;
+    plot_value *arg;
     int i;
-    plot_expr *arg;
 
     tmp.type = plot_type_number;
 
@@ -423,16 +419,16 @@ struct plot_value * plot_func_equal(struct plot_env *env, struct plot_expr *args
     res->type = plot_type_boolean;
     res->u.boolean.val = false;
 
-    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
-        val = plot_eval_expr(env, arg);
-        if( ! val ){
+    for( i=0; i<argc; ++i ){
+        arg = args[i];
+        if( ! arg ){
             #if DEBUG
-            puts("return val was NULL");
+            puts("arg was NULL");
             #endif
             return 0; /* FIXME error */
         }
 
-        if( val->type != plot_type_number ){
+        if( arg->type != plot_type_number ){
             #if DEBUG
             puts("evaled expr did not yield number");
             #endif
@@ -440,9 +436,9 @@ struct plot_value * plot_func_equal(struct plot_env *env, struct plot_expr *args
         }
 
         if( i == 0 ){
-            tmp.u.number.val = val->u.number.val;
+            tmp.u.number.val = arg->u.number.val;
         } else {
-            if( tmp.u.number.val != val->u.number.val ){
+            if( tmp.u.number.val != arg->u.number.val ){
                 #if DEBUG
                 printf("'not equal' for i '%d'\n", i);
                 #endif
@@ -457,12 +453,11 @@ struct plot_value * plot_func_equal(struct plot_env *env, struct plot_expr *args
 
 /* <
  */
-struct plot_value * plot_func_less(struct plot_env *env, struct plot_expr *args, int argc){
+struct plot_value * plot_func_less(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
     plot_value *res;
-    plot_value *val;
+    plot_value *arg;
     int i;
-    plot_expr *arg;
 
     tmp.type = plot_type_number;
 
@@ -488,16 +483,16 @@ struct plot_value * plot_func_less(struct plot_env *env, struct plot_expr *args,
     res->type = plot_type_boolean;
     res->u.boolean.val = false;
 
-    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
-        val = plot_eval_expr(env, arg);
-        if( ! val ){
+    for( i=0; i<argc; ++i ){
+        arg = args[i];
+        if( ! arg ){
             #if DEBUG
-            puts("return val was NULL");
+            puts("arg was NULL");
             #endif
             return 0; /* FIXME error */
         }
 
-        if( val->type != plot_type_number ){
+        if( arg->type != plot_type_number ){
             #if DEBUG
             puts("evaled expr did not yield number");
             #endif
@@ -505,15 +500,15 @@ struct plot_value * plot_func_less(struct plot_env *env, struct plot_expr *args,
         }
 
         if( i == 0 ){
-            tmp.u.number.val = val->u.number.val;
+            tmp.u.number.val = arg->u.number.val;
         } else {
-            if( ! (tmp.u.number.val < val->u.number.val) ){
+            if( ! (tmp.u.number.val < arg->u.number.val) ){
                 #if DEBUG
                 printf("not 'less than' for i '%d'\n", i);
                 #endif
                 return res;
             }
-            tmp.u.number.val = val->u.number.val;
+            tmp.u.number.val = arg->u.number.val;
         }
     }
 
@@ -525,12 +520,11 @@ struct plot_value * plot_func_less(struct plot_env *env, struct plot_expr *args,
 
 /* >
  */
-struct plot_value * plot_func_greater(struct plot_env *env, struct plot_expr *args, int argc){
+struct plot_value * plot_func_greater(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
     plot_value *res;
-    plot_value *val;
+    plot_value *arg;
     int i;
-    plot_expr *arg;
 
     tmp.type = plot_type_number;
 
@@ -556,16 +550,16 @@ struct plot_value * plot_func_greater(struct plot_env *env, struct plot_expr *ar
     res->type = plot_type_boolean;
     res->u.boolean.val = false;
 
-    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
-        val = plot_eval_expr(env, arg);
-        if( ! val ){
+    for( i=0; i<argc; ++i ){
+        arg = args[i];
+        if( ! arg ){
             #if DEBUG
-            puts("return val was NULL");
+            puts("arg was NULL");
             #endif
             return 0; /* FIXME error */
         }
 
-        if( val->type != plot_type_number ){
+        if( arg->type != plot_type_number ){
             #if DEBUG
             puts("evaled expr did not yield number");
             #endif
@@ -573,15 +567,15 @@ struct plot_value * plot_func_greater(struct plot_env *env, struct plot_expr *ar
         }
 
         if( i == 0 ){
-            tmp.u.number.val = val->u.number.val;
+            tmp.u.number.val = arg->u.number.val;
         } else {
-            if( ! (tmp.u.number.val > val->u.number.val) ){
+            if( ! (tmp.u.number.val > arg->u.number.val) ){
                 #if DEBUG
                 printf("not 'greater than' for i '%d'\n", i);
                 #endif
                 return res;
             }
-            tmp.u.number.val = val->u.number.val;
+            tmp.u.number.val = arg->u.number.val;
         }
     }
 
@@ -592,12 +586,11 @@ struct plot_value * plot_func_greater(struct plot_env *env, struct plot_expr *ar
 
 /* <=
  */
-struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_expr *args, int argc){
+struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
     plot_value *res;
-    plot_value *val;
+    plot_value *arg;
     int i;
-    plot_expr *arg;
 
     tmp.type = plot_type_number;
 
@@ -623,16 +616,16 @@ struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_expr 
     res->type = plot_type_boolean;
     res->u.boolean.val = false;
 
-    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
-        val = plot_eval_expr(env, arg);
-        if( ! val ){
+    for( i=0; i<argc; ++i ){
+        arg = args[i];
+        if( ! arg ){
             #if DEBUG
-            puts("return val was NULL");
+            puts("arg was NULL");
             #endif
             return 0; /* FIXME error */
         }
 
-        if( val->type != plot_type_number ){
+        if( arg->type != plot_type_number ){
             #if DEBUG
             puts("evaled expr did not yield number");
             #endif
@@ -640,15 +633,15 @@ struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_expr 
         }
 
         if( i == 0 ){
-            tmp.u.number.val = val->u.number.val;
+            tmp.u.number.val = arg->u.number.val;
         } else {
-            if( ! (tmp.u.number.val <= val->u.number.val) ){
+            if( ! (tmp.u.number.val <= arg->u.number.val) ){
                 #if DEBUG
                 printf("not 'less than or equal' for i '%d'\n", i);
                 #endif
                 return res;
             }
-            tmp.u.number.val = val->u.number.val;
+            tmp.u.number.val = arg->u.number.val;
         }
     }
 
@@ -659,12 +652,11 @@ struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_expr 
 
 /* >=
  */
-struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_expr *args, int argc){
+struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
     plot_value *res;
-    plot_value *val;
     int i;
-    plot_expr *arg;
+    plot_value *arg;
 
     tmp.type = plot_type_number;
 
@@ -690,16 +682,16 @@ struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_ex
     res->type = plot_type_boolean;
     res->u.boolean.val = false;
 
-    for( arg=args, i=0; i<argc; ++i, arg+=1 ){
-        val = plot_eval_expr(env, arg);
-        if( ! val ){
+    for( i=0; i<argc; ++i ){
+        arg = args[i];
+        if( ! arg ){
             #if DEBUG
-            puts("return val was NULL");
+            puts("arg was NULL");
             #endif
             return 0; /* FIXME error */
         }
 
-        if( val->type != plot_type_number ){
+        if( arg->type != plot_type_number ){
             #if DEBUG
             puts("evaled expr did not yield number");
             #endif
@@ -707,15 +699,15 @@ struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_ex
         }
 
         if( i == 0 ){
-            tmp.u.number.val = val->u.number.val;
+            tmp.u.number.val = arg->u.number.val;
         } else {
-            if( ! (tmp.u.number.val >= val->u.number.val) ){
+            if( ! (tmp.u.number.val >= arg->u.number.val) ){
                 #if DEBUG
                 printf("not 'less than or equal' for i '%d'\n", i);
                 #endif
                 return res;
             }
-            tmp.u.number.val = val->u.number.val;
+            tmp.u.number.val = arg->u.number.val;
         }
     }
 
@@ -728,7 +720,7 @@ struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_ex
 
 /* boolean?
  */
-struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_expr *args, int argc){
+struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
     plot_value *val;
 
@@ -758,7 +750,7 @@ struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_exp
         return 0; /* FIXME error */
     }
 
-    val = plot_eval_expr(env, args);
+    val = args[0];
 
     if( ! val ){
         #if DEBUG
@@ -779,7 +771,7 @@ struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_exp
 
 /* symbol?
  */
-struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_expr *args, int argc){
+struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
     plot_value *val;
 
@@ -809,7 +801,7 @@ struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_expr
         return 0; /* FIXME error */
     }
 
-    val = plot_eval_expr(env, args);
+    val = args[0];
 
     if( ! val ){
         #if DEBUG
@@ -830,7 +822,7 @@ struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_expr
 
 /* string?
  */
-struct plot_value * plot_func_string_test(struct plot_env *env, struct plot_expr *args, int argc){
+struct plot_value * plot_func_string_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
     plot_value *val;
 
@@ -860,7 +852,7 @@ struct plot_value * plot_func_string_test(struct plot_env *env, struct plot_expr
         return 0; /* FIXME error */
     }
 
-    val = plot_eval_expr(env, args);
+    val = args[0];
 
     if( ! val ){
         #if DEBUG
@@ -881,7 +873,7 @@ struct plot_value * plot_func_string_test(struct plot_env *env, struct plot_expr
 
 /* number?
  */
-struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_expr *args, int argc){
+struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
     plot_value *val;
 
@@ -911,7 +903,7 @@ struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_expr
         return 0; /* FIXME error */
     }
 
-    val = plot_eval_expr(env, args);
+    val = args[0];
 
     if( ! val ){
         #if DEBUG
@@ -932,7 +924,7 @@ struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_expr
 
 /* function?
  */
-struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_expr *args, int argc){
+struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
     plot_value *val;
 
@@ -962,7 +954,7 @@ struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_e
         return 0; /* FIXME error */
     }
 
-    val = plot_eval_expr(env, args);
+    val = args[0];
 
     if( ! val ){
         #if DEBUG

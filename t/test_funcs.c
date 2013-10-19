@@ -18,7 +18,7 @@
 /* functions to bind */
 struct plot_test_funcs_tests {
     plot_value *func;
-    plot_expr args[2];
+    plot_value *args[2];
     union {
         const int expected;
         const bool expected_val;
@@ -69,11 +69,11 @@ START_TEST (test_funcs_math){
 
     struct plot_test_funcs_tests bindings[] = {
         /* function                     ( args1,            arg2 )                   = expected            "failure message" */
-        {PTF_VBU(plot_func_add),         { PTF_EV(PTF_VN(2)),  PTF_EV(PTF_VN(3))  },  {.expected =  5},     "failed test for plot_func_add"},
-        {PTF_VBU(plot_func_subtract),    { PTF_EV(PTF_VN(10)), PTF_EV(PTF_VN(7))  },  {.expected =  3},     "failed test for plot_func_subtract"},
-        {PTF_VBU(plot_func_multiply),    { PTF_EV(PTF_VN(5)),  PTF_EV(PTF_VN(15)) },  {.expected = 75},     "failed test for plot_func_multiply"},
-        {PTF_VBU(plot_func_divide),      { PTF_EV(PTF_VN(10)), PTF_EV(PTF_VN(3))  },  {.expected =  3},     "failed test for plot_func_divide"},
-        {PTF_VBU(plot_func_remainder),   { PTF_EV(PTF_VN(10)), PTF_EV(PTF_VN(3))  },  {.expected =  1},     "failed test for plot_func_remainder"}
+        {PTF_VBU(plot_func_add),         { PTF_VN( 2),  PTF_VN( 3)  },  {.expected =  5},     "failed test for plot_func_add"},
+        {PTF_VBU(plot_func_subtract),    { PTF_VN(10),  PTF_VN( 7)  },  {.expected =  3},     "failed test for plot_func_subtract"},
+        {PTF_VBU(plot_func_multiply),    { PTF_VN( 5),  PTF_VN(15)  },  {.expected = 75},     "failed test for plot_func_multiply"},
+        {PTF_VBU(plot_func_divide),      { PTF_VN(10),  PTF_VN( 3)  },  {.expected =  3},     "failed test for plot_func_divide"},
+        {PTF_VBU(plot_func_remainder),   { PTF_VN(10),  PTF_VN( 3)  },  {.expected =  1},     "failed test for plot_func_remainder"}
     };
 
     puts("\ttesting math functions");
@@ -106,11 +106,11 @@ START_TEST (test_funcs_comparison){
 
     struct plot_test_funcs_tests bindings[] = {
         /* function                             ( args1,               arg2 )                  = expected                   "failure message" */
-        {PTF_VBU(plot_func_equal),               { PTF_EV(PTF_VN( 1)),  PTF_EV(PTF_VN( 2))  },  {.expected_val = false},     "failed test for plot_func_equal"},
-        {PTF_VBU(plot_func_less),                { PTF_EV(PTF_VN( 3)),  PTF_EV(PTF_VN( 5))  },  {.expected_val = true},      "failed test for plot_func_less"},
-        {PTF_VBU(plot_func_greater),             { PTF_EV(PTF_VN( 1)),  PTF_EV(PTF_VN( 1))  },  {.expected_val = false},     "failed test for plot_func_greater"},
-        {PTF_VBU(plot_func_less_equal),          { PTF_EV(PTF_VN(10)),  PTF_EV(PTF_VN(10))  },  {.expected_val = true},      "failed test for plot_func_less_equal"},
-        {PTF_VBU(plot_func_greater_equal),       { PTF_EV(PTF_VN( 8)),  PTF_EV(PTF_VN( 7))  },  {.expected_val = true},      "failed test for plot_func_greater_equal"}
+        {PTF_VBU(plot_func_equal),               { PTF_VN( 1),  PTF_VN( 2)  },  {.expected_val = false},     "failed test for plot_func_equal"},
+        {PTF_VBU(plot_func_less),                { PTF_VN( 3),  PTF_VN( 5)  },  {.expected_val = true},      "failed test for plot_func_less"},
+        {PTF_VBU(plot_func_greater),             { PTF_VN( 1),  PTF_VN( 1)  },  {.expected_val = false},     "failed test for plot_func_greater"},
+        {PTF_VBU(plot_func_less_equal),          { PTF_VN(10),  PTF_VN(10)  },  {.expected_val = true},      "failed test for plot_func_less_equal"},
+        {PTF_VBU(plot_func_greater_equal),       { PTF_VN( 8),  PTF_VN( 7)  },  {.expected_val = true},      "failed test for plot_func_greater_equal"}
     };
 
     puts("\ttesting comparison functions");
@@ -143,24 +143,24 @@ START_TEST (test_funcs_value_tests){
 
     struct plot_test_funcs_tests bindings[] = {
         /* function                             ( args1 )                   = expected                  "failure message" */
-        {PTF_VBU(plot_func_boolean_test),        { PTF_EV(PTF_VN( 1))},      {.expected_val = false},    "failed test for plot_func_boolean_test (negative)"},
-        {PTF_VBU(plot_func_boolean_test),        { PTF_EV(PTF_VBO( false))},  {.expected_val = true},     "failed test for plot_func_boolean_test (positive)"},
+        {PTF_VBU(plot_func_boolean_test),        { PTF_VN( 1)},      {.expected_val = false},    "failed test for plot_func_boolean_test (negative)"},
+        {PTF_VBU(plot_func_boolean_test),        { PTF_VBO( false)},  {.expected_val = true},     "failed test for plot_func_boolean_test (positive)"},
 
-        {PTF_VBU(plot_func_string_test),         { PTF_EV(PTF_VN( 3))},      {.expected_val = false},    "failed test for plot_func_string_test (negative)"},
-        {PTF_VBU(plot_func_string_test),         { PTF_EV(PTF_VST("hello"))},{.expected_val = true},     "failed test for plot_func_string_test (positive)"},
+        {PTF_VBU(plot_func_string_test),         { PTF_VN( 3)},      {.expected_val = false},    "failed test for plot_func_string_test (negative)"},
+        {PTF_VBU(plot_func_string_test),         { PTF_VST("hello")},{.expected_val = true},     "failed test for plot_func_string_test (positive)"},
 
 /* FIXME TODO we cannot yet properly store a symbol as a value (would require quoting
  * so symbol? will always be false as it either fails to look up the symbol, or the value returned is not a symbol
  * this is correct behavior as per the scheme spec
  */
-//        {PTF_VBU(plot_func_symbol_test),         { PTF_EV(PTF_VST("NOPE"))}, {.expected_val = false},    "failed test for plot_func_symbol_test (negative)"},
-//        {PTF_VBU(plot_func_symbol_test),         { PTF_EV(PTF_VSY("sym"))},  {.expected_val = true},     "failed test for plot_func_symbol_test (positive)"},
+//        {PTF_VBU(plot_func_symbol_test),         { PTF_VST("NOPE")}, {.expected_val = false},    "failed test for plot_func_symbol_test (negative)"},
+//        {PTF_VBU(plot_func_symbol_test),         { PTF_VSY("sym")},  {.expected_val = true},     "failed test for plot_func_symbol_test (positive)"},
 
-        {PTF_VBU(plot_func_number_test),         { PTF_EV(PTF_VBO(true))},    {.expected_val = false},    "failed test for plot_func_number_test (negative)"},
-        {PTF_VBU(plot_func_number_test),         { PTF_EV(PTF_VN(10))},      {.expected_val = true},     "failed test for plot_func_number_test (positive)"},
+        {PTF_VBU(plot_func_number_test),         { PTF_VBO(true)},    {.expected_val = false},    "failed test for plot_func_number_test (negative)"},
+        {PTF_VBU(plot_func_number_test),         { PTF_VN(10)},      {.expected_val = true},     "failed test for plot_func_number_test (positive)"},
 
-        {PTF_VBU(plot_func_procedure_test),       { PTF_EV(PTF_VBO(true))},    {.expected_val = false},    "failed test for plot_func_procedure_test (negative)"},
-        {PTF_VBU(plot_func_procedure_test),       { PTF_EV(PTF_VBU(plot_func_procedure_test))},  {.expected_val = true},      "failed test for plot_func_procedure_test (positive)"}
+        {PTF_VBU(plot_func_procedure_test),       { PTF_VBO(true)},    {.expected_val = false},    "failed test for plot_func_procedure_test (negative)"},
+        {PTF_VBU(plot_func_procedure_test),       { PTF_VBU(plot_func_procedure_test)},  {.expected_val = true},      "failed test for plot_func_procedure_test (positive)"}
     };
 
     puts("\ttesting comparison functions");
@@ -213,6 +213,7 @@ START_TEST (test_funcs_env){
 
     add.type = plot_type_builtin;
     add.u.builtin.func = plot_func_add;
+    add.gc.refcount = 1;
     puts("\tdefining function add");
     fail_unless( 1 == plot_env_define(env, &sym, &add) );
 
@@ -273,55 +274,52 @@ END_TEST
 
 
 START_TEST (test_display){
-    plot_expr v, s;
+    plot_value *v, *s;
 
-    v.type = plot_expr_value;
     puts("\n\tTesting display of values");
     fail_if( 0 == plot_init() );
 
     /* allocate our values once */
-    v.u.value = plot_new_value();
-    s.u.value = plot_new_value();
+    v = plot_new_value();
+    s = plot_new_value();
 
     puts("\t\ttesting display of number (expected '3')");
-    v.u.value->type = plot_type_number;
-    v.u.value->u.number.val = 3;
+    v->type = plot_type_number;
+    v->u.number.val = 3;
     plot_func_display(plot_get_env(), &v, 1);
     puts(""); /* trailing \n */
 
     puts("\t\ttesting display of symbol (expected '3')");
-    s.type = plot_expr_value;
-    s.u.value->type = plot_type_symbol;
+    s->type = plot_type_symbol;
 #define TEST_DISPLAY_SYMBOL "symbol"
-    s.u.value->u.symbol.val = TEST_DISPLAY_SYMBOL;
-    s.u.value->u.symbol.size = strlen(TEST_DISPLAY_SYMBOL) + 1;
-    s.u.value->u.symbol.len = strlen(TEST_DISPLAY_SYMBOL) + 1;
-    fail_unless( 1 == plot_env_define(plot_get_env(), &(s.u.value->u.symbol), v.u.value) );
+    s->u.symbol.val = TEST_DISPLAY_SYMBOL;
+    s->u.symbol.size = strlen(TEST_DISPLAY_SYMBOL) + 1;
+    s->u.symbol.len = strlen(TEST_DISPLAY_SYMBOL) + 1;
+    fail_unless( 1 == plot_env_define(plot_get_env(), &(s->u.symbol), v) );
     plot_func_display(plot_get_env(), &s, 1);
     puts(""); /* trailing \n */
 
     puts("\t\ttesting display of string (expected 'testing display of string')");
-    s.type = plot_expr_value;
-    s.u.value->type = plot_type_string;
+    s->type = plot_type_string;
 #define TEST_DISPLAY_STRING "testing display of string"
-    s.u.value->u.string.val = TEST_DISPLAY_STRING;
-    s.u.value->u.string.size = strlen(TEST_DISPLAY_STRING) +1;
-    s.u.value->u.string.len = strlen(TEST_DISPLAY_STRING) + 1;
+    s->u.string.val = TEST_DISPLAY_STRING;
+    s->u.string.size = strlen(TEST_DISPLAY_STRING) +1;
+    s->u.string.len = strlen(TEST_DISPLAY_STRING) + 1;
     plot_func_display(plot_get_env(), &s, 1);
     puts(""); /* trailing \n */
 
 
     puts("\t\ttesting display of function");
-    v.u.value->type = plot_type_builtin;
-    v.u.value->u.builtin.func = 0;
+    v->type = plot_type_builtin;
+    v->u.builtin.func = 0;
     plot_func_display(plot_get_env(), &v, 1);
 
     /* last as this will cause an exit(1) */
     puts("\t\ttesting display of error (error expected)");
-    v.u.value->type = plot_type_error;
-    v.u.value->u.error.type = plot_error_internal;
-    v.u.value->u.error.msg = "testing display of error";
-    v.u.value->u.error.location = "test_display";
+    v->type = plot_type_error;
+    v->u.error.type = plot_error_internal;
+    v->u.error.msg = "testing display of error";
+    v->u.error.location = "test_display";
     plot_func_display(plot_get_env(), &v, 1);
 
     plot_cleanup();

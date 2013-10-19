@@ -379,6 +379,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
  */
 plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
     plot_value *val;
+    plot_value **vals;
     plot_value *func;
     plot_env *new_env;
     int i;
@@ -429,7 +430,19 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
                     #if DEBUG_FUNC || DEBUG
                     puts("calling a builtin function...");
                     #endif
-                    return func->u.builtin.func( env, sexpr->subforms + 1, sexpr->nchildren - 1);
+
+                    /* FIXME dirty */
+                    vals = calloc( sexpr->nchildren - 1, sizeof *vals);
+                    /* eval each argument and add to list */
+                    for( i=0; i < sexpr->nchildren - 1; ++i ){
+                        val = plot_eval_expr(env, &(sexpr->subforms[1 + i]));
+                        if( ! val ){
+                            puts("DEFINE: evaluating argument returned NULL");
+                            return 0; /* FIXME error*/
+                        }
+                        vals[i] = val;
+                    }
+                    return func->u.builtin.func( env, vals, sexpr->nchildren - 1);
                 case plot_type_lambda:
                     #if DEBUG_FUNC || DEBUG
                     puts("calling lambda");

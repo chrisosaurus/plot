@@ -86,7 +86,11 @@ typedef struct plot_lambda {
 } plot_lambda;
 
 typedef struct plot_builtin {
-    struct plot_value * (*func)(struct plot_env *env, struct plot_expr *args, int argc);
+    /* env to evaluate within
+     * args is an array of plot_value *(s) to apply function to
+     * argc is the number of them
+     */
+    struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc);
 } plot_builtin;
 
 typedef struct plot_value {
