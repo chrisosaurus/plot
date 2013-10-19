@@ -204,7 +204,7 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
          */
         int len = (*upto) - start + 1;
         expr->type = plot_expr_value;
-        expr->u.value = plot_new_value();
+        expr->u.value = plot_new_constant();
         expr->u.value->u.string.val = tmp = calloc(len, sizeof(char));
         expr->u.value->u.string.len = len;
         expr->u.value->u.string.size = len;
@@ -216,7 +216,7 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
     else if( inside_value ){
         char *invalid;
         expr->type = plot_expr_value;
-        expr->u.value = plot_new_value();
+        expr->u.value = plot_new_constant();
         if( isdigit(source[start]) ){ /* FIXME source[start] may not be correct, want to really look at first non-whitespace */
             /* if digit then number */
             expr->u.value->u.number.val = strtol( &source[start], &invalid, 10 );

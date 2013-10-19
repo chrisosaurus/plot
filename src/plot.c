@@ -228,11 +228,11 @@ void plot_value_init(void){
     }
 }
 
-/* get new value */
+/* get new ref counted value */
 struct plot_value * plot_new_value(void){
     struct plot_value *p;
     if( ! plot_instance ){
-        puts("plot_new_value called without plot_instance being initialised");
+        puts("plot_value_new called without plot_instance being initialised");
         exit(1);
     }
 
@@ -258,6 +258,18 @@ struct plot_value * plot_new_value(void){
         return p;
     }
 }
+
+/* get new NON-ref counted value
+ * this is needed for constants until
+ * a better solution comes along
+ */
+struct plot_value * plot_new_constant(void){
+    struct plot_value *p;
+    p = plot_new_value();
+    p->gc.refcount = -1; /* FIXME hack */
+    return p;
+}
+
 
 /* get new env */
 struct plot_env * plot_new_env(void){

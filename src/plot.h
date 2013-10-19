@@ -52,8 +52,14 @@ void plot_value_incr(struct plot_value *p);
  */
 void plot_value_decr(struct plot_value *p);
 
-/* get new value */
+/* get new ref counted value */
 struct plot_value * plot_new_value(void);
+
+/* get new NON-ref counted value
+ * this is needed for constants until
+ * a better solution comes along
+ */
+struct plot_value * plot_new_constant(void);
 
 /* get new env */
 struct plot_env * plot_new_env(void);

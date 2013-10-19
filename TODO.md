@@ -8,6 +8,7 @@ garbage collection:
 * func_ * - decr arguments post-use
 * consider preferring garbage-reuse (reclaimed) over new (arena)
 * implement arena growth
+* need to work out how to deal with constants - for now we will not gc anything allocated at parse time
 
 performance:
 ------------
