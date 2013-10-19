@@ -17,6 +17,8 @@ START_TEST (test_env){
     plot_value v;
     plot_symbol s = (plot_symbol){"sym", 4, 4};
 
+    fail_if( 0 == plot_init() );
+
     puts("\tTesting construction");
     fail_if( 0 == (e = plot_env_init(0)) );
 
@@ -30,6 +32,7 @@ START_TEST (test_env){
     fail_unless( 0 == plot_env_get(e, &s) );
 
     plot_env_cleanup(e);
+    plot_cleanup();
 }
 END_TEST
 

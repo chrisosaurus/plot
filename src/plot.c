@@ -16,21 +16,30 @@
 typedef struct plot {
     struct plot_env *env;
 
+    /**** GC arena ****/
     /* array of malloc'd values */
-    struct plot_value *arena;
+    struct plot_value *value_arena;
     /* number of values in above arena */
-    int num_values_allocated;
+    int num_value_allocated;
     /* number of values currently in use by callers */
-    int num_values_used;
-
+    int num_value_used;
     /* head of list of reclaimed plot_value(s) */
-    struct plot_value *reclaimed;
+    struct plot_value *value_reclaimed;
+
+    struct plot_env *env_arena;
+    int num_env_allocated;
+    int num_env_used;
+    struct plot_env *env_reclaimed;
+
 
     /**** garbage stats ****/
     /* number of plot_value(s) reclaimed (garbage collected) */
-    int num_reclaimed;
+    int num_value_reclaimed;
     /* number of plot_value(s) recycling (handed back out after GC) */
-    int num_recycled;
+    int num_value_recycled;
+
+    int num_env_reclaimed;
+    int num_env_recycled;
 } plot;
 
 static plot *plot_instance;
@@ -68,7 +77,8 @@ struct plot_binding bindings[] = {
     {{"newline",   7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_newline}}}}
 };
 
-void plot_value_init(void);
+void plot_gc_value_init(void);
+void plot_gc_env_init(void);
 
 int plot_init(void){
     size_t i=0;
@@ -78,6 +88,9 @@ int plot_init(void){
         puts("alloc failed in plot_init");
         return 0;
     }
+
+    plot_gc_value_init();
+    plot_gc_env_init();
 
     plot_instance->env = plot_env_init(0);
     if( ! plot_instance->env ){
@@ -91,8 +104,6 @@ int plot_init(void){
             printf("error in plot_init defining symbol '%s'\n", bindings[i].sym.val);
         }
     }
-
-    plot_value_init();
 
     return 1;
 }
@@ -108,15 +119,30 @@ void plot_cleanup(){
 #if GC_STATS
     int lost = 0;
     plot_value *v;
+    plot_env *e;
 
     printf("\nplot GC stats:\n");
-    printf("\tMax in use '%d'\n", plot_instance->num_values_used);
-    printf("\tStill had in the bank: '%d'\n", plot_instance->num_values_allocated - plot_instance->num_values_used );
-    printf("\tnum recycled '%d', reclaimed '%d'\n", plot_instance->num_recycled, plot_instance->num_reclaimed);
-    printf("\tused - reclaimed = '%d'\n", plot_instance->num_values_used - plot_instance->num_reclaimed);
-    for( v = plot_instance->reclaimed; v; v = (plot_value *) v->gc.next )
+
+    printf("##### plot_value stats #####\n");
+    printf("\tMax in use '%d'\n", plot_instance->num_value_used);
+    printf("\tStill had in the bank: '%d'\n", plot_instance->num_value_allocated - plot_instance->num_value_used );
+    printf("\tnum recycled '%d', reclaimed '%d'\n", plot_instance->num_value_recycled, plot_instance->num_value_reclaimed);
+    printf("\tused - reclaimed = '%d'\n", plot_instance->num_value_used - plot_instance->num_value_reclaimed);
+    for( lost=0, v = plot_instance->value_reclaimed; v; v = (plot_value *) v->gc.next )
         ++lost;
-    printf("\tnon-reclaimed (still in use at cleanup) '%d'\n\n", lost);
+    printf("\tnon-reclaimed (still in use at cleanup) '%d'\n", lost);
+
+    printf("##### plot_env stats #####\n");
+    printf("\tMax in use '%d'\n", plot_instance->num_env_used);
+    printf("\tStill had in the bank: '%d'\n", plot_instance->num_env_allocated - plot_instance->num_env_used );
+    printf("\tnum recycled '%d', reclaimed '%d'\n", plot_instance->num_env_recycled, plot_instance->num_env_reclaimed);
+    printf("\tused - reclaimed = '%d'\n", plot_instance->num_env_used - plot_instance->num_env_reclaimed);
+    for( lost=0, e = plot_instance->env_reclaimed; e; e = (plot_env *) e->gc.next )
+        ++lost;
+    printf("\tnon-reclaimed (still in use at cleanup) '%d'\n", lost);
+
+    printf("\n");
+
 #endif
 
     plot_env_cleanup(plot_instance->env);
@@ -188,11 +214,11 @@ void plot_value_decr(struct plot_value *p){
     if( p->gc.refcount > 0 ){
         --p->gc.refcount;
         if( p->gc.refcount == 0 ){
-            ++plot_instance->num_reclaimed;
+            ++plot_instance->num_value_reclaimed;
             /* time to reclaim */
             //fprintf(stderr, "RECLAIMING\n"); // 2692537
-            p->gc.next = (struct plot_gc *) plot_instance->reclaimed;
-            plot_instance->reclaimed = (struct plot_value *) p;
+            p->gc.next = (struct plot_gc *) plot_instance->value_reclaimed;
+            plot_instance->value_reclaimed = (struct plot_value *) p;
             p->type = plot_type_reclaimed; /* FIXME useful for testing */
         }
     } else {
@@ -207,14 +233,14 @@ void plot_value_decr(struct plot_value *p){
  * returns on success
  * will cause a fatal error and exit program on failure
  */
-void plot_value_init(void){
+void plot_gc_value_init(void){
     if( ! plot_instance ){
-        puts("plot_value_init called without plot_instance being initialised");
+        puts("plot_gc_value_init called without plot_instance being initialised");
         exit(1);
     }
 
-    plot_instance->num_values_used = 0;
-    plot_instance->reclaimed = 0;
+    plot_instance->num_value_used = 0;
+    plot_instance->num_value_reclaimed = 0;
     /* FIXME
      * before gc fibo(31) would require 6731342 plot_values
      * after tracking waste, this included 2692537 wasted values (mostly from if test position)
@@ -222,10 +248,31 @@ void plot_value_init(void){
      *
      * now after func-call-temp-reclaiming this value can be reduced to 2692574
      */
-    plot_instance->num_values_allocated = 2700000;
-    plot_instance->arena = calloc( plot_instance->num_values_allocated, sizeof (struct plot_value) );
-    if( ! plot_instance->arena ){
-        puts("plot_value_init ERROR: failed to calloc arena");
+    plot_instance->num_value_allocated = 2700000;
+    plot_instance->value_arena = calloc( plot_instance->num_value_allocated, sizeof (struct plot_value) );
+    if( ! plot_instance->value_arena ){
+        puts("plot_gc_value_init ERROR: failed to calloc value arena");
+        exit(1);
+    }
+}
+
+/* initialise env arena
+ *
+ * returns on success
+ * will cause a fatal error and exit on failure
+ */
+void plot_gc_env_init(void){
+    if( ! plot_instance ){
+        puts("plot_gc_env_init called without plot_instance being initialised");
+        exit(1);
+    }
+
+    plot_instance->num_env_used = 0;
+    plot_instance->num_env_reclaimed = 0;
+    plot_instance->num_env_allocated = 2700000;
+    plot_instance->env_arena = calloc( plot_instance->num_env_allocated, sizeof (struct plot_env) );
+    if( ! plot_instance->env_arena ){
+        puts("plot_gc_env_init ERROR: failed to calloc env arena");
         exit(1);
     }
 }
@@ -238,23 +285,23 @@ struct plot_value * plot_new_value(void){
         exit(1);
     }
 
-    if( plot_instance->reclaimed ){
-        ++plot_instance->num_recycled;
+    if( plot_instance->value_reclaimed ){
+        ++plot_instance->num_value_recycled;
         //fprintf(stderr, "reusing\n");
-        p = plot_instance->reclaimed;
+        p = plot_instance->value_reclaimed;
         /* gc is the first element of plot_value so this is safe */
-        plot_instance->reclaimed = (plot_value *) p->gc.next;
+        plot_instance->value_reclaimed = (plot_value *) p->gc.next;
         p->gc.refcount = 1;
         p->gc.next = 0;
         return p;
     }
-    if( plot_instance->num_values_used >= plot_instance->num_values_allocated ){
+    if( plot_instance->num_value_used >= plot_instance->num_value_allocated ){
         /* FIXME realloc */
-        printf("THE BANK IS EMPTY; allocated all '%d' plot_value(s)\n", plot_instance->num_values_used);
+        printf("THE BANK IS EMPTY; allocated all '%d' plot_value(s)\n", plot_instance->num_value_used);
         exit(1);
     } else {
         /* hand out resources */
-        p = &(plot_instance->arena[ plot_instance->num_values_used ++]);
+        p = &(plot_instance->value_arena[ plot_instance->num_value_used ++]);
         p->gc.refcount = 1;
         p->gc.next = 0;
         return p;
@@ -276,13 +323,33 @@ struct plot_value * plot_new_constant(void){
 /* get new env */
 struct plot_env * plot_new_env(void){
     struct plot_env *e;
-    e = calloc(1, sizeof *e);
-    if( ! e ){
-        /* TODO FIXME use plot error handling */
-        puts("plot_new_env: calloc failed, dying");
+    if( ! plot_instance ){
+        puts("plot_value_new called without plot_instance being initialised");
         exit(1);
     }
-    return e;
+
+    if( plot_instance->env_reclaimed ){
+        ++plot_instance->num_env_recycled;
+        //fprintf(stderr, "reusing\n");
+        e = plot_instance->env_reclaimed;
+        /* gc is the first element of plot_env so this is safe */
+        plot_instance->env_reclaimed = (plot_env *) e->gc.next;
+        e->gc.refcount = 1;
+        e->gc.next = 0;
+        return e;
+    }
+    if( plot_instance->num_env_used >= plot_instance->num_env_allocated ){
+        /* FIXME realloc */
+        printf("THE BANK IS EMPTY; allocated all '%d' plot_env(s)\n", plot_instance->num_env_used);
+        exit(1);
+    } else {
+        /* hand out resources */
+        e = &(plot_instance->env_arena[ plot_instance->num_env_used ++]);
+        e->gc.refcount = 1;
+        e->gc.next = 0;
+        return e;
+    }
+
 }
 
 /* get new hash */

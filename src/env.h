@@ -1,11 +1,14 @@
 #ifndef PLOT_ENV_H
 #define PLOT_ENV_H
 
+#include "plot.h" /* needed for plot_gc */
+
 struct plot_hash;
 struct plot_symbol;
 struct plot_value;
 
 typedef struct plot_env {
+    struct plot_gc gc;
     struct plot_env *parent;
     struct plot_hash *hash;
 } plot_env;

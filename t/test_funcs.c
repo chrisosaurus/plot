@@ -204,7 +204,10 @@ START_TEST (test_funcs_env){
     plot_symbol sym;
     plot_value add;
     const plot_value *f;
-    plot_env *env = plot_env_init(0);
+    plot_env *env;
+
+    fail_if( 0 == plot_init() );
+    env = plot_env_init(0);
 
 
     sym.val = "+";
@@ -223,6 +226,7 @@ START_TEST (test_funcs_env){
     fail_unless( f->u.builtin.func == plot_func_add );
 
     plot_env_cleanup(env);
+    plot_cleanup();
 }
 END_TEST
 
