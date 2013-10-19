@@ -9,6 +9,8 @@
 
 #define LENGTH(x) (sizeof x / sizeof x[0])
 
+#define GC_STATS 1
+
 typedef struct plot {
     struct plot_env *env;
 
@@ -101,11 +103,19 @@ struct plot_env * plot_get_env(void){
 }
 
 void plot_cleanup(){
+#if GC_STATS
+    int lost = 0;
+    plot_value *v;
+
     printf("\nplot GC stats:\n");
     printf("\tMax in use '%d'\n", plot_instance->num_values_used);
     printf("\tStill had in the bank: '%d'\n", plot_instance->num_values_allocated - plot_instance->num_values_used );
     printf("\tnum recycled '%d', reclaimed '%d'\n", plot_instance->num_recycled, plot_instance->num_reclaimed);
-    printf("\tused - reclaimed '%d'\n\n", plot_instance->num_values_used - plot_instance->num_reclaimed);
+    printf("\tused - reclaimed '%d'\n", plot_instance->num_values_used - plot_instance->num_reclaimed);
+    for( v = plot_instance->reclaimed; v; v = (plot_value *) v->gc.next )
+        ++lost;
+    printf("\tnon-reclaimed (still in use at cleanup) '%d'\n\n", lost);
+#endif
 
     plot_env_cleanup(plot_instance->env);
     free(plot_instance);
