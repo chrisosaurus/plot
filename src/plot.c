@@ -101,8 +101,12 @@ struct plot_env * plot_get_env(void){
 }
 
 void plot_cleanup(){
-    printf("Still had in the bank: '%d'\n", plot_instance->num_values_allocated - plot_instance->num_values_used );
-    printf("num recycled '%d', reclaimed '%d'\n", plot_instance->num_recycled, plot_instance->num_reclaimed);
+    printf("\nplot GC stats:\n");
+    printf("\tMax in use '%d'\n", plot_instance->num_values_used);
+    printf("\tStill had in the bank: '%d'\n", plot_instance->num_values_allocated - plot_instance->num_values_used );
+    printf("\tnum recycled '%d', reclaimed '%d'\n", plot_instance->num_recycled, plot_instance->num_reclaimed);
+    printf("\tused - reclaimed '%d'\n\n", plot_instance->num_values_used - plot_instance->num_reclaimed);
+
     plot_env_cleanup(plot_instance->env);
     free(plot_instance);
 }
