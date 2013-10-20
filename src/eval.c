@@ -453,7 +453,7 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
                     #endif
 
                     /* create a new env with lambda->env as parent */
-                    new_env = plot_env_init(func->u.lambda.env);
+                    new_env = plot_new_env(func->u.lambda.env);
                     if( ! new_env ){
                         puts("LAMBDA: call to plot_env_init failed");
                         return 0; /* FIXME error */

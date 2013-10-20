@@ -13,12 +13,11 @@ typedef struct plot_env {
     struct plot_hash *hash;
 } plot_env;
 
-/* allocated a new plot_env using calloc
- * *parent is pointer to parent env, or 0
- *
- * returns pointer to new env or 0 on error
+/* initialise a previously allocated env
+ * returns 1 on success
+ * 0 on error
  */
-plot_env * plot_env_init(plot_env *parent);
+int plot_env_init(plot_env *env, plot_env *parent);
 
 /* free env and calls hash cleanup */
 void plot_env_cleanup(plot_env *env);

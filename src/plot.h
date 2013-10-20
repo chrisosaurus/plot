@@ -70,8 +70,10 @@ void plot_env_incr(struct plot_env *e);
  */
 void plot_env_decr(struct plot_env *e);
 
-/* get new env */
-struct plot_env * plot_new_env(void);
+/* get new env
+ * parent is the enclosing environment, or 0
+ */
+struct plot_env * plot_new_env(struct plot_env *parent);
 
 /* get new hash */
 struct plot_hash * plot_new_hash(void);

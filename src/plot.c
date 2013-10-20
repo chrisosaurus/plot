@@ -93,7 +93,7 @@ int plot_init(void){
     plot_gc_value_init();
     plot_gc_env_init();
 
-    plot_instance->env = plot_env_init(0);
+    plot_instance->env = plot_new_env(0);
     if( ! plot_instance->env ){
         puts("call to plot_env_init failed");
         plot_cleanup();
@@ -359,8 +359,10 @@ struct plot_value * plot_new_constant(void){
 }
 
 
-/* get new env */
-struct plot_env * plot_new_env(void){
+/* get new env
+ * parent is the enclosing environment, or 0
+ */
+struct plot_env * plot_new_env(struct plot_env *parent){
     struct plot_env *e;
     if( ! plot_instance ){
         puts("plot_value_new called without plot_instance being initialised");
@@ -375,6 +377,10 @@ struct plot_env * plot_new_env(void){
         plot_instance->env_reclaimed = (plot_env *) e->gc.next;
         e->gc.refcount = 1;
         e->gc.next = 0;
+        if( ! plot_env_init(e, parent) ){
+            puts("plot_value_new: call to plot_env_init failed");
+            exit(1);
+        }
         return e;
     }
     if( plot_instance->num_env_used >= plot_instance->num_env_allocated ){
@@ -386,6 +392,10 @@ struct plot_env * plot_new_env(void){
         e = &(plot_instance->env_arena[ plot_instance->num_env_used ++]);
         e->gc.refcount = 1;
         e->gc.next = 0;
+        if( ! plot_env_init(e, parent) ){
+            puts("plot_value_new: call to plot_env_init failed");
+            exit(1);
+        }
         return e;
     }
 

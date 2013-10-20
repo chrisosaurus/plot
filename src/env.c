@@ -7,23 +7,27 @@
 
 #define DEBUG 0
 
-/* allocated a new plot_env using calloc
- * *parent is pointer to parent env, or 0
+/* initialise a previously allocated env
  *
- * returns pointer to new env or 0 on error
+ * env is the environment to initialise
+ * parent is the enclosing env for this new env
+ *  (can be 0)
+ *
+ *
+ * returns 1 on success
+ * 0 on error
  */
-plot_env * plot_env_init(plot_env *parent){
-    plot_env *e = plot_new_env();
-    if( ! e )
+int plot_env_init(plot_env *env, plot_env *parent){
+    if( ! env )
         return 0;
 
-    e->parent = parent;
+    env->parent = parent;
 
-    e->hash = plot_hash_init();
-    if( ! e->hash )
+    env->hash = plot_hash_init();
+    if( ! env->hash )
         return 0;
 
-    return e;
+    return 1;
 }
 
 /* free env and calls hash cleanup */
