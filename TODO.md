@@ -6,6 +6,7 @@ garbage collection:
 * lambda form
 * implement arena growth
 * need to work out how to deal with constants - for now we will not gc anything allocated at parse time
+* garbage collected env do not appear to properly decr their values
 
 performance:
 ------------

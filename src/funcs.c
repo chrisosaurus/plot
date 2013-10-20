@@ -41,6 +41,13 @@ static void plot_func_display_value(plot_env *env, plot_value *val){
         case plot_type_error:
             plot_handle_error(val);
             break;
+        case plot_type_lambda:
+            puts("Unable to print a lambda value at this point in time");
+            break;
+        case plot_type_reclaimed:
+            puts("ERROR: you are trying to display a garbage collected value, most likely an error in the GC");
+            exit(1);
+            break;
         default:
             err.type = plot_type_error;
             err.u.error.type = plot_error_internal;

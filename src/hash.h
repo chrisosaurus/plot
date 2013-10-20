@@ -38,7 +38,12 @@ typedef struct plot_hash_entry {
 plot_hash * plot_hash_init(void);
 
 /* destroy hash
- * frees all plot_hash_entry(s) and then finally the plot_hash
+ * plot_hash_cleanup will call decr on all values
+ * stored within
+ *
+ * FIXME currently the hash and each hash_entry
+ * are allocated on the heap, so this will also free them.
+ * Eventually they should also be gc-managed
  */
 void plot_hash_cleanup(plot_hash *hash);
 

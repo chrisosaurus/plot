@@ -19,7 +19,9 @@ typedef struct plot_env {
  */
 int plot_env_init(plot_env *env, plot_env *parent);
 
-/* free env and calls hash cleanup */
+/* plot_env_cleanup will decr any parent
+ * it will also call decr on all values stored within hash
+ */
 void plot_env_cleanup(plot_env *env);
 
 /* resolve a symbol to a value

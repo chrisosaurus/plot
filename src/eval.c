@@ -329,6 +329,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
 
                 tmp->type = plot_type_lambda;
                 tmp->u.lambda.env = env;
+                plot_env_incr(env);
                 tmp->u.lambda.body = sexpr;
                 return tmp;
             }
@@ -498,6 +499,10 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
                     for( i=2; i < func->u.lambda.body->nchildren; ++i ){
                         val = plot_eval_expr(new_env, &(func->u.lambda.body->subforms[i]) );
                     }
+                    plot_env_decr(new_env);
+                    plot_value_decr(func);
+                    //printf("after lambda we have '%d' refs\n", func->gc.refcount);
+                    //printf("and our env has '%d'\n", func->u.lambda.env->gc.refcount);
                     return val;
 
                     break;

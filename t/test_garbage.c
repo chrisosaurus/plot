@@ -53,8 +53,12 @@ START_TEST (test_garbage){
     fail_if( 0 == plot_eval(plot_get_env(), prog) );
 
     v = plot_env_get(plot_get_env(), PT_VS("result"));
-    /* NB below it is 2 as the env holds one and we now hold one (as we fetched) */
-    ck_assert_int_eq( 2,  v->gc.refcount );
+    /* NB below it is 3:
+     * creating a value starts with refcount 1
+     * the env holds one reference (we stored)
+     * we hold on reference (as we fetched)
+     */
+    ck_assert_int_eq( 3,  v->gc.refcount );
     fail_if( plot_type_reclaimed == v->type );
 
     puts("\tCompleted!");

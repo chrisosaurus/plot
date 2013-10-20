@@ -224,6 +224,10 @@ void plot_value_decr(struct plot_value *p){
             //fprintf(stderr, "RECLAIMING\n"); // 2692537
             p->gc.next = (struct plot_gc *) plot_instance->value_reclaimed;
             plot_instance->value_reclaimed = (struct plot_value *) p;
+            /* if plot_value is a lambda we must also decr the env */
+            if( p->type == plot_type_lambda ){
+                plot_env_decr(p->u.lambda.env);
+            }
             p->type = plot_type_reclaimed; /* FIXME useful for testing */
         }
     } else {
@@ -287,6 +291,9 @@ void plot_env_decr(struct plot_env *e){
             //fprintf(stderr, "RECLAIMING\n"); // 2692537
             e->gc.next = (struct plot_gc *) plot_instance->env_reclaimed;
             plot_instance->env_reclaimed = (struct plot_env *) e;
+
+            /* env cleanup will decr parent and trigger decr on all stored values */
+            plot_env_cleanup(e);
         }
     } else {
         /* this object already has a refcount of 0, ERROR */
@@ -377,6 +384,7 @@ struct plot_env * plot_new_env(struct plot_env *parent){
         plot_instance->env_reclaimed = (plot_env *) e->gc.next;
         e->gc.refcount = 1;
         e->gc.next = 0;
+        //printf("\tRECLAIMED: trying to set parent for '%p', parent is '%p'\n", (void*)e, (void*)parent);
         if( ! plot_env_init(e, parent) ){
             puts("plot_value_new: call to plot_env_init failed");
             exit(1);
@@ -392,6 +400,7 @@ struct plot_env * plot_new_env(struct plot_env *parent){
         e = &(plot_instance->env_arena[ plot_instance->num_env_used ++]);
         e->gc.refcount = 1;
         e->gc.next = 0;
+        //printf("\tNEW: trying to set parent for '%p', parent is '%p'\n", (void*)e, (void*)parent);
         if( ! plot_env_init(e, parent) ){
             puts("plot_value_new: call to plot_env_init failed");
             exit(1);

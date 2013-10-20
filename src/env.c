@@ -1,4 +1,5 @@
 #include <stdio.h> /* puts */
+#include <stdlib.h>
 
 #include "value.h"
 #include "hash.h"
@@ -21,7 +22,14 @@ int plot_env_init(plot_env *env, plot_env *parent){
     if( ! env )
         return 0;
 
-    env->parent = parent;
+    if( env == parent ){
+        puts("TRYING TO SET PARENT TO SELF");
+        exit(1);
+    }
+    if( parent ){
+        env->parent = parent;
+        plot_env_incr(parent);
+    }
 
     env->hash = plot_hash_init();
     if( ! env->hash )
@@ -30,13 +38,26 @@ int plot_env_init(plot_env *env, plot_env *parent){
     return 1;
 }
 
-/* free env and calls hash cleanup */
+/* plot_env_cleanup will decr any parent
+ * it will also call decr on all values stored within hash
+ */
 void plot_env_cleanup(plot_env *env){
     if( ! env )
         return;
 
+    if( env->parent ){
+        plot_env_decr(env->parent);
+        env->parent = 0;
+    }
+
+    /* plot_hash_cleanup will call decr on all values
+     * stored within
+     *
+     * FIXME currently the hash and each hash_entry
+     * are allocated on the heap, so this will also free them.
+     * Eventually they should also be gc-managed
+     */
     plot_hash_cleanup(env->hash);
-    /* FIXME need to deref */
 }
 
 /* resolve a symbol to a value
@@ -64,7 +85,9 @@ plot_value * plot_env_get(const plot_env *env, const plot_symbol * sym){
             break;
         v = plot_hash_get(e->hash, sym);
         if( v ){
-            plot_value_incr(v);
+            #if DEBUG
+            puts("\tvalue found, returning");
+            #endif
             return v;
         }
     }

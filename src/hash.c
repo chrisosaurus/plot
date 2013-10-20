@@ -22,7 +22,12 @@ plot_hash * plot_hash_init(void){
 }
 
 /* destroy hash
- * frees all plot_hash_entry(s) and then finally the plot_hash
+ * plot_hash_cleanup will call decr on all values
+ * stored within
+ *
+ * FIXME currently the hash and each hash_entry
+ * are allocated on the heap, so this will also free them.
+ * Eventually they should also be gc-managed
  */
 void plot_hash_cleanup(plot_hash *hash){
     plot_hash_entry *cur, *nxt;
@@ -30,8 +35,12 @@ void plot_hash_cleanup(plot_hash *hash){
     if( ! hash )
         return;
 
+    /* FIXME currently hash and hash_entry are allocated
+     * on the heap (via calloc), these should eventually be gc-ed
+     */
     for( cur = hash->head; cur; cur = nxt ){
         nxt = cur->next;
+        plot_value_decr(cur->value);
         /* FIXME need to deref each hash_entry */
     }
 
@@ -61,6 +70,7 @@ plot_value * plot_hash_get(plot_hash *hash, const plot_symbol * key){
         printf("\tcomparing: looking at key '%s', search string is '%s'\n", e->key->val, key->val);
         #endif
         if( ! strcmp(key->val, e->key->val) ){
+            plot_value_incr(e->value);
             return e->value;
         }
     }
@@ -106,8 +116,11 @@ int plot_hash_set(plot_hash *hash, const plot_symbol * key, plot_value *value){
          */
         if(  sc < 0 ) /* TRUE IFF key < (*e)->key */
             break;
-        if( sc == 0 ) /* TRUE IFF key == (*e)->key */
+        if( sc == 0 ){ /* TRUE IFF key == (*e)->key */
+            /* FIXME overriding, need to decr value here */
+            puts("OVERRIDING - FIXME need to decr");
             break;
+        }
     }
 
     /* if *e is null then we have either reached the end of the list
@@ -120,6 +133,7 @@ int plot_hash_set(plot_hash *hash, const plot_symbol * key, plot_value *value){
         return 0;/* ERROR: calloc failed */
     n->key = key;
     n->value = value;
+    plot_value_incr(value); /* we are holding a reference to value */
     n->next = *e;
     *e = n;
 
@@ -127,7 +141,7 @@ int plot_hash_set(plot_hash *hash, const plot_symbol * key, plot_value *value){
         hash->n_elems++;
 
     #if DEBUG
-    puts("\teverything seemed fine");
+    printf("\tsuccessfully added key '%s'\n", key->val);
     #endif
 
     return 1;
