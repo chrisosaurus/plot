@@ -364,7 +364,7 @@ void plot_gc_env_init(void){
 
     plot_instance->num_env_used = 0;
     plot_instance->num_env_reclaimed = 0;
-    plot_instance->num_env_allocated = 2700000;
+    plot_instance->num_env_allocated = 1000;
     plot_instance->env_arena = calloc( plot_instance->num_env_allocated, sizeof (struct plot_env) );
     if( ! plot_instance->env_arena ){
         puts("plot_gc_env_init ERROR: failed to calloc env arena");
