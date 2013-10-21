@@ -23,9 +23,10 @@ int plot_env_init(plot_env *env, plot_env *parent){
         return 0;
 
     if( env == parent ){
-        puts("TRYING TO SET PARENT TO SELF");
+        printf("TRYING TO SET PARENT TO SELF '%p' and '%p'\n", (void*) env, (void*) parent);
         exit(1);
     }
+
     if( parent ){
         env->parent = parent;
         plot_env_incr(parent);

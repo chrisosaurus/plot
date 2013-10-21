@@ -35,15 +35,26 @@ void plot_hash_cleanup(plot_hash *hash){
     if( ! hash )
         return;
 
+    #if DEBUG
+    puts("in plot_hash_cleanup");
+    #endif
+
     /* FIXME currently hash and hash_entry are allocated
      * on the heap (via calloc), these should eventually be gc-ed
      */
     for( cur = hash->head; cur; cur = nxt ){
         nxt = cur->next;
+        #if DEBUG
+        puts("decreasing value");
+        printf("for '%p'\n", (void*) cur->value);
+        #endif
         plot_value_decr(cur->value);
         /* FIXME need to deref each hash_entry */
     }
 
+    #if DEBUG
+    puts("leaving plot_hash_cleanup");
+    #endif
     /* FIXME need to deref */
 }
 

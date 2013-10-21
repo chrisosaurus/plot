@@ -13,6 +13,8 @@
 #define GC_STATS 1
 #endif
 
+#define DEBUG 0
+
 typedef struct plot {
     struct plot_env *env;
 
@@ -211,14 +213,29 @@ void plot_value_decr(struct plot_value *p){
     if( !p )
         return;
 
+    #if DEBUG
+    printf("inside plot_value_decr looking at object '%p' with refcount '%d'\n",
+          (void*) p, p->gc.refcount );
+    #endif
+
     if( p->gc.refcount < 0 ){
+        #if DEBUG
+        puts("\tthis object is NOT under gc control, leaving untouched");
+        #endif
         /* object is NOT under control of gc, do not touch */
         return;
     }
 
     if( p->gc.refcount > 0 ){
+        #if DEBUG
+        puts("\tdecrementing refcount");
+        #endif
         --p->gc.refcount;
+
         if( p->gc.refcount == 0 ){
+            #if DEBUG
+            puts("\treclaiming value");
+            #endif
             ++plot_instance->num_value_reclaimed;
             /* time to reclaim */
             //fprintf(stderr, "RECLAIMING\n"); // 2692537
@@ -229,12 +246,20 @@ void plot_value_decr(struct plot_value *p){
                 plot_env_decr(p->u.lambda.env);
             }
             p->type = plot_type_reclaimed; /* FIXME useful for testing */
+        #if DEBUG
+        } else {
+            puts("\tsparing object");
+        #endif
         }
     } else {
         /* this object already has a refcount of 0, ERROR */
         puts("plot_value_decr: This object already has a refcount of 0, ERROR has occurred, terminating");
         exit(1);
     }
+
+    #if DEBUG
+    puts("\tleaving plot_value_decr");
+    #endif
 }
 
 /* initialise value arena
@@ -278,14 +303,30 @@ void plot_env_decr(struct plot_env *e){
     if( !e )
         return;
 
+    #if DEBUG
+    printf("inside plot_env_decr considering object '%p' with refcount '%d'\n",
+          (void*) e, e->gc.refcount);
+    #endif
+
     if( e->gc.refcount < 0 ){
+        #if DEBUG
+        puts("\tthis object is not under GC control, leaving untouched");
+        #endif
         /* object is NOT under control of gc, do not touch */
         return;
     }
 
     if( e->gc.refcount > 0 ){
+        #if DEBUG
+        puts("\tdecrementing refcount");
+        #endif
+
         --e->gc.refcount;
         if( e->gc.refcount == 0 ){
+            #if DEBUG
+            puts("\treclaiming object");
+            #endif
+
             ++plot_instance->num_env_reclaimed;
             /* time to reclaim */
             //fprintf(stderr, "RECLAIMING\n"); // 2692537
@@ -294,12 +335,20 @@ void plot_env_decr(struct plot_env *e){
 
             /* env cleanup will decr parent and trigger decr on all stored values */
             plot_env_cleanup(e);
+        #if DEBUG
+        } else {
+            puts("\tsparing object");
+        #endif
         }
     } else {
         /* this object already has a refcount of 0, ERROR */
         puts("plot_env_decr: This object already has a refcount of 0, ERROR has occurred, terminating");
         exit(1);
     }
+
+    #if DEBUG
+    puts("\tleaving plot_env_decr");
+    #endif
 }
 
 /* initialise env arena
