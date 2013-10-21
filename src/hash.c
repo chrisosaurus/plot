@@ -6,6 +6,7 @@
 #include "plot.h"
 
 #define DEBUG 0
+#define DEBUG_CLEANUP 1
 
 /* create a new hash
  * allocate a new hash using calloc
@@ -35,7 +36,7 @@ void plot_hash_cleanup(plot_hash *hash){
     if( ! hash )
         return;
 
-    #if DEBUG
+    #if DEBUG || DEBUG_CLEANUP
     puts("in plot_hash_cleanup");
     #endif
 
@@ -44,16 +45,15 @@ void plot_hash_cleanup(plot_hash *hash){
      */
     for( cur = hash->head; cur; cur = nxt ){
         nxt = cur->next;
-        #if DEBUG
-        puts("decreasing value");
-        printf("for '%p'\n", (void*) cur->value);
+        #if DEBUG || DEBUG_CLEANUP
+        printf("\tdecreasing value '%p' with refcount '%d'\n", (void*) cur->value, cur->value->gc.refcount);
         #endif
         plot_value_decr(cur->value);
         /* FIXME need to deref each hash_entry */
     }
 
-    #if DEBUG
-    puts("leaving plot_hash_cleanup");
+    #if DEBUG || DEBUG_CLEANUP
+    puts("\tleaving plot_hash_cleanup");
     #endif
     /* FIXME need to deref */
 }
@@ -82,6 +82,9 @@ plot_value * plot_hash_get(plot_hash *hash, const plot_symbol * key){
         #endif
         if( ! strcmp(key->val, e->key->val) ){
             plot_value_incr(e->value);
+            #if DEBUG || DEBUG_CLEANUP
+            printf("\treturning found object '%s' ('%p') with refcount '%d'\n", e->key->val,(void*) e->value, e->value->gc.refcount);
+            #endif
             return e->value;
         }
     }
