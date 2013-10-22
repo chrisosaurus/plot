@@ -21,6 +21,7 @@ START_TEST (test_hash){
     hash.n_elems = 0;
 
     puts("\tTesting hash construction");
+    fail_if( 0 == plot_init() );
     fail_if( 0 == (plot_hash_init(&hash)) );
 
     puts("\tTesting basic hash get and insert");
@@ -46,6 +47,7 @@ START_TEST (test_hash){
     fail_unless( 3 == hash.n_elems );
 
     plot_hash_cleanup(&hash);
+    plot_cleanup();
 }
 END_TEST
 

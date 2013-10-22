@@ -75,6 +75,17 @@ void plot_env_decr(struct plot_env *e);
  */
 struct plot_env * plot_new_env(struct plot_env *parent);
 
+struct plot_hash_entry;
+
+/* increase reference count on plot_entry */
+void plot_he_incr(struct plot_hash_entry *he);
+
+/* decrease reference count on plot_entry
+ * may trigger collection of the entry
+ * (and the symbol and value stored within)
+ */
+void plot_he_decr(struct plot_hash_entry *he);
+
 /* get new hash entry */
 struct plot_hash_entry * plot_new_hash_entry(void);
 

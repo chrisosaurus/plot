@@ -1,6 +1,8 @@
 #ifndef PLOT_HASH_H
 #define PLOT_HASH_H
 
+#include "plot.h" /* needed for plot_gc */
+
 struct plot_symbol;
 struct plot_value;
 
@@ -24,6 +26,7 @@ typedef struct plot_hash {
  * in strcmp order of keys
  */
 typedef struct plot_hash_entry {
+    struct plot_gc gc;
     const struct plot_symbol * key;
     struct plot_value *value;
     struct plot_hash_entry *next;
