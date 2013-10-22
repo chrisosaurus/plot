@@ -17,6 +17,7 @@
  * or 0 if an error was encountered
  */
 int plot_hash_init(plot_hash *hash){
+    hash->n_elems = 0;
     hash->head = 0;
     return 1;
 }
