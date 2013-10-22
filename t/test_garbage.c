@@ -53,12 +53,12 @@ START_TEST (test_garbage){
     fail_if( 0 == plot_eval(plot_get_env(), prog) );
 
     v = plot_env_get(plot_get_env(), PT_VS("result"));
-    /* NB below it is 3:
-     * creating a value starts with refcount 1
-     * the env holds one reference (we stored)
-     * we hold on reference (as we fetched)
+    /* define will create the value (with refount 1)
+     * define then stored the value (refcount to 2) and then
+     * decrs as it no longer needs the value (refcount back to 1)
+     * we then fetch it which called incr (refcount back to 2)
      */
-    ck_assert_int_eq( 3,  v->gc.refcount );
+    ck_assert_int_eq( 2,  v->gc.refcount );
     fail_if( plot_type_reclaimed == v->type );
 
     puts("\tCompleted!");

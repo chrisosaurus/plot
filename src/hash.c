@@ -151,6 +151,13 @@ int plot_hash_set(plot_hash *hash, const plot_symbol * key, plot_value *value){
         return 0;/* ERROR: calloc failed */
     n->key = key;
     n->value = value;
+
+    #if DEBUG || DEBUG_CLEANUP
+    if( key && value ){
+        printf("\tincrementing value for '%s' ('%p'), refcount was '%d'\n", key->val, (void *) value, value->gc.refcount);
+    }
+    #endif
+
     plot_value_incr(value); /* we are holding a reference to value */
     n->next = *e;
     *e = n;

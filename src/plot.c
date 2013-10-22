@@ -276,13 +276,15 @@ void plot_gc_value_init(void){
     plot_instance->num_value_used = 0;
     plot_instance->num_value_reclaimed = 0;
     /* FIXME
-     * before gc fibo(31) would require 6731342 plot_values
+     * before gc (fibo 31) would require 6731342 plot_values
      * after tracking waste, this included 2692537 wasted values (mostly from if test position)
      * this means the minimum size of num)values_allocated must be 6731342 - 2692537 = 4038805
      *
      * now after func-call-temp-reclaiming this value can be reduced to 2692574
+     *
+     * and now, after enc-cleanup (fibo 31) only needs 52
      */
-    plot_instance->num_value_allocated = 2700000;
+    plot_instance->num_value_allocated = 1000;
     plot_instance->value_arena = calloc( plot_instance->num_value_allocated, sizeof (struct plot_value) );
     if( ! plot_instance->value_arena ){
         puts("plot_gc_value_init ERROR: failed to calloc value arena");

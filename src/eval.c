@@ -298,6 +298,8 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                 printf("\tStoring value type '%d', under name '%s'\n'", value->type, name->u.symbol.val);
                 #endif
                 plot_env_define(env, &(name->u.symbol), value);
+                /* decrement value as eval and define will both increment it and we are not keeping a reference around */
+                plot_value_decr(value);
                 return 0; /* FIXME success */
             }
             if( ! strcmp(form->u.symbol.val, "lambda") ){
@@ -498,6 +500,8 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
                             puts("\tLAMBDA: failed to define argument");
                             return 0; /* FIXME error */
                         }
+                        /* we are no longer holding a reference so decr */
+                        plot_value_decr(val);
                     }
 
                     /* eval each part of the body in new_env
