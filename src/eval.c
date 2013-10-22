@@ -457,6 +457,8 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
                     for( i=0; i < sexpr->nchildren - 1; ++i ){
                         plot_value_decr(vals[i]);
                     }
+                    /* FIXME also dirty */
+                    free(vals);
                     return val;
                 case plot_type_lambda:
                     #if DEBUG_FUNC || DEBUG

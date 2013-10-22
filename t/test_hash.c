@@ -17,34 +17,35 @@ START_TEST (test_hash){
     const plot_symbol c = (plot_symbol){"c", 2, 2};
 
     plot_value value;
-    plot_hash *hash;
+    plot_hash hash;
+    hash.n_elems = 0;
 
     puts("\tTesting hash construction");
-    fail_if( 0 == (hash = plot_hash_init()) );
+    fail_if( 0 == (plot_hash_init(&hash)) );
 
     puts("\tTesting basic hash get and insert");
-    fail_if( plot_hash_get(hash, &b) );
-    fail_unless( plot_hash_set(hash, &b, &value) );
-    fail_if( plot_hash_get(hash, &b) != &value );
-    fail_if( plot_hash_get(hash, &a) );
+    fail_if( plot_hash_get(&hash, &b) );
+    fail_unless( plot_hash_set(&hash, &b, &value) );
+    fail_if( plot_hash_get(&hash, &b) != &value );
+    fail_if( plot_hash_get(&hash, &a) );
 
     puts("\tTesting for correct key ordering");
-    fail_unless( plot_hash_set(hash, &a, &value) );
-    fail_unless( plot_hash_set(hash, &c, &value) );
-    fail_if( strcmp(a.val, hash->head->key->val) );
-    fail_if( strcmp(b.val, hash->head->next->key->val) );
-    fail_if( strcmp(c.val, hash->head->next->next->key->val) );
+    fail_unless( plot_hash_set(&hash, &a, &value) );
+    fail_unless( plot_hash_set(&hash, &c, &value) );
+    fail_if( strcmp(a.val, hash.head->key->val) );
+    fail_if( strcmp(b.val, hash.head->next->key->val) );
+    fail_if( strcmp(c.val, hash.head->next->next->key->val) );
 
     puts("\tTesting correct number of elements");
-    fail_unless( hash->head->next->next->next == 0 );
-    fail_unless( hash->n_elems == 3);
+    fail_unless( hash.head->next->next->next == 0 );
+    fail_unless( hash.n_elems == 3);
 
     puts("\tTesting mutation");
-    fail_unless( plot_hash_set(hash, &b, 0) );
-    fail_unless( 0 == plot_hash_get(hash, &b) );
-    fail_unless( 3 == hash->n_elems );
+    fail_unless( plot_hash_set(&hash, &b, 0) );
+    fail_unless( 0 == plot_hash_get(&hash, &b) );
+    fail_unless( 3 == hash.n_elems );
 
-    plot_hash_cleanup(hash);
+    plot_hash_cleanup(&hash);
 }
 END_TEST
 

@@ -8,18 +8,17 @@
 #define DEBUG 0
 #define DEBUG_CLEANUP 0
 
-/* create a new hash
- * allocate a new hash using calloc
+/* initialise a new hash
+ * hashes are now part of plot_env
  *
- * a pointer to the new hash is returned
+ * requires a pointer to hash to initialise
+ *
+ * 1 is returned on success
  * or 0 if an error was encountered
  */
-plot_hash * plot_hash_init(void){
-    plot_hash *hash;
-    hash = plot_new_hash();
-    if( ! hash )
-        return 0; /* ERROR: calloc failed */
-    return hash;
+int plot_hash_init(plot_hash *hash){
+    hash->head = 0;
+    return 1;
 }
 
 /* destroy hash
@@ -64,7 +63,7 @@ void plot_hash_cleanup(plot_hash *hash){
 /* get value stored at key within hash
  * return value for key or 0 if key was not found
  */
-plot_value * plot_hash_get(plot_hash *hash, const plot_symbol * key){
+plot_value * plot_hash_get(const plot_hash *hash, const plot_symbol * key){
     plot_hash_entry *e;
 
     #if DEBUG

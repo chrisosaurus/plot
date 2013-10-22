@@ -10,7 +10,7 @@ struct plot_value;
 typedef struct plot_env {
     struct plot_gc gc;
     struct plot_env *parent;
-    struct plot_hash *hash;
+    struct plot_hash hash;
 } plot_env;
 
 /* initialise a previously allocated env

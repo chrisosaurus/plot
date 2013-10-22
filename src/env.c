@@ -32,9 +32,7 @@ int plot_env_init(plot_env *env, plot_env *parent){
         plot_env_incr(parent);
     }
 
-    env->hash = plot_hash_init();
-    if( ! env->hash )
-        return 0;
+    plot_hash_init(&(env->hash));
 
     return 1;
 }
@@ -58,7 +56,7 @@ void plot_env_cleanup(plot_env *env){
      * are allocated on the heap, so this will also free them.
      * Eventually they should also be gc-managed
      */
-    plot_hash_cleanup(env->hash);
+    plot_hash_cleanup(&(env->hash));
 }
 
 /* resolve a symbol to a value
@@ -82,9 +80,9 @@ plot_value * plot_env_get(const plot_env *env, const plot_symbol * sym){
     }
 
     for( e=env; e; e=e->parent ){
-        if( ! e->hash )
+        if( ! &(e->hash) )
             break;
-        v = plot_hash_get(e->hash, sym);
+        v = plot_hash_get(&(e->hash), sym);
         if( v ){
             #if DEBUG
             puts("\tvalue found, returning");
@@ -116,13 +114,7 @@ int plot_env_define(plot_env *env, const plot_symbol * sym, plot_value * val){
         return 0;
         #endif
     }
-    if( ! env->hash ){
-        #if DEBUG
-        puts("\tbad args");
-        return 0;
-        #endif
-    }
 
-    return plot_hash_set(env->hash, sym, val);
+    return plot_hash_set(&(env->hash), sym, val);
 }
 

@@ -75,9 +75,6 @@ void plot_env_decr(struct plot_env *e);
  */
 struct plot_env * plot_new_env(struct plot_env *parent);
 
-/* get new hash */
-struct plot_hash * plot_new_hash(void);
-
 /* get new hash entry */
 struct plot_hash_entry * plot_new_hash_entry(void);
 

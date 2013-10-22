@@ -466,18 +466,6 @@ struct plot_env * plot_new_env(struct plot_env *parent){
 
 }
 
-/* get new hash */
-struct plot_hash * plot_new_hash(void){
-    struct plot_hash *h;
-    h = calloc(1, sizeof *h);
-    if( ! h ){
-        /* TODO FIXME use plot error handling */
-        puts("plot_new_hash: calloc failed, dying");
-        exit(1);
-    }
-    return h;
-}
-
 /* get new hash entry */
 struct plot_hash_entry * plot_new_hash_entry(void){
     struct plot_hash_entry *he;

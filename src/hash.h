@@ -29,13 +29,15 @@ typedef struct plot_hash_entry {
     struct plot_hash_entry *next;
 } plot_hash_entry;
 
-/* create a new hash
- * allocate a new hash using calloc
+/* initialise a new hash
+ * hashes are now part of plot_env
  *
- * a pointer to the new hash is returned
+ * requires a pointer to hash to initialise
+ *
+ * 1 is returned on success
  * or 0 if an error was encountered
  */
-plot_hash * plot_hash_init(void);
+int plot_hash_init(plot_hash *hash);
 
 /* destroy hash
  * plot_hash_cleanup will call decr on all values
@@ -50,7 +52,7 @@ void plot_hash_cleanup(plot_hash *hash);
 /* get value stored at key within hash
  * return value for key or 0 if key was not found
  */
-struct plot_value * plot_hash_get(plot_hash *hash, const struct plot_symbol * key);
+struct plot_value * plot_hash_get(const plot_hash *hash, const struct plot_symbol * key);
 
 /* set value to hash under key
  * keys must be unique within the hash
