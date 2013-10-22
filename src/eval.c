@@ -346,6 +346,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                 if( sexpr->nchildren != 4 ){
                     return 0; /* FIXME ERROR */
                 }
+                /* decr is handled in plot_eval_truthy */
                 value = plot_eval_expr(env, &(sexpr->subforms[1]));
                 if( ! value ){
                     #if DEBUG_FORM || DEBUG

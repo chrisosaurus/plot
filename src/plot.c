@@ -120,9 +120,6 @@ struct plot_env * plot_get_env(void){
 
 void plot_cleanup(){
 #if GC_STATS
-    int lost = 0;
-    plot_value *v;
-    plot_env *e;
 
     printf("\nplot GC stats:\n");
 
@@ -131,18 +128,14 @@ void plot_cleanup(){
     printf("\tStill had in the bank: '%d'\n", plot_instance->num_value_allocated - plot_instance->num_value_used );
     printf("\tnum recycled '%d', reclaimed '%d'\n", plot_instance->num_value_recycled, plot_instance->num_value_reclaimed);
     printf("\tused - reclaimed = '%d'\n", plot_instance->num_value_used - plot_instance->num_value_reclaimed);
-    for( lost=0, v = plot_instance->value_reclaimed; v; v = (plot_value *) v->gc.next )
-        ++lost;
-    printf("\tnon-reclaimed (still in use at cleanup) '%d'\n", lost);
+    printf("\tnon-reclaimed (still in use at cleanup) '%d'\n", (plot_instance->num_value_used + plot_instance->num_value_recycled) - plot_instance->num_value_reclaimed);
 
     printf("##### plot_env stats #####\n");
     printf("\tMax in use '%d'\n", plot_instance->num_env_used);
     printf("\tStill had in the bank: '%d'\n", plot_instance->num_env_allocated - plot_instance->num_env_used );
     printf("\tnum recycled '%d', reclaimed '%d'\n", plot_instance->num_env_recycled, plot_instance->num_env_reclaimed);
     printf("\tused - reclaimed = '%d'\n", plot_instance->num_env_used - plot_instance->num_env_reclaimed);
-    for( lost=0, e = plot_instance->env_reclaimed; e; e = (plot_env *) e->gc.next )
-        ++lost;
-    printf("\tnon-reclaimed (still in use at cleanup) '%d'\n", lost);
+    printf("\tnon-reclaimed (still in use at cleanup) '%d'\n", (plot_instance->num_env_used + plot_instance->num_env_recycled) - plot_instance->num_env_reclaimed);
 
     printf("\n");
 
