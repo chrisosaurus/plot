@@ -33,7 +33,7 @@ typedef struct plot {
     int num_env_used;
     struct plot_env *env_reclaimed;
 
-
+#if GC_STATS
     /**** garbage stats ****/
     /* number of plot_value(s) reclaimed (garbage collected) */
     int num_value_reclaimed;
@@ -42,6 +42,7 @@ typedef struct plot {
 
     int num_env_reclaimed;
     int num_env_recycled;
+#endif
 } plot;
 
 static plot *plot_instance;
@@ -229,7 +230,9 @@ void plot_value_decr(struct plot_value *p){
             #if DEBUG
             puts("\treclaiming value");
             #endif
+            #if GC_STATS
             ++plot_instance->num_value_reclaimed;
+            #endif
             /* time to reclaim */
             //fprintf(stderr, "RECLAIMING\n"); // 2692537
             p->gc.next = (struct plot_gc *) plot_instance->value_reclaimed;
@@ -267,7 +270,9 @@ void plot_gc_value_init(void){
     }
 
     plot_instance->num_value_used = 0;
+    #if GC_STATS
     plot_instance->num_value_reclaimed = 0;
+    #endif
     /* FIXME
      * before gc (fibo 31) would require 6731342 plot_values
      * after tracking waste, this included 2692537 wasted values (mostly from if test position)
@@ -321,8 +326,9 @@ void plot_env_decr(struct plot_env *e){
             #if DEBUG
             puts("\treclaiming object");
             #endif
-
+            #if GC_STATS
             ++plot_instance->num_env_reclaimed;
+            #endif
             /* time to reclaim */
             //fprintf(stderr, "RECLAIMING\n"); // 2692537
             e->gc.next = (struct plot_gc *) plot_instance->env_reclaimed;
@@ -358,7 +364,9 @@ void plot_gc_env_init(void){
     }
 
     plot_instance->num_env_used = 0;
+    #if GC_STATS
     plot_instance->num_env_reclaimed = 0;
+    #endif
     plot_instance->num_env_allocated = 1000;
     plot_instance->env_arena = calloc( plot_instance->num_env_allocated, sizeof (struct plot_env) );
     if( ! plot_instance->env_arena ){
@@ -376,7 +384,9 @@ struct plot_value * plot_new_value(void){
     }
 
     if( plot_instance->value_reclaimed ){
+        #if GC_STATS
         ++plot_instance->num_value_recycled;
+        #endif
         //fprintf(stderr, "reusing\n");
         p = plot_instance->value_reclaimed;
         /* gc is the first element of plot_value so this is safe */
@@ -421,7 +431,9 @@ struct plot_env * plot_new_env(struct plot_env *parent){
     }
 
     if( plot_instance->env_reclaimed ){
+        #if GC_STATS
         ++plot_instance->num_env_recycled;
+        #endif
         //fprintf(stderr, "reusing\n");
         e = plot_instance->env_reclaimed;
         /* gc is the first element of plot_env so this is safe */
