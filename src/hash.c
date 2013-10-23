@@ -48,10 +48,11 @@ void plot_hash_cleanup(plot_hash *hash){
         #if DEBUG || DEBUG_CLEANUP
         if( cur->value ){
             printf("\tdecreasing value '%p' with refcount '%d'\n", (void*) cur->value, cur->value->gc.refcount);
+            printf("\tdecreasing hash_entry '%p' with refcount '%d'\n", (void*) cur, cur->gc.refcount);
         }
         #endif
         plot_value_decr(cur->value);
-        /* FIXME need to deref each hash_entry */
+        plot_he_decr(cur);
     }
 
     #if DEBUG || DEBUG_CLEANUP

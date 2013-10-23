@@ -480,7 +480,7 @@ void plot_gc_he_init(void){
     #if GC_STATS
     plot_instance->num_he_reclaimed = 0;
     #endif
-    plot_instance->num_he_allocated = 2700000;
+    plot_instance->num_he_allocated = 1000;
     plot_instance->he_arena = calloc( plot_instance->num_he_allocated, sizeof (struct plot_hash_entry) );
     if( ! plot_instance->he_arena ){
         puts("plot_gc_he_init ERROR: failed to calloc hv arena");
