@@ -70,7 +70,7 @@ struct plot_binding bindings[] = {
     {{"remainder",10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_remainder}}}},
 
     /* comparison functions */
-    {{"=",         2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_equal}}}},
+    {{"=",         2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_math_equal}}}},
     {{"<",         2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_less}}}},
     {{">",         2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_greater}}}},
     {{"<=",        2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_less_equal}}}},

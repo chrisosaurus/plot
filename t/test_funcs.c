@@ -106,7 +106,7 @@ START_TEST (test_funcs_comparison){
 
     struct plot_test_funcs_tests bindings[] = {
         /* function                             ( args1,               arg2 )                  = expected                   "failure message" */
-        {PTF_VBU(plot_func_equal),               { PTF_VN( 1),  PTF_VN( 2)  },  {.expected_val = false},     "failed test for plot_func_equal"},
+        {PTF_VBU(plot_func_math_equal),               { PTF_VN( 1),  PTF_VN( 2)  },  {.expected_val = false},     "failed test for plot_func_math_equal"},
         {PTF_VBU(plot_func_less),                { PTF_VN( 3),  PTF_VN( 5)  },  {.expected_val = true},      "failed test for plot_func_less"},
         {PTF_VBU(plot_func_greater),             { PTF_VN( 1),  PTF_VN( 1)  },  {.expected_val = false},     "failed test for plot_func_greater"},
         {PTF_VBU(plot_func_less_equal),          { PTF_VN(10),  PTF_VN(10)  },  {.expected_val = true},      "failed test for plot_func_less_equal"},

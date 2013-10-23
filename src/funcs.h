@@ -49,7 +49,7 @@ struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value 
 
 /* mathmatical =
  */
-struct plot_value * plot_func_equal(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_math_equal(struct plot_env *env, struct plot_value **args, int argc);
 
 /* <
  */

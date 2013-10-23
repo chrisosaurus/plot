@@ -396,7 +396,7 @@ struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value 
 
 /* mathmatical =
  */
-struct plot_value * plot_func_equal(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_math_equal(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
     plot_value *res;
     plot_value *arg;
@@ -405,7 +405,7 @@ struct plot_value * plot_func_equal(struct plot_env *env, struct plot_value **ar
     tmp.type = plot_type_number;
 
     #if DEBUG
-    puts("inside plot_func_equal");
+    puts("inside plot_func_math_equal");
     #endif
 
     if( ! env ){
