@@ -19,6 +19,7 @@ START_TEST (test_hash){
     plot_value value;
     plot_hash hash;
     hash.n_elems = 0;
+    value.gc.refcount = 1;
 
     puts("\tTesting hash construction");
     fail_if( 0 == plot_init() );
