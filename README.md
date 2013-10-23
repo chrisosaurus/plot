@@ -25,6 +25,7 @@ plot currently has:
 * boolean values (`#f` and `#t`)
 * basic integer functions: addition (`+`), subtraction (`-`), multiplication (`*`), division (`/`) and remainder (`remainder`)
 * basic integer comparison functions: equal (`=`), less than (`<`), less than or equal (`<=`), greater than (`>`), greater than or equal (`>=`)
+* comprehensive equality testing `equal?` (on all types)
 * printing of values (`display`)
 * printing of newline (`newline`)
 * comments (`;`)
@@ -79,7 +80,7 @@ planned:
 * quote
 * strings and basic ops
 * numbers and basic ops
-* eq? and equal?
+* equal?
 * if and cond
 
 dependencies

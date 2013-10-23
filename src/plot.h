@@ -23,9 +23,15 @@ struct plot_env * plot_get_env(void);
 void plot_cleanup(void);
 
 struct plot_value;
+
 /* print error information and then exit
  */
 void plot_handle_error(const struct plot_value *error);
+
+/* print error string and then exit
+ * FIXME merge with plot_handle_error
+ */
+void plot_fatal_error(const char *str);
 
 /******* public garbage collection interface ******/
 

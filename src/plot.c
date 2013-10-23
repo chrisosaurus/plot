@@ -76,6 +76,9 @@ struct plot_binding bindings[] = {
     {{"<=",        2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_less_equal}}}},
     {{">=",        2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_greater_equal}}}},
 
+    /* equivalent predicates */
+    {{"equal?",    2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_equal}}}},
+
     /* value testing functions */
     {{"boolean?",        9,  9}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_boolean_test}}}},
     {{"string?",         8,  8}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_test}}}},
@@ -192,6 +195,15 @@ void plot_handle_error(const plot_value *error){
     }
 
     printf("Error encountered in '%s', error message: '%s', error type: '%s'\n", error->u.error.location, error->u.error.msg, type);
+    exit(1);
+}
+
+/* print error string and then exit
+ * FIXME merge with plot_handle_error
+ */
+void plot_fatal_error(const char *str){
+    puts("FATAL ERROR OCCURED:");
+    puts(str);
     exit(1);
 }
 

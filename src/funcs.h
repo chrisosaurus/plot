@@ -67,6 +67,11 @@ struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_value
  */
 struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_value **args, int argc);
 
+/********* equivalent predicates *********/
+/* equal?
+ */
+struct plot_value * plot_func_equal(struct plot_env *env, struct plot_value **args, int argc);
+
 /********* value testing functions ********/
 
 /* boolean?

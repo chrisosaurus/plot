@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "value.h"
 #include "types.h"
@@ -721,6 +722,91 @@ struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_va
     res->u.boolean.val = true;
     return res;
     return 0;
+}
+
+/********* equivalent predicates *********/
+
+/* equal?
+ */
+struct plot_value * plot_func_equal(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *res;
+
+    #if DEBUG
+    puts("inside plot_func_equal");
+    #endif
+
+    if( ! env ){
+        #if DEBUG
+        puts("\tenv if NULL");
+        #endif
+        return 0;
+    }
+
+    if( argc != 2 ){
+        #if DEBUG
+        puts("\tinvalid number of args (expected 2)");
+        #endif
+        return 0;
+    }
+
+    res = plot_new_value();
+    if( ! res ){
+        #if DEBUG
+        puts("\tfailed to allocated result value");
+        #endif
+        return 0;
+    }
+
+    if( ! args[0] || ! args[1] ){
+        #if DEBUG
+        puts("\targs were NULL");
+        #endif
+        return 0;
+    }
+
+    res->type = plot_type_boolean;
+    res->u.boolean.val = false;
+
+    if( args[0]->type != args[1]->type ){
+        #if DEBUG
+        puts("\targs were not of the same type");
+        #endif
+        return res;
+    }
+
+    switch( args[0]->type ){
+        case plot_type_number:
+            res->u.boolean.val = args[0]->u.number.val == args[1]->u.number.val;
+            break;
+        case plot_type_symbol:
+            res->u.boolean.val = ! strcmp( args[0]->u.symbol.val, args[1]->u.symbol.val );
+            break;
+        case plot_type_lambda:
+            res->u.boolean.val =
+                args[0]->u.lambda.env == args[1]->u.lambda.env
+                &&
+                args[0]->u.lambda.body == args[1]->u.lambda.body;
+            break;
+        case plot_type_builtin:
+            res->u.boolean.val = args[0]->u.builtin.func == args[1]->u.builtin.func;
+            break;
+        case plot_type_error:
+            plot_fatal_error("plot_func_equal: saw plot_type_error");
+            break;
+        case plot_type_string:
+            res->u.boolean.val = ! strcmp( args[0]->u.string.val, args[1]->u.string.val );
+            break;
+        case plot_type_boolean:
+            res->u.boolean.val = args[0]->u.boolean.val == args[1]->u.boolean.val;
+            break;
+        case plot_type_reclaimed:
+            plot_fatal_error("plot_func_equal: saw plot_type_reclaimed");
+            break;
+        default:
+            plot_fatal_error("plot_func_equal: impossible args[0]->type");
+            break;
+    }
+    return res;
 }
 
 /********* value testing functions ********/

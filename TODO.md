@@ -72,7 +72,7 @@ first milestone: 'core'
 * value testing functions: string? symbol? integer? number? function? boolean?
 * if form
 * lambda forms
-* eq? and equal?
+* equal?
 * pair datatype, car, cdr, cons and list constructors
 * quoting and display of quoted data
 * display of all values
