@@ -125,3 +125,33 @@
       (if (equal? display newline)
         (println "fail twelve case 4")
         (println "pass twelve")))))
+
+
+; sicp-derived 'bank account'
+; purely-functional as we lack a set! operation
+; we also lack a cons, error and quoted symbols
+; so this makes it a little more awkward
+(define mk-bank-acc
+  (lambda (balance)
+    (lambda (op)
+      (if (equal? op "deposit")
+        (lambda (amt)
+          (mk-bank-acc (+ balance amt)))
+        (if (equal? op "withdraw")
+          (lambda (amt)
+            (mk-bank-acc (- balance amt)))
+          (if (equal? op "balance")
+            balance
+            #f))))))
+
+(define acc (mk-bank-acc 100))
+(define new-acc ((acc "withdraw") 70))
+
+(if (equal? (new-acc "balance") 30)
+  (if (equal? (acc "balance") 100)
+    (if (equal? (((new-acc "deposit") 20) "balance") (((new-acc "deposit") 20) "balance"))
+      (println "pass thirteen")
+      (println "fail thirteen case 3"))
+    (println "fail thirteen case 2"))
+  (println "fail thirteen case 1"))
+
