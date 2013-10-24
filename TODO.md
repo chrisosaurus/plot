@@ -3,7 +3,6 @@ TODO(s):
 
 garbage collection:
 -------------------
-* lambda form
 * implement arena growth
 * need to work out how to deal with constants - for now we will not gc anything allocated at parse time
 * merge arenas
