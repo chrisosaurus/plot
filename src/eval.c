@@ -160,6 +160,13 @@ static int plot_is_form(plot_sexpr * sexpr){
                 #endif
                 return 1;
                 }
+            if( ! strcmp(val->u.symbol.val, "set!") ){
+                #if DEBUG_FORM || DEBUG
+                puts("\tset! form found");
+                #endif
+                return 1;
+                }
+
 
             break;
         default:
@@ -373,6 +380,34 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                 }
 
                 return value;
+            }
+            if( ! strcmp(form->u.symbol.val, "set!") ){
+                #if DEBUG_FORM || DEBUG
+                #endif
+                if( sexpr->nchildren != 3 ){
+                    puts("\tset! had incorrect number of arguments");
+                    return 0; /* FIXME ERROR */
+                }
+
+                if( sexpr->subforms[1].type != plot_expr_value || sexpr->subforms[1].u.value->type != plot_type_symbol ){
+                    puts("\tset! first argument is wrong type (either not value or not symbol)");
+                    return 0; /* FIXME ERROR */
+                }
+
+                value = plot_eval_expr(env, &(sexpr->subforms[2]));
+                if( ! value ){
+                    #if DEBUG_FORM || DEBUG
+                    puts("\teval of set value returned NULL");
+                    #endif
+                    return 0; /* FIXME ERROR */
+                }
+
+                if( ! plot_env_set(env, &(sexpr->subforms[1].u.value->u.symbol), value) ){
+                    puts("\tset! call to plot_env_set failed");
+                    return 0; /* FIXME ERROR */
+                }
+
+                return 0;
             }
             break;
         default:

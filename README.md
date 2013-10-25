@@ -20,6 +20,7 @@ plot currently has:
 * define form (value only, no lambda shorthand)
 * if form
 * lambda form
+* set! form
 * string values
 * integer values
 * boolean values (`#f` and `#t`)

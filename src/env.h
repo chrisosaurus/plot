@@ -39,4 +39,13 @@ struct plot_value * plot_env_get(const plot_env *env, const struct plot_symbol *
  */
 int plot_env_define(plot_env *env, const struct plot_symbol * sym, struct plot_value * val);
 
+/* implemention of scheme set!
+ * will look up tree searching for symbol
+ *  if found it will change the value stored there to the one specified
+ *  if it is not found then it is an error
+ *
+ * returns 1 on success, 0 on error
+ */
+int plot_env_set(plot_env *env, const struct plot_symbol * sym, struct plot_value * val);
+
 #endif

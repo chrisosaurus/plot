@@ -118,3 +118,33 @@ int plot_env_define(plot_env *env, const plot_symbol * sym, plot_value * val){
     return plot_hash_set(&(env->hash), sym, val);
 }
 
+/* implemention of scheme set!
+ * will look up tree searching for symbol
+ *  if found it will change the value stored there to the one specified
+ *  if it is not found then it is an error
+ *
+ * returns 1 on success, 0 on error
+ */
+int plot_env_set(plot_env *env, const struct plot_symbol * sym, struct plot_value * val){
+    plot_env *e;
+    plot_value *v;
+
+    /* a set! is equiv to finding the right env and then running a define
+     * as define can mutate variables
+     */
+    for( e=env; e; e=e->parent ){
+        if( ! &(e->hash) )
+            break;
+        v = plot_hash_get(&(e->hash), sym);
+        if( v ){
+            #if DEBUG
+            puts("\tvalue found, returning");
+            #endif
+            plot_value_decr(v); /* we are not actually holding a pointer to this */
+            return plot_hash_set(&(e->hash), sym, val);
+        }
+    }
+    return 0;
+}
+
+

@@ -6,6 +6,7 @@
     (display s)
     (newline)))
 
+(println "You should see 15 tests pass")
 
 ;; test define, if and simple comparison functions
 (define one
@@ -154,4 +155,17 @@
       (println "fail thirteen case 3"))
     (println "fail thirteen case 2"))
   (println "fail thirteen case 1"))
+
+
+;; testing set! mutation
+(define fourteen "fail fourteen case 1")
+((lambda ()
+   (set! fourteen "pass fourteen")))
+(println fourteen)
+
+(define fifteen "pass fifteen")
+((lambda ()
+   (define fifteen "shadowing")
+   (set! fifteen "fail fifteen case 1")))
+(println fifteen)
 
