@@ -136,8 +136,8 @@ int plot_hash_set(plot_hash *hash, const plot_symbol * key, plot_value *value){
         if(  sc < 0 ) /* TRUE IFF key < (*e)->key */
             break;
         if( sc == 0 ){ /* TRUE IFF key == (*e)->key */
-            /* FIXME overriding, need to decr value here */
-            puts("OVERRIDING - FIXME need to decr");
+            /* overriding, need to decr value here */
+            plot_value_decr((*e)->value);
             break;
         }
     }
