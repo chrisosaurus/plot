@@ -6,7 +6,23 @@
     (display s)
     (newline)))
 
-(println "You should see 15 tests pass")
+(define test-count 0)
+(define tests-passed 0)
+(define tests-failed 0)
+
+(define pass
+  (lambda (s)
+    (display "pass ")
+    (println s)
+    (set! test-count (+ test-count 1))
+    (set! tests-passed (+ tests-passed 1))))
+
+(define fail
+  (lambda (s)
+    (display "fail ")
+    (println s)
+    (set! test-count (+ test-count 1))
+    (set! tests-failed (+ tests-failed 1))))
 
 ;; test define, if and simple comparison functions
 (define one
@@ -15,8 +31,8 @@
     0))
 
 (if (= one 1)
-  (println "pass one")
-  (println "fail one"))
+  (pass "one")
+  (fail "one"))
 
 
 ;; test define, if and more complex comparison functions
@@ -28,8 +44,8 @@
     0))
 
 (if (= two 1)
-  (println "pass two")
-  (println "fail two"))
+  (pass "two")
+  (fail "two"))
 
 
 ;; testing nested lambda form
@@ -42,29 +58,29 @@
   (if (procedure? (three))
     (if (number? ((three)))
       (if (= 5 ((three)))
-        (println "pass three")
-        (println "fail three: case 4"))
-      (println "fail three: case 3"))
-    (println "fail three: case 2"))
-  (println "fail three: case 1"))
+        (pass "three")
+        (fail "three: case 4"))
+      (fail "three: case 3"))
+    (fail "three: case 2"))
+  (fail "three: case 1"))
 
 
 ;; test value testing functions
 (if (string? "I am a string")
-  (println "pass four")
-  (println "fail four"))
+  (pass "four")
+  (fail "four"))
 
 (if (number? 24)
-  (println "pass five")
-  (println "fail five"))
+  (pass "five")
+  (fail "five"))
 
 (if (procedure? display)
-  (println "pass six")
-  (println "fail six"))
+  (pass "six")
+  (fail "six"))
 
 (if (boolean? #f)
-  (println "pass seven")
-  (println "fail seven"))
+  (pass "seven")
+  (fail "seven"))
 
 
 ;; testing define and scope
@@ -76,9 +92,9 @@
 
 (if (= eight 1)
   (if (= (eight-f) 2)
-    (println "pass eight")
-    (println "fail eight: case 2"))
-  (println "fail eight: case 1"))
+    (pass "eight")
+    (fail "eight: case 2"))
+  (fail "eight: case 1"))
 
 
 (define nine 1)
@@ -89,9 +105,9 @@
 
 (if (= nine 2)
   (if (= (nine-f) 2)
-    (println "pass nine")
-    (println "fail nine case 2"))
-  (println "fail nine case 1"))
+    (pass "nine")
+    (fail "nine case 2"))
+  (fail "nine case 1"))
 
 
 (define ten-f
@@ -101,31 +117,31 @@
 
 (if (= ten 2)
   (if (= (ten-f) 2)
-    (println "pass ten")
-    (println "fail ten case 2"))
-  (println "fail ten case 1"))
+    (pass "ten")
+    (fail "ten: case 2"))
+  (pass "ten: case 1"))
 
 (if (equal? "hello" "hello")
   (if (equal? 1 1)
     (if (equal? display display)
       (if (equal? #t #t)
         (if (equal? #f #f)
-          (println "pass eleven")
-          (println "fail eleven case 5"))
-        (println "fail eleven case 4"))
-      (println "fail eleven case 3"))
-    (println "fail eleven case 2"))
-  (println "fail eleven case 1"))
+          (pass "eleven")
+          (fail "eleven: case 5"))
+        (fail "eleven: case 4"))
+      (fail "eleven: case 3"))
+    (fail "eleven: case 2"))
+  (fail "eleven: case 1"))
 
 (if (equal? 1 2)
-  (println "fail twelve case 1")
+  (fail "twelve: case 1")
   (if (equal? #t #f)
-    (println "fail twelve case 2")
+    (fail "twelve. case 2")
     (if (equal? "hello" "world")
-      (println "fail twelve case 3")
+      (fail "twelve: case 3")
       (if (equal? display newline)
-        (println "fail twelve case 4")
-        (println "pass twelve")))))
+        (fail "twelve: case 4")
+        (pass "twelve")))))
 
 
 ; sicp-derived 'bank account'
@@ -151,21 +167,36 @@
 (if (equal? (new-acc "balance") 30)
   (if (equal? (acc "balance") 100)
     (if (equal? (((new-acc "deposit") 20) "balance") (((new-acc "deposit") 20) "balance"))
-      (println "pass thirteen")
-      (println "fail thirteen case 3"))
-    (println "fail thirteen case 2"))
-  (println "fail thirteen case 1"))
+      (pass "thirteen")
+      (fail "thirteen: case 3"))
+    (fail "thirteen: case 2"))
+  (fail "thirteen: case 1"))
 
 
 ;; testing set! mutation
-(define fourteen "fail fourteen case 1")
+(define fourteen "fourteen: case 1")
 ((lambda ()
-   (set! fourteen "pass fourteen")))
-(println fourteen)
+   (set! fourteen "fourteen")))
+(if (equal? fourteen "fourteen")
+  (pass fourteen)
+  (fail fourteen))
 
-(define fifteen "pass fifteen")
+(define fifteen "fifteen")
 ((lambda ()
    (define fifteen "shadowing")
-   (set! fifteen "fail fifteen case 1")))
-(println fifteen)
+   (set! fifteen "fifteen case 1")))
+(if (equal? fifteen "fifteen")
+  (pass fifteen)
+  (fail fifteen))
+
+
+;; tests completed, print results
+(println "")
+(display tests-passed)
+(display " / ")
+(display test-count)
+(println " tests passed")
+
+(display tests-failed)
+(println " tests failed")
 
