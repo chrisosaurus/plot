@@ -448,18 +448,7 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
         return 0; /* FIXME ERROR */
     }
 
-    if( sexpr->subforms[0].type == plot_expr_sexpr ){
-        #if DEBUG_FUNC || DEBUG
-        puts("\tplot_eval_func_call: subform is an sexpr");
-        #endif
-        val = plot_eval_sexpr(env, &(sexpr->subforms[0].u.sexpr));
-    } else {
-        #if DEBUG_FUNC || DEBUG
-        puts("\tplot_eval_func_call: subform is a value");
-        #endif
-        val = sexpr->subforms[0].u.value;
-    }
-
+    val = plot_eval_expr(env, &(sexpr->subforms[0]));
 
     switch( val->type ){
         case plot_type_builtin:
