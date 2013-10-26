@@ -189,6 +189,18 @@
   (pass fifteen)
   (fail fifteen))
 
+;; testing inner env
+(define foo
+  (lambda ()
+    (define bar
+      (lambda ()
+        20))
+    (lambda (c)
+      (+ c (bar)))))
+
+(if (equal? ((foo) 14) 34)
+  (pass "sixteen")
+  (fail "sixteen"))
 
 ;; tests completed, print results
 (println "")
