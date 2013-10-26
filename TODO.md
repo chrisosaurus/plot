@@ -11,6 +11,8 @@ performance:
 ------------
 * need to more aggressively incr/decr values
 * recursion is currently very expensive (both in terms of stack and memory) -> need tail call optimisation
+* reduction of strcmp usage
+* more performant env structure
 
 misc:
 -----
@@ -41,6 +43,10 @@ read:
 features:
 ---------
 * write repl front-end
+* single branch if ('guard')
+* macro system
+* quoting
+* variable arguments
 
 runtime:
 ---------
@@ -53,6 +59,11 @@ runtime:
 * use plot_error
 * tail call optimisation
 * garbage collector
+
+bugs:
+-----
+* cannot use # within a string (eg "#####") due to bug in parsing of booleans
+* can currently use single quote (`'`) as a string delimiter
 
 Milestones:
 ===========
@@ -72,6 +83,7 @@ first milestone: 'core'
 * lambda forms
 * equal?
 * pair datatype, car, cdr, cons and list constructors
+* variable arguments
 * quoting and display of quoted data
 * display of all values
 
