@@ -350,7 +350,11 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                 return tmp;
             }
             if( ! strcmp(form->u.symbol.val, "if") ){
-                if( sexpr->nchildren != 4 ){
+                /* scheme if's can have 2 forms
+                 * (if cond if-expr) ; 'guard'
+                 * (if cond if-expr else-expr) ; 'branching'
+                 */
+                if( sexpr->nchildren != 3 && sexpr->nchildren != 4 ){
                     return 0; /* FIXME ERROR */
                 }
                 /* decr is handled in plot_eval_truthy */
@@ -369,7 +373,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                         #endif
                         return 0; /* FIXME ERROR */
                     }
-                } else {
+                } else if( sexpr->nchildren == 4){ /* (if cond if-expr else-expr) */
                     value = plot_eval_expr(env, &(sexpr->subforms[3]));
                     if( ! value ){
                         #if DEBUG_FORM || DEBUG
@@ -377,6 +381,23 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                         #endif
                         return 0; /* FIXME ERROR */
                     }
+                } else {
+                    /* FIXME need to define an 'undef' value
+                     * (display (if #f "hello")) ;; => ??
+                     * in csi this is 'unspecified'
+                     * in racket (lang scheme) there is no output
+                     *
+                     * r5rs says: (4.1.5 page 10)
+                     *  "if the <test> yields a false value and no <alternate>
+                     *  is spcified, then the result of the expression is
+                     *  unspecified"
+                     *
+                     * r6rs says: (11.4.3 page 33)
+                     *  "if the <test> yields #f and no <alternate> is
+                     *  specified, then the result of the expression is
+                     *  unspecified"
+                     */
+                    return 0; /* FIXME success */
                 }
 
                 return value;
@@ -472,7 +493,7 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
                     for( i=0; i < sexpr->nchildren - 1; ++i ){
                         val = plot_eval_expr(env, &(sexpr->subforms[1 + i]));
                         if( ! val ){
-                            puts("\tDEFINE: evaluating argument returned NULL");
+                            puts("\tBUILTIN call: evaluating argument returned NULL");
                             return 0; /* FIXME error*/
                         }
                         vals[i] = val;

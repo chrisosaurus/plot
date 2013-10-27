@@ -202,6 +202,16 @@
   (pass "sixteen")
   (fail "sixteen"))
 
+;; testing 'guard' form if '(if cond if-expr)'
+(define seventeen "pass")
+(if #f
+  (set! seventeen "fail"))
+
+(if (equal? seventeen "pass")
+  (pass "seventeen")
+  (fail "seventeen"))
+
+
 ;; tests completed, print results
 (println "")
 (display tests-passed)
