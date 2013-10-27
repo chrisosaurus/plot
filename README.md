@@ -18,7 +18,7 @@ current state
 -------------
 plot currently has:
 * define form (value only, no lambda shorthand)
-* if form
+* if form `(if cond if-expr else-expr)` and `(if cond if-expr)`
 * lambda form
 * set! form
 * string values

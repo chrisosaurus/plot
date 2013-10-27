@@ -43,7 +43,6 @@ read:
 features:
 ---------
 * write repl front-end
-* single branch if ('guard')
 * macro system
 * quoting
 * variable arguments
