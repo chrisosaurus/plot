@@ -1,4 +1,4 @@
-;; some basic unit testing for plot in plot
+;; some basic integration testing for plot in plot
 
 ;; I do love my new lines
 (define println

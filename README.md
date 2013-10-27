@@ -33,7 +33,7 @@ plot currently has:
 * value testing functions: `boolean?`, `string?`, `number?`, `symbol?`, and `procedure?`
 * garbage collection of runtime values (`value`, `env` and `hash_entry`)
 
-example: (see `make simple`)
+example: (see `make example`)
 
     (define println
       (lambda (v)
@@ -97,7 +97,7 @@ You are able to compile and run plot manually though:
 
     cd /devel/plot # or wherever you cloned to
     make
-    ./plot t/hard.scm
+    ./plot t/integration.scm
 
 license
 ---------

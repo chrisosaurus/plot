@@ -36,10 +36,10 @@ tests_soft: clean ${OBJ}
 test_soft: tests_soft plot
 	@echo running test_llist
 	./run_tests
-	@echo "\nrunning simple.scm"
-	./plot t/simple.scm
-	@echo "\nrunning hard.scm"
-	./plot t/hard.scm
+	@echo "\nrunning example.scm"
+	./plot t/example.scm
+	@echo "\nrunning integration.scm"
+	./plot t/integration.scm
 
 # harsh version for checking sanity of test code
 compile_tests: clean ${TOBJ}
@@ -51,23 +51,23 @@ compile_tests: clean ${TOBJ}
 run_tests: compile_tests plot
 	@echo running test_llist
 	./run_tests
-	@echo "\nrunning simple.scm"
-	./plot t/simple.scm
-	@echo "\nrunning hard.scm"
-	./plot t/hard.scm
+	@echo "\nrunning example.scm"
+	./plot t/example.scm
+	@echo "\nrunning integration.scm"
+	./plot t/integration.scm
 	@make -s cleanobj
 
 test: run_tests cleanobj
 
-simple: plot
-	cat t/simple.scm
+example: plot
+	cat t/example.scm
 	@echo "\n"
-	./plot t/simple.scm
+	./plot t/example.scm
 
-hard: plot
-	cat t/hard.scm
+integration: plot
+	cat t/integration.scm
 	@echo "\n"
-	./plot t/hard.scm
+	./plot t/integration.scm
 
 cleanobj:
 	@echo cleaning objects
@@ -79,4 +79,4 @@ clean: cleanobj
 	@echo cleaning executable
 	@rm -f plot run_tests
 
-.PHONY: all clean cleanobj test tests simple hard clang test_soft tests_soft
+.PHONY: all clean cleanobj test tests example integration clang test_soft tests_soft

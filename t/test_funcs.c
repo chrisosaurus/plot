@@ -15,7 +15,7 @@
 #include "../src/funcs.h"
 #include "../src/plot.h"
 
-/* functions to bind */
+/* functions to test */
 struct plot_test_funcs_tests {
     plot_value *func;
     plot_value *args[2];
@@ -48,26 +48,26 @@ struct plot_test_funcs_tests {
 #define PTF_LENGTH(x) (sizeof x / sizeof x[0])
 
 /* call builtin given index */
-#define PTF_CALL_BUILTIN(i) bindings[i].func->u.builtin.func
+#define PTF_CALL_BUILTIN(i) tests[i].func->u.builtin.func
 
 /* yield args and len given index */
-#define PTF_ARGS(i) bindings[i].args, PTF_LENGTH(bindings[i].args)
+#define PTF_ARGS(i) tests[i].args, PTF_LENGTH(tests[i].args)
 
 /* yield args list from index and provided len */
-#define PTF_ARGS_LEN(i, len) bindings[i].args, len
+#define PTF_ARGS_LEN(i, len) tests[i].args, len
 
 /* yield expected value given index */
-#define PTF_EXP(i) bindings[i].u.expected
-#define PTF_EXP_VAL(i) bindings[i].u.expected_val
+#define PTF_EXP(i) tests[i].u.expected
+#define PTF_EXP_VAL(i) tests[i].u.expected_val
 
 /* yield error message given index */
-#define PTF_ERR(i) bindings[i].failure_msg
+#define PTF_ERR(i) tests[i].failure_msg
 
 START_TEST (test_funcs_math){
     unsigned int i;
     plot_value *r;
 
-    struct plot_test_funcs_tests bindings[] = {
+    struct plot_test_funcs_tests tests[] = {
         /* function                     ( args1,            arg2 )                   = expected            "failure message" */
         {PTF_VBU(plot_func_add),         { PTF_VN( 2),  PTF_VN( 3)  },  {.expected =  5},     "failed test for plot_func_add"},
         {PTF_VBU(plot_func_subtract),    { PTF_VN(10),  PTF_VN( 7)  },  {.expected =  3},     "failed test for plot_func_subtract"},
@@ -81,7 +81,7 @@ START_TEST (test_funcs_math){
     fail_if( 0 == plot_init() );
     fail_if( 0 == plot_get_env() );
 
-    for( i=0; i < PTF_LENGTH(bindings); ++i ){
+    for( i=0; i < PTF_LENGTH(tests); ++i ){
         r = PTF_CALL_BUILTIN(i)( plot_get_env(), PTF_ARGS(i) );
         if( 0 == r ){
             puts(PTF_ERR(i));
@@ -104,7 +104,7 @@ START_TEST (test_funcs_comparison){
     unsigned int i;
     const plot_value *r;
 
-    struct plot_test_funcs_tests bindings[] = {
+    struct plot_test_funcs_tests tests[] = {
         /* function                             ( args1,               arg2 )                  = expected                   "failure message" */
         {PTF_VBU(plot_func_math_equal),               { PTF_VN( 1),  PTF_VN( 2)  },  {.expected_val = false},     "failed test for plot_func_math_equal"},
         {PTF_VBU(plot_func_less),                { PTF_VN( 3),  PTF_VN( 5)  },  {.expected_val = true},      "failed test for plot_func_less"},
@@ -118,7 +118,7 @@ START_TEST (test_funcs_comparison){
     fail_if( 0 == plot_init() );
     fail_if( 0 == plot_get_env() );
 
-    for( i=0; i < PTF_LENGTH(bindings); ++i ){
+    for( i=0; i < PTF_LENGTH(tests); ++i ){
         r = PTF_CALL_BUILTIN(i)( plot_get_env(), PTF_ARGS(i) );
         if( 0 == r ){
             puts(PTF_ERR(i));
@@ -141,7 +141,7 @@ START_TEST (test_funcs_value_tests){
     unsigned int i;
     const plot_value *r;
 
-    struct plot_test_funcs_tests bindings[] = {
+    struct plot_test_funcs_tests tests[] = {
         /* function                             ( args1 )                   = expected                  "failure message" */
         {PTF_VBU(plot_func_boolean_test),        { PTF_VN( 1)},      {.expected_val = false},    "failed test for plot_func_boolean_test (negative)"},
         {PTF_VBU(plot_func_boolean_test),        { PTF_VBO( false)},  {.expected_val = true},     "failed test for plot_func_boolean_test (positive)"},
@@ -151,7 +151,8 @@ START_TEST (test_funcs_value_tests){
 
 /* FIXME TODO we cannot yet properly store a symbol as a value (would require quoting
  * so symbol? will always be false as it either fails to look up the symbol, or the value returned is not a symbol
- * this is correct behavior as per the scheme spec
+ *
+ * this is the correct behavior pre-quoting
  */
 //        {PTF_VBU(plot_func_symbol_test),         { PTF_VST("NOPE")}, {.expected_val = false},    "failed test for plot_func_symbol_test (negative)"},
 //        {PTF_VBU(plot_func_symbol_test),         { PTF_VSY("sym")},  {.expected_val = true},     "failed test for plot_func_symbol_test (positive)"},
@@ -168,7 +169,7 @@ START_TEST (test_funcs_value_tests){
     fail_if( 0 == plot_init() );
     fail_if( 0 == plot_get_env() );
 
-    for( i=0; i < PTF_LENGTH(bindings); ++i ){
+    for( i=0; i < PTF_LENGTH(tests); ++i ){
         r = PTF_CALL_BUILTIN(i)( plot_get_env(), PTF_ARGS_LEN(i, 1) );
         if( 0 == r ){
             puts(PTF_ERR(i));
