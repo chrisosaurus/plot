@@ -9,7 +9,6 @@ garbage collection:
 
 performance:
 ------------
-* need to more aggressively incr/decr values
 * recursion is currently very expensive (both in terms of stack and memory) -> need tail call optimisation
 * reduction of strcmp usage
 * more performant env structure
@@ -62,7 +61,7 @@ runtime:
 
 bugs:
 -----
-* cannot use # within a string (eg "#####") due to bug in parsing of booleans
+* parsing of # is silly
 
 Milestones:
 ===========

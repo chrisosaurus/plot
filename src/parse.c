@@ -100,10 +100,12 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
             case '#':
                 /* valid character within string */
                 if( inside_string ){
+                    ++ *upto;
                     break;
                 }
                 /* valid character inside symbol */
                 if( inside_value ){
+                    ++ *upto;
                     break;
                 }
 
