@@ -124,11 +124,11 @@ static const char * test_full_forms_input_define = "(define a 5)";
 static const char * test_full_forms_input_lambda = "(define b\
                                                         (lambda ()\
                                                             (lambda ()\
-                                                                'hello'";
+                                                                \"hello\"";
 static const char * test_full_forms_input_if = "(define c\
                                                     (if (< 4 5)\
-                                                        'pass'\
-                                                        'fail'))";
+                                                        \"pass\"\
+                                                        \"fail\"))";
 
 START_TEST (test_full_forms){
     plot_program *prog;

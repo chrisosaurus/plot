@@ -73,11 +73,9 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
      */
     int inside_value = 0;
     int inside_string = 0;
-    char quote = 0;
     char *tmp;
 
-    if( source[ *upto ] == '\'' || source[ *upto ] == '"' ){
-        quote = source[*upto];
+    if( source[ *upto ] == '"' ){
         ++ *upto;
         inside_string = 1;
     }
@@ -116,16 +114,20 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
                 cont = 0;
                 break;
             case '\'':
+                /* if we are inside a string then this is just part of the string */
+                if( inside_string){
+                    ++ *upto;
+                } else {
+                    /* FIXME error! */
+                    /* start of next quoted token */
+                    puts("quoting unimplemented.. sorry");
+                    exit(1);
+                }
+                break;
             case '"':
                 /* if we are inside a string then this may be the end */
                 if( inside_string ){
-                    /* if quote matches then we are at the end */
-                    if( quote == source[*upto] ) {
-                        cont = 0;
-                    } else {
-                        /* otherwise keep on going */
-                        ++*upto;
-                    }
+                    cont = 0;
                     break;
                 }
                 /* if we are inside a value then ' and " are not valid chars to consume

@@ -63,7 +63,6 @@ runtime:
 bugs:
 -----
 * cannot use # within a string (eg "#####") due to bug in parsing of booleans
-* can currently use single quote (`'`) as a string delimiter
 
 Milestones:
 ===========
