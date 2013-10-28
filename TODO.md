@@ -1,6 +1,12 @@
 TODO(s):
 =====
 
+experimental:
+-------------
+* remove creation logic from parse and tests - centralise in function (will probably require merging of value and symbols in hash/env and gc interface)
+* use the above func in parse, plot.c and tests
+* refactor plot_is_form, plot_eval_form and plot_eval_sexpr to merge the former 2 (try and check value)
+
 garbage collection:
 -------------------
 * implement arena growth
