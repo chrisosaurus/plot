@@ -62,6 +62,7 @@ runtime:
 bugs:
 -----
 * parsing of # is silly
+* remove value-creation logic from parse and unit tests, instead expose functions that encapsulate it
 
 Milestones:
 ===========
@@ -81,7 +82,7 @@ first milestone: 'core'
 * lambda forms
 * equal?
 * pair datatype, car, cdr, cons and list constructors
-* variable arguments
+* variable arguments - (define (a . b)) and (lambda args)
 * quoting and display of quoted data
 * display of all values
 
