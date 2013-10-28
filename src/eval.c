@@ -402,6 +402,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                     return tmp; /* success */
                 }
 
+                plot_value_decr(tmp); /* don't leak */
                 return value;
             }
             if( ! strcmp(form->u.symbol.val, "set!") ){
