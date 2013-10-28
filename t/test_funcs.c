@@ -231,6 +231,7 @@ START_TEST (test_funcs_env){
 }
 END_TEST
 
+/* FIXME should test generation of errors
 START_TEST (test_error_alloc_failed){
     plot_value v;
     puts("\tTesting alloc failed error handling (error expected):");
@@ -276,6 +277,7 @@ START_TEST (test_error_unbound_symbol){
     plot_handle_error(&v);
 }
 END_TEST
+*/
 
 
 START_TEST (test_display){
@@ -319,13 +321,15 @@ START_TEST (test_display){
     v->u.builtin.func = 0;
     plot_func_display(plot_get_env(), &v, 1);
 
-    /* last as this will cause an exit(1) */
     puts("\t\ttesting display of error (error expected)");
     v->type = plot_type_error;
     v->u.error.type = plot_error_internal;
     v->u.error.msg = "testing display of error";
     v->u.error.location = "test_display";
-    plot_func_display(plot_get_env(), &v, 1);
+    v = plot_func_display(plot_get_env(), &v, 1);
+    ck_assert_msg(0 != v, "runtime error was no generated");
+    ck_assert_msg(plot_type_error == v->type, "value returned was not of type error");
+    ck_assert_msg(plot_error_internal == v->u.error.type, "value returned had wrong error type");
 
     plot_cleanup();
 }
@@ -337,13 +341,13 @@ TEST_CASE_ADD(funcs, funcs_math)
 TEST_CASE_ADD(funcs, funcs_comparison)
 TEST_CASE_ADD(funcs, funcs_value_tests)
 TEST_CASE_ADD(funcs, funcs_env)
+TEST_CASE_ADD(funcs, display)
 TEST_CASE_END(funcs)
 
+/* FIXME should test generation of errors */
 TEST_CASE_NEW(funcs_error)
-    /* FIXME display of error will cause exit(1), functions can also not currently be displayed */
-    tcase_add_exit_test(tc_funcs_error, test_display, 1);
-    tcase_add_exit_test(tc_funcs_error, test_error_alloc_failed, 1);
-    tcase_add_exit_test(tc_funcs_error, test_error_bad_args, 1);
-    tcase_add_exit_test(tc_funcs_error, test_error_internal, 1);
-    tcase_add_exit_test(tc_funcs_error, test_error_unbound_symbol, 1);
+//    tcase_add_exit_test(tc_funcs_error, test_error_alloc_failed, 1);
+//    tcase_add_exit_test(tc_funcs_error, test_error_bad_args, 1);
+//    tcase_add_exit_test(tc_funcs_error, test_error_internal, 1);
+//    tcase_add_exit_test(tc_funcs_error, test_error_unbound_symbol, 1);
 TEST_CASE_END(funcs_error)

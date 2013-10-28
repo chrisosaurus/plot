@@ -45,6 +45,10 @@ read:
 -----
 * write...
 
+testing:
+--------
+* error testing suite should test generation of runtime errors
+
 features:
 ---------
 * write repl front-end

@@ -24,12 +24,15 @@ void plot_cleanup(void);
 
 struct plot_value;
 
-/* print error information and then exit
+/* generates an appropriate error value, prints it, and then returns it
+ * caller is expected to return the result
+ *
+ * each frame within the callstack is expected to detect this,
+ * print relevant trace information, and then return the value further
  */
-void plot_handle_error(const struct plot_value *error);
+struct plot_value * plot_runtime_error(enum plot_error_type type, const char *msg, const char *location);
 
-/* print error string and then exit
- * FIXME merge with plot_handle_error
+/* a fatal error will print the supplied string and then `exit(1)`
  */
 void plot_fatal_error(const char *str);
 

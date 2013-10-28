@@ -53,8 +53,6 @@ int plot_eval(plot_env *env, plot_program * prog){
 /* evals an expr in an environment
  */
 plot_value * plot_eval_expr(plot_env *env, plot_expr * expr){
-    plot_value err;
-
     if( !env || !expr )
         return 0; /* ERROR */
 
@@ -75,13 +73,7 @@ plot_value * plot_eval_expr(plot_env *env, plot_expr * expr){
             return plot_eval_sexpr(env, &(expr->u.sexpr));
             break;
         default:
-            /* TODO FIXME most likely a bad error usage pattern, revise later */
-            err.type = plot_type_error;
-            err.u.error.type = plot_error_internal;
-            err.u.error.msg = "unknown plot_expr_type";
-            err.u.error.location = "plot_eval";
-            /* plot_handle_error will not return */
-            plot_handle_error(&err);
+            return plot_runtime_error(plot_error_internal, "unknown plot_expr_type", "plot_eval");
             break;
     }
 

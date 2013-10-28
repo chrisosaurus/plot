@@ -18,11 +18,18 @@
 /* internal routine for displaying a value
  * returns 0 on failure, 1 on success
  */
-static int plot_func_display_value(plot_env *env, plot_value *val){
-    plot_value err;
+static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
+    plot_value *ret;
 
     if( ! val )
         return 0;
+
+    ret = plot_new_value();
+    if( ! ret ){
+        plot_fatal_error("plot_func_display_value: failed call to plot_new_value()");
+    }
+
+    ret->type = plot_type_unspecified;
 
     switch(val->type){
         case plot_type_boolean:
@@ -41,7 +48,7 @@ static int plot_func_display_value(plot_env *env, plot_value *val){
             puts("Unable to print a builtin function at this point in time");
             break;
         case plot_type_error:
-            plot_handle_error(val);
+            return plot_runtime_error(plot_error_internal, "trying to print an error value", "plot_func_display_value");
             break;
         case plot_type_lambda:
             puts("Unable to print a lambda value at this point in time");
@@ -54,22 +61,17 @@ static int plot_func_display_value(plot_env *env, plot_value *val){
             exit(1);
             break;
         default:
-            err.type = plot_type_error;
-            err.u.error.type = plot_error_internal;
-            err.u.error.msg = "impossible type for value";
-            err.u.error.location = "plot_func_display_value";
-            plot_handle_error(&err);
+            return plot_runtime_error(plot_error_internal, "impossible type for val->type", "plot_func_display_value");
             break;
     }
 
-    return 1;
+    return ret;
 }
 
 /* print value to stdout
  */
 plot_value * plot_func_display(plot_env *env, plot_value **args, int argc){
     plot_value *arg;
-    plot_value *ret;
 
     if( argc != 1 ){
         #if DEBUG
@@ -85,17 +87,7 @@ plot_value * plot_func_display(plot_env *env, plot_value **args, int argc){
         return 0;
     }
 
-    ret = plot_new_value();
-    if( ! ret )
-        return 0;
-
-    ret->type = plot_type_unspecified;
-
-    if( plot_func_display_value(env, arg) )
-        return ret;
-    /* error occured */
-    plot_value_decr(ret);
-    return 0;
+    return plot_func_display_value(env, arg);
 }
 
 /* print a newline to stdout

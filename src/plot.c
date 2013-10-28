@@ -16,6 +16,8 @@
 #define DEBUG 0
 
 typedef struct plot {
+    /* error value returned by plot_error */
+    struct plot_value error;
     struct plot_env *env;
 
     /**** GC arena ****/
@@ -105,6 +107,9 @@ int plot_init(void){
         return 0;
     }
 
+    plot_instance->error.gc.refcount = -1;
+    plot_instance->error.type = plot_type_error;
+
     plot_gc_value_init();
     plot_gc_he_init();
     plot_gc_env_init();
@@ -167,39 +172,48 @@ void plot_cleanup(){
     free(plot_instance);
 }
 
-/* print error information and then exit
+/* generates an appropriate error value, prints it, and then returns it
+ * caller is expected to return the result
+ *
+ * each frame within the callstack is expected to detect this,
+ * print relevant trace information, and then return the value further
  */
-void plot_handle_error(const plot_value *error){
-    const char *type = "unknown";
-    if( ! error->type == plot_type_error ){
-        printf("Error encountered in 'plot_handle_error', invalid error value supplied\n");
-        exit(1);
-    }
+struct plot_value * plot_runtime_error(plot_error_type type, const char *msg, const char *location){
+    plot_value *err;
+    const char *error_type_str;
 
-    switch(error->u.error.type){
+    if( ! plot_instance )
+        plot_fatal_error("plot_runtime_error called without plot_instance being initialised");
+
+    err = &plot_instance->error;
+    err->type = plot_type_error;
+    err->u.error.type = type;
+    err->u.error.msg = msg;
+    err->u.error.location = location;
+
+    switch(err->u.error.type){
         case plot_error_alloc_failed:
-            type = "alloc failed";
+            error_type_str = "alloc failed";
             break;
         case plot_error_bad_args:
-            type = "bad args";
+            error_type_str = "bad args";
             break;
         case plot_error_internal:
-            type = "internal error";
+            error_type_str = "internal error";
             break;
         case plot_error_unbound_symbol:
-            type = "unbound symbol";
+            error_type_str = "unbound symbol";
             break;
         default:
-            type = "IMPOSSIBLE ERROR";
+            error_type_str = "IMPOSSIBLE ERROR";
             break;
     }
 
-    printf("Error encountered in '%s', error message: '%s', error type: '%s'\n", error->u.error.location, error->u.error.msg, type);
-    exit(1);
+    printf("Error encountered in '%s', error message: '%s', error type: '%s'\n", err->u.error.location, err->u.error.msg, error_type_str);
+    return err;
 }
 
-/* print error string and then exit
- * FIXME merge with plot_handle_error
+/* a fatal error will print the supplied string and then `exit(1)`
  */
 void plot_fatal_error(const char *str){
     puts("FATAL ERROR OCCURED:");
