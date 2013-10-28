@@ -12,6 +12,14 @@ typedef enum plot_value_type{
     plot_type_error,
     plot_type_string,
     plot_type_boolean,
+    /* this type represents expressions that do not yield a value
+     * '(if #f "hello")' => unspecified
+     * '(define a "world")' => unspecified
+     *
+     * this type does NOT have a matching
+     * union member
+     */
+    plot_type_unspecified,
     plot_type_reclaimed /* FIXME useful for testing garbage collection */
 #if 0
     plot_type_character

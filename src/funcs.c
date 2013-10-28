@@ -16,12 +16,13 @@
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
 /* internal routine for displaying a value
+ * returns 0 on failure, 1 on success
  */
-static void plot_func_display_value(plot_env *env, plot_value *val){
+static int plot_func_display_value(plot_env *env, plot_value *val){
     plot_value err;
 
     if( ! val )
-        return;
+        return 0;
 
     switch(val->type){
         case plot_type_boolean:
@@ -45,6 +46,9 @@ static void plot_func_display_value(plot_env *env, plot_value *val){
         case plot_type_lambda:
             puts("Unable to print a lambda value at this point in time");
             break;
+        case plot_type_unspecified:
+            puts("<unspecified>");
+            break;
         case plot_type_reclaimed:
             puts("ERROR: you are trying to display a garbage collected value, most likely an error in the GC");
             exit(1);
@@ -57,12 +61,15 @@ static void plot_func_display_value(plot_env *env, plot_value *val){
             plot_handle_error(&err);
             break;
     }
+
+    return 1;
 }
 
 /* print value to stdout
  */
 plot_value * plot_func_display(plot_env *env, plot_value **args, int argc){
     plot_value *arg;
+    plot_value *ret;
 
     if( argc != 1 ){
         #if DEBUG
@@ -78,19 +85,31 @@ plot_value * plot_func_display(plot_env *env, plot_value **args, int argc){
         return 0;
     }
 
+    ret = plot_new_value();
+    if( ! ret )
+        return 0;
 
-    plot_func_display_value(env, arg);
+    ret->type = plot_type_unspecified;
+
+    if( plot_func_display_value(env, arg) )
+        return ret;
+    /* error occured */
+    plot_value_decr(ret);
     return 0;
 }
 
 /* print a newline to stdout
  */
 plot_value * plot_func_newline(plot_env *env, plot_value **args, int argc){
+    plot_value *ret = plot_new_value();
+    if( ret )
+        ret->type = plot_type_unspecified;
+
     /* FIXME currently ignores arguments, only there to match plot_func interface
      */
     puts("");
 
-    return 0;
+    return ret;
 }
 
 /* takes a list of expressions

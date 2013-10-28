@@ -186,8 +186,61 @@ END_TEST
 
 #undef PT_VS
 
+const char * tf_unspecified = "(define a (define b 10))\
+                               (define c (display \"hello world\"))\
+                               (define d (if #f \"dude\"))\
+                               (define e (newline))";
+
+START_TEST (test_full_unspecified){
+    plot_symbol sym;
+    plot_value *val;
+    plot_program *prog;
+
+    sym.len = 2;
+    sym.size = 2;
+
+    puts("\nFull unspecified test");
+    fail_if( 0 == plot_init() );
+
+    prog = plot_parse(tf_unspecified);
+    fail_if( 0 == prog );
+    fail_if( 0 == plot_eval(plot_get_env(), prog) );
+
+    sym.val = "a";
+    val = plot_env_get( plot_get_env(), &sym);
+    ck_assert_msg( 0 != val, "symbol a was not defined");
+    ck_assert_msg( plot_type_unspecified == val->type, "symbol a did not have unspecified value");
+
+    sym.val = "b";
+    val = plot_env_get( plot_get_env(), &sym);
+    ck_assert_msg( 0 != val, "symbol b was not defined");
+    ck_assert_msg( plot_type_number == val->type, "symbol b was not a number");
+    ck_assert_msg( 10 == val->u.number.val, "symbol b did not have value 10");
+
+    sym.val = "c";
+    val = plot_env_get( plot_get_env(), &sym);
+    ck_assert_msg( 0 != val, "symbol c was not defined");
+    ck_assert_msg( plot_type_unspecified == val->type, "symbol c did not have unspecified value");
+
+    sym.val = "d";
+    val = plot_env_get( plot_get_env(), &sym);
+    ck_assert_msg( 0 != val, "symbol d was not defined");
+    ck_assert_msg( plot_type_unspecified == val->type, "symbol d did not have unspecified value");
+
+    sym.val = "e";
+    val = plot_env_get( plot_get_env(), &sym);
+    ck_assert_msg( 0 != val, "symbol e was not defined");
+    ck_assert_msg( plot_type_unspecified == val->type, "symbol e did not have unspecified value");
+
+
+    puts("completed!");
+    plot_cleanup();
+}
+END_TEST
+
 TEST_CASE_NEW(full)
 TEST_CASE_ADD(full, full_simple)
 TEST_CASE_ADD(full, full_harder)
 TEST_CASE_ADD(full, full_forms)
+TEST_CASE_ADD(full, full_unspecified)
 TEST_CASE_END(full)

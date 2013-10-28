@@ -51,7 +51,6 @@ features:
 * macro system
 * quoting
 * variable arguments
-* define an 'undefined' value e.g. value of '(if #f "hello")'
 
 runtime:
 ---------

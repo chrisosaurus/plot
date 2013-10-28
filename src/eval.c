@@ -257,6 +257,16 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
         return 0; /* FIXME ERROR */
     }
 
+    tmp = plot_new_value();
+    if( ! tmp ){
+        #if DEBUG_FORM || DEBUG
+        puts("\tplot_eval_form: failed to create new value");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    tmp->type = plot_type_unspecified;
+
     form = sexpr->subforms[0].u.value;
     switch( form->type){
         case plot_type_symbol:
@@ -307,7 +317,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                 plot_env_define(env, &(name->u.symbol), value);
                 /* decrement value as eval and define will both increment it and we are not keeping a reference around */
                 plot_value_decr(value);
-                return 0; /* FIXME success */
+                return tmp;
             }
             if( ! strcmp(form->u.symbol.val, "lambda") ){
                 if( sexpr->nchildren < 3 ){
@@ -333,14 +343,6 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                         puts("LAMBDA: invalid param type, expected symbol");
                         return 0; /* FIXME error */
                     }
-                }
-
-                tmp = plot_new_value();
-                if( ! tmp ){
-                    #if DEBUG_FORM || DEBUG
-                    puts("\tLAMBDA: failed to calloc");
-                    #endif
-                    return 0; /* FIXME error */
                 }
 
                 tmp->type = plot_type_lambda;
@@ -397,7 +399,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                      *  specified, then the result of the expression is
                      *  unspecified"
                      */
-                    return 0; /* FIXME success */
+                    return tmp; /* success */
                 }
 
                 return value;
@@ -428,7 +430,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                     return 0; /* FIXME ERROR */
                 }
 
-                return 0;
+                return tmp;
             }
             break;
         default:
