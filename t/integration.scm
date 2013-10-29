@@ -211,6 +211,19 @@
   (pass "seventeen")
   (fail "seventeen"))
 
+;; test logical operations
+(if (and #t #t)
+  (pass "eighteen")
+  (fail "eighteen"))
+
+(if (or #f #t)
+  (pass "nineteen")
+  (fail "nineteen"))
+
+(if (or (and (not #f) (not #t)) (not (not #t)))
+  (pass "twenty")
+  (fail "twenty"))
+
 
 ;; tests completed, print results
 (println "")

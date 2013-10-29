@@ -1077,3 +1077,84 @@ struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_v
     }
 }
 
+/* returns 1 if value is considered truthy
+ * returns 0 if falsy
+ */
+int plot_truthy(plot_value *val){
+    int ret = 1;
+    if( ! val )
+        return 0;
+
+    if( val->type == plot_type_boolean && val->u.boolean.val == false )
+        ret =  0;
+
+    return ret;
+}
+
+/* logical and of all arguments */
+struct plot_value * plot_func_and(struct plot_env *env, struct plot_value **args, int argc){
+    int i;
+    plot_value *ret;
+
+    if( argc < 2 ){
+        return plot_runtime_error(plot_error_bad_args, "insufficient arguments, expected 2", "plot_func_add");
+    }
+
+    ret = plot_new_value();
+    ret->type = plot_type_boolean;
+    ret->u.boolean.val = false;
+
+    for( i=0; i<argc; ++i ){
+        if( ! plot_truthy(args[i]) ){
+            return ret;
+        }
+    }
+
+    ret->u.boolean.val = true;
+    return ret;
+}
+
+/* logical or of all arguments */
+struct plot_value * plot_func_or(struct plot_env *env, struct plot_value **args, int argc){
+    int i;
+    plot_value *ret;
+
+    if( argc < 2 ){
+        return plot_runtime_error(plot_error_bad_args, "insufficient arguments, expected 2", "plot_func_or");
+    }
+
+    ret = plot_new_value();
+    ret->type = plot_type_boolean;
+    ret->u.boolean.val = true;
+
+    for( i=0; i<argc; ++i ){
+        if( plot_truthy(args[i]) ){
+            return ret;
+        }
+    }
+
+    ret->u.boolean.val = false;
+    return ret;
+}
+
+/* logical not of single argument */
+struct plot_value * plot_func_not(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *ret;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "incorrect arguments: expected exactly 1", "plot_func_not");
+    }
+
+    ret = plot_new_value();
+    ret->type = plot_type_boolean;
+
+    if( plot_truthy(args[0]) ){
+        ret->u.boolean.val = false;
+        return ret;
+    } else {
+        ret->u.boolean.val = true;
+        return ret;
+    }
+}
+
+

@@ -90,7 +90,12 @@ struct plot_binding bindings[] = {
 
     /* display functions */
     {{"display",   7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_display}}}},
-    {{"newline",   7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_newline}}}}
+    {{"newline",   7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_newline}}}},
+
+    /* logical operations */
+    {{"and",   4,  4}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_and}}}},
+    {{"or",    3,  3}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_or}}}},
+    {{"not",   4,  4}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_not}}}}
 };
 
 static void plot_gc_incr(struct plot_gc *g);

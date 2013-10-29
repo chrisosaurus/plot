@@ -198,22 +198,6 @@ plot_value * plot_eval_sexpr(plot_env *env, plot_sexpr * sexpr){
     return plot_eval_func_call(env, sexpr);
 }
 
-/* returns 1 if value is considered truthy
- * returns 0 if falsy
- */
-static int plot_eval_truthy(plot_value *val){
-    int ret = 1;
-    if( ! val )
-        return 0;
-
-    if( val->type == plot_type_boolean && val->u.boolean.val == false )
-        ret =  0;
-
-    plot_value_decr(val);
-
-    return ret;
-}
-
 /* eval a form in an environment
  * can modify the environment (e.g. define)
  */
@@ -351,7 +335,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                 if( sexpr->nchildren != 3 && sexpr->nchildren != 4 ){
                     return 0; /* FIXME ERROR */
                 }
-                /* decr is handled in plot_eval_truthy */
+                /* decr is handled in plot_truthy */
                 value = plot_eval_expr(env, &(sexpr->subforms[1]));
                 if( ! value ){
                     #if DEBUG_FORM || DEBUG
@@ -359,7 +343,8 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                     #endif
                     return 0; /* FIXME ERROR */
                 }
-                if( plot_eval_truthy(value) ){
+                if( plot_truthy(value) ){
+                    plot_value_decr(value);
                     value = plot_eval_expr(env, &(sexpr->subforms[2]));
                     if( ! value ){
                         #if DEBUG_FORM || DEBUG
@@ -368,6 +353,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                         return 0; /* FIXME ERROR */
                     }
                 } else if( sexpr->nchildren == 4){ /* (if cond if-expr else-expr) */
+                    plot_value_decr(value);
                     value = plot_eval_expr(env, &(sexpr->subforms[3]));
                     if( ! value ){
                         #if DEBUG_FORM || DEBUG
@@ -376,6 +362,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                         return 0; /* FIXME ERROR */
                     }
                 } else {
+                    plot_value_decr(value);
                     /* FIXME need to define an 'undef' value
                      * (display (if #f "hello")) ;; => ??
                      * in csi this is 'unspecified'

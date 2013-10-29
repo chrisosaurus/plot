@@ -94,4 +94,21 @@ struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_valu
  */
 struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_value **args, int argc);
 
+/****** logical operations ******/
+
+/* truthy not exposed to runtime
+ * returns 1 if value is considered truthy
+ * returns 0 if falsy
+ */
+int plot_truthy(plot_value *val);
+
+/* logical and of all arguments */
+struct plot_value * plot_func_and(struct plot_env *env, struct plot_value **args, int argc);
+
+/* logical or of all arguments */
+struct plot_value * plot_func_or(struct plot_env *env, struct plot_value **args, int argc);
+
+/* logical not of single argument */
+struct plot_value * plot_func_not(struct plot_env *env, struct plot_value **args, int argc);
+
 #endif
