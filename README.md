@@ -32,6 +32,7 @@ plot currently has:
 * comments (`;`)
 * value testing functions: `boolean?`, `string?`, `number?`, `symbol?`, and `procedure?`
 * garbage collection of runtime values (`value`, `env` and `hash_entry`)
+* logical operations `and`, `or` and `not
 
 example: (see `make example`)
 
