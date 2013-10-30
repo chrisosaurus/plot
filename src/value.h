@@ -34,7 +34,9 @@ typedef enum plot_error_type{
     /* unknown internal error, in theory an impossible state */
     plot_error_internal,
     /* unbound symbol encountered */
-    plot_error_unbound_symbol
+    plot_error_unbound_symbol,
+
+    plot_error_unimplemented
 } plot_error_type;
 
 typedef struct plot_error {
@@ -58,7 +60,8 @@ typedef struct plot_symbol {
 } plot_symbol;
 
 typedef struct plot_string {
-    const char *val;
+    /* FIXME scheme strings are mutable */
+    char *val;
     /* len is number of characters used
      * including \0 terminator
      */

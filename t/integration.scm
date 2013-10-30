@@ -224,6 +224,13 @@
   (pass "twenty")
   (fail "twenty"))
 
+;; test implemented string methods
+(if (= (string-length "hello") 5)
+  (if (string=? "hello world" (string-copy "hello world"))
+    (pass "twenty one")
+    (fail "twenty one case one"))
+  (fail "twenty one case two"))
+
 
 ;; tests completed, print results
 (println "")

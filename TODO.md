@@ -1,6 +1,12 @@
 TODO(s):
 =====
 
+operations:
+-----------
+* substring
+* string-append
+* string-ci=?
+
 experimental:
 -------------
 * remove creation logic from parse and tests - centralise in function (will probably require merging of value and symbols in hash/env and gc interface)
@@ -26,6 +32,8 @@ misc:
 * break math and comparison funcs into own files (.h and .c)
 * all math functions should check argument count
 * plot_handle_error should not be in funcs, funcs are things that can be assigned to plot_values
+* probably want to move plot bindings out of plot.c
+* simplify defining of plot bindings (counting of chars = lame)
 
 parse:
 ------
@@ -74,6 +82,7 @@ bugs:
 * remove value-creation logic from parse and unit tests, instead expose functions that encapsulate it
 * plot_get_env vs plot_env_get, could change former to plot_get_global_env
 * handling of val and func within func_call, if they are unique then val isn't always collected
+* function lookup fail can cause segfault
 
 Milestones:
 ===========

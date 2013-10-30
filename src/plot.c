@@ -95,7 +95,16 @@ struct plot_binding bindings[] = {
     /* logical operations */
     {{"and",   4,  4}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_and}}}},
     {{"or",    3,  3}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_or}}}},
-    {{"not",   4,  4}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_not}}}}
+    {{"not",   4,  4}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_not}}}},
+
+    /* string operations */
+    {{"string-length",  14, 14}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_length}}}},
+    {{"substring",      10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_substring}}}},
+    {{"string-append",  14, 14}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_append}}}},
+    {{"string-copy",    12, 12}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_copy}}}},
+    {{"string=?",        9,  9}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_equal}}}},
+    {{"string-ci=?",    12, 12}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_ci_equal}}}}
+
 };
 
 static void plot_gc_incr(struct plot_gc *g);
