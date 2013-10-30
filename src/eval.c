@@ -460,8 +460,11 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
             func = plot_eval_value(env, val);
 
             if( ! func ){
-                printf("\tplot_eval_func_call: no function found for '%s', bailing\n", val->u.symbol.val);
-                return 0; /* FIXME ERROR */
+                if( val->type == plot_type_symbol ){
+                    return plot_runtime_error(plot_error_undefined, val->u.symbol.val, "plot_eval_func_call");
+                } else {
+                    return plot_runtime_error(plot_error_undefined, "could not find function", "plot_eval_func_call");
+                }
             }
             switch( func->type ){
                 case plot_type_builtin:

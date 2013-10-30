@@ -48,6 +48,7 @@ eval:
 * define eval pointer ownership (currently returned values are a mess....)
 * eval documentation
 * add some heavier unit testing coverage for eval (test each individual func)
+* plot runtime error checks should be everywhere!
 
 read:
 -----

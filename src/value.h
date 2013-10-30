@@ -36,7 +36,10 @@ typedef enum plot_error_type{
     /* unbound symbol encountered */
     plot_error_unbound_symbol,
 
-    plot_error_unimplemented
+    /* function not implemented yet */
+    plot_error_unimplemented,
+    /* symbol failed to resolved */
+    plot_error_undefined
 } plot_error_type;
 
 typedef struct plot_error {
