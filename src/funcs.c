@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h> /* tolower */
 
 #include "value.h"
 #include "types.h"
@@ -1271,8 +1272,40 @@ struct plot_value * plot_func_string_equal(struct plot_env *env, struct plot_val
  * returns #t iff both string are the same length and contains the same characters
  */
 struct plot_value * plot_func_string_ci_equal(struct plot_env *env, struct plot_value **args, int argc){
-    /* FIXME */
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_ci_equal");
+    int i;
+    plot_value *ret, *a, *b;
+
+    if( argc != 2 ){
+        return plot_runtime_error(plot_error_bad_args, "expected 2 args", "plot_func_string_ci_equal");
+    }
+
+    a = args[0];
+    if( a->type != plot_type_string ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_ci_equal");
+    }
+
+    b = args[1];
+    if( b->type != plot_type_string ){
+        return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_string", "plot_func_string_ci_equal");
+    }
+
+    ret = plot_new_value();
+    ret->type = plot_type_boolean;
+    ret->u.boolean.val = false;
+
+    if( a->u.string.len != b->u.string.len ){
+        return ret;
+    }
+
+    for( i=0; i< a->u.string.len; ++i ){
+        if( tolower(a->u.string.val[i]) != tolower(b->u.string.val[i]) ){
+            printf("chars did not match '%c' '%c'\n", a->u.string.val[i], b->u.string.val[i]);
+            return ret;
+        }
+    }
+
+    ret->u.boolean.val = true;
+    return ret;
 }
 
 

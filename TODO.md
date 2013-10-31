@@ -34,6 +34,8 @@ misc:
 * plot_handle_error should not be in funcs, funcs are things that can be assigned to plot_values
 * probably want to move plot bindings out of plot.c
 * simplify defining of plot bindings (counting of chars = lame)
+* too much repeated handling for stack unwinding in eval
+* want to also print context for errors (e.g. expr being evalled when error occured, expr at each stage of stack unwinding)
 
 parse:
 ------

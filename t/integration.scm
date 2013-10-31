@@ -227,9 +227,19 @@
 ;; test implemented string methods
 (if (= (string-length "hello") 5)
   (if (string=? "hello world" (string-copy "hello world"))
-    (pass "twenty one")
-    (fail "twenty one case one"))
-  (fail "twenty one case two"))
+    (if (string-ci=? "yes" "YES")
+      (pass "twenty one")
+      (fail "twenty one case three"))
+    (fail "twenty one case two"))
+  (fail "twenty one case one"))
+
+(if (= (string-length "hello") 100)
+  (fail "twenty two case one")
+  (if (string=? "yes" "nope")
+    (fail "twenty two case two")
+    (if (string-ci=? "yes" "nope")
+      (fail "twenty two case three")
+      (pass "twenty two"))))
 
 
 ;; tests completed, print results
