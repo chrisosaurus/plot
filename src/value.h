@@ -11,6 +11,7 @@ typedef enum plot_value_type{
     plot_type_error,
     plot_type_string,
     plot_type_boolean,
+    plot_type_character,
     /* this type represents expressions that do not yield a value
      * '(if #f "hello")' => unspecified
      * '(define a "world")' => unspecified
@@ -21,7 +22,6 @@ typedef enum plot_value_type{
     plot_type_unspecified,
     plot_type_reclaimed /* FIXME useful for testing garbage collection */
 #if 0
-    plot_type_character
     plot_type_pair
 #endif
 } plot_value_type;
@@ -47,6 +47,10 @@ typedef struct plot_error {
     const char *msg;
     const char *location;
 } plot_error;
+
+typedef struct plot_character {
+    char character;
+} plot_character;
 
 typedef struct plot_number {
     int val;
@@ -119,8 +123,8 @@ typedef struct plot_value {
         plot_error     error;
         plot_string    string;
         plot_boolean   boolean;
-#if 0
         plot_character character;
+#if 0
         plot_pair      pair;
 #endif
     } u;

@@ -249,6 +249,18 @@
     (fail "twenty three case 1")))
   (string-append "hello" " " "world"))
 
+;; testing character datatype
+(if (char? #\a)
+  (if (not (char? 114))
+    (if (char?? #\ ) ; space character
+      (if (char? #\space) ; also space
+        (if (char? #\newline) ; newline character
+          (pass "twenty four")
+          (fail "twenty four case 5"))
+        (fail "twenty four case 4"))
+      (fail "twenty four case 3"))
+    (fail "twenty four case 2"))
+  (fail "twenty four case 1"))
 
 
 ;; tests completed, print results

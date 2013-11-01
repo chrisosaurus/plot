@@ -104,6 +104,9 @@ first milestone: 'core'
 * if form
 * lambda forms
 * equal?
+* char type
+* port type
+* basic io
 * pair datatype, car, cdr, cons and list constructors
 * variable arguments - (define (a . b)) and (lambda args)
 * quoting and display of quoted data

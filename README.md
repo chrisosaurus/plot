@@ -1,17 +1,14 @@
 plot
 ====
-Interpreter for a small subset of scheme - not to be taken seriously
+Interpreter for a subset of r5rs scheme - not to be taken seriously
 
-I am writing plot mostly for the sake of playing around with implementing a language,
-I am specifically interesting in garbage collection and memory allocation.
+I am writing plot mostly for the sake of playing around with implementing a language.
 
 Please note that I will most likely not be accepting pull requests as this project is primarily for my learning.
 I will also be force pushing here often, so no getting upset.
 
 naming
 -------
-scheme - Noun; A large-scale systematic plan or arrangement for attaining some particular object or putting a particular idea into effect.
-
 plot - Noun; A plan made in secret by a group of people to do something illegal or harmful
 
 current state
@@ -33,6 +30,7 @@ plot currently has:
 * value testing functions: `boolean?`, `string?`, `number?`, `symbol?`, and `procedure?`
 * garbage collection of runtime values (`value`, `env` and `hash_entry`)
 * logical operations `and`, `or` and `not
+* char type (`#\a` for literals)
 
 example: (see `make example`)
 
@@ -73,17 +71,7 @@ planned work
 ------------
 The initial plan was to try to define a very minimal core language (in c) and implement the rest in plot itself.
 
-I am not so sure about the current plan...
-
-planned:
-* ref counting
-* define
-* lambda
-* quote
-* strings and basic ops
-* numbers and basic ops
-* equal?
-* if and cond
+Now the current plan is to aim for r5rs compliance.
 
 dependencies
 ------------
