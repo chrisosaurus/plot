@@ -241,6 +241,15 @@
       (fail "twenty two case three")
       (pass "twenty two"))))
 
+((lambda (str)
+  (if (string=? str"hello world")
+    (if (= (string-length str) 11)
+      (pass "twenty three")
+      (fail "twenty three case 2"))
+    (fail "twenty three case 1")))
+  (string-append "hello" " " "world"))
+
+
 
 ;; tests completed, print results
 (println "")

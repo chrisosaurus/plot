@@ -1194,8 +1194,40 @@ struct plot_value * plot_func_substring(struct plot_env *env, struct plot_value 
  * of the given strings
  */
 struct plot_value * plot_func_string_append(struct plot_env *env, struct plot_value **args, int argc){
-    /* FIXME */
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_append");
+    plot_value *res;
+    int i;
+    int len = 0;
+
+    if( argc < 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected at least one argument", "plot_func_substring");
+    }
+
+    for( i=0; i<argc; ++i ){
+        if( args[i]->type != plot_type_string ){
+            return plot_runtime_error(plot_error_bad_args, "argument was not of type plot_type_string", "plot_func_substring");
+        }
+        len += args[i]->u.string.len - 1; /* do not include null terminator in count */
+    }
+
+    /* our final null terminator */
+    len += 1;
+
+    res = plot_new_value();
+    res->type = plot_type_string;
+    res->u.string.len = len;
+    res->u.string.size = len;
+    res->u.string.val = plot_new_string(len);
+
+    /* we now start using len to refer to the next place in our
+     * string to write
+     */
+    len = 0;
+    for( i=0; i<argc; ++i ){
+        strncpy( &(res->u.string.val[len]), args[i]->u.string.val, args[i]->u.string.len );
+        len += args[i]->u.string.len - 1;
+    }
+
+    return res;
 }
 
 /* (string-copy string)
