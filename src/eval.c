@@ -78,7 +78,7 @@ plot_value * plot_eval_expr(plot_env *env, plot_expr * expr){
             break;
         case plot_expr_sexpr:
             #if DEBUG_EXPR || DEBUG
-            puts("\tdispatching to plot_eres_sexpr");
+            puts("\tdispatching to plot_eval_sexpr");
             #endif
             res = plot_eval_sexpr(env, &(expr->u.sexpr));
             if( res && res->type == plot_type_error ){
@@ -185,7 +185,7 @@ static int plot_is_form(plot_sexpr * sexpr){
     }
 
     #if DEBUG_FORM || DEBUG
-    puts("\tno form found");
+    printf("\tno form found for '%s'\n", val->u.symbol.val);
     #endif
     return 0;
 }

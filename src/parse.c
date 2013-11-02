@@ -34,6 +34,9 @@ plot_program * plot_parse(const char *source){
                 break;
             case '[':
             case '(':
+                #if DEBUG
+                    puts("plot_parse: calling plot_parse_expr");
+                #endif
                 if( prog->nchildren >= prog->max_children ){
                     puts("\t\t error in plot_parse, max_children exceeded, returning");
                     return 0;
@@ -48,6 +51,9 @@ plot_program * plot_parse(const char *source){
             case '\r':
             case '\n':
             case '\t':
+                #if DEBUG
+                    puts("plot_parse: skipping whitespace");
+                #endif
                 /* skip whitespace */
                 ++i;
                 break;
@@ -60,90 +66,278 @@ plot_program * plot_parse(const char *source){
     return prog;
 }
 
+/* internal method used by plot_parse_expr
+ * deals with literals beginning with #
+ *
+ * this includes:
+ *      booleans: #t #f
+ *      characters: #\a #\space #\newline (etc.) FIXME unimplemented
+ *      vectors: FIXME unimplemented
+ *
+ * expects first character of value to be at source[*upto]
+ */
+static plot_expr * plot_parse_expr_hash(plot_expr *expr, const char *source, size_t *upto){
+    if( ! source[*upto] == '#' ){
+        plot_fatal_error("plot_parse_expr_hash: first character was not '#'");
+    }
+
+#if DEBUG
+    puts("plot_parse_expr_hash: start");
+#endif
+
+    ++ *upto;
+
+    expr->type = plot_expr_value;
+    expr->u.value = plot_new_constant();
+    expr->u.value->type = plot_type_boolean;
+    if( source[*upto] == 't' ){
+        expr->u.value->u.boolean.val = true;
+    } else if( source[*upto] == 'f' ){
+        expr->u.value->u.boolean.val = false;
+    } else {
+        plot_fatal_error("plot_parse_expr_hash: characters and vector not implemented yet");
+    }
+
+    ++ *upto;
+
+#if DEBUG
+    puts("plot_parse_expr_hash: end");
+#endif
+
+    return expr;
+}
+
+/* internal method used by plot_parse_expr
+ * deals with parsing of strings
+ *
+ * expects first character of string to be at source[*upto]
+ */
+static plot_expr * plot_parse_expr_string(plot_expr *expr, const char *source, size_t *upto){
+    size_t start;
+    int cont = 1;
+    int escaped = 0; /* is the next character escaped? set by / */
+
+    int len;
+
+#if DEBUG
+    puts("plot_parse_expr_string: start");
+#endif
+
+    if( source[*upto] != '"' ){
+        plot_fatal_error("plot_parse_expr_string: did not find starting quote");
+    }
+
+    /* do not include the leading " in string */
+    ++*upto;
+    start = *upto;
+    while( cont ){
+        switch (source[*upto]){
+            case '"':
+                if( ! escaped ){
+                    /* end of string unless escaped */
+                    cont = 0;
+                }
+                ++*upto;
+                break;
+            case '\\':
+                escaped = 1;
+                ++*upto;
+                break;
+            default:
+                /* part of string */
+                ++*upto;
+                break;
+        }
+    }
+
+    /* NB: at this point *upto is PAST the terminating "
+     * we do NOT want to copy this, however we do want to
+     * insert a null terminator instead
+     */
+    len = (*upto) - start; /* includes null term */
+    expr->type  = plot_expr_value;
+    expr->u.value = plot_new_constant();
+    expr->u.value->type = plot_type_string;
+    expr->u.value->u.string.len = len;
+    expr->u.value->u.string.size = len;
+    expr->u.value->u.string.val = plot_new_string(len);
+    strncpy(expr->u.value->u.string.val, &source[start], len - 1);
+
+#if DEBUG
+    printf("plot_parse_expr_string: end '%s'\n", expr->u.value->u.string.val);
+#endif
+
+    return expr;
+}
+
+/* internal method used by plot_parse_expr
+ * deals with parsing of symbols
+ *
+ * expects first character of symbol to be at source[*upto]
+ */
+static plot_expr * plot_parse_expr_symbol(plot_expr *expr, const char *source, size_t *upto){
+    size_t start = *upto;
+    int len;
+    int cont = 1;
+    char *tmp;
+
+#if DEBUG
+    puts("plot_parse_expr_symbol: start");
+    printf("started looking at '%c'\n", source[start]);
+#endif
+
+    while( cont ){
+        switch (source[*upto]){
+            case '\0':
+            case ' ':
+            case '\r':
+            case '\n':
+            case '\t':
+                /* end, leave for parent to consume*/
+                cont = 0;
+                break;
+            case ')':
+            case ']':
+                /* end, leave for parent to consume*/
+                cont = 0;
+                break;
+            default:
+                /* probably part of symbol */
+                ++ *upto;
+                break;
+        }
+    }
+
+    len = (*upto) - start + 1; /* +1 to include null term */
+    expr->type = plot_expr_value;
+    expr->u.value = plot_new_constant();
+    expr->u.value->type = plot_type_symbol;
+    expr->u.value->u.symbol.len = len;
+    expr->u.value->u.symbol.size = len;
+    /* NB: we also assign to tmp so that we can
+     * then write to it without violating const
+     * from plot symbol val
+     */
+    expr->u.value->u.symbol.val = tmp = plot_new_string(len);
+    strncpy(tmp, &source[start], len - 1);
+
+#if DEBUG
+    printf("plot_parse_expr_symbol: end '%s'\n", expr->u.value->u.symbol.val);
+#endif
+
+    return expr;
+}
+
+/* internal method used by plot_parse_expr
+ * deals with parsing of numbers
+ *
+ * expects first character of number to be at source[*upto]
+ */
+static plot_expr * plot_parse_expr_number(plot_expr *expr, const char *source, size_t *upto){
+    int cont = 1;
+    size_t start = *upto;
+    char *end;
+
+#if DEBUG
+    puts("plot_parse_expr_number: start");
+    printf("started looking at '%c'\n", source[start]);
+#endif
+
+    while (cont){
+        switch (source[*upto]) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                /* part of number, keep going */
+                ++ *upto;
+                break;
+            default:
+                /*end, leave for parent to consume */
+                cont = 0;
+                break;
+        }
+    }
+    if( start == *upto ){
+        plot_fatal_error("plot_parse_expr_number: no digits consumed");
+    }
+
+    expr->type = plot_expr_value;
+    expr->u.value = plot_new_constant();
+    expr->u.value->type = plot_type_number;
+    expr->u.value->u.number.val = strtol( &source[start], &end, 10);
+    /* end should be first non-digit
+     * it should also be where we stopped parsing
+     */
+    if( end != &source[*upto] ){
+        plot_fatal_error("plot_parse_expr_number: did not correctly consume number");
+    }
+
+#if DEBUG
+    printf("plot_parse_expr_number: end '%d'\n", expr->u.value->u.number.val);
+#endif
+
+    return expr;
+}
+
+/* FIXME ignore unused parameter warnings */
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+/* internal method used by plot_parse_expr
+ * deals with parsing of quoted values
+ *
+ * expects quote to be at source[*upto]
+ */
+static plot_expr * plot_parse_expr_quote(plot_expr *expr, const char *source, size_t *upto){
+#if DEBUG
+    puts("plot_parse_expr_quote: start");
+#endif
+
+    plot_fatal_error("plot_parse_expr_quote: Unimplemented");
+    return 0; /* FIXME */
+}
+
 /* plot_parse_expr will consume a token upto a separator (but will not consume the separator)
  * *upto is an offset into the source
  * *upto represents where plot_parse_sexpr starts and it will update it to match where it got up to
  * return a plot_expr* or 0 for errors
  * */
 plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
-    int start;
     int cont = 1;
-    /* set to true if we are within a value
-     * if we are inside a value then only numbers or characters are allowed
-     */
-    int inside_value = 0;
-    int inside_string = 0;
-    char *tmp;
-
-    if( source[ *upto ] == '"' ){
-        ++ *upto;
-        inside_string = 1;
-    }
-
-    /* we don't want to include the " or ' inside our copied string */
-    start = *upto;
 
     while( cont ){
         switch( source[ *upto ] ){
             case ';':
-                /* valid character within string */
-                if( inside_string ){
-                    break;
-                }
-                /* if inside value then end of current value */
-                if( inside_value ){
-                    cont =0;
-                    break;
-                }
                 plot_parse_comment(source, upto);
                 break;
             case '#':
-                /* valid character within string */
-                if( inside_string ){
-                    ++ *upto;
-                    break;
-                }
-                /* valid character inside symbol */
-                if( inside_value ){
-                    ++ *upto;
-                    break;
-                }
-
-                inside_value = 1;
-                /* otherwise this is the start of a boolean */
-                /* parsing is handled below */
-                ++ *upto;
-                cont = 0;
+                #if DEBUG
+                    puts("plot_parse_expr: calling plot_parse_expr_hash");
+                #endif
+                return plot_parse_expr_hash(expr, source, upto);
                 break;
             case '\'':
-                /* if we are inside a string then this is just part of the string */
-                if( inside_string){
-                    ++ *upto;
-                } else {
-                    /* FIXME error! */
-                    /* start of next quoted token */
-                    puts("quoting unimplemented.. sorry");
-                    exit(1);
-                }
+                #if DEBUG
+                    puts("plot_parse_expr: calling plot_parse_expr_quote");
+                #endif
+                return plot_parse_expr_quote(expr, source, upto);
                 break;
             case '"':
-                /* if we are inside a string then this may be the end */
-                if( inside_string ){
-                    cont = 0;
-                    break;
-                }
-                /* if we are inside a value then ' and " are not valid chars to consume
-                 * and must therefore be start of the nexttoken
-                 */
-                if( inside_value ){
-                    cont = 0;
-                    break;
-                }
-                /* otherwise this is an error */
-                puts("\t\tError in plot_parse_expr; unexpected quote token\n");
-                return 0;
+                #if DEBUG
+                    puts("plot_parse_expr: calling plot_parse_expr_string");
+                #endif
+                /* start of string */
+                return plot_parse_expr_string(expr, source, upto);
                 break;
             case '\0':
+                #if DEBUG
+                    puts("plot_parse_expr: null");
+                #endif
                 /* end of the line */
                 cont = 0;
                 break;
@@ -151,115 +345,61 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
             case '\r':
             case '\t':
             case '\n':
-                /* if we are inside a string then consume whitespace as part of string */
-                if( inside_string ){
-                    ++ *upto;
-                    break;
-                }
-                /* otherwise whitespace is the end of a token, leave it for parent and return */
-                cont = 0;
+                #if DEBUG
+                    puts("plot_parse_expr: consuming whitespace");
+                #endif
+                /* consume whitespace */
+                ++ *upto;
                 break;
             case '(':
             case '[':
-                /* if we are inside a string then this is just part of the string */
-                if( inside_string ){
-                    break;
-                }
-                /* if we are inside a value then ( is not a valid char to consume
-                 * it must be the start of the next token
-                 */
-                if( inside_value ){
-                    cont = 0;
-                    break;
-                }
+                #if DEBUG
+                    puts("plot_parse_expr: calling plot_parse_sexpr");
+                #endif
                 /* ( start of s_expr */
                 expr->type = plot_expr_sexpr;
                 if( ! plot_parse_sexpr(&(expr->u.sexpr), source, upto) ){
                     puts("\t\t Error in plot_parse_expr when calling plot_parse_sexpr, returning\n");
                     return 0;
                 }
+                return expr;
                 break;
             case ']':
             case ')':
-                /* if we are inside a string then this is just part of string */
-                if( inside_string ){
-                    break;
-                }
+                #if DEBUG
+                    puts("plot_parse_expr: end of token");
+                #endif
                 /* ) is the end of a token, leave it for parent to consume */
                 cont = 0;
                 break;
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                #if DEBUG
+                    puts("plot_parse_expr: calling plot_parse_expr_number");
+                #endif
+                return plot_parse_expr_number(expr, source, upto);
+                break;
             default:
-                /* either symbol, number or string
-                 * keep going *
-                 */
-                if( ! inside_string ){
-                    inside_value = 1;
-                }
-                ++ *upto;
+                #if DEBUG
+                    puts("plot_parse_expr: calling plot_parse_expr_symbol");
+                #endif
+                /* symbol */
+                return plot_parse_expr_symbol(expr, source, upto);
                 break;
         }
     }
 
-    /* if inside_string then string was consumed */
-    if( inside_string ){
-        /* our quote symbol has not yet been stepped over
-         * so this logic is the same as that for symbols
-         * + an additional step (++ *upto) to step over quote
-         */
-        int len = (*upto) - start + 1;
-        expr->type = plot_expr_value;
-        expr->u.value = plot_new_constant();
-        expr->u.value->u.string.val = tmp = calloc(len, sizeof(char));
-        expr->u.value->u.string.len = len;
-        expr->u.value->u.string.size = len;
-        strncpy(tmp, &source[start], (*upto) - start);
-        expr->u.value->type = plot_type_string;
-        ++ *upto;
-    }
-    /* if inside_value then a value was consumed */
-    else if( inside_value ){
-        char *invalid;
-        expr->type = plot_expr_value;
-        expr->u.value = plot_new_constant();
-        if( isdigit(source[start]) ){ /* FIXME source[start] may not be correct, want to really look at first non-whitespace */
-            /* if digit then number */
-            expr->u.value->u.number.val = strtol( &source[start], &invalid, 10 );
-            expr->u.value->type = plot_type_number;
-            if( invalid != &source[*upto] ){
-                puts("ERROR: conversion of token to t via strtol encountered an error\n");
-                return 0;
-            }
-        } else if( source[start] == '#' ){ /* FIXME source[start] may not be correct, want to really look at first non-whitespace */
-            /* boolean */
-            if( source[*upto] == 't' ){
-                expr->u.value->u.boolean.val = true;
-            } else if( source[*upto] == 'f' ){
-                expr->u.value->u.boolean.val = false;
-            } else {
-                puts("ERROR: invalid boolean in plot_parse_expr");
-                return 0;
-            }
-            expr->u.value->type = plot_type_boolean;
-            ++ *upto;
-        } else {
-            /* otherwise it is a symbol */
-            int len = (*upto) - start + 1;
-            expr->u.value->u.symbol.val = tmp = calloc(len, sizeof(char));
-            expr->u.value->u.symbol.len = len;
-            expr->u.value->u.symbol.size = len;
-            strncpy(tmp, &source[start], (*upto) - start);
-            expr->u.value->type = plot_type_symbol;
-        }
-    }
-
-#if debug
-    /* debugging only */
-    char *ch = calloc( (*upto) - start + 1, 1);
-    strncpy(ch, &source[start], (*upto) - start);
-    printf("\t\tConsumed expr '%s'\n", ch);
-    free(ch);
-#endif
-
+    #if DEBUG
+        puts("plot_parse_expr: returning expr...");
+    #endif
     return expr;
 }
 
@@ -311,6 +451,9 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, const char *source, size_t *upt
                 ++ *upto;
                 break;
             default:
+                #if DEBUG
+                puts("\n\nplot_parse_sexpr: calling plot_parse_expr");
+                #endif
                 /* ( and [ also use this path (as they are compound sexpressions) */
                 if( ! plot_parse_expr(&(children[nchildren++]), source, upto) ){
                     puts("\t\tError in plot_parse_sexpr, called to plot_parse_expr failed\n");
@@ -337,14 +480,6 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, const char *source, size_t *upt
     /* only modufy *sexpr if there were no errors */
     sexpr->nchildren = nchildren;
     sexpr->subforms = children;
-
-#if DEBUG
-    /* debugging only */
-    char *ch = calloc( (*upto) - start + 1, 1);
-    strncpy(ch, &source[start], (*upto) - start);
-    printf("\t\tConsumed sexpr '%s'\n", ch);
-    free(ch);
-#endif
 
     return sexpr;
 }
