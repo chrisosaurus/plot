@@ -13,24 +13,23 @@ plot - Noun; A plan made in secret by a group of people to do something illegal 
 
 current state
 -------------
-plot currently has:
+For an up-to-date summary or plot's implementation status see `docs/r5rs.md`
+
+a brief summary:
 * define form (value only, no lambda shorthand)
-* if form `(if cond if-expr else-expr)` and `(if cond if-expr)`
+* if forms
 * lambda form
 * set! form
-* string values
-* integer values
-* boolean values (`#f` and `#t`)
-* char type (`#\a` and `#\newline` for literals)
-* basic integer functions: addition (`+`), subtraction (`-`), multiplication (`*`), division (`/`) and remainder (`remainder`)
-* basic integer comparison functions: equal (`=`), less than (`<`), less than or equal (`<=`), greater than (`>`), greater than or equal (`>=`)
-* comprehensive equality testing `equal?` (on all types)
+* string literals
+* positive integer literals
+* boolean literals
+* char literals
+* basic integer procedures
 * printing of values (`display`)
 * printing of newline (`newline`)
 * comments (`;`)
-* value testing functions: `boolean?`, `string?`, `number?`, `symbol?`, `procedure?`, and `char?`
+* type testing functions: `boolean?`, `string?`, `number?`, `symbol?`, `procedure?`, and `char?`
 * garbage collection of runtime values (`value`, `env` and `hash_entry`)
-* logical operations `and`, `or` and `not
 
 example: (see `make example`)
 
