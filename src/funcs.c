@@ -1213,7 +1213,7 @@ struct plot_value * plot_func_not(struct plot_env *env, struct plot_value **args
     }
 }
 
-/******* string operations *******/
+/******* string procedures *******/
 /* return plot number representing length of string (excluding null terminator)
  * 'number of characters in string'
  */
@@ -1355,7 +1355,7 @@ struct plot_value * plot_func_string_equal(struct plot_env *env, struct plot_val
 }
 
 /* (string-ci=? str1 str2)
- * string equality test that treats upper and lowercase as the same (case insensitive)
+ * string case-insensitive equality test
  * returns #t iff both string are the same length and contains the same characters
  */
 struct plot_value * plot_func_string_ci_equal(struct plot_env *env, struct plot_value **args, int argc){
@@ -1393,6 +1393,66 @@ struct plot_value * plot_func_string_ci_equal(struct plot_env *env, struct plot_
 
     ret->u.boolean.val = true;
     return ret;
+}
+
+/****** character procedures ******/
+
+/* (char=? char1 char2)
+ * character equality test
+ */
+struct plot_value * plot_func_char_equal(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *res;
+
+    if( argc != 2 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 arguments", "plot_func_char_equal");
+    }
+
+    if( args[0]->type != plot_type_character ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_equal");
+    }
+
+    if( args[0]->type != plot_type_character ){
+        return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_character", "plot_func_char_equal");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_boolean;
+    res->u.boolean.val = false;
+
+    if( args[0]->u.character.val == args[1]->u.character.val ){
+        res->u.boolean.val = true;
+    }
+
+    return res;
+}
+
+/* (char-ci=? char1 char2)
+ * character case-insensitive equality test
+ */
+struct plot_value * plot_func_char_ci_equal(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *res;
+
+    if( argc != 2 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 arguments", "plot_func_char_equal");
+    }
+
+    if( args[0]->type != plot_type_character ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_equal");
+    }
+
+    if( args[0]->type != plot_type_character ){
+        return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_character", "plot_func_char_equal");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_boolean;
+    res->u.boolean.val = false;
+
+    if( tolower(args[0]->u.character.val) == tolower(args[1]->u.character.val) ){
+        res->u.boolean.val = true;
+    }
+
+    return res;
 }
 
 

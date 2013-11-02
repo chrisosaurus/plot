@@ -98,13 +98,17 @@ struct plot_binding bindings[] = {
     {{"or",    3,  3}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_or}}}},
     {{"not",   4,  4}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_not}}}},
 
-    /* string operations */
+    /* string procedures */
     {{"string-length",  14, 14}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_length}}}},
     {{"substring",      10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_substring}}}},
     {{"string-append",  14, 14}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_append}}}},
     {{"string-copy",    12, 12}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_copy}}}},
     {{"string=?",        9,  9}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_equal}}}},
-    {{"string-ci=?",    12, 12}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_ci_equal}}}}
+    {{"string-ci=?",    12, 12}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_ci_equal}}}},
+
+    /* character procesured */
+    {{"char=?",       7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_equal}}}},
+    {{"char-ci=?",   10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_equal}}}}
 
 };
 

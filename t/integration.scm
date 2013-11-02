@@ -265,6 +265,19 @@
     (fail "twenty five case 2"))
   (fail "twenty five case 1"))
 
+;; test char equality procedures
+(if (char=? #\a #\a)
+  (if (char=? #\  #\space)
+    (if (char-ci=? #\a #\A)
+      (if (not (char=? #\a #\b))
+        (if (not (char-ci=? #\a #\b))
+          (pass "twenty six")
+          (fail "twenty six case 5"))
+        (fail "twenty six case 4"))
+      (fail "twenty six case 3"))
+    (fail "twenty six case 2"))
+  (fail "twenty six case 1"))
+
 
 ;; tests completed, print results
 (println "")

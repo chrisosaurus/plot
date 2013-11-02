@@ -115,7 +115,7 @@ struct plot_value * plot_func_or(struct plot_env *env, struct plot_value **args,
 /* logical not of single argument */
 struct plot_value * plot_func_not(struct plot_env *env, struct plot_value **args, int argc);
 
-/******* string operations *******/
+/******* string procedures *******/
 /* return plot number representing length of string (excluding null terminator)
  * 'number of characters in string'
  */
@@ -145,9 +145,21 @@ struct plot_value * plot_func_string_copy(struct plot_env *env, struct plot_valu
 struct plot_value * plot_func_string_equal(struct plot_env *env, struct plot_value **args, int argc);
 
 /* (string-ci=? str1 str2)
- * string equality test that treats upper and lowercase as the same (case insensitive)
+ * string case-insensitive equality test
  * returns #t iff both string are the same length and contains the same characters
  */
 struct plot_value * plot_func_string_ci_equal(struct plot_env *env, struct plot_value **args, int argc);
+
+/****** character procedures ******/
+
+/* (char=? char1 char2)
+ * character equality test
+ */
+struct plot_value * plot_func_char_equal(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (char-ci=? char1 char2)
+ * character case-insensitive equality test
+ */
+struct plot_value * plot_func_char_ci_equal(struct plot_env *env, struct plot_value **args, int argc);
 
 #endif
