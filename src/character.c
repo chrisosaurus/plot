@@ -1,6 +1,7 @@
+#include <ctype.h> /* tolower */
+
 #include "value.h"
 #include "funcs.h"
-#include <ctype.h> /* tolower */
 
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"

@@ -3,6 +3,12 @@
 #include "number.h"
 #include "value.h"
 
+/* ignore unused parameter warnings */
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
+#define DEBUG 0
+
+
 /***** mathmatical functions ******/
 
 /* takes a list of expressions
@@ -18,13 +24,6 @@ plot_value * plot_func_add(struct plot_env *env, plot_value **args, int argc){
     #if DEBUG
     puts("inside plot_func_add");
     #endif
-
-    if( !env ){
-        #if DEBUG
-        puts("env is null");
-        #endif
-        return 0; /* ERROR */
-    }
 
     for( i=0; i<argc; ++i ){
         arg = args[i];
@@ -75,13 +74,6 @@ plot_value * plot_func_subtract(struct plot_env *env, plot_value **args, int arg
     #if DEBUG
     puts("inside plot_func_subtract");
     #endif
-
-    if( !env ){
-        #if DEBUG
-        puts("env is null");
-        #endif
-        return 0; /* ERROR */
-    }
 
     for( i=0; i<argc; ++i ){
         arg = args[i];
@@ -139,13 +131,6 @@ plot_value * plot_func_multiply(struct plot_env *env, plot_value **args, int arg
     puts("inside plot_func_multiply");
     #endif
 
-    if( !env ){
-        #if DEBUG
-        puts("env is null");
-        #endif
-        return 0; /* ERROR */
-    }
-
     for( i=0; i<argc; ++i ){
         arg = args[i];
         if( ! arg ){
@@ -193,13 +178,6 @@ struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value **a
     #if DEBUG
     puts("inside plot_func_divide");
     #endif
-
-    if( !env ){
-        #if DEBUG
-        puts("env is null");
-        #endif
-        return 0; /* ERROR */
-    }
 
     for( i=0; i<argc; ++i ){
         arg = args[i];
@@ -251,13 +229,6 @@ struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value 
     #if DEBUG
     puts("inside plot_func_remainder");
     #endif
-
-    if( !env ){
-        #if DEBUG
-        puts("env is null");
-        #endif
-        return 0; /* ERROR */
-    }
 
     if( argc != 2 ){
         #if DEBUG
@@ -323,13 +294,6 @@ struct plot_value * plot_func_math_equal(struct plot_env *env, struct plot_value
     puts("inside plot_func_math_equal");
     #endif
 
-    if( ! env ){
-        #if DEBUG
-        puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
-    }
-
     res = plot_new_value();
     if( ! res ){
         #if DEBUG
@@ -386,13 +350,6 @@ struct plot_value * plot_func_less(struct plot_env *env, struct plot_value **arg
     #if DEBUG
     puts("inside plot_func_less");
     #endif
-
-    if( ! env ){
-        #if DEBUG
-        puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
-    }
 
     res = plot_new_value();
     if( ! res ){
@@ -454,13 +411,6 @@ struct plot_value * plot_func_greater(struct plot_env *env, struct plot_value **
     puts("inside plot_func_greater");
     #endif
 
-    if( ! env ){
-        #if DEBUG
-        puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
-    }
-
     res = plot_new_value();
     if( ! res ){
         #if DEBUG
@@ -520,13 +470,6 @@ struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_value
     puts("inside plot_func_less_equal");
     #endif
 
-    if( ! env ){
-        #if DEBUG
-        puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
-    }
-
     res = plot_new_value();
     if( ! res ){
         #if DEBUG
@@ -585,13 +528,6 @@ struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_va
     #if DEBUG
     puts("inside plot_func_greater_equal");
     #endif
-
-    if( ! env ){
-        #if DEBUG
-        puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
-    }
 
     res = plot_new_value();
     if( ! res ){

@@ -1,6 +1,5 @@
 #include <ctype.h> /* tolower */
 #include <string.h>
-#include <stdio.h>
 
 #include "string.h"
 #include "value.h"
@@ -183,7 +182,6 @@ struct plot_value * plot_func_string_ci_equal(struct plot_env *env, struct plot_
 
     for( i=0; i< a->u.string.len; ++i ){
         if( tolower(a->u.string.val[i]) != tolower(b->u.string.val[i]) ){
-            printf("chars did not match '%c' '%c'\n", a->u.string.val[i], b->u.string.val[i]);
             return ret;
         }
     }
