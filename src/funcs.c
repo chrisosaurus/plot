@@ -814,6 +814,9 @@ struct plot_value * plot_func_equal(struct plot_env *env, struct plot_value **ar
         case plot_type_boolean:
             res->u.boolean.val = args[0]->u.boolean.val == args[1]->u.boolean.val;
             break;
+        case plot_type_character:
+            res->u.boolean.val = args[0]->u.character.val == args[1]->u.boolean.val;
+            break;
         case plot_type_reclaimed:
             plot_fatal_error("plot_func_equal: saw plot_type_reclaimed");
             break;
