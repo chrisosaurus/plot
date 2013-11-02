@@ -1078,6 +1078,58 @@ struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_v
     }
 }
 
+/* char?
+ */
+struct plot_value * plot_func_char_test(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *res;
+    plot_value *val;
+
+    #if DEBUG
+    puts("inside plot_func_char_test");
+    #endif
+
+    if( ! env ){
+        #if DEBUG
+        puts("env is NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res = plot_new_value();
+    if( ! res ){
+        #if DEBUG
+        puts("called to plot_new_value failed");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    if( argc != 1 ){
+        #if DEBUG
+        puts("incorrect number of args to plot_func_char_test");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    val = args[0];
+
+    if( ! val ){
+        #if DEBUG
+        puts("call to plot_eval_expr returned NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res->type = plot_type_boolean;
+    if( val->type == plot_type_character ){
+        res->u.boolean.val = true;
+        return res;
+    } else {
+        res->u.boolean.val = false;
+        return res;
+    }
+
+}
+
 /* returns 1 if value is considered truthy
  * returns 0 if falsy
  */

@@ -87,6 +87,7 @@ struct plot_binding bindings[] = {
     {{"symbol?",         8,  8}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_symbol_test}}}},
     {{"number?",         8,  8}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_number_test}}}},
     {{"procedure?",     11, 11}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_procedure_test}}}},
+    {{"char?",           6,  6}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_test}}}},
 
     /* display functions */
     {{"display",   7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_display}}}},

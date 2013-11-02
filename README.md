@@ -21,16 +21,16 @@ plot currently has:
 * string values
 * integer values
 * boolean values (`#f` and `#t`)
+* char type (`#\a` and `#\newline` for literals)
 * basic integer functions: addition (`+`), subtraction (`-`), multiplication (`*`), division (`/`) and remainder (`remainder`)
 * basic integer comparison functions: equal (`=`), less than (`<`), less than or equal (`<=`), greater than (`>`), greater than or equal (`>=`)
 * comprehensive equality testing `equal?` (on all types)
 * printing of values (`display`)
 * printing of newline (`newline`)
 * comments (`;`)
-* value testing functions: `boolean?`, `string?`, `number?`, `symbol?`, and `procedure?`
+* value testing functions: `boolean?`, `string?`, `number?`, `symbol?`, `procedure?`, and `char?`
 * garbage collection of runtime values (`value`, `env` and `hash_entry`)
 * logical operations `and`, `or` and `not
-* char type (`#\a` for literals)
 
 example: (see `make example`)
 
