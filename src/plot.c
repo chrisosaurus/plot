@@ -106,9 +106,17 @@ struct plot_binding bindings[] = {
     {{"string=?",        9,  9}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_equal}}}},
     {{"string-ci=?",    12, 12}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_ci_equal}}}},
 
-    /* character procesured */
+    /* character procedures */
     {{"char=?",       7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_equal}}}},
-    {{"char-ci=?",   10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_equal}}}}
+    {{"char-ci=?",   10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_equal}}}},
+    {{"char<?",       7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_less}}}},
+    {{"char>?",       7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_greater}}}},
+    {{"char<=?",      8,  8}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_less_equal}}}},
+    {{"char>=?",      8,  8}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_greater_equal}}}},
+    {{"char-ci<?",   10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_less}}}},
+    {{"char-ci>?",   10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_greater}}}},
+    {{"char-ci<=?",  11, 11}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_less_equal}}}},
+    {{"char-ci>=?",  11, 11}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_greater_equal}}}}
 
 };
 

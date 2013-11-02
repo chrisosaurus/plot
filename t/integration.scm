@@ -278,6 +278,21 @@
     (fail "twenty six case 2"))
   (fail "twenty six case 1"))
 
+;; testing char comparison procedures
+(if (char<? #\a #\b)
+  (if (not (char<? #\b #\a))
+    (if (char-ci>? #\b #\a)
+      (if (char-ci<=? #\( #\()
+        (if (not (char-ci>? #\B #\b))
+          ; Z < b BUT z > b (ascii)
+          (if (char-ci>? #\Z #\b) 
+            (pass "twenty seven")
+            (fail "twenty seven case 6"))
+          (fail "twenty seven case 5"))
+        (fail "twenty seven case 4"))
+      (fail "twenty seven case 3"))
+    (fail "twenty seven case 2"))
+  (fail "twenty seven case 1"))
 
 ;; tests completed, print results
 (println "")
