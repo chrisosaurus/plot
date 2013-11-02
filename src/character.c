@@ -1,4 +1,4 @@
-#include <ctype.h> /* tolower */
+#include <ctype.h> /* tolower, toupper, isalpha, isdigit, isspace, isupper, islower */
 
 #include "value.h"
 #include "funcs.h"
@@ -13,7 +13,7 @@
 /* (char=? char1 char2)
  * character equality test
  */
-struct plot_value * plot_func_char_equal(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_char_equal_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
 
     if( argc != 2 ){
@@ -42,7 +42,7 @@ struct plot_value * plot_func_char_equal(struct plot_env *env, struct plot_value
 /* (char-ci=? char1 char2)
  * character case-insensitive equality test
  */
-struct plot_value * plot_func_char_ci_equal(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_char_ci_equal_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
 
     if( argc != 2 ){
@@ -70,7 +70,7 @@ struct plot_value * plot_func_char_ci_equal(struct plot_env *env, struct plot_va
 
 /* (char<? char1 char2)
  */
-struct plot_value * plot_func_char_less(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_char_less_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
 
     if( argc != 2 ){
@@ -98,7 +98,7 @@ struct plot_value * plot_func_char_less(struct plot_env *env, struct plot_value 
 
 /* (char>? char1 char2)
  */
-struct plot_value * plot_func_char_greater(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_char_greater_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
 
     if( argc != 2 ){
@@ -126,7 +126,7 @@ struct plot_value * plot_func_char_greater(struct plot_env *env, struct plot_val
 
 /* (char<=? char1 char2)
  */
-struct plot_value * plot_func_char_less_equal(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_char_less_equal_test(struct plot_env *env, struct plot_value **args, int argc){
         plot_value *res;
 
     if( argc != 2 ){
@@ -154,7 +154,7 @@ struct plot_value * plot_func_char_less_equal(struct plot_env *env, struct plot_
 
 /* (char>=? char1 char2)
  */
-struct plot_value * plot_func_char_greater_equal(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_char_greater_equal_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
 
     if( argc != 2 ){
@@ -182,7 +182,7 @@ struct plot_value * plot_func_char_greater_equal(struct plot_env *env, struct pl
 
 /* (char-ci<? char1 char2)
  */
-struct plot_value * plot_func_char_ci_less(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_char_ci_less_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
 
     if( argc != 2 ){
@@ -210,7 +210,7 @@ struct plot_value * plot_func_char_ci_less(struct plot_env *env, struct plot_val
 
 /* (char-ci>? char1 char2)
  */
-struct plot_value * plot_func_char_ci_greater(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_char_ci_greater_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
 
     if( argc != 2 ){
@@ -238,7 +238,7 @@ struct plot_value * plot_func_char_ci_greater(struct plot_env *env, struct plot_
 
 /* (char-ci<=? char1 char2)
  */
-struct plot_value * plot_func_char_ci_less_equal(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_char_ci_less_equal_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
 
     if( argc != 2 ){
@@ -266,7 +266,7 @@ struct plot_value * plot_func_char_ci_less_equal(struct plot_env *env, struct pl
 
 /* (char-ci>=? char1 char2)
  */
-struct plot_value * plot_func_char_ci_greater_equal(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_char_ci_greater_equal_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
 
     if( argc != 2 ){
@@ -288,6 +288,187 @@ struct plot_value * plot_func_char_ci_greater_equal(struct plot_env *env, struct
     if( tolower(args[0]->u.boolean.val) >= tolower(args[1]->u.boolean.val) ){
         res->u.boolean.val = true;
     }
+
+    return res;
+}
+
+/* (char-alphabetic? char)
+ */
+struct plot_value * plot_func_char_alphabetic_test(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *res;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_alphabetic_test");
+    }
+
+    if( args[0]->type != plot_type_character ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_alphabetic_test");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_boolean;
+    res->u.boolean.val = isalpha(args[0]->u.character.val);
+
+    return res;
+}
+
+/* (char-numeric? char)
+ */
+struct plot_value * plot_func_char_numeric_test(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *res;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_numeric_test");
+    }
+
+    if( args[0]->type != plot_type_character ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_numeric_test");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_boolean;
+    res->u.boolean.val = isdigit(args[0]->u.character.val);
+
+    return res;
+
+}
+
+/* (char-whitespace? char)
+ */
+struct plot_value * plot_func_char_whitespace_test(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *res;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_whitespace_test");
+    }
+
+    if( args[0]->type != plot_type_character ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_whitespace_test");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_boolean;
+    res->u.boolean.val = isspace(args[0]->u.character.val);
+
+    return res;
+}
+
+/* (char-upper-case? char)
+ */
+struct plot_value * plot_func_char_upper_case_test(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *res;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_upper_case_test");
+    }
+
+    if( args[0]->type != plot_type_character ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_upper_case_test");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_boolean;
+    res->u.boolean.val = isupper(args[0]->u.character.val);
+
+    return res;
+}
+
+/* (char-lower-case? char)
+ */
+struct plot_value * plot_func_char_lower_case_test(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *res;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_lower_case_test");
+    }
+
+    if( args[0]->type != plot_type_character ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_lower_case_test");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_boolean;
+    res->u.boolean.val = islower(args[0]->u.character.val);
+
+    return res;
+}
+
+/* (char->integer char)
+ */
+struct plot_value * plot_func_char_to_integer(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *res;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_to_integer");
+    }
+
+    if( args[0]->type != plot_type_character ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_to_integer");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_number;
+    res->u.number.val = args[0]->u.character.val;
+
+    return res;
+}
+
+/* (integer->char n)
+ */
+struct plot_value * plot_func_integer_to_char(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *res;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_integer_to_char");
+    }
+
+    if( args[0]->type != plot_type_number ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_integer_to_char");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_character;
+    res->u.character.val = args[0]->u.number.val;
+
+    return res;
+}
+
+/* (char-upcase char)
+ */
+struct plot_value * plot_func_char_upcase(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *res;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_upcase");
+    }
+
+    if( args[0]->type != plot_type_character ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_upcase");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_character;
+    res->u.character.val = toupper(args[0]->u.character.val);
+
+    return res;
+}
+
+/* (char-downcase char)
+ */
+struct plot_value * plot_func_char_downcase(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *res;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_downcase");
+    }
+
+    if( args[0]->type != plot_type_character ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_downcase");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_character;
+    res->u.character.val = tolower(args[0]->u.character.val);
 
     return res;
 }

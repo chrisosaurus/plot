@@ -294,6 +294,34 @@
     (fail "twenty seven case 2"))
   (fail "twenty seven case 1"))
 
+;; testing remaining 6.3.4 character testing procedures
+(if (char-alphabetic? #\a)
+  (if (not (char-alphabetic? #\)))
+    (if (char-numeric? #\4)
+      (if (not (char-numeric? #\Z))
+        (if (char-upper-case? #\A)
+          (if (not (char-lower-case? #\Q))
+            (pass "twenty eight")
+            (fail "twenty eight case 6"))
+          (fail "twenty eight case 5"))
+        (fail "twenty eight case 4"))
+      (fail "twenty eight case 3"))
+    (fail "twenty eight case 2"))
+  (fail "twenty eight case 1"))
+
+;; testing 6.3.4 character conversion procedures
+(if (char=? #\A (char-upcase #\a))
+  (if (char-ci=? #\a (char-upcase #\a))
+    (if (= (char->integer #\A) (char->integer #\A))
+      (if (not (= (char->integer #\a) (char->integer #\q)))
+        (if (char=? #\a (integer->char (char->integer #\a)))
+          (pass "twenty nine")
+          (fail "twenty nine case 5"))
+        (fail "twenty nine case 4"))
+      (fail "twenty nine case 3"))
+    (fail "twenty nine case 2"))
+  (fail "twenty nine case 1"))
+
 ;; tests completed, print results
 (println "")
 (display tests-passed)

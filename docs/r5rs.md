@@ -87,6 +87,8 @@ List of r5rs sections and notes on implementation progress and any deviations fr
     are currently always resolved via the env so `symbol?` can never return true.
 
 6.3.4
+    this section is completely implemented.
+
     character literals are implemented
         `#\a` through to `#\Z`
         `#\0` through to `#\9`
@@ -106,6 +108,15 @@ List of r5rs sections and notes on implementation progress and any deviations fr
         `char-ci>?`
         `char-ci<=?`
         `char-ci>=?`
+        `char-alphabetic?`
+        `char-numeric?`
+        `char-whitespace?`
+        `char-upper-case?`
+        `char-lower-case?`
+        `char->integer`
+        `integer->char`
+        `char-upcase`
+        `char-downcase`
 
 6.3.5
     string literals are implemented

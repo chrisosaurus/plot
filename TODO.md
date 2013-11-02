@@ -88,6 +88,7 @@ bugs:
 * function lookup fail can cause segfault
 * string do not currently support escaping
 * everything parse
+* runtime error feedback is rubbish, e.g. using a function that doesn't exist
 
 Milestones:
 ===========

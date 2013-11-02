@@ -107,17 +107,26 @@ struct plot_binding bindings[] = {
     {{"string-ci=?",    12, 12}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_ci_equal}}}},
 
     /* character procedures */
-    {{"char=?",       7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_equal}}}},
-    {{"char-ci=?",   10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_equal}}}},
-    {{"char<?",       7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_less}}}},
-    {{"char>?",       7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_greater}}}},
-    {{"char<=?",      8,  8}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_less_equal}}}},
-    {{"char>=?",      8,  8}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_greater_equal}}}},
-    {{"char-ci<?",   10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_less}}}},
-    {{"char-ci>?",   10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_greater}}}},
-    {{"char-ci<=?",  11, 11}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_less_equal}}}},
-    {{"char-ci>=?",  11, 11}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_greater_equal}}}}
+    {{"char=?",             7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_equal_test}}}},
+    {{"char-ci=?",         10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_equal_test}}}},
+    {{"char<?",             7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_less_test}}}},
+    {{"char>?",             7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_greater_test}}}},
+    {{"char<=?",            8,  8}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_less_equal_test}}}},
+    {{"char>=?",            8,  8}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_greater_equal_test}}}},
+    {{"char-ci<?",         10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_less_test}}}},
+    {{"char-ci>?",         10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_greater_test}}}},
+    {{"char-ci<=?",        11, 11}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_less_equal_test}}}},
+    {{"char-ci>=?",        11, 11}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_greater_equal_test}}}},
 
+    {{"char-alphabetic?",  17, 17}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_alphabetic_test}}}},
+    {{"char-numeric?",     14, 14}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_numeric_test}}}},
+    {{"char-whitespace?",  17, 17}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_whitespace_test}}}},
+    {{"char-upper-case?",  17, 17}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_upper_case_test}}}},
+    {{"char-lower-case?",  17, 17}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_lower_case_test}}}},
+    {{"char->integer",     14, 14}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_to_integer}}}},
+    {{"integer->char",     14, 14}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_integer_to_char}}}},
+    {{"char-upcase",       12, 12}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_upcase}}}},
+    {{"char-downcase",     14, 14}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_downcase}}}}
 };
 
 static void plot_gc_incr(struct plot_gc *g);
