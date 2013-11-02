@@ -5,6 +5,8 @@ struct plot_env;
 struct plot_value;
 struct plot_expr;
 
+#include "character.h"
+
 /* print value to stdout
  */
 struct plot_value * plot_func_display(struct plot_env *env, struct plot_value **args, int argc);
@@ -149,50 +151,5 @@ struct plot_value * plot_func_string_equal(struct plot_env *env, struct plot_val
  * returns #t iff both string are the same length and contains the same characters
  */
 struct plot_value * plot_func_string_ci_equal(struct plot_env *env, struct plot_value **args, int argc);
-
-/****** character procedures ******/
-
-/* (char=? char1 char2)
- * character equality test
- */
-struct plot_value * plot_func_char_equal(struct plot_env *env, struct plot_value **args, int argc);
-
-/* (char-ci=? char1 char2)
- * character case-insensitive equality test
- */
-struct plot_value * plot_func_char_ci_equal(struct plot_env *env, struct plot_value **args, int argc);
-
-/* (char<? char1 char2)
- */
-struct plot_value * plot_func_char_less(struct plot_env *env, struct plot_value **args, int argc);
-
-/* (char>? char1 char2)
- */
-struct plot_value * plot_func_char_greater(struct plot_env *env, struct plot_value **args, int argc);
-
-/* (char<=? char1 char2)
- */
-struct plot_value * plot_func_char_less_equal(struct plot_env *env, struct plot_value **args, int argc);
-
-/* (char>=? char1 char2)
- */
-struct plot_value * plot_func_char_greater_equal(struct plot_env *env, struct plot_value **args, int argc);
-
-/* (char-ci<? char1 char2)
- */
-struct plot_value * plot_func_char_ci_less(struct plot_env *env, struct plot_value **args, int argc);
-
-/* (char-ci>? char1 char2)
- */
-struct plot_value * plot_func_char_ci_greater(struct plot_env *env, struct plot_value **args, int argc);
-
-/* (char-ci<=? char1 char2)
- */
-struct plot_value * plot_func_char_ci_less_equal(struct plot_env *env, struct plot_value **args, int argc);
-
-/* (char-ci>=? char1 char2)
- */
-struct plot_value * plot_func_char_ci_greater_equal(struct plot_env *env, struct plot_value **args, int argc);
-
 
 #endif
