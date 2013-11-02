@@ -45,6 +45,9 @@ static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
         case plot_type_symbol:
             puts("Unable to print a symbol at this point in time");
             break;
+        case plot_type_character:
+            printf("%c", val->u.character.val);
+            break;
         case plot_type_builtin:
             puts("Unable to print a builtin function at this point in time");
             break;

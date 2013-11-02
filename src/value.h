@@ -49,7 +49,7 @@ typedef struct plot_error {
 } plot_error;
 
 typedef struct plot_character {
-    char character;
+    char val;
 } plot_character;
 
 typedef struct plot_number {

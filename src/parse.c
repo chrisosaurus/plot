@@ -77,6 +77,12 @@ plot_program * plot_parse(const char *source){
  * expects first character of value to be at source[*upto]
  */
 static plot_expr * plot_parse_expr_hash(plot_expr *expr, const char *source, size_t *upto){
+    /* char_start is where the character constant started */
+    size_t char_start = 0; /* only used for character parsing */
+    /* char_cont signified we are still parsing a character constant */
+    int char_cont = 1;
+
+
     if( ! source[*upto] == '#' ){
         plot_fatal_error("plot_parse_expr_hash: first character was not '#'");
     }
@@ -89,16 +95,80 @@ static plot_expr * plot_parse_expr_hash(plot_expr *expr, const char *source, siz
 
     expr->type = plot_expr_value;
     expr->u.value = plot_new_constant();
-    expr->u.value->type = plot_type_boolean;
-    if( source[*upto] == 't' ){
-        expr->u.value->u.boolean.val = true;
-    } else if( source[*upto] == 'f' ){
-        expr->u.value->u.boolean.val = false;
-    } else {
-        plot_fatal_error("plot_parse_expr_hash: characters and vector not implemented yet");
+
+    switch (source[*upto]){
+        case 't':
+            expr->u.value->type = plot_type_boolean;
+            expr->u.value->u.boolean.val = true;
+            ++ *upto;
+            return expr;
+            break;
+        case 'f':
+            expr->u.value->type = plot_type_boolean;
+            expr->u.value->u.boolean.val = false;
+            ++ *upto;
+            return expr;
+            break;
+        case '\\':
+            /* skip past the \ */
+            ++*upto;
+            char_start = *upto;
+            while (char_cont){
+                switch (source[*upto]){
+                    case '\r':
+                    case '\n':
+                    case ' ':
+                        /* r5rs allows for the following space literals:
+                         *      `#\ ` to signify a literal space
+                         *      `#\\r` or `#\\n` to signify a newline (where \n and \r are the literal char values)
+                         *
+                         * if this is the first character within the literal:
+                         *      this is a space literal, consume and end
+                         *      else end
+                         */
+                        if( char_start == *upto ){
+                            ++*upto;
+                        }
+                        char_cont = 0;
+                        break;
+                    case '\0':
+                        char_cont = 0;
+                        break;
+                    default:
+                        /* keep on going */
+                        ++ *upto;
+                        /* FIXME this disallowed complex char literals
+                         * HOWEVER without this we will try to consume
+                         * `#\a)` as a single token, which is not right
+                         * however `#\)` is a valid character literal
+                         */
+                        char_cont = 0;
+                        break;
+                }
+            }
+            break;
+        default:
+            plot_fatal_error("plot_parse_expr_hash: unexpected character (vectors not implemented yet");
+            break;
     }
 
-    ++ *upto;
+    /* here means we are dealing with a character literal */
+    if( char_start ){
+        expr->u.value->type = plot_type_character;
+        if( (*upto - char_start) == 1 ){
+            /* simple */
+            expr->u.value->u.character.val = source[char_start];
+        } else {
+            printf("distance '%d'\n", (int)(*upto - char_start));
+            /* complex char constant
+             * supported:
+             *      `newline`
+             *      `space`
+             */
+            /* FIXME difficult */
+            plot_fatal_error("plot_parse_expr_hash: complex character literals are not currently implemented");
+        }
+    }
 
 #if DEBUG
     puts("plot_parse_expr_hash: end");

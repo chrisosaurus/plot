@@ -106,7 +106,7 @@ first milestone: 'core'
 * if form
 * lambda forms
 * equal?
-* char type
+* character type
 * port type
 * basic io
 * pair datatype, car, cdr, cons and list constructors
