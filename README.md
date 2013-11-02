@@ -1,7 +1,8 @@
 plot
 ====
-Interpreter for a subset of r5rs scheme - not to be taken seriously
+Plot is a toy interpreter for the r5rs scheme standard.
 
+The goal of plot is to write a simple language and then spend some time writing applications in it.
 I am writing plot mostly for the sake of playing around with implementing a language.
 
 Please note that I will most likely not be accepting pull requests as this project is primarily for my learning.
@@ -56,15 +57,6 @@ example: (see `make example`)
     (println (procedure? display)) ;; => #t
 
     (println (if #t "hello there" (illegal))) ;; => hello there
-
-output:
-
-    25
-    1080
-    #t
-    2
-    #t
-    hello there
 
 planned work
 ------------
