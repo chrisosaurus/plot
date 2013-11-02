@@ -89,6 +89,10 @@ List of r5rs sections and notes on implementation progress and any deviations fr
 6.3.4
     this section is completely implemented.
 
+    plot deviates mildly from the standard as 'special' literals `#\space` and
+    `#\newline` are case sensitive, whereas 6.3.4 defines them to be case insensitive;
+    this means that plow will not behave correctly for `#\NEWLINE`.
+
     character literals are implemented
         `#\a` through to `#\Z`
         `#\0` through to `#\9`
