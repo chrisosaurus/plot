@@ -78,10 +78,7 @@ plot_program * plot_parse(const char *source){
  */
 static plot_expr * plot_parse_expr_hash(plot_expr *expr, const char *source, size_t *upto){
     /* char_start is where the character constant started */
-    size_t char_start = 0; /* only used for character parsing */
-    /* char_cont signified we are still parsing a character constant */
-    int char_cont = 1;
-
+    size_t char_start = 0;
 
     if( ! source[*upto] == '#' ){
         plot_fatal_error("plot_parse_expr_hash: first character was not '#'");
@@ -113,39 +110,6 @@ static plot_expr * plot_parse_expr_hash(plot_expr *expr, const char *source, siz
             /* skip past the \ */
             ++*upto;
             char_start = *upto;
-            while (char_cont){
-                switch (source[*upto]){
-                    case '\r':
-                    case '\n':
-                    case ' ':
-                        /* r5rs allows for the following space literals:
-                         *      `#\ ` to signify a literal space
-                         *      `#\\r` or `#\\n` to signify a newline (where \n and \r are the literal char values)
-                         *
-                         * if this is the first character within the literal:
-                         *      this is a space literal, consume and end
-                         *      else end
-                         */
-                        if( char_start == *upto ){
-                            ++*upto;
-                        }
-                        char_cont = 0;
-                        break;
-                    case '\0':
-                        char_cont = 0;
-                        break;
-                    default:
-                        /* keep on going */
-                        ++ *upto;
-                        /* FIXME this disallowed complex char literals
-                         * HOWEVER without this we will try to consume
-                         * `#\a)` as a single token, which is not right
-                         * however `#\)` is a valid character literal
-                         */
-                        char_cont = 0;
-                        break;
-                }
-            }
             break;
         default:
             plot_fatal_error("plot_parse_expr_hash: unexpected character (vectors not implemented yet");
@@ -155,19 +119,23 @@ static plot_expr * plot_parse_expr_hash(plot_expr *expr, const char *source, siz
     /* here means we are dealing with a character literal */
     if( char_start ){
         expr->u.value->type = plot_type_character;
-        if( (*upto - char_start) == 1 ){
-            /* simple */
-            expr->u.value->u.character.val = source[char_start];
-        } else {
-            printf("distance '%d'\n", (int)(*upto - char_start));
-            /* complex char constant
-             * supported:
-             *      `newline`
-             *      `space`
-             */
-            /* FIXME difficult */
-            plot_fatal_error("plot_parse_expr_hash: complex character literals are not currently implemented");
+
+        /* try complex character literals first */
+        if( ! strncmp(&source[char_start], "newline", 7) ){
+            expr->u.value->u.character.val = '\n';
+            *upto += 7;
+            return expr;
         }
+        if( ! strncmp(&source[char_start], "space", 5) ){
+            expr->u.value->u.character.val = ' ';
+            *upto += 5;
+            return expr;
+        }
+
+        /* otherwise we are a simple (single letter) character literal */
+        expr->u.value->u.character.val = source[char_start];
+        ++ *upto;
+        return expr;
     }
 
 #if DEBUG
