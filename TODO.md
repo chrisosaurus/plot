@@ -89,6 +89,7 @@ bugs:
 * string do not currently support escaping
 * everything parse
 * runtime error feedback is rubbish, e.g. using a function that doesn't exist
+* escaping in strings will copy over the escape character and include it in size/len
 
 Milestones:
 ===========

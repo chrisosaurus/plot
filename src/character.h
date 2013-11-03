@@ -6,6 +6,10 @@ struct plot_value;
 
 /****** character procedures ******/
 
+/* char?
+ */
+struct plot_value * plot_func_char_test(struct plot_env *env, struct plot_value **args, int argc);
+
 /* (char=? char1 char2)
  * character equality test
  */

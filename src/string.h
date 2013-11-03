@@ -5,6 +5,11 @@ struct plot_env;
 struct plot_value;
 
 /******* string procedures *******/
+
+/* string?
+ */
+struct plot_value * plot_func_string_test(struct plot_env *env, struct plot_value **args, int argc);
+
 /* return plot number representing length of string (excluding null terminator)
  * 'number of characters in string'
  */

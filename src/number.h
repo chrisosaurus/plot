@@ -3,7 +3,12 @@
 
 struct plot_env;
 struct plot_value;
+
 /***** mathmatical functions ******/
+
+/* number?
+ */
+struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_value **args, int argc);
 
 /* takes a list of expressions
  * evals each and then adds the expression's value if it is a number

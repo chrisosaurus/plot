@@ -10,6 +10,58 @@
 #define DEBUG 0
 
 /******* string procedures *******/
+
+/* string?
+ */
+struct plot_value * plot_func_string_test(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *res;
+    plot_value *val;
+
+    #if DEBUG
+    puts("inside plot_func_boolean_test");
+    #endif
+
+    if( ! env ){
+        #if DEBUG
+        puts("env is NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res = plot_new_value();
+    if( ! res ){
+        #if DEBUG
+        puts("called to plot_new_value failed");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    if( argc != 1 ){
+        #if DEBUG
+        puts("incorrect number of args to plot_func_string_test");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    val = args[0];
+
+    if( ! val ){
+        #if DEBUG
+        puts("call to plot_eval_expr returned NULL");
+        #endif
+        return 0; /* FIXME error */
+    }
+
+    res->type = plot_type_boolean;
+    if( val->type == plot_type_string ){
+        res->u.boolean.val = true;
+        return res;
+    } else {
+        res->u.boolean.val = false;
+        return res;
+    }
+}
+
 /* return plot number representing length of string (excluding null terminator)
  * 'number of characters in string'
  */

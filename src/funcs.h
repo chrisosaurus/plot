@@ -32,21 +32,9 @@ struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_val
  */
 struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_value **args, int argc);
 
-/* string?
- */
-struct plot_value * plot_func_string_test(struct plot_env *env, struct plot_value **args, int argc);
-
-/* number?
- */
-struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_value **args, int argc);
-
 /* function?
  */
 struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_value **args, int argc);
-
-/* char?
- */
-struct plot_value * plot_func_char_test(struct plot_env *env, struct plot_value **args, int argc);
 
 /****** logical operations ******/
 
