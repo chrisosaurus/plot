@@ -258,6 +258,12 @@ struct plot_value * plot_runtime_error(plot_error_type type, const char *msg, co
         case plot_error_unbound_symbol:
             error_type_str = "unbound symbol";
             break;
+        case plot_error_unimplemented:
+            error_type_str = "unimplemented";
+            break;
+        case plot_error_undefined:
+            error_type_str = "symbol is undefined";
+            break;
         default:
             error_type_str = "IMPOSSIBLE ERROR";
             break;
