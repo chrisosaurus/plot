@@ -322,6 +322,20 @@
     (fail "twenty nine case 2"))
   (fail "twenty nine case 1"))
 
+;; testing 6.3.5 string procedures
+(if (string-ci=? "hello" (list->string (string->list "hello")))
+  (if (char=? (string-ref "hello" 1) #\e)
+    (if (string=? (make-string 4 #\q) "qqqq")
+      ;; A < z, a > z (ascii)
+      (if (string-ci>? "A" "z")
+        (if (string-ci=? "hello" (string #\H #\E #\L #\L #\O))
+          (pass "thirty")
+          (fail "thirty case 5"))
+        (fail "thirty case 4"))
+      (fail "thirty case 3"))
+    (fail "thirty case 2"))
+  (fail "thirty case 1"))
+
 ;; tests completed, print results
 (println "")
 (display tests-passed)
