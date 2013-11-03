@@ -136,6 +136,21 @@ List of r5rs sections and notes on implementation progress and any deviations fr
         `string-copy`
         `string=?`
         `string-ci=?`
+        `make-string`
+        `string`
+        `string-ref`
+        `string-set!`
+        `string<?`
+        `string>?`
+        `string<=?`
+        `string>=?`
+        `string-ci<?`
+        `string-ci>?`
+        `string-ci<=?`
+        `string-ci>=?`
+        `string->list`
+        `list->string`
+        `string-fill!`
 
 6.3.6 Vectors
     vectors are not currently implemented.

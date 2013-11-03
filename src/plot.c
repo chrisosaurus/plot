@@ -108,6 +108,22 @@ struct plot_binding bindings[] = {
     PBB("string=?",        9, plot_func_string_equal),
     PBB("string-ci=?",    12, plot_func_string_ci_equal),
 
+    PBB("make-string",    12, plot_func_make_string),
+    PBB("string",          7, plot_func_string),
+    PBB("string-ref",     11, plot_func_string_ref),
+    PBB("string-set!",    12, plot_func_string_set),
+    PBB("string<?",        9, plot_func_string_less_test),
+    PBB("string>?",        9, plot_func_string_greater_test),
+    PBB("string<=?",      10, plot_func_string_less_equal_test),
+    PBB("string>=?",      10, plot_func_string_greater_equal_test),
+    PBB("string-ci<?",    12, plot_func_string_ci_less_test),
+    PBB("string-ci>?",    12, plot_func_string_ci_greater_test),
+    PBB("string-ci<=?",   13, plot_func_string_ci_less_equal_test),
+    PBB("string-ci>=?",   13, plot_func_string_ci_greater_equal_test),
+    PBB("string->list",   13, plot_func_string_to_list),
+    PBB("list->string",   13, plot_func_list_to_string),
+    PBB("string-fill!",   13, plot_func_string_fill),
+
     /* character procedures */
     PBB("char=?",             7, plot_func_char_equal_test),
     PBB("char-ci=?",         10, plot_func_char_ci_equal_test),

@@ -242,4 +242,96 @@ struct plot_value * plot_func_string_ci_equal(struct plot_env *env, struct plot_
     return ret;
 }
 
+/* (make-string len)
+ * (make-string len char)
+ */
+struct plot_value * plot_func_make_string(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_make_string");
+}
+
+/* (string char ...)
+ */
+struct plot_value * plot_func_string(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string");
+}
+
+/* (string-ref string k)
+ * return char at k, zero-origin indexing
+ */
+struct plot_value * plot_func_string_ref(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_ref");
+}
+
+/* (string-set! string k char)
+ */
+struct plot_value * plot_func_string_set(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_set");
+}
+
+/* (string<? string1 string2)
+ */
+struct plot_value * plot_func_string_less_test(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_less_test");
+}
+
+/* (string>? string1 string2)
+ */
+struct plot_value * plot_func_string_greater_test(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_greater_test");
+}
+
+/* (string<=? string1 string2)
+ */
+struct plot_value * plot_func_string_less_equal_test(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_less_equal_test");
+}
+
+/* (string>=? string1 string 2)
+ */
+struct plot_value * plot_func_string_greater_equal_test(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_greater_equal_test");
+}
+
+/* (string-ci<? string1 string 2)
+ */
+struct plot_value * plot_func_string_ci_less_test(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_ci_less_test");
+}
+
+/* (string-ci>? string1 string 2)
+ */
+struct plot_value * plot_func_string_ci_greater_test(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_ci_greater_test");
+}
+
+/* (string-ci<=? string1 string 2)
+ */
+struct plot_value * plot_func_string_ci_less_equal_test(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_ci_less_equal_test");
+}
+
+/* (string-ci>=? string1 string2)
+ */
+struct plot_value * plot_func_string_ci_greater_equal_test(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_ci_greater_equal_test");
+}
+
+/* (string->list string)
+ */
+struct plot_value * plot_func_string_to_list(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_to_list");
+}
+
+/* (list->string list)
+ */
+struct plot_value * plot_func_list_to_string(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_list_to_string");
+}
+
+/* (string-fill! string char)
+ */
+struct plot_value * plot_func_string_fill(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_fill");
+}
+
 

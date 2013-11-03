@@ -44,4 +44,67 @@ struct plot_value * plot_func_string_equal(struct plot_env *env, struct plot_val
  */
 struct plot_value * plot_func_string_ci_equal(struct plot_env *env, struct plot_value **args, int argc);
 
+/* (make-string len)
+ * (make-string len char)
+ */
+struct plot_value * plot_func_make_string(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (string char ...)
+ */
+struct plot_value * plot_func_string(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (string-ref string k)
+ * return char at k, zero-origin indexing
+ */
+struct plot_value * plot_func_string_ref(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (string-set! string k char)
+ */
+struct plot_value * plot_func_string_set(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (string<? string1 string2)
+ */
+struct plot_value * plot_func_string_less_test(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (string>? string1 string2)
+ */
+struct plot_value * plot_func_string_greater_test(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (string<=? string1 string2)
+ */
+struct plot_value * plot_func_string_less_equal_test(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (string>=? string1 string 2)
+ */
+struct plot_value * plot_func_string_greater_equal_test(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (string-ci<? string1 string 2)
+ */
+struct plot_value * plot_func_string_ci_less_test(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (string-ci>? string1 string 2)
+ */
+struct plot_value * plot_func_string_ci_greater_test(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (string-ci<=? string1 string 2)
+ */
+struct plot_value * plot_func_string_ci_less_equal_test(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (string-ci>=? string1 string2)
+ */
+struct plot_value * plot_func_string_ci_greater_equal_test(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (string->list string)
+ */
+struct plot_value * plot_func_string_to_list(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (list->string list)
+ */
+struct plot_value * plot_func_list_to_string(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (string-fill! string char)
+ */
+struct plot_value * plot_func_string_fill(struct plot_env *env, struct plot_value **args, int argc);
+
+
 #endif
