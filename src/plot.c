@@ -79,7 +79,7 @@ struct plot_binding bindings[] = {
     {{">=",        2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_greater_equal}}}},
 
     /* equivalent predicates */
-    {{"equal?",    2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_equal}}}},
+    {{"equal?",    2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_equal_test}}}},
 
     /* value testing functions */
     {{"boolean?",        9,  9}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_boolean_test}}}},

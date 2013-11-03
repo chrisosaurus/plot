@@ -111,7 +111,7 @@ plot_value * plot_func_newline(plot_env *env, plot_value **args, int argc){
 
 /* equal?
  */
-struct plot_value * plot_func_equal(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *res;
 
     #if DEBUG

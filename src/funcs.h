@@ -20,7 +20,7 @@ struct plot_value * plot_func_newline(struct plot_env *env, struct plot_value **
 /********* equivalent predicates *********/
 /* equal?
  */
-struct plot_value * plot_func_equal(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value **args, int argc);
 
 /********* value testing functions ********/
 
