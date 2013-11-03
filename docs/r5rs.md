@@ -1,12 +1,12 @@
 List of r5rs sections and notes on implementation progress and any deviations from standard.
 
-2.2
+2.2 comments
     `;` comments are implemented
 
-3.5
+3.5 Proper tail recursion
     tail recursion is not implemented but is planned.
 
-4.1.2
+4.1.2 Literal expressions
     literals are implemented for all implemented types:
         character
         string
@@ -14,41 +14,41 @@ List of r5rs sections and notes on implementation progress and any deviations fr
         number (exact positive integer)
         symbol (although there is not yet quoting)
         function (lambda form)
-4.1.4
+4.1.4 Procedures
     `lambda` form is implemented
 
-4.1.5
+4.1.5 Conditionals
     both forms of `if` are implemented
     `(if cond if-expr)`
     `(if cond if-expr else-expr)`
 
-4.1.6
+4.1.6 Assignments
     `set!` form is implemented.
 
 
-4.2.1
+4.2.1 Derived conditionals
     the following procedures are implemented:
         `and`
         `or`
 
-4.2.2
+4.2.2 Binding constructs
     no derived binding construct are currently implemented.
 
-4.3
+4.3 Macros
     plot does not yet have a macro system.
 
-5.2
+5.2 Definitions
     `define` form is implemented.
 
-5.3
+5.3 Syntax definitions
     plot does not yet have syntax definitions.
 
-6.1
+6.1 Equivalence predicates
     `eq?` is not implemented.
     `eqv?` is not implemented.
     `equal?` is implemented.
 
-6.2
+6.2 Numbers
     exact integers are implemented although
     there is not yet support for literal negative integers
     so you must use `(- 0 1)` in lieu of `-1`.
@@ -73,20 +73,20 @@ List of r5rs sections and notes on implementation progress and any deviations fr
         `/`
         `remainder`
 
-6.3.1
+6.3.1 booleans
     booleans are implemented, literals `#t` and `#f`.
     plot has the boolean-type testing procedures `boolean?`
     `not` is implemented.
 
-6.3.2
+6.3.2 pairs and lists
     pairs and lists are currently not implemented.
 
-6.3.3
+6.3.3 symbols
     symbols are implemented along with the testing procedures `symbol?`,
     note however that quoting is not yet implemented and thus symbols
     are currently always resolved via the env so `symbol?` can never return true.
 
-6.3.4
+6.3.4 characters
     this section is completely implemented.
 
     plot deviates mildly from the standard as 'special' literals `#\space` and
@@ -122,7 +122,7 @@ List of r5rs sections and notes on implementation progress and any deviations fr
         `char-upcase`
         `char-downcase`
 
-6.3.5
+6.3.5 Strings
     string literals are implemented
         `"the word recursion has many meanings"`
 
@@ -137,20 +137,20 @@ List of r5rs sections and notes on implementation progress and any deviations fr
         `string=?`
         `string-ci=?`
 
-6.3.6
+6.3.6 Vectors
     vectors are not currently implemented.
 
-6.4
+6.4 Control features
     `procedure?` is implemented.
     all other procedures from this section are not implemented.
 
-6.5
+6.5 Eval
     eval is not currently exposed to plot programs.
 
-6.6
+6.6 Input and output
     ports are not currently implemented.
 
-6.6.3
+6.6.3 Output
     the following output procedures are implemented:
         `display`
         `newline`
