@@ -63,70 +63,72 @@ struct plot_binding {
     plot_value func;
 };
 
+#define PBB(str, len, func) {{str, len,  len}, {{-1, 0}, plot_type_builtin, {.builtin = {func}}}}
+
 struct plot_binding bindings[] = {
     /* math functions */
-    {{"+",         2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_add}}}},
-    {{"-",         2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_subtract}}}},
-    {{"*",         2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_multiply}}}},
-    {{"/",         2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_divide}}}},
-    {{"remainder",10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_remainder}}}},
+    PBB("+",         2, plot_func_add),
+    PBB("-",         2, plot_func_subtract),
+    PBB("*",         2, plot_func_multiply),
+    PBB("/",         2, plot_func_divide),
+    PBB("remainder",10, plot_func_remainder),
 
     /* comparison functions */
-    {{"=",         2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_math_equal}}}},
-    {{"<",         2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_less}}}},
-    {{">",         2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_greater}}}},
-    {{"<=",        2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_less_equal}}}},
-    {{">=",        2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_greater_equal}}}},
+    PBB("=",         2, plot_func_math_equal),
+    PBB("<",         2, plot_func_less),
+    PBB(">",         2, plot_func_greater),
+    PBB("<=",        2, plot_func_less_equal),
+    PBB(">=",        2, plot_func_greater_equal),
 
     /* equivalent predicates */
-    {{"equal?",    2,  2}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_equal_test}}}},
+    PBB("equal?",    2, plot_func_equal_test),
 
     /* value testing functions */
-    {{"boolean?",        9,  9}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_boolean_test}}}},
-    {{"string?",         8,  8}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_test}}}},
-    {{"symbol?",         8,  8}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_symbol_test}}}},
-    {{"number?",         8,  8}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_number_test}}}},
-    {{"procedure?",     11, 11}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_procedure_test}}}},
-    {{"char?",           6,  6}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_test}}}},
+    PBB("boolean?",        9, plot_func_boolean_test),
+    PBB("string?",         8, plot_func_string_test),
+    PBB("symbol?",         8, plot_func_symbol_test),
+    PBB("number?",         8, plot_func_number_test),
+    PBB("procedure?",     11, plot_func_procedure_test),
+    PBB("char?",           6, plot_func_char_test),
 
     /* display functions */
-    {{"display",   7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_display}}}},
-    {{"newline",   7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_newline}}}},
+    PBB("display",   7, plot_func_display),
+    PBB("newline",   7, plot_func_newline),
 
     /* logical operations */
-    {{"and",   4,  4}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_and}}}},
-    {{"or",    3,  3}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_or}}}},
-    {{"not",   4,  4}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_not}}}},
+    PBB("and",   4, plot_func_and),
+    PBB("or",    3, plot_func_or),
+    PBB("not",   4, plot_func_not),
 
     /* string procedures */
-    {{"string-length",  14, 14}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_length}}}},
-    {{"substring",      10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_substring}}}},
-    {{"string-append",  14, 14}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_append}}}},
-    {{"string-copy",    12, 12}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_copy}}}},
-    {{"string=?",        9,  9}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_equal}}}},
-    {{"string-ci=?",    12, 12}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_string_ci_equal}}}},
+    PBB("string-length",  14, plot_func_string_length),
+    PBB("substring",      10, plot_func_substring),
+    PBB("string-append",  14, plot_func_string_append),
+    PBB("string-copy",    12, plot_func_string_copy),
+    PBB("string=?",        9, plot_func_string_equal),
+    PBB("string-ci=?",    12, plot_func_string_ci_equal),
 
     /* character procedures */
-    {{"char=?",             7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_equal_test}}}},
-    {{"char-ci=?",         10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_equal_test}}}},
-    {{"char<?",             7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_less_test}}}},
-    {{"char>?",             7,  7}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_greater_test}}}},
-    {{"char<=?",            8,  8}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_less_equal_test}}}},
-    {{"char>=?",            8,  8}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_greater_equal_test}}}},
-    {{"char-ci<?",         10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_less_test}}}},
-    {{"char-ci>?",         10, 10}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_greater_test}}}},
-    {{"char-ci<=?",        11, 11}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_less_equal_test}}}},
-    {{"char-ci>=?",        11, 11}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_ci_greater_equal_test}}}},
+    PBB("char=?",             7, plot_func_char_equal_test),
+    PBB("char-ci=?",         10, plot_func_char_ci_equal_test),
+    PBB("char<?",             7, plot_func_char_less_test),
+    PBB("char>?",             7, plot_func_char_greater_test),
+    PBB("char<=?",            8, plot_func_char_less_equal_test),
+    PBB("char>=?",            8, plot_func_char_greater_equal_test),
+    PBB("char-ci<?",         10, plot_func_char_ci_less_test),
+    PBB("char-ci>?",         10, plot_func_char_ci_greater_test),
+    PBB("char-ci<=?",        11, plot_func_char_ci_less_equal_test),
+    PBB("char-ci>=?",        11, plot_func_char_ci_greater_equal_test),
 
-    {{"char-alphabetic?",  17, 17}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_alphabetic_test}}}},
-    {{"char-numeric?",     14, 14}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_numeric_test}}}},
-    {{"char-whitespace?",  17, 17}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_whitespace_test}}}},
-    {{"char-upper-case?",  17, 17}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_upper_case_test}}}},
-    {{"char-lower-case?",  17, 17}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_lower_case_test}}}},
-    {{"char->integer",     14, 14}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_to_integer}}}},
-    {{"integer->char",     14, 14}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_integer_to_char}}}},
-    {{"char-upcase",       12, 12}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_upcase}}}},
-    {{"char-downcase",     14, 14}, {{-1, 0}, plot_type_builtin, {.builtin = {plot_func_char_downcase}}}}
+    PBB("char-alphabetic?",  17, plot_func_char_alphabetic_test),
+    PBB("char-numeric?",     14, plot_func_char_numeric_test),
+    PBB("char-whitespace?",  17, plot_func_char_whitespace_test),
+    PBB("char-upper-case?",  17, plot_func_char_upper_case_test),
+    PBB("char-lower-case?",  17, plot_func_char_lower_case_test),
+    PBB("char->integer",     14, plot_func_char_to_integer),
+    PBB("integer->char",     14, plot_func_integer_to_char),
+    PBB("char-upcase",       12, plot_func_char_upcase),
+    PBB("char-downcase",     14, plot_func_char_downcase)
 };
 
 static void plot_gc_incr(struct plot_gc *g);
