@@ -83,11 +83,9 @@ runtime:
 bugs:
 -----
 * parsing of # is silly
-* parsing does not currently detect invalid input like '\#c'
 * remove value-creation logic from parse and unit tests, instead expose functions that encapsulate it
 * plot_get_env vs plot_env_get, could change former to plot_get_global_env
 * handling of val and func within func_call, if they are unique then val isn't always collected
-* function lookup fail can cause segfault
 * string do not currently support escaping
 * everything parse
 * runtime error feedback is rubbish, e.g. using a function that doesn't exist

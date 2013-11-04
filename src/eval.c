@@ -72,7 +72,7 @@ plot_value * plot_eval_expr(plot_env *env, plot_expr * expr){
             #endif
             res = plot_eval_value(env, expr->u.value);
             if( res && res->type == plot_type_error ){
-                puts("plot_eres_expr (resue)");
+                puts("plot_eval_expr (resue)");
             }
             return res;
             break;
@@ -82,7 +82,7 @@ plot_value * plot_eval_expr(plot_env *env, plot_expr * expr){
             #endif
             res = plot_eval_sexpr(env, &(expr->u.sexpr));
             if( res && res->type == plot_type_error ){
-                puts("plot_eres_expr (sexpr)");
+                puts("plot_eval_expr (sexpr)");
             }
             return res;
             break;
@@ -115,6 +115,9 @@ plot_value * plot_eval_value(plot_env *env, plot_value * val){
             printf("\tsymbol found '%s', resolving: dispatching to plot_env_get\n", val->u.symbol.val);
             #endif
             res = plot_env_get(env, &(val->u.symbol));
+            if( ! res ){
+                return plot_runtime_error(plot_error_unbound_symbol, val->u.symbol.val, "plot_eval_value");
+            }
             if( res && res->type == plot_type_error ){
                 puts("plot_eval_value (symbol)");
             }
@@ -477,7 +480,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
 /* eval a function call in an environment
  */
 plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
-    plot_value *val, *outerval; /* outerval is used for debugging */
+    plot_value *val;
     plot_value **vals;
     plot_value *func;
     plot_env *new_env;
@@ -501,7 +504,7 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
         return 0; /* FIXME ERROR */
     }
 
-    outerval = val = plot_eval_expr(env, &(sexpr->subforms[0]));
+    val = plot_eval_expr(env, &(sexpr->subforms[0]));
     if( ! val ){
         return plot_runtime_error(plot_error_internal, "evaluating function returned null", "plot_eval_func_call");
     }
@@ -539,12 +542,7 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
                     for( i=0; i < sexpr->nchildren - 1; ++i ){
                         val = plot_eval_expr(env, &(sexpr->subforms[1 + i]));
                         if( ! val ){
-                            val = plot_runtime_error(plot_error_internal, "BUILTIN call: evaluating argument returned NULL", "plot_eval_func_call");
-                            puts("\touterval:");
-                            plot_func_display(env, &outerval, 1);
-                            puts("\tfunc:");
-                            plot_func_display(env, &func, 1);
-                            return val;
+                            return plot_runtime_error(plot_error_internal, "BUILTIN call: evaluating argument returned NULL", "plot_eval_func_call");
                         }
                         if( val->type == plot_type_error ){
                             puts("plot_eval_func_call (arg)");
