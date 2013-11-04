@@ -539,8 +539,12 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
                     for( i=0; i < sexpr->nchildren - 1; ++i ){
                         val = plot_eval_expr(env, &(sexpr->subforms[1 + i]));
                         if( ! val ){
+                            val = plot_runtime_error(plot_error_internal, "BUILTIN call: evaluating argument returned NULL", "plot_eval_func_call");
+                            puts("\touterval:");
                             plot_func_display(env, &outerval, 1);
-                            return plot_runtime_error(plot_error_internal, "BUILTIN call: evaluating argument returned NULL", "plot_eval_func_call");
+                            puts("\tfunc:");
+                            plot_func_display(env, &func, 1);
+                            return val;
                         }
                         if( val->type == plot_type_error ){
                             puts("plot_eval_func_call (arg)");
