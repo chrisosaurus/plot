@@ -128,7 +128,8 @@ List of r5rs sections and notes on implementation progress and any deviations fr
 
     escaping is partially implemented but still requires work.
 
-    the following string procedures are implemented:
+    the following string procedures are implemented or pending
+    implementation (exposed to runtime but not yet callable):
         `string?`
         `string-length`
         `substring`
