@@ -1,5 +1,6 @@
 #include <ctype.h> /* tolower */
 #include <string.h>
+#include <stdio.h>
 
 #include "string.h"
 #include "value.h"
@@ -162,7 +163,7 @@ struct plot_value * plot_func_string_copy(struct plot_env *env, struct plot_valu
  * string equality test (case sensitive)
  * returns #t iff both strings are the same length and contain the same characters
  */
-struct plot_value * plot_func_string_equal(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string_equal_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *ret;
 
     /* FIXME r5rs page 30 section 6.3.5 allows
@@ -246,26 +247,142 @@ struct plot_value * plot_func_string_ci_equal(struct plot_env *env, struct plot_
  * (make-string len char)
  */
 struct plot_value * plot_func_make_string(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_make_string");
+    plot_value *res;
+
+    if( argc != 1 && argc != 2 ){
+        return plot_runtime_error(plot_error_bad_args, "expected either 1 or 2 arguments", "plot_func_make_string");
+    }
+
+    if( args[0]->type != plot_type_number ){
+        return plot_runtime_error(plot_error_bad_args, "first argument was not of type plot_type_number", "plot_func_make_string");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_string;
+    res->u.string.len = args[0]->u.number.val + 1;
+    res->u.string.size = res->u.string.len;
+    res->u.string.val = plot_new_string( res->u.string.len );
+
+    if( argc == 2 ){
+        if( args[1]->type != plot_type_character ){
+            plot_value_decr(res);
+            return plot_runtime_error(plot_error_bad_args, "second argument was not of type plot_type_character", "plot_func_make_string");
+        }
+        memset( res->u.string.val, args[1]->u.character.val, sizeof(char) * (res->u.string.len - 1) );
+        res->u.string.val[ res->u.string.len - 1] = '\0';
+    } else {
+        res->u.string.val[0] = '\0';
+    }
+
+    return res;
 }
 
 /* (string char ...)
+ * FIXME spec is unclear about the minimum number of arguments
+ * I will assume 1 as a minimum
  */
 struct plot_value * plot_func_string(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string");
+    plot_value *res;
+    int i;
+
+    if( argc < 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected at least 1 argument", "plot_func_string");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_string;
+    res->u.string.len = argc + 1; /* null terminator */
+    res->u.string.size = res->u.string.len;
+    res->u.string.val = plot_new_string( res->u.string.len );
+
+    for(i=0; i<argc; ++i ){
+        if( args[i]->type != plot_type_character ){
+            plot_value_decr(res);
+            return plot_runtime_error(plot_error_bad_args, "argument was not of type plot_type_character", "plot_func_string");
+        }
+        res->u.string.val[i] = args[i]->u.character.val;
+    }
+
+    res->u.string.val[ argc ] = '\0';
+    return res;
 }
 
 /* (string-ref string k)
  * return char at k, zero-origin indexing
  */
 struct plot_value * plot_func_string_ref(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_ref");
+    plot_value *res;
+    int i;
+
+    if( argc != 2 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 arguments", "plot_func_string_ref");
+    }
+
+    if( args[0]->type != plot_type_string ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_ref");
+    }
+
+    if( args[1]->type != plot_type_number ){
+        return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_number", "plot_func_string_ref");
+    }
+
+    i = args[1]->u.number.val;
+
+    /* NB: len - 1 as len is a size (counts from 1) and includes null terminator
+     * whereas index is an index (counts from 0)
+     *
+     * >= as if we have size 5 (excluding null term) then 5 is not a valid index (highest valid index would be 4)
+     */
+    if( i >= args[0]->u.string.len - 1 ){
+        return plot_runtime_error(plot_error_bad_args, "supplied index was out of range", "plot_func_string_ref");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_character;
+    res->u.character.val = args[0]->u.string.val[i];
+
+    return res;
 }
 
 /* (string-set! string k char)
+ * k is index, set character at index k to character char
  */
 struct plot_value * plot_func_string_set(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_set");
+    plot_value *res;
+    int i;
+
+    if( argc != 3 ){
+        return plot_runtime_error(plot_error_unimplemented, "expected exactly 3 arguments", "plot_func_string_set");
+    }
+
+    if( args[0]->type != plot_type_string ){
+        return plot_runtime_error(plot_error_unimplemented, "first arg was not of type plot_type_string", "plot_func_string_set");
+    }
+
+    if( args[1]->type != plot_type_number ){
+        return plot_runtime_error(plot_error_unimplemented, "second arg was not of type plot_type_number", "plot_func_string_set");
+    }
+
+    i = args[1]->u.number.val;
+
+    /* NB: len - 1 as len is a size (counts from 1) and includes null terminator
+     * whereas index is an index (counts from 0)
+     *
+     * >= as if we have size 5 (excluding null term) then 5 is not a valid index (highest valid index would be 4)
+     */
+    if( i >= args[0]->u.string.len - 1 ){
+        return plot_runtime_error(plot_error_unimplemented, "specified index was out of range", "plot_func_string_set");
+    }
+
+    if( args[2]->type != plot_type_character ){
+        return plot_runtime_error(plot_error_unimplemented, "third arg was not of type plot_type_character", "plot_func_string_set");
+    }
+
+    args[0]->u.string.val[i] = args[2]->u.character.val;
+
+    res = plot_new_value();
+    res->type = plot_type_unspecified;
+    return res;
 }
 
 /* (string<? string1 string2)
@@ -331,7 +448,35 @@ struct plot_value * plot_func_list_to_string(struct plot_env *env, struct plot_v
 /* (string-fill! string char)
  */
 struct plot_value * plot_func_string_fill(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_fill");
+    plot_value *res;
+    int i;
+    char ch;
+
+    if( argc != 2 ){
+        return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_fill");
+    }
+
+    if( args[0]->type != plot_type_string ){
+        return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_fill");
+    }
+
+    if( args[1]->type != plot_type_character){
+        return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_fill");
+    }
+
+    ch = args[1]->u.character.val;
+    res = plot_new_value();
+
+    /* NB: len - 1 as len is a size (counts from 1) and includes null terminator
+     * whereas i is an index (counts from 0)
+     *
+     * >= as if we have size 5 (excluding null term) then 5 is not a valid index (highest valid index would be 4)
+     */
+    for(i=0; i < args[0]->u.string.len - 1; ++i){
+        args[0]->u.string.val[i] = ch;
+    }
+
+    return res;
 }
 
 

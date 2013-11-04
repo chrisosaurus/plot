@@ -36,7 +36,7 @@ struct plot_value * plot_func_string_copy(struct plot_env *env, struct plot_valu
  * string equality test (case sensitive)
  * returns #t iff both strings are the same length and contain the same characters
  */
-struct plot_value * plot_func_string_equal(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_string_equal_test(struct plot_env *env, struct plot_value **args, int argc);
 
 /* (string-ci=? str1 str2)
  * string case-insensitive equality test

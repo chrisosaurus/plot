@@ -322,6 +322,19 @@
     (fail "twenty nine case 2"))
   (fail "twenty nine case 1"))
 
+;; testing 6.3.5 string creation and manipulation procedures
+(define thirty-test-str (make-string 5 #\a))
+(string-set! thirty-test-str 2 #\X)
+(if (string=? "ccccc" (make-string 5 #\c))
+  (if (= 7 (string-length (make-string 7)))
+    (if (char=? (string-ref (string #\a #\a #\a #\Q #\a) 3) #\Q)
+      (if (char=? (string-ref thirty-test-str 2) #\X)
+        (pass "thirty")
+        (fail "thirty case 4"))
+      (fail "thirty case 3"))
+    (fail "thirty case 2"))
+  (fail "thirty case 1"))
+
 ;; testing 6.3.5 string procedures
 (if (string-ci=? "hello" (list->string (string->list "hello")))
   (if (char=? (string-ref "hello" 1) #\e)
@@ -329,12 +342,12 @@
       ;; A < z, a > z (ascii)
       (if (string-ci>? "A" "z")
         (if (string-ci=? "hello" (string #\H #\E #\L #\L #\O))
-          (pass "thirty")
-          (fail "thirty case 5"))
-        (fail "thirty case 4"))
-      (fail "thirty case 3"))
-    (fail "thirty case 2"))
-  (fail "thirty case 1"))
+          (pass "thirty one")
+          (fail "thirty one case 5"))
+        (fail "thirty one case 4"))
+      (fail "thirty one case 3"))
+    (fail "thirty one case 2"))
+  (fail "thirty one case 1"))
 
 ;; tests completed, print results
 (println "")

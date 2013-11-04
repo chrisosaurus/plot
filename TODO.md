@@ -24,6 +24,7 @@ performance:
 * recursion is currently very expensive (both in terms of stack and memory) -> need tail call optimisation
 * reduction of strcmp usage
 * more performant env structure
+* no need to have multiple 'unspecified' objects, could instead have 1 constant (and a plot_get_unspecified)
 
 misc:
 -----
@@ -90,6 +91,7 @@ bugs:
 * everything parse
 * runtime error feedback is rubbish, e.g. using a function that doesn't exist
 * escaping in strings will copy over the escape character and include it in size/len
+* plot runtime errors may leak previously allocated values, need to decr before throwing error.
 
 Milestones:
 ===========

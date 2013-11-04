@@ -477,7 +477,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
 /* eval a function call in an environment
  */
 plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
-    plot_value *val;
+    plot_value *val, *outerval; /* outerval is used for debugging */
     plot_value **vals;
     plot_value *func;
     plot_env *new_env;
@@ -501,7 +501,7 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
         return 0; /* FIXME ERROR */
     }
 
-    val = plot_eval_expr(env, &(sexpr->subforms[0]));
+    outerval = val = plot_eval_expr(env, &(sexpr->subforms[0]));
     if( ! val ){
         return plot_runtime_error(plot_error_internal, "evaluating function returned null", "plot_eval_func_call");
     }
@@ -539,8 +539,8 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
                     for( i=0; i < sexpr->nchildren - 1; ++i ){
                         val = plot_eval_expr(env, &(sexpr->subforms[1 + i]));
                         if( ! val ){
-                            puts("\tBUILTIN call: evaluating argument returned NULL");
-                            return 0; /* FIXME error*/
+                            plot_func_display(env, &outerval, 1);
+                            return plot_runtime_error(plot_error_internal, "BUILTIN call: evaluating argument returned NULL", "plot_eval_func_call");
                         }
                         if( val->type == plot_type_error ){
                             puts("plot_eval_func_call (arg)");

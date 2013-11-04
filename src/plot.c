@@ -105,7 +105,7 @@ struct plot_binding bindings[] = {
     PBB("substring",      10, plot_func_substring),
     PBB("string-append",  14, plot_func_string_append),
     PBB("string-copy",    12, plot_func_string_copy),
-    PBB("string=?",        9, plot_func_string_equal),
+    PBB("string=?",        9, plot_func_string_equal_test),
     PBB("string-ci=?",    12, plot_func_string_ci_equal),
 
     PBB("make-string",    12, plot_func_make_string),
