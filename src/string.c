@@ -352,15 +352,15 @@ struct plot_value * plot_func_string_set(struct plot_env *env, struct plot_value
     int i;
 
     if( argc != 3 ){
-        return plot_runtime_error(plot_error_unimplemented, "expected exactly 3 arguments", "plot_func_string_set");
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 3 arguments", "plot_func_string_set");
     }
 
     if( args[0]->type != plot_type_string ){
-        return plot_runtime_error(plot_error_unimplemented, "first arg was not of type plot_type_string", "plot_func_string_set");
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_set");
     }
 
     if( args[1]->type != plot_type_number ){
-        return plot_runtime_error(plot_error_unimplemented, "second arg was not of type plot_type_number", "plot_func_string_set");
+        return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_number", "plot_func_string_set");
     }
 
     i = args[1]->u.number.val;
@@ -371,11 +371,11 @@ struct plot_value * plot_func_string_set(struct plot_env *env, struct plot_value
      * >= as if we have size 5 (excluding null term) then 5 is not a valid index (highest valid index would be 4)
      */
     if( i >= args[0]->u.string.len - 1 ){
-        return plot_runtime_error(plot_error_unimplemented, "specified index was out of range", "plot_func_string_set");
+        return plot_runtime_error(plot_error_bad_args, "specified index was out of range", "plot_func_string_set");
     }
 
     if( args[2]->type != plot_type_character ){
-        return plot_runtime_error(plot_error_unimplemented, "third arg was not of type plot_type_character", "plot_func_string_set");
+        return plot_runtime_error(plot_error_bad_args, "third arg was not of type plot_type_character", "plot_func_string_set");
     }
 
     args[0]->u.string.val[i] = args[2]->u.character.val;
@@ -453,15 +453,15 @@ struct plot_value * plot_func_string_fill(struct plot_env *env, struct plot_valu
     char ch;
 
     if( argc != 2 ){
-        return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_fill");
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 arguments", "plot_func_string_fill");
     }
 
     if( args[0]->type != plot_type_string ){
-        return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_fill");
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_fill");
     }
 
     if( args[1]->type != plot_type_character){
-        return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_fill");
+        return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_character", "plot_func_string_fill");
     }
 
     ch = args[1]->u.character.val;
