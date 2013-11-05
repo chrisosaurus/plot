@@ -66,6 +66,7 @@ features:
 * macro system
 * quoting
 * variable arguments
+* want a way of printing literal syntax (without attempting to eval)
 
 runtime:
 ---------
@@ -83,7 +84,6 @@ bugs:
 -----
 * parsing of # is silly
 * remove value-creation logic from parse and unit tests, instead expose functions that encapsulate it
-* handling of val and func within func_call, if they are unique then val isn't always collected
 * string do not currently support escaping
 * everything parse
 * runtime error feedback is rubbish, e.g. using a function that doesn't exist

@@ -504,143 +504,123 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
         return 0; /* FIXME ERROR */
     }
 
-    val = plot_eval_expr(env, &(sexpr->subforms[0]));
-    if( ! val ){
-        return plot_runtime_error(plot_error_internal, "evaluating function returned null", "plot_eval_func_call");
+    func = plot_eval_expr(env, &(sexpr->subforms[0]));
+    if( ! func ){
+        return plot_runtime_error(plot_error_internal, "evaluating value in function call position returned null", "plot_eval_func_call");
     }
 
-    switch( val->type ){
+    switch( func->type ){
         case plot_type_error:
             puts("plot_eval_func_call (func)");
-            return val;
+            return func;
             break;
-        case plot_type_builtin:
-        case plot_type_lambda:
-        case plot_type_symbol:
-            func = plot_eval_value(env, val);
 
-            if( ! func ){
-                if( val->type == plot_type_symbol ){
-                    return plot_runtime_error(plot_error_undefined, val->u.symbol.val, "plot_eval_func_call");
-                } else {
-                    return plot_runtime_error(plot_error_undefined, "could not find function", "plot_eval_func_call");
+        case plot_type_builtin:
+            #if DEBUG_FUNC || DEBUG
+            puts("\tcalling a builtin function...");
+            #endif
+
+            /* FIXME dirty */
+            vals = calloc( sexpr->nchildren - 1, sizeof *vals);
+            /* eval each argument and add to list */
+            for( i=0; i < sexpr->nchildren - 1; ++i ){
+                val = plot_eval_expr(env, &(sexpr->subforms[1 + i]));
+                if( ! val ){
+                    return plot_runtime_error(plot_error_internal, "BUILTIN call: evaluating argument returned NULL", "plot_eval_func_call");
+                }
+                if( val->type == plot_type_error ){
+                    puts("plot_eval_func_call (arg)");
+                    return val;
+                }
+                vals[i] = val;
+            }
+            val = func->u.builtin.func( env, vals, sexpr->nchildren - 1);
+            for( i=0; i < sexpr->nchildren - 1; ++i ){
+                plot_value_decr(vals[i]);
+            }
+            /* FIXME also dirty */
+            free(vals);
+            return val;
+        case plot_type_lambda:
+            #if DEBUG_FUNC || DEBUG
+            puts("\tcalling lambda");
+            #endif
+
+            /* create a new env with lambda->env as parent */
+            new_env = plot_new_env(func->u.lambda.env);
+            if( ! new_env ){
+                puts("\tLAMBDA: call to plot_env_init failed");
+                return 0; /* FIXME error */
+            }
+
+            if( func->u.lambda.body->subforms[1].type != plot_expr_sexpr ){
+                puts("\tLAMBDA: plot_eval_func_call parameter list is not an sexpr");
+                return 0; /* FIXME error */
+            }
+
+            /* check number of arguments match number of parameters */
+            if( func->u.lambda.body->subforms[1].u.sexpr.nchildren != sexpr->nchildren - 1 ){
+                printf("\tLAMBDA: incorrect number of arguments, expected '%d' and got '%d'\n", func->u.lambda.body->subforms[1].u.sexpr.nchildren, sexpr->nchildren - 1);
+            }
+            /* for each parameter grab an argument
+             *  if no argument then error
+             *  define(new-env, parameter, argument)
+             */
+            for( i=0; i< func->u.lambda.body->subforms[1].u.sexpr.nchildren ; ++i ){
+                if( func->u.lambda.body->subforms[1].u.sexpr.subforms[i].type != plot_expr_value ){
+                    puts("\tLAMBDA: expected value");
+                    return 0; /* FIXME error */
+                }
+                if( func->u.lambda.body->subforms[1].u.sexpr.subforms[i].u.value->type != plot_type_symbol ){
+                    puts("\tLAMBDA: expected symbol");
+                    return 0; /* FIXME error */
+                }
+                val = plot_eval_expr(env, &(sexpr->subforms[1+i]));
+                if( ! val ){
+                    puts("\tLAMBDA: evaluating argument returned NULL");
+                    return 0; /* FIXME error */
+                }
+                if( val->type == plot_type_error ){
+                    puts("plot_eval_func_call (lambda arg)");
+                    return val;
+                }
+                if( ! plot_env_define(new_env, &(func->u.lambda.body->subforms[1].u.sexpr.subforms[i].u.value->u.symbol), val) ){
+                    puts("\tLAMBDA: failed to define argument");
+                    return 0; /* FIXME error */
+                }
+                /* we are no longer holding a reference so decr */
+                plot_value_decr(val);
+            }
+
+            /* eval each part of the body in new_env
+             * return value of final expr
+             */
+            for( i=2; i < func->u.lambda.body->nchildren; ++i ){
+                val = plot_eval_expr(new_env, &(func->u.lambda.body->subforms[i]) );
+                if( val && val->type == plot_type_error ){
+                    puts("plot_eval_func_call (lambda body)");
+                    return val;
                 }
             }
-            switch( func->type ){
-                case plot_type_error:
-                    puts("plot_eval_func_call (func second)");
-                    return func;
-                    break;
-                case plot_type_builtin:
-                    #if DEBUG_FUNC || DEBUG
-                    puts("\tcalling a builtin function...");
-                    #endif
+            plot_env_decr(new_env);
+            plot_value_decr(func);
+            //printf("after lambda we have '%d' refs\n", func->gc.refcount);
+            //printf("and our env has '%d'\n", func->u.lambda.env->gc.refcount);
+            return val;
 
-                    /* FIXME dirty */
-                    vals = calloc( sexpr->nchildren - 1, sizeof *vals);
-                    /* eval each argument and add to list */
-                    for( i=0; i < sexpr->nchildren - 1; ++i ){
-                        val = plot_eval_expr(env, &(sexpr->subforms[1 + i]));
-                        if( ! val ){
-                            return plot_runtime_error(plot_error_internal, "BUILTIN call: evaluating argument returned NULL", "plot_eval_func_call");
-                        }
-                        if( val->type == plot_type_error ){
-                            puts("plot_eval_func_call (arg)");
-                            return val;
-                        }
-                        vals[i] = val;
-                    }
-                    val = func->u.builtin.func( env, vals, sexpr->nchildren - 1);
-                    for( i=0; i < sexpr->nchildren - 1; ++i ){
-                        plot_value_decr(vals[i]);
-                    }
-                    /* FIXME also dirty */
-                    free(vals);
-                    return val;
-                case plot_type_lambda:
-                    #if DEBUG_FUNC || DEBUG
-                    puts("\tcalling lambda");
-                    #endif
-
-                    /* create a new env with lambda->env as parent */
-                    new_env = plot_new_env(func->u.lambda.env);
-                    if( ! new_env ){
-                        puts("\tLAMBDA: call to plot_env_init failed");
-                        return 0; /* FIXME error */
-                    }
-
-                    if( func->u.lambda.body->subforms[1].type != plot_expr_sexpr ){
-                        puts("\tLAMBDA: plot_eval_func_call parameter list is not an sexpr");
-                        return 0; /* FIXME error */
-                    }
-
-                    /* check number of arguments match number of parameters */
-                    if( func->u.lambda.body->subforms[1].u.sexpr.nchildren != sexpr->nchildren - 1 ){
-                        printf("\tLAMBDA: incorrect number of arguments, expected '%d' and got '%d'\n", func->u.lambda.body->subforms[1].u.sexpr.nchildren, sexpr->nchildren - 1);
-                    }
-                    /* for each parameter grab an argument
-                     *  if no argument then error
-                     *  define(new-env, parameter, argument)
-                     */
-                    for( i=0; i< func->u.lambda.body->subforms[1].u.sexpr.nchildren ; ++i ){
-                        if( func->u.lambda.body->subforms[1].u.sexpr.subforms[i].type != plot_expr_value ){
-                            puts("\tLAMBDA: expected value");
-                            return 0; /* FIXME error */
-                        }
-                        if( func->u.lambda.body->subforms[1].u.sexpr.subforms[i].u.value->type != plot_type_symbol ){
-                            puts("\tLAMBDA: expected symbol");
-                            return 0; /* FIXME error */
-                        }
-                        val = plot_eval_expr(env, &(sexpr->subforms[1+i]));
-                        if( ! val ){
-                            puts("\tLAMBDA: evaluating argument returned NULL");
-                            return 0; /* FIXME error */
-                        }
-                        if( val->type == plot_type_error ){
-                            puts("plot_eval_func_call (lambda arg)");
-                            return val;
-                        }
-                        if( ! plot_env_define(new_env, &(func->u.lambda.body->subforms[1].u.sexpr.subforms[i].u.value->u.symbol), val) ){
-                            puts("\tLAMBDA: failed to define argument");
-                            return 0; /* FIXME error */
-                        }
-                        /* we are no longer holding a reference so decr */
-                        plot_value_decr(val);
-                    }
-
-                    /* eval each part of the body in new_env
-                     * return value of final expr
-                     */
-                    for( i=2; i < func->u.lambda.body->nchildren; ++i ){
-                        val = plot_eval_expr(new_env, &(func->u.lambda.body->subforms[i]) );
-                        if( val && val->type == plot_type_error ){
-                            puts("plot_eval_func_call (lambda body)");
-                            return val;
-                        }
-                    }
-                    plot_env_decr(new_env);
-                    plot_value_decr(func);
-                    //printf("after lambda we have '%d' refs\n", func->gc.refcount);
-                    //printf("and our env has '%d'\n", func->u.lambda.env->gc.refcount);
-                    return val;
-
-                    break;
-                default:
-                    puts("\tERROR: unknown syntax");
-                    return 0; /* FIXME ERROR */
-                    break;
-            }
             break;
         default:
-            #if DEBUG_FUNC || DEBUG
-            puts("\tplot_eval_func_call: unknown syntax");
-            #endif
-            puts("\tERROR: unknown syntax");
-            return 0; /* FIXME ERROR */
+            val = plot_runtime_error(plot_error_internal, "trying to call non-function", "plot_eval_func_call");
+            if( func->type == plot_type_symbol ){
+                printf("Trying to call literal symbol '%s'\n", func->u.symbol.val);
+            } else {
+                printf("Trying to call value: ");
+                plot_func_display(env, &func, 1);
+                puts("");
+            }
+            return val;
             break;
     }
-    puts("ended");
-
     return 0;
 }
 
