@@ -3,7 +3,6 @@ TODO(s):
 
 operations:
 -----------
-* substring
 * string-append
 * string-ci=?
 

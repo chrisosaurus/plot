@@ -89,8 +89,53 @@ struct plot_value * plot_func_string_length(struct plot_env *env, struct plot_va
  * returns a string from start (inclusive) to end (exclusive)
  */
 struct plot_value * plot_func_substring(struct plot_env *env, struct plot_value **args, int argc){
-    /* FIXME */
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_substring");
+    plot_value *res;
+    int start, end;
+
+    if( argc != 3 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 3 args", "plot_func_substring");
+    }
+
+    if( args[0]->type != plot_type_string ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_substring");
+    }
+
+    if( args[1]->type != plot_type_number ){
+        return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_number", "plot_func_substring");
+    }
+    start = args[1]->u.number.val;
+
+    if( args[2]->type != plot_type_number ){
+        return plot_runtime_error(plot_error_bad_args, "third arg was not of type plot_type_number", "plot_func_substring");
+    }
+    end = args[2]->u.number.val;
+
+    if( start > end ){
+        return plot_runtime_error(plot_error_bad_args, "start was greater than end, impossible substring", "plot_func_substring");
+    }
+
+    if( start < 0 ){
+        return plot_runtime_error(plot_error_bad_args, "provided start was < 0", "plot_func_substring");
+    }
+
+    /* len is 1-based counting and includes \0 terminator
+     * end is 0-based counting
+     */
+    if( end >= (args[0]->u.string.len - 1) ){
+        return plot_runtime_error(plot_error_bad_args, "provided end value is not within string", "plot_func_substring");
+    }
+
+    res = plot_new_value();
+    res->type = plot_type_string;
+    res->u.string.len = (end - start) + 1;
+    res->u.string.size = res->u.string.len;
+    res->u.string.val = plot_new_string( res->u.string.len );
+
+    /* start is inclusive and end is exclusive */
+    strncpy(res->u.string.val, &(args[0]->u.string.val[start]), end-start);
+    res->u.string.val[ end-start ] = '\0';
+
+    return res;
 }
 
 /* (string-append string ...)

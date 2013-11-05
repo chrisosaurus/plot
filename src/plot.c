@@ -386,7 +386,7 @@ void plot_gc_value_init(void){
      *
      * and now, after enc-cleanup (fibo 31) only needs 52
      */
-    plot_instance->num_value_allocated = 1000;
+    plot_instance->num_value_allocated = 1500;
     plot_instance->value_arena = calloc( plot_instance->num_value_allocated, sizeof (struct plot_value) );
     if( ! plot_instance->value_arena ){
         puts("plot_gc_value_init ERROR: failed to calloc value arena");
