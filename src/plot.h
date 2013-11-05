@@ -15,7 +15,7 @@ struct plot_env;
 /* return root env
  * root env represents 'global' scope
  */
-struct plot_env * plot_get_env(void);
+struct plot_env * plot_get_global_env(void);
 
 /* plot_cleanup cleans up internal state
  * must be last method called

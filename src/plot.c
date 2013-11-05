@@ -184,7 +184,7 @@ int plot_init(void){
     return 1;
 }
 
-struct plot_env * plot_get_env(void){
+struct plot_env * plot_get_global_env(void){
     if( ! plot_instance )
         return 0;
 

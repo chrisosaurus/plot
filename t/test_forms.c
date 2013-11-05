@@ -46,9 +46,9 @@ START_TEST (test_forms_define){
     expr.u.sexpr.subforms[2].u.value->type = plot_type_number;
     expr.u.sexpr.subforms[2].u.value->u.number.val = 7;
 
-    plot_eval_expr(plot_get_env(), &expr);
+    plot_eval_expr(plot_get_global_env(), &expr);
 
-    fail_if( 0 == (val = plot_env_get(plot_get_env(), &(expr.u.sexpr.subforms[1].u.value->u.symbol)) ));
+    fail_if( 0 == (val = plot_env_get(plot_get_global_env(), &(expr.u.sexpr.subforms[1].u.value->u.symbol)) ));
     fail_unless( val->type == plot_type_number );
     fail_unless( 7 == val->u.number.val );
 

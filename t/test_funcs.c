@@ -79,10 +79,10 @@ START_TEST (test_funcs_math){
     puts("\ttesting math functions");
 
     fail_if( 0 == plot_init() );
-    fail_if( 0 == plot_get_env() );
+    fail_if( 0 == plot_get_global_env() );
 
     for( i=0; i < PTF_LENGTH(tests); ++i ){
-        r = PTF_CALL_BUILTIN(i)( plot_get_env(), PTF_ARGS(i) );
+        r = PTF_CALL_BUILTIN(i)( plot_get_global_env(), PTF_ARGS(i) );
         if( 0 == r ){
             puts(PTF_ERR(i));
             puts("received a NULL return value");
@@ -116,10 +116,10 @@ START_TEST (test_funcs_comparison){
     puts("\ttesting comparison functions");
 
     fail_if( 0 == plot_init() );
-    fail_if( 0 == plot_get_env() );
+    fail_if( 0 == plot_get_global_env() );
 
     for( i=0; i < PTF_LENGTH(tests); ++i ){
-        r = PTF_CALL_BUILTIN(i)( plot_get_env(), PTF_ARGS(i) );
+        r = PTF_CALL_BUILTIN(i)( plot_get_global_env(), PTF_ARGS(i) );
         if( 0 == r ){
             puts(PTF_ERR(i));
             puts("received a NULL return value");
@@ -167,10 +167,10 @@ START_TEST (test_funcs_value_tests){
     puts("\ttesting comparison functions");
 
     fail_if( 0 == plot_init() );
-    fail_if( 0 == plot_get_env() );
+    fail_if( 0 == plot_get_global_env() );
 
     for( i=0; i < PTF_LENGTH(tests); ++i ){
-        r = PTF_CALL_BUILTIN(i)( plot_get_env(), PTF_ARGS_LEN(i, 1) );
+        r = PTF_CALL_BUILTIN(i)( plot_get_global_env(), PTF_ARGS_LEN(i, 1) );
         if( 0 == r ){
             puts(PTF_ERR(i));
             puts("received a NULL return value");
@@ -293,7 +293,7 @@ START_TEST (test_display){
     puts("\t\ttesting display of number (expected '3')");
     v->type = plot_type_number;
     v->u.number.val = 3;
-    plot_func_display(plot_get_env(), &v, 1);
+    plot_func_display(plot_get_global_env(), &v, 1);
     puts(""); /* trailing \n */
 
     puts("\t\ttesting display of symbol (expected '3')");
@@ -302,8 +302,8 @@ START_TEST (test_display){
     s->u.symbol.val = TEST_DISPLAY_SYMBOL;
     s->u.symbol.size = strlen(TEST_DISPLAY_SYMBOL) + 1;
     s->u.symbol.len = strlen(TEST_DISPLAY_SYMBOL) + 1;
-    fail_unless( 1 == plot_env_define(plot_get_env(), &(s->u.symbol), v) );
-    plot_func_display(plot_get_env(), &s, 1);
+    fail_unless( 1 == plot_env_define(plot_get_global_env(), &(s->u.symbol), v) );
+    plot_func_display(plot_get_global_env(), &s, 1);
     puts(""); /* trailing \n */
 
     puts("\t\ttesting display of string (expected 'testing display of string')");
@@ -312,21 +312,21 @@ START_TEST (test_display){
     s->u.string.val = TEST_DISPLAY_STRING;
     s->u.string.size = strlen(TEST_DISPLAY_STRING) +1;
     s->u.string.len = strlen(TEST_DISPLAY_STRING) + 1;
-    plot_func_display(plot_get_env(), &s, 1);
+    plot_func_display(plot_get_global_env(), &s, 1);
     puts(""); /* trailing \n */
 
 
     puts("\t\ttesting display of function");
     v->type = plot_type_builtin;
     v->u.builtin.func = 0;
-    plot_func_display(plot_get_env(), &v, 1);
+    plot_func_display(plot_get_global_env(), &v, 1);
 
     puts("\t\ttesting display of error (error expected)");
     v->type = plot_type_error;
     v->u.error.type = plot_error_internal;
     v->u.error.msg = "testing display of error";
     v->u.error.location = "test_display";
-    v = plot_func_display(plot_get_env(), &v, 1);
+    v = plot_func_display(plot_get_global_env(), &v, 1);
     ck_assert_msg(0 != v, "runtime error was no generated");
     ck_assert_msg(plot_type_error == v->type, "value returned was not of type error");
     ck_assert_msg(plot_error_internal == v->u.error.type, "value returned had wrong error type");

@@ -51,7 +51,7 @@ int main(int argc, char **argv){
         exit(1);
     }
 
-    if( ! plot_eval(plot_get_env(), prog) ){
+    if( ! plot_eval(plot_get_global_env(), prog) ){
         /* FIXME error */
         puts("error occurred in plot_eval");
         exit(1);

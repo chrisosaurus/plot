@@ -50,9 +50,9 @@ START_TEST (test_garbage){
     fail_if( prog == 0 );
 
     puts("\t\ttesting eval");
-    fail_if( 0 == plot_eval(plot_get_env(), prog) );
+    fail_if( 0 == plot_eval(plot_get_global_env(), prog) );
 
-    v = plot_env_get(plot_get_env(), PT_VS("result"));
+    v = plot_env_get(plot_get_global_env(), PT_VS("result"));
     /* define will create the value (with refount 1)
      * define then stored the value (refcount to 2) and then
      * decrs as it no longer needs the value (refcount back to 1)
