@@ -74,6 +74,8 @@ List of r5rs sections and notes on implementation progress and any deviations fr
         `remainder`
 
 6.3.1 booleans
+    this section is fully implemented.
+
     booleans are implemented, literals `#t` and `#f`.
     plot has the boolean-type testing procedures `boolean?`
     `not` is implemented.
@@ -128,8 +130,7 @@ List of r5rs sections and notes on implementation progress and any deviations fr
 
     escaping is partially implemented but still requires work.
 
-    the following string procedures are implemented or pending
-    implementation (exposed to runtime but not yet callable):
+    the following string procedures are implemented:
         `string?`
         `string-length`
         `substring`
@@ -141,6 +142,10 @@ List of r5rs sections and notes on implementation progress and any deviations fr
         `string`
         `string-ref`
         `string-set!`
+        `string-fill!`
+
+    the following procedures are pending implementation
+    (exposed to runtime but not yet callable):
         `string<?`
         `string>?`
         `string<=?`
@@ -151,7 +156,6 @@ List of r5rs sections and notes on implementation progress and any deviations fr
         `string-ci>=?`
         `string->list`
         `list->string`
-        `string-fill!`
 
 6.3.6 Vectors
     vectors are not currently implemented.

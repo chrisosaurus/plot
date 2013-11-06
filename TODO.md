@@ -3,8 +3,16 @@ TODO(s):
 
 operations:
 -----------
-* string-append
-* string-ci=?
+* string<?
+* string >?
+* string<=?
+* string>=?
+* string-ci<?
+* string-ci>?
+* string-ci<=?
+* string-ci>=?
+* string->list
+* list->string
 
 experimental:
 -------------
