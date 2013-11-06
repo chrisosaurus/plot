@@ -12,6 +12,7 @@ typedef enum plot_value_type{
     plot_type_string,
     plot_type_boolean,
     plot_type_character,
+    plot_type_pair,
     /* this type represents expressions that do not yield a value
      * '(if #f "hello")' => unspecified
      * '(define a "world")' => unspecified
@@ -22,7 +23,8 @@ typedef enum plot_value_type{
     plot_type_unspecified,
     plot_type_reclaimed /* FIXME useful for testing garbage collection */
 #if 0
-    plot_type_pair
+    plot_type_vector
+    plot_type_port
 #endif
 } plot_value_type;
 
@@ -81,15 +83,18 @@ typedef struct plot_boolean {
     bool val;
 } plot_boolean;
 
-#if 0
-typedef struct plot_character {
-    char val;
-} plot_character;
-
 typedef struct plot_pair {
-    struct plot_value *left;
-    struct plot_value *right;
+    struct plot_value *car;
+    struct plot_value *cdr;
 } plot_pair;
+
+#if 0
+
+typedef struct plot_vector {
+} plot_vector;
+
+typedef struct plot_port {
+} plot_port;
 
 #endif
 
@@ -124,8 +129,10 @@ typedef struct plot_value {
         plot_string    string;
         plot_boolean   boolean;
         plot_character character;
-#if 0
         plot_pair      pair;
+#if 0
+        plot_vector    vector;
+        plot_plot      port;
 #endif
     } u;
 } plot_value;

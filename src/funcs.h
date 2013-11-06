@@ -8,6 +8,7 @@ struct plot_expr;
 #include "character.h"
 #include "string.h"
 #include "number.h"
+#include "pair.h"
 
 /* print value to stdout
  */

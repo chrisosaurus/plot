@@ -2,7 +2,7 @@
 
 include config.mk
 
-SRC = src/read.c src/parse.c src/eval.c src/hash.c src/env.c src/funcs.c src/plot.c src/character.c src/string.c src/number.c
+SRC = src/read.c src/parse.c src/eval.c src/hash.c src/env.c src/funcs.c src/plot.c src/character.c src/string.c src/number.c src/pair.c
 OBJ = ${SRC:.c=.o}
 TOBJ = ${SRC:.c=.to}
 

@@ -47,6 +47,13 @@ static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
         case plot_type_character:
             printf("%c", val->u.character.val);
             break;
+        case plot_type_pair:
+            fputs("(", stdout);
+            plot_func_display_value(env, val->u.pair.car);
+            fputs(" ", stdout);
+            plot_func_display_value(env, val->u.pair.cdr);
+            fputs(")", stdout);
+            break;
         case plot_type_builtin:
             puts("Unable to print a builtin function at this point in time");
             break;

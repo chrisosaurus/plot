@@ -81,7 +81,15 @@ List of r5rs sections and notes on implementation progress and any deviations fr
     `not` is implemented.
 
 6.3.2 pairs and lists
-    pairs and lists are currently not implemented.
+    pairs are currently implemented.
+    lists are pending implementation.
+    plot currently lacks quoting, so literal pairs and lists are not yet possible.
+
+    implemented procedures from this section:
+        `pair?`
+        `cons`
+        `car`
+        `cdr`
 
 6.3.3 symbols
     symbols are implemented along with the testing procedures `symbol?`,

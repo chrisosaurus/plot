@@ -144,7 +144,14 @@ struct plot_binding bindings[] = {
     PBB("char->integer",     14, plot_func_char_to_integer),
     PBB("integer->char",     14, plot_func_integer_to_char),
     PBB("char-upcase",       12, plot_func_char_upcase),
-    PBB("char-downcase",     14, plot_func_char_downcase)
+    PBB("char-downcase",     14, plot_func_char_downcase),
+
+    /* pair and list procedures */
+    PBB("pair?",      6, plot_func_pair_test),
+    PBB("cons",       5, plot_func_pair_cons),
+    PBB("car",        4, plot_func_pair_car),
+    PBB("cdr",        4, plot_func_pair_cdr)
+
 };
 
 static void plot_gc_incr(struct plot_gc *g);
