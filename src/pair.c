@@ -82,7 +82,6 @@ struct plot_value * plot_func_pair_cdr(struct plot_env *env, struct plot_value *
     plot_value_incr(res);
 
     return res;
-
 }
 
 

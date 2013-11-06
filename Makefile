@@ -53,8 +53,14 @@ run_tests: compile_tests plot
 	./run_tests
 	@echo "\nrunning example.scm"
 	./plot t/example.scm
-	@echo "\nrunning integration.scm"
-	./plot t/integration.scm
+	@echo "\nrunning basic.scm"
+	./plot t/integration/basic.scm
+	@echo "\nrunning character.scm"
+	./plot t/integration/character.scm
+	@echo "\nrunning string.scm"
+	./plot t/integration/string.scm
+	@echo "\nrunning pair.scm"
+	./plot t/integration/pair.scm
 	@make -s cleanobj
 
 test: run_tests cleanobj

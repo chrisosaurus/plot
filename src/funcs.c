@@ -42,7 +42,7 @@ static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
             printf("%s", val->u.string.val);
             break;
         case plot_type_symbol:
-            puts("Unable to print a symbol at this point in time");
+            printf("%s", val->u.symbol.val);
             break;
         case plot_type_character:
             printf("%c", val->u.character.val);
