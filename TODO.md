@@ -98,6 +98,7 @@ bugs:
 * escaping in strings will copy over the escape character and include it in size/len
 * plot runtime errors may leak previously allocated values, need to decr before throwing error.
 * break integration.scm tests into separate tests for each section
+* plot_new_string and plot_alloc_string are not really related, as the latter allocates an array and the former a value
 
 Milestones:
 ===========

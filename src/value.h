@@ -139,6 +139,7 @@ typedef struct plot_value {
 
 /* functions to allocate and setup a new plot_value
  */
+plot_value * plot_new_unspecified(void);
 plot_value * plot_new_number(int value);
 plot_value * plot_new_boolean(int value);
 plot_value * plot_new_character(char value);
