@@ -13,7 +13,6 @@
 /* char?
  */
 struct plot_value * plot_func_char_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
     plot_value *val;
 
     #if DEBUG
@@ -23,14 +22,6 @@ struct plot_value * plot_func_char_test(struct plot_env *env, struct plot_value 
     if( ! env ){
         #if DEBUG
         puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
-    }
-
-    res = plot_alloc_value();
-    if( ! res ){
-        #if DEBUG
-        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -51,23 +42,13 @@ struct plot_value * plot_func_char_test(struct plot_env *env, struct plot_value 
         return 0; /* FIXME error */
     }
 
-    res->type = plot_type_boolean;
-    if( val->type == plot_type_character ){
-        res->u.boolean.val = true;
-        return res;
-    } else {
-        res->u.boolean.val = false;
-        return res;
-    }
-
+    return plot_new_boolean( val->type == plot_type_character );
 }
 
 /* (char=? char1 char2)
  * character equality test
  */
 struct plot_value * plot_func_char_equal_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 2 ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 2 arguments", "plot_func_char_equal");
     }
@@ -80,22 +61,13 @@ struct plot_value * plot_func_char_equal_test(struct plot_env *env, struct plot_
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_character", "plot_func_char_equal");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
-
-    if( args[0]->u.character.val == args[1]->u.character.val ){
-        res->u.boolean.val = true;
-    }
-
-    return res;
+    return plot_new_boolean( args[0]->u.character.val == args[1]->u.character.val );
 }
 
 /* (char-ci=? char1 char2)
  * character case-insensitive equality test
  */
 struct plot_value * plot_func_char_ci_equal_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
 
     if( argc != 2 ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 2 arguments", "plot_func_char_equal");
@@ -109,22 +81,12 @@ struct plot_value * plot_func_char_ci_equal_test(struct plot_env *env, struct pl
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_character", "plot_func_char_equal");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
-
-    if( tolower(args[0]->u.character.val) == tolower(args[1]->u.character.val) ){
-        res->u.boolean.val = true;
-    }
-
-    return res;
+    return plot_new_boolean( tolower(args[0]->u.character.val) == tolower(args[1]->u.character.val) );
 }
 
 /* (char<? char1 char2)
  */
 struct plot_value * plot_func_char_less_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 2 ){
         return plot_runtime_error(plot_error_bad_args, "expected 2 args", "plot_func_char_less");
     }
@@ -137,22 +99,12 @@ struct plot_value * plot_func_char_less_test(struct plot_env *env, struct plot_v
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_character", "plot_func_char_less");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
-
-    if( args[0]->u.boolean.val < args[1]->u.boolean.val ){
-        res->u.boolean.val = true;
-    }
-
-    return res;
+    return plot_new_boolean( args[0]->u.boolean.val < args[1]->u.boolean.val );
 }
 
 /* (char>? char1 char2)
  */
 struct plot_value * plot_func_char_greater_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 2 ){
         return plot_runtime_error(plot_error_bad_args, "expected 2 args", "plot_func_char_greater");
     }
@@ -165,22 +117,12 @@ struct plot_value * plot_func_char_greater_test(struct plot_env *env, struct plo
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_character", "plot_func_char_greater");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
-
-    if( args[0]->u.boolean.val > args[1]->u.boolean.val ){
-        res->u.boolean.val = true;
-    }
-
-    return res;
+    return plot_new_boolean( args[0]->u.boolean.val > args[1]->u.boolean.val );
 }
 
 /* (char<=? char1 char2)
  */
 struct plot_value * plot_func_char_less_equal_test(struct plot_env *env, struct plot_value **args, int argc){
-        plot_value *res;
-
     if( argc != 2 ){
         return plot_runtime_error(plot_error_bad_args, "expected 2 args", "plot_func_char_less_equal");
     }
@@ -193,22 +135,12 @@ struct plot_value * plot_func_char_less_equal_test(struct plot_env *env, struct 
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_character", "plot_func_char_less_equal");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
-
-    if( args[0]->u.boolean.val <= args[1]->u.boolean.val ){
-        res->u.boolean.val = true;
-    }
-
-    return res;
+    return plot_new_boolean( args[0]->u.boolean.val <= args[1]->u.boolean.val );
 }
 
 /* (char>=? char1 char2)
  */
 struct plot_value * plot_func_char_greater_equal_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 2 ){
         return plot_runtime_error(plot_error_bad_args, "expected 2 args", "plot_func_char_greater_equal");
     }
@@ -221,22 +153,12 @@ struct plot_value * plot_func_char_greater_equal_test(struct plot_env *env, stru
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_character", "plot_func_char_greater_equal");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
-
-    if( args[0]->u.boolean.val >= args[1]->u.boolean.val ){
-        res->u.boolean.val = true;
-    }
-
-    return res;
+    return plot_new_boolean( args[0]->u.boolean.val >= args[1]->u.boolean.val );
 }
 
 /* (char-ci<? char1 char2)
  */
 struct plot_value * plot_func_char_ci_less_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 2 ){
         return plot_runtime_error(plot_error_bad_args, "expected 2 args", "plot_func_char_ci_less");
     }
@@ -249,22 +171,12 @@ struct plot_value * plot_func_char_ci_less_test(struct plot_env *env, struct plo
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_character", "plot_func_char_ci_ess");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
-
-    if( tolower(args[0]->u.boolean.val) < tolower(args[1]->u.boolean.val) ){
-        res->u.boolean.val = true;
-    }
-
-    return res;
+    return plot_new_boolean( tolower(args[0]->u.boolean.val) < tolower(args[1]->u.boolean.val) );
 }
 
 /* (char-ci>? char1 char2)
  */
 struct plot_value * plot_func_char_ci_greater_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 2 ){
         return plot_runtime_error(plot_error_bad_args, "expected 2 args", "plot_func_char_ci_reater");
     }
@@ -277,22 +189,12 @@ struct plot_value * plot_func_char_ci_greater_test(struct plot_env *env, struct 
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_character", "plot_func_char_ci_reater");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
-
-    if( tolower(args[0]->u.boolean.val) > tolower(args[1]->u.boolean.val) ){
-        res->u.boolean.val = true;
-    }
-
-    return res;
+    return plot_new_boolean( tolower(args[0]->u.boolean.val) > tolower(args[1]->u.boolean.val) );
 }
 
 /* (char-ci<=? char1 char2)
  */
 struct plot_value * plot_func_char_ci_less_equal_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 2 ){
         return plot_runtime_error(plot_error_bad_args, "expected 2 args", "plot_func_char_ci_ess_equal");
     }
@@ -305,22 +207,12 @@ struct plot_value * plot_func_char_ci_less_equal_test(struct plot_env *env, stru
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_character", "plot_func_char_ci_ess_equal");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
-
-    if( tolower(args[0]->u.boolean.val) <= tolower(args[1]->u.boolean.val) ){
-        res->u.boolean.val = true;
-    }
-
-    return res;
+    return plot_new_boolean( tolower(args[0]->u.boolean.val) <= tolower(args[1]->u.boolean.val) );
 }
 
 /* (char-ci>=? char1 char2)
  */
 struct plot_value * plot_func_char_ci_greater_equal_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 2 ){
         return plot_runtime_error(plot_error_bad_args, "expected 2 args", "plot_func_char_greater_ci_qual");
     }
@@ -333,22 +225,12 @@ struct plot_value * plot_func_char_ci_greater_equal_test(struct plot_env *env, s
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_character", "plot_func_char_ci_reater_equal");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
-
-    if( tolower(args[0]->u.boolean.val) >= tolower(args[1]->u.boolean.val) ){
-        res->u.boolean.val = true;
-    }
-
-    return res;
+    return plot_new_boolean( tolower(args[0]->u.boolean.val) >= tolower(args[1]->u.boolean.val) );
 }
 
 /* (char-alphabetic? char)
  */
 struct plot_value * plot_func_char_alphabetic_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 1 ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_alphabetic_test");
     }
@@ -357,18 +239,12 @@ struct plot_value * plot_func_char_alphabetic_test(struct plot_env *env, struct 
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_alphabetic_test");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = isalpha(args[0]->u.character.val);
-
-    return res;
+    return plot_new_boolean( isalpha(args[0]->u.character.val) );
 }
 
 /* (char-numeric? char)
  */
 struct plot_value * plot_func_char_numeric_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 1 ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_numeric_test");
     }
@@ -377,19 +253,12 @@ struct plot_value * plot_func_char_numeric_test(struct plot_env *env, struct plo
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_numeric_test");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = isdigit(args[0]->u.character.val);
-
-    return res;
-
+    return plot_new_boolean( isdigit(args[0]->u.character.val) );
 }
 
 /* (char-whitespace? char)
  */
 struct plot_value * plot_func_char_whitespace_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 1 ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_whitespace_test");
     }
@@ -398,18 +267,12 @@ struct plot_value * plot_func_char_whitespace_test(struct plot_env *env, struct 
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_whitespace_test");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = isspace(args[0]->u.character.val);
-
-    return res;
+    return plot_new_boolean( isspace(args[0]->u.character.val) );
 }
 
 /* (char-upper-case? char)
  */
 struct plot_value * plot_func_char_upper_case_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 1 ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_upper_case_test");
     }
@@ -418,18 +281,12 @@ struct plot_value * plot_func_char_upper_case_test(struct plot_env *env, struct 
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_upper_case_test");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = isupper(args[0]->u.character.val);
-
-    return res;
+    return plot_new_boolean( isupper(args[0]->u.character.val) );
 }
 
 /* (char-lower-case? char)
  */
 struct plot_value * plot_func_char_lower_case_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 1 ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_lower_case_test");
     }
@@ -438,18 +295,12 @@ struct plot_value * plot_func_char_lower_case_test(struct plot_env *env, struct 
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_lower_case_test");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_boolean;
-    res->u.boolean.val = islower(args[0]->u.character.val);
-
-    return res;
+    return plot_new_boolean( islower(args[0]->u.character.val) );
 }
 
 /* (char->integer char)
  */
 struct plot_value * plot_func_char_to_integer(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 1 ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_to_integer");
     }
@@ -458,18 +309,12 @@ struct plot_value * plot_func_char_to_integer(struct plot_env *env, struct plot_
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_to_integer");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_number;
-    res->u.number.val = args[0]->u.character.val;
-
-    return res;
+    return plot_new_number( args[0]->u.character.val );
 }
 
 /* (integer->char n)
  */
 struct plot_value * plot_func_integer_to_char(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 1 ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_integer_to_char");
     }
@@ -478,18 +323,12 @@ struct plot_value * plot_func_integer_to_char(struct plot_env *env, struct plot_
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_integer_to_char");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_character;
-    res->u.character.val = args[0]->u.number.val;
-
-    return res;
+    return plot_new_character( args[0]->u.number.val );
 }
 
 /* (char-upcase char)
  */
 struct plot_value * plot_func_char_upcase(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 1 ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_upcase");
     }
@@ -498,18 +337,12 @@ struct plot_value * plot_func_char_upcase(struct plot_env *env, struct plot_valu
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_upcase");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_character;
-    res->u.character.val = toupper(args[0]->u.character.val);
-
-    return res;
+    return plot_new_character( toupper(args[0]->u.character.val) );
 }
 
 /* (char-downcase char)
  */
 struct plot_value * plot_func_char_downcase(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     if( argc != 1 ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_char_downcase");
     }
@@ -518,11 +351,7 @@ struct plot_value * plot_func_char_downcase(struct plot_env *env, struct plot_va
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_char_downcase");
     }
 
-    res = plot_alloc_value();
-    res->type = plot_type_character;
-    res->u.character.val = tolower(args[0]->u.character.val);
-
-    return res;
+    return plot_new_character( tolower(args[0]->u.character.val) );
 }
 
 
