@@ -19,17 +19,8 @@
  * returns 0 on failure, 1 on success
  */
 static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
-    plot_value *ret;
-
     if( ! val )
         return 0;
-
-    ret = plot_alloc_value();
-    if( ! ret ){
-        plot_fatal_error("plot_func_display_value: failed call to plot_alloc_value()");
-    }
-
-    ret->type = plot_type_unspecified;
 
     switch(val->type){
         case plot_type_boolean:
@@ -75,7 +66,7 @@ static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
             break;
     }
 
-    return ret;
+    return plot_new_unspecified();
 }
 
 /* print value to stdout
@@ -103,15 +94,11 @@ plot_value * plot_func_display(plot_env *env, plot_value **args, int argc){
 /* print a newline to stdout
  */
 plot_value * plot_func_newline(plot_env *env, plot_value **args, int argc){
-    plot_value *ret = plot_alloc_value();
-    if( ret )
-        ret->type = plot_type_unspecified;
-
     /* FIXME currently ignores arguments, only there to match plot_func interface
      */
     puts("");
 
-    return ret;
+    return plot_new_unspecified();
 }
 
 /********* equivalent predicates *********/
@@ -119,8 +106,6 @@ plot_value * plot_func_newline(plot_env *env, plot_value **args, int argc){
 /* equal?
  */
 struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
-
     #if DEBUG
     puts("inside plot_func_equal");
     #endif
@@ -139,14 +124,6 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
         return 0;
     }
 
-    res = plot_alloc_value();
-    if( ! res ){
-        #if DEBUG
-        puts("\tfailed to allocated result value");
-        #endif
-        return 0;
-    }
-
     if( ! args[0] || ! args[1] ){
         #if DEBUG
         puts("\targs were NULL");
@@ -154,43 +131,41 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
         return 0;
     }
 
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
-
     if( args[0]->type != args[1]->type ){
         #if DEBUG
         puts("\targs were not of the same type");
         #endif
-        return res;
+        return plot_new_boolean(false);
     }
 
     switch( args[0]->type ){
         case plot_type_number:
-            res->u.boolean.val = args[0]->u.number.val == args[1]->u.number.val;
+            return plot_new_boolean( args[0]->u.number.val == args[1]->u.number.val );
             break;
         case plot_type_symbol:
-            res->u.boolean.val = ! strcmp( args[0]->u.symbol.val, args[1]->u.symbol.val );
+            return plot_new_boolean( ! strcmp( args[0]->u.symbol.val, args[1]->u.symbol.val ) );
             break;
         case plot_type_lambda:
-            res->u.boolean.val =
+            return plot_new_boolean(
                 args[0]->u.lambda.env == args[1]->u.lambda.env
                 &&
-                args[0]->u.lambda.body == args[1]->u.lambda.body;
+                args[0]->u.lambda.body == args[1]->u.lambda.body
+            );
             break;
         case plot_type_builtin:
-            res->u.boolean.val = args[0]->u.builtin.func == args[1]->u.builtin.func;
+            return plot_new_boolean( args[0]->u.builtin.func == args[1]->u.builtin.func );
             break;
         case plot_type_error:
             plot_fatal_error("plot_func_equal: saw plot_type_error");
             break;
         case plot_type_string:
-            res->u.boolean.val = ! strcmp( args[0]->u.string.val, args[1]->u.string.val );
+            return plot_new_boolean( ! strcmp( args[0]->u.string.val, args[1]->u.string.val ) );
             break;
         case plot_type_boolean:
-            res->u.boolean.val = args[0]->u.boolean.val == args[1]->u.boolean.val;
+            return plot_new_boolean( args[0]->u.boolean.val == args[1]->u.boolean.val );
             break;
         case plot_type_character:
-            res->u.boolean.val = args[0]->u.character.val == args[1]->u.boolean.val;
+            return plot_new_boolean( args[0]->u.character.val == args[1]->u.boolean.val );
             break;
         case plot_type_reclaimed:
             plot_fatal_error("plot_func_equal: saw plot_type_reclaimed");
@@ -199,7 +174,9 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
             plot_fatal_error("plot_func_equal: impossible args[0]->type");
             break;
     }
-    return res;
+
+    plot_fatal_error("plot_func_equal: out of switch, impossible args[0]->type");
+    return 0; /* IMPOSSIBLE as plot_fatal_error does not return */
 }
 
 /********* value testing functions ********/
@@ -207,7 +184,6 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
 /* boolean?
  */
 struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
     plot_value *val;
 
     #if DEBUG
@@ -217,14 +193,6 @@ struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_val
     if( ! env ){
         #if DEBUG
         puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
-    }
-
-    res = plot_alloc_value();
-    if( ! res ){
-        #if DEBUG
-        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -245,20 +213,12 @@ struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_val
         return 0; /* FIXME error */
     }
 
-    res->type = plot_type_boolean;
-    if( val->type == plot_type_boolean ){
-        res->u.boolean.val = true;
-        return res;
-    } else {
-        res->u.boolean.val = false;
-        return res;
-    }
+    return plot_new_boolean( val->type == plot_type_boolean );
 }
 
 /* symbol?
  */
 struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
     plot_value *val;
 
     #if DEBUG
@@ -268,14 +228,6 @@ struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_valu
     if( ! env ){
         #if DEBUG
         puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
-    }
-
-    res = plot_alloc_value();
-    if( ! res ){
-        #if DEBUG
-        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -296,20 +248,12 @@ struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_valu
         return 0; /* FIXME error */
     }
 
-    res->type = plot_type_boolean;
-    if( val->type == plot_type_symbol ){
-        res->u.boolean.val = true;
-        return res;
-    } else {
-        res->u.boolean.val = false;
-        return res;
-    }
+    return plot_new_boolean( val->type == plot_type_symbol );
 }
 
 /* function?
  */
 struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
     plot_value *val;
 
     #if DEBUG
@@ -319,14 +263,6 @@ struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_v
     if( ! env ){
         #if DEBUG
         puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
-    }
-
-    res = plot_alloc_value();
-    if( ! res ){
-        #if DEBUG
-        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -347,14 +283,7 @@ struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_v
         return 0; /* FIXME error */
     }
 
-    res->type = plot_type_boolean;
-    if( val->type == plot_type_builtin || val->type == plot_type_lambda ){
-        res->u.boolean.val = true;
-        return res;
-    } else {
-        res->u.boolean.val = false;
-        return res;
-    }
+    return plot_new_boolean( val->type == plot_type_builtin || val->type == plot_type_lambda );
 }
 
 /* returns 1 if value is considered truthy
@@ -374,67 +303,44 @@ int plot_truthy(plot_value *val){
 /* logical and of all arguments */
 struct plot_value * plot_func_and(struct plot_env *env, struct plot_value **args, int argc){
     int i;
-    plot_value *ret;
 
     if( argc < 2 ){
         return plot_runtime_error(plot_error_bad_args, "insufficient arguments, expected 2", "plot_func_add");
     }
 
-    ret = plot_alloc_value();
-    ret->type = plot_type_boolean;
-    ret->u.boolean.val = false;
-
     for( i=0; i<argc; ++i ){
         if( ! plot_truthy(args[i]) ){
-            return ret;
+            return plot_new_boolean(false);
         }
     }
 
-    ret->u.boolean.val = true;
-    return ret;
+    return plot_new_boolean(true);
 }
 
 /* logical or of all arguments */
 struct plot_value * plot_func_or(struct plot_env *env, struct plot_value **args, int argc){
     int i;
-    plot_value *ret;
 
     if( argc < 2 ){
         return plot_runtime_error(plot_error_bad_args, "insufficient arguments, expected 2", "plot_func_or");
     }
 
-    ret = plot_alloc_value();
-    ret->type = plot_type_boolean;
-    ret->u.boolean.val = true;
-
     for( i=0; i<argc; ++i ){
         if( plot_truthy(args[i]) ){
-            return ret;
+            return plot_new_boolean(false);
         }
     }
 
-    ret->u.boolean.val = false;
-    return ret;
+    return plot_new_boolean(false);
 }
 
 /* logical not of single argument */
 struct plot_value * plot_func_not(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *ret;
-
     if( argc != 1 ){
         return plot_runtime_error(plot_error_bad_args, "incorrect arguments: expected exactly 1", "plot_func_not");
     }
 
-    ret = plot_alloc_value();
-    ret->type = plot_type_boolean;
-
-    if( plot_truthy(args[0]) ){
-        ret->u.boolean.val = false;
-        return ret;
-    } else {
-        ret->u.boolean.val = true;
-        return ret;
-    }
+    return plot_new_boolean( ! plot_truthy(args[0]) );
 }
 
 
