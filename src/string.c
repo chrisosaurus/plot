@@ -29,10 +29,10 @@ struct plot_value * plot_func_string_test(struct plot_env *env, struct plot_valu
         return 0; /* FIXME error */
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( ! res ){
         #if DEBUG
-        puts("called to plot_new_value failed");
+        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -77,7 +77,7 @@ struct plot_value * plot_func_string_length(struct plot_env *env, struct plot_va
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_lenght");
     }
 
-    ret = plot_new_value();
+    ret = plot_alloc_value();
     ret->type = plot_type_number;
     ret->u.number.val = args[0]->u.string.len - 1; /* len includes null terminator */
 
@@ -125,11 +125,11 @@ struct plot_value * plot_func_substring(struct plot_env *env, struct plot_value 
         return plot_runtime_error(plot_error_bad_args, "provided end value is not within string", "plot_func_substring");
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     res->type = plot_type_string;
     res->u.string.len = (end - start) + 1;
     res->u.string.size = res->u.string.len;
-    res->u.string.val = plot_new_string( res->u.string.len );
+    res->u.string.val = plot_alloc_string( res->u.string.len );
 
     /* start is inclusive and end is exclusive */
     strncpy(res->u.string.val, &(args[0]->u.string.val[start]), end-start);
@@ -161,11 +161,11 @@ struct plot_value * plot_func_string_append(struct plot_env *env, struct plot_va
     /* our final null terminator */
     len += 1;
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     res->type = plot_type_string;
     res->u.string.len = len;
     res->u.string.size = len;
-    res->u.string.val = plot_new_string(len);
+    res->u.string.val = plot_alloc_string(len);
 
     /* we now start using len to refer to the next place in our
      * string to write
@@ -193,12 +193,12 @@ struct plot_value * plot_func_string_copy(struct plot_env *env, struct plot_valu
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_copy");
     }
 
-    ret = plot_new_value();
+    ret = plot_alloc_value();
     ret->type = plot_type_string;
     ret->u.string.size = args[0]->u.string.size;
     ret->u.string.len = args[0]->u.string.len;
 
-    ret->u.string.val = plot_new_string(ret->u.string.len);
+    ret->u.string.val = plot_alloc_string(ret->u.string.len);
     strncpy(ret->u.string.val, args[0]->u.string.val, ret->u.string.len - 1);
 
     return ret;
@@ -232,7 +232,7 @@ struct plot_value * plot_func_string_equal_test(struct plot_env *env, struct plo
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_string", "plot_func_string_equal");
     }
 
-    ret = plot_new_value();
+    ret = plot_alloc_value();
     ret->type = plot_type_boolean;
     ret->u.boolean.val = false;
 
@@ -270,7 +270,7 @@ struct plot_value * plot_func_string_ci_equal(struct plot_env *env, struct plot_
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_string", "plot_func_string_ci_equal");
     }
 
-    ret = plot_new_value();
+    ret = plot_alloc_value();
     ret->type = plot_type_boolean;
     ret->u.boolean.val = false;
 
@@ -302,11 +302,11 @@ struct plot_value * plot_func_make_string(struct plot_env *env, struct plot_valu
         return plot_runtime_error(plot_error_bad_args, "first argument was not of type plot_type_number", "plot_func_make_string");
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     res->type = plot_type_string;
     res->u.string.len = args[0]->u.number.val + 1;
     res->u.string.size = res->u.string.len;
-    res->u.string.val = plot_new_string( res->u.string.len );
+    res->u.string.val = plot_alloc_string( res->u.string.len );
 
     if( argc == 2 ){
         if( args[1]->type != plot_type_character ){
@@ -334,11 +334,11 @@ struct plot_value * plot_func_string(struct plot_env *env, struct plot_value **a
         return plot_runtime_error(plot_error_bad_args, "expected at least 1 argument", "plot_func_string");
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     res->type = plot_type_string;
     res->u.string.len = argc + 1; /* null terminator */
     res->u.string.size = res->u.string.len;
-    res->u.string.val = plot_new_string( res->u.string.len );
+    res->u.string.val = plot_alloc_string( res->u.string.len );
 
     for(i=0; i<argc; ++i ){
         if( args[i]->type != plot_type_character ){
@@ -382,7 +382,7 @@ struct plot_value * plot_func_string_ref(struct plot_env *env, struct plot_value
         return plot_runtime_error(plot_error_bad_args, "supplied index was out of range", "plot_func_string_ref");
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     res->type = plot_type_character;
     res->u.character.val = args[0]->u.string.val[i];
 
@@ -425,7 +425,7 @@ struct plot_value * plot_func_string_set(struct plot_env *env, struct plot_value
 
     args[0]->u.string.val[i] = args[2]->u.character.val;
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     res->type = plot_type_unspecified;
     return res;
 }
@@ -510,7 +510,7 @@ struct plot_value * plot_func_string_fill(struct plot_env *env, struct plot_valu
     }
 
     ch = args[1]->u.character.val;
-    res = plot_new_value();
+    res = plot_alloc_value();
 
     /* NB: len - 1 as len is a size (counts from 1) and includes null terminator
      * whereas i is an index (counts from 0)

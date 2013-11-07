@@ -28,20 +28,20 @@ START_TEST (test_forms_define){
 
     expr.u.sexpr.subforms[0].type = plot_expr_value;
 
-    expr.u.sexpr.subforms[0].u.value = plot_new_value();
+    expr.u.sexpr.subforms[0].u.value = plot_alloc_value();
     expr.u.sexpr.subforms[0].u.value->type = plot_type_symbol;
     expr.u.sexpr.subforms[0].u.value->u.symbol.val = "define";
     expr.u.sexpr.subforms[0].u.value->u.symbol.size = 7;
     expr.u.sexpr.subforms[0].u.value->u.symbol.len = 7;
 
-    expr.u.sexpr.subforms[1].u.value = plot_new_value();
+    expr.u.sexpr.subforms[1].u.value = plot_alloc_value();
     expr.u.sexpr.subforms[1].type = plot_expr_value;
     expr.u.sexpr.subforms[1].u.value->type = plot_type_symbol;
     expr.u.sexpr.subforms[1].u.value->u.symbol.val = "hello";
     expr.u.sexpr.subforms[1].u.value->u.symbol.size = 6;
     expr.u.sexpr.subforms[1].u.value->u.symbol.len = 6;
 
-    expr.u.sexpr.subforms[2].u.value = plot_new_value();
+    expr.u.sexpr.subforms[2].u.value = plot_alloc_value();
     expr.u.sexpr.subforms[2].type = plot_expr_value;
     expr.u.sexpr.subforms[2].u.value->type = plot_type_number;
     expr.u.sexpr.subforms[2].u.value->u.number.val = 7;

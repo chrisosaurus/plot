@@ -91,7 +91,7 @@ static plot_expr * plot_parse_expr_hash(plot_expr *expr, const char *source, siz
     ++ *upto;
 
     expr->type = plot_expr_value;
-    expr->u.value = plot_new_constant();
+    expr->u.value = plot_alloc_constant();
 
     switch (source[*upto]){
         case 't':
@@ -194,11 +194,11 @@ static plot_expr * plot_parse_expr_string(plot_expr *expr, const char *source, s
      */
     len = (*upto) - start; /* includes null term */
     expr->type  = plot_expr_value;
-    expr->u.value = plot_new_constant();
+    expr->u.value = plot_alloc_constant();
     expr->u.value->type = plot_type_string;
     expr->u.value->u.string.len = len;
     expr->u.value->u.string.size = len;
-    expr->u.value->u.string.val = plot_new_string(len);
+    expr->u.value->u.string.val = plot_alloc_string(len);
     strncpy(expr->u.value->u.string.val, &source[start], len - 1);
 
 #if DEBUG
@@ -248,7 +248,7 @@ static plot_expr * plot_parse_expr_symbol(plot_expr *expr, const char *source, s
 
     len = (*upto) - start + 1; /* +1 to include null term */
     expr->type = plot_expr_value;
-    expr->u.value = plot_new_constant();
+    expr->u.value = plot_alloc_constant();
     expr->u.value->type = plot_type_symbol;
     expr->u.value->u.symbol.len = len;
     expr->u.value->u.symbol.size = len;
@@ -256,7 +256,7 @@ static plot_expr * plot_parse_expr_symbol(plot_expr *expr, const char *source, s
      * then write to it without violating const
      * from plot symbol val
      */
-    expr->u.value->u.symbol.val = tmp = plot_new_string(len);
+    expr->u.value->u.symbol.val = tmp = plot_alloc_string(len);
     strncpy(tmp, &source[start], len - 1);
 
 #if DEBUG
@@ -307,7 +307,7 @@ static plot_expr * plot_parse_expr_number(plot_expr *expr, const char *source, s
     }
 
     expr->type = plot_expr_value;
-    expr->u.value = plot_new_constant();
+    expr->u.value = plot_alloc_constant();
     expr->u.value->type = plot_type_number;
     expr->u.value->u.number.val = strtol( &source[start], &end, 10);
     /* end should be first non-digit

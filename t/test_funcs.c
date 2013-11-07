@@ -208,7 +208,7 @@ START_TEST (test_funcs_env){
     plot_env *env;
 
     fail_if( 0 == plot_init() );
-    env = plot_new_env(0);
+    env = plot_alloc_env(0);
 
 
     sym.val = "+";
@@ -287,8 +287,8 @@ START_TEST (test_display){
     fail_if( 0 == plot_init() );
 
     /* allocate our values once */
-    v = plot_new_value();
-    s = plot_new_value();
+    v = plot_alloc_value();
+    s = plot_alloc_value();
 
     puts("\t\ttesting display of number (expected '3')");
     v->type = plot_type_number;

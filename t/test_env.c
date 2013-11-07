@@ -20,7 +20,7 @@ START_TEST (test_env){
     fail_if( 0 == plot_init() );
 
     puts("\tTesting construction");
-    fail_if( 0 == (e = plot_new_env(0)) );
+    fail_if( 0 == (e = plot_alloc_env(0)) );
 
     puts("\tTesting basic define");
     fail_if( plot_env_get(e, &s) );

@@ -147,7 +147,7 @@ int plot_hash_set(plot_hash *hash, const plot_symbol * key, plot_value *value){
      *
      * regardless, *e is our next and *e is where we store ourselves
      */
-    n = plot_new_hash_entry();
+    n = plot_alloc_hash_entry();
     if( ! n )
         return 0;/* ERROR: calloc failed */
     n->key = key;

@@ -16,7 +16,7 @@ struct plot_value * plot_func_pair_test(struct plot_env *env, struct plot_value 
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 argument", "plot_func_pair_test");
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     res->type = plot_type_boolean;
     res->u.boolean.val = args[0]->type == plot_type_pair;
     return res;
@@ -32,7 +32,7 @@ struct plot_value * plot_func_pair_cons(struct plot_env *env, struct plot_value 
         return plot_runtime_error(plot_error_bad_args, "expected exactly 2 arguments", "plot_func_pair_cons");
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     res->type = plot_type_pair;
 
     res->u.pair.car = args[0];

@@ -61,14 +61,14 @@ void plot_value_incr(struct plot_value *p);
  */
 void plot_value_decr(struct plot_value *p);
 
-/* get new ref counted value */
-struct plot_value * plot_new_value(void);
+/* allocate new ref counted value */
+struct plot_value * plot_alloc_value(void);
 
-/* get new NON-ref counted value
+/* allocate new NON-ref counted value
  * this is needed for constants until
  * a better solution comes along
  */
-struct plot_value * plot_new_constant(void);
+struct plot_value * plot_alloc_constant(void);
 
 /* increase reference count on plot_env */
 void plot_env_incr(struct plot_env *e);
@@ -79,10 +79,10 @@ void plot_env_incr(struct plot_env *e);
  */
 void plot_env_decr(struct plot_env *e);
 
-/* get new env
+/* allocate new env
  * parent is the enclosing environment, or 0
  */
-struct plot_env * plot_new_env(struct plot_env *parent);
+struct plot_env * plot_alloc_env(struct plot_env *parent);
 
 struct plot_hash_entry;
 
@@ -95,10 +95,10 @@ void plot_he_incr(struct plot_hash_entry *he);
  */
 void plot_he_decr(struct plot_hash_entry *he);
 
-/* get new hash entry */
-struct plot_hash_entry * plot_new_hash_entry(void);
+/* allocate new hash entry */
+struct plot_hash_entry * plot_alloc_hash_entry(void);
 
-/* get new string */
-char * plot_new_string(int len);
+/* allocate new string */
+char * plot_alloc_string(int len);
 
 #endif

@@ -28,10 +28,10 @@ struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_valu
         return 0; /* FIXME error */
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( ! res ){
         #if DEBUG
-        puts("called to plot_new_value failed");
+        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -95,10 +95,10 @@ plot_value * plot_func_add(struct plot_env *env, plot_value **args, int argc){
         sum += arg->u.number.val;
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( !res ){
         #if DEBUG
-        puts("res failed call to plot_new_value");
+        puts("res failed call to plot_alloc_value");
         #endif
         return 0; /* ERROR */
     }
@@ -149,10 +149,10 @@ plot_value * plot_func_subtract(struct plot_env *env, plot_value **args, int arg
         }
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( !res ){
         #if DEBUG
-        puts("res failed call to plot_new_value");
+        puts("res failed call to plot_alloc_value");
         #endif
         return 0; /* ERROR */
     }
@@ -201,10 +201,10 @@ plot_value * plot_func_multiply(struct plot_env *env, plot_value **args, int arg
         product *= arg->u.number.val;
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( !res ){
         #if DEBUG
-        puts("res failed call to plot_new_value");
+        puts("res failed call to plot_alloc_value");
         #endif
         return 0; /* ERROR */
     }
@@ -252,10 +252,10 @@ struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value **a
             quotient /= arg->u.number.val;
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( !res ){
         #if DEBUG
-        puts("res failed call to plot_new_value");
+        puts("res failed call to plot_alloc_value");
         #endif
         return 0; /* ERROR */
     }
@@ -310,10 +310,10 @@ struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value 
             remainder %= arg->u.number.val;
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( !res ){
         #if DEBUG
-        puts("res failed call to plot_new_value");
+        puts("res failed call to plot_alloc_value");
         #endif
         return 0; /* ERROR */
     }
@@ -345,10 +345,10 @@ struct plot_value * plot_func_math_equal(struct plot_env *env, struct plot_value
     puts("inside plot_func_math_equal");
     #endif
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( ! res ){
         #if DEBUG
-        puts("called to plot_new_value failed");
+        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -402,10 +402,10 @@ struct plot_value * plot_func_less(struct plot_env *env, struct plot_value **arg
     puts("inside plot_func_less");
     #endif
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( ! res ){
         #if DEBUG
-        puts("called to plot_new_value failed");
+        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -462,10 +462,10 @@ struct plot_value * plot_func_greater(struct plot_env *env, struct plot_value **
     puts("inside plot_func_greater");
     #endif
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( ! res ){
         #if DEBUG
-        puts("called to plot_new_value failed");
+        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -521,10 +521,10 @@ struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_value
     puts("inside plot_func_less_equal");
     #endif
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( ! res ){
         #if DEBUG
-        puts("called to plot_new_value failed");
+        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -580,10 +580,10 @@ struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_va
     puts("inside plot_func_greater_equal");
     #endif
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( ! res ){
         #if DEBUG
-        puts("called to plot_new_value failed");
+        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }

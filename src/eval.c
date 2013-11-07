@@ -265,7 +265,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
         return 0; /* FIXME ERROR */
     }
 
-    tmp = plot_new_value();
+    tmp = plot_alloc_value();
     if( ! tmp ){
         #if DEBUG_FORM || DEBUG
         puts("\tplot_eval_form: failed to create new value");
@@ -547,7 +547,7 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
             #endif
 
             /* create a new env with lambda->env as parent */
-            new_env = plot_new_env(func->u.lambda.env);
+            new_env = plot_alloc_env(func->u.lambda.env);
             if( ! new_env ){
                 puts("\tLAMBDA: call to plot_env_init failed");
                 return 0; /* FIXME error */

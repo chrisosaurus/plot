@@ -24,9 +24,9 @@ static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
     if( ! val )
         return 0;
 
-    ret = plot_new_value();
+    ret = plot_alloc_value();
     if( ! ret ){
-        plot_fatal_error("plot_func_display_value: failed call to plot_new_value()");
+        plot_fatal_error("plot_func_display_value: failed call to plot_alloc_value()");
     }
 
     ret->type = plot_type_unspecified;
@@ -103,7 +103,7 @@ plot_value * plot_func_display(plot_env *env, plot_value **args, int argc){
 /* print a newline to stdout
  */
 plot_value * plot_func_newline(plot_env *env, plot_value **args, int argc){
-    plot_value *ret = plot_new_value();
+    plot_value *ret = plot_alloc_value();
     if( ret )
         ret->type = plot_type_unspecified;
 
@@ -139,7 +139,7 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
         return 0;
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( ! res ){
         #if DEBUG
         puts("\tfailed to allocated result value");
@@ -221,10 +221,10 @@ struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_val
         return 0; /* FIXME error */
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( ! res ){
         #if DEBUG
-        puts("called to plot_new_value failed");
+        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -272,10 +272,10 @@ struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_valu
         return 0; /* FIXME error */
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( ! res ){
         #if DEBUG
-        puts("called to plot_new_value failed");
+        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -323,10 +323,10 @@ struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_v
         return 0; /* FIXME error */
     }
 
-    res = plot_new_value();
+    res = plot_alloc_value();
     if( ! res ){
         #if DEBUG
-        puts("called to plot_new_value failed");
+        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -380,7 +380,7 @@ struct plot_value * plot_func_and(struct plot_env *env, struct plot_value **args
         return plot_runtime_error(plot_error_bad_args, "insufficient arguments, expected 2", "plot_func_add");
     }
 
-    ret = plot_new_value();
+    ret = plot_alloc_value();
     ret->type = plot_type_boolean;
     ret->u.boolean.val = false;
 
@@ -403,7 +403,7 @@ struct plot_value * plot_func_or(struct plot_env *env, struct plot_value **args,
         return plot_runtime_error(plot_error_bad_args, "insufficient arguments, expected 2", "plot_func_or");
     }
 
-    ret = plot_new_value();
+    ret = plot_alloc_value();
     ret->type = plot_type_boolean;
     ret->u.boolean.val = true;
 
@@ -425,7 +425,7 @@ struct plot_value * plot_func_not(struct plot_env *env, struct plot_value **args
         return plot_runtime_error(plot_error_bad_args, "incorrect arguments: expected exactly 1", "plot_func_not");
     }
 
-    ret = plot_new_value();
+    ret = plot_alloc_value();
     ret->type = plot_type_boolean;
 
     if( plot_truthy(args[0]) ){

@@ -175,7 +175,7 @@ int plot_init(void){
     plot_gc_he_init();
     plot_gc_env_init();
 
-    plot_instance->env = plot_new_env(0);
+    plot_instance->env = plot_alloc_env(0);
     if( ! plot_instance->env ){
         puts("call to plot_env_init failed");
         plot_cleanup();
@@ -569,11 +569,11 @@ void plot_gc_he_init(void){
     }
 }
 
-/* get new ref counted value */
-struct plot_value * plot_new_value(void){
+/* allocate new ref counted value */
+struct plot_value * plot_alloc_value(void){
     struct plot_value *p;
     if( ! plot_instance ){
-        puts("plot_value_new called without plot_instance being initialised");
+        puts("plot_alloc_value called without plot_instance being initialised");
         exit(1);
     }
 
@@ -602,25 +602,25 @@ struct plot_value * plot_new_value(void){
     }
 }
 
-/* get new NON-ref counted value
+/* allocate new NON-ref counted value
  * this is needed for constants until
  * a better solution comes along
  */
-struct plot_value * plot_new_constant(void){
+struct plot_value * plot_alloc_constant(void){
     struct plot_value *p;
-    p = plot_new_value();
+    p = plot_alloc_value();
     p->gc.refcount = -1; /* FIXME hack */
     return p;
 }
 
 
-/* get new env
+/* allocate new env
  * parent is the enclosing environment, or 0
  */
-struct plot_env * plot_new_env(struct plot_env *parent){
+struct plot_env * plot_alloc_env(struct plot_env *parent){
     struct plot_env *e;
     if( ! plot_instance ){
-        puts("plot_value_new called without plot_instance being initialised");
+        puts("plot_alloc_env called without plot_instance being initialised");
         exit(1);
     }
 
@@ -660,11 +660,11 @@ struct plot_env * plot_new_env(struct plot_env *parent){
 
 }
 
-/* get new hash entry */
-struct plot_hash_entry * plot_new_hash_entry(void){
+/* allocate new hash entry */
+struct plot_hash_entry * plot_alloc_hash_entry(void){
     struct plot_hash_entry *he;
     if( ! plot_instance ){
-        puts("plot_value_new called without plot_instance being initialised");
+        puts("plot_alloc_hash_entry called without plot_instance being initialised");
         exit(1);
     }
 
@@ -693,13 +693,13 @@ struct plot_hash_entry * plot_new_hash_entry(void){
     }
 }
 
-/* get new string */
-char * plot_new_string(int len){
+/* allocate new string */
+char * plot_alloc_string(int len){
     char * c;
     c = calloc(len, sizeof *c);
     if( ! c ){
         /* TODO FIXME use plot error handling */
-        puts("plot_new_string: calloc failed, dying");
+        puts("plot_alloc_string: calloc failed, dying");
         exit(1);
     }
     return c;

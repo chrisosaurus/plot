@@ -27,7 +27,7 @@ START_TEST (test_garbage){
     fail_if( 0 == plot_init() );
 
     puts("\t\tTesting basic value allocation");
-    v = plot_new_value();
+    v = plot_alloc_value();
     fail_if( 0 == v );
 
     fail_unless( 1 == v->gc.refcount );
