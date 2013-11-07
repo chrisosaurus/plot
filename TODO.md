@@ -99,6 +99,8 @@ bugs:
 * plot runtime errors may leak previously allocated values, need to decr before throwing error.
 * break integration.scm tests into separate tests for each section
 * plot_new_string and plot_alloc_string are not really related, as the latter allocates an array and the former a value
+* need to update number.c to use plot_runtime_error system
+* every c function should have it's scheme usage in the comment, number.c currently lacks this
 
 Milestones:
 ===========

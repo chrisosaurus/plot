@@ -14,7 +14,6 @@
 /* number?
  */
 struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
     plot_value *val;
 
     #if DEBUG
@@ -24,14 +23,6 @@ struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_valu
     if( ! env ){
         #if DEBUG
         puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
-    }
-
-    res = plot_alloc_value();
-    if( ! res ){
-        #if DEBUG
-        puts("called to plot_alloc_value failed");
         #endif
         return 0; /* FIXME error */
     }
@@ -52,14 +43,7 @@ struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_valu
         return 0; /* FIXME error */
     }
 
-    res->type = plot_type_boolean;
-    if( val->type == plot_type_number ){
-        res->u.boolean.val = true;
-        return res;
-    } else {
-        res->u.boolean.val = false;
-        return res;
-    }
+    return plot_new_boolean( val->type == plot_type_number );
 }
 
 /* takes a list of expressions
@@ -68,7 +52,6 @@ struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_valu
  * throw plot_error_bad_args
  */
 plot_value * plot_func_add(struct plot_env *env, plot_value **args, int argc){
-    plot_value *res;
     plot_value *arg;
     int sum=0, i;
 
@@ -95,21 +78,10 @@ plot_value * plot_func_add(struct plot_env *env, plot_value **args, int argc){
         sum += arg->u.number.val;
     }
 
-    res = plot_alloc_value();
-    if( !res ){
-        #if DEBUG
-        puts("res failed call to plot_alloc_value");
-        #endif
-        return 0; /* ERROR */
-    }
-
-    res->type = plot_type_number;
-    res->u.number.val = sum;
-
     #if DEBUG
     puts("returning sum of 2 numbers");
     #endif
-    return res;
+    return plot_new_number(sum);
 }
 
 /* takes a list of expressions
@@ -118,7 +90,6 @@ plot_value * plot_func_add(struct plot_env *env, plot_value **args, int argc){
  * throw plot_error_bad_args
  */
 plot_value * plot_func_subtract(struct plot_env *env, plot_value **args, int argc){
-    plot_value *res;
     plot_value *arg;
     int difference=0, i;
 
@@ -148,24 +119,11 @@ plot_value * plot_func_subtract(struct plot_env *env, plot_value **args, int arg
             difference -= arg->u.number.val;
         }
     }
-
-    res = plot_alloc_value();
-    if( !res ){
-        #if DEBUG
-        puts("res failed call to plot_alloc_value");
-        #endif
-        return 0; /* ERROR */
-    }
-
-    res->type = plot_type_number;
-    res->u.number.val = difference;
-
     #if DEBUG
     puts("returning difference");
     #endif
-    return res;
 
-    return 0;
+    return plot_new_number(difference);
 }
 
 /* takes a list of expressions
@@ -174,7 +132,6 @@ plot_value * plot_func_subtract(struct plot_env *env, plot_value **args, int arg
  * throw plot_error_bad_args
  */
 plot_value * plot_func_multiply(struct plot_env *env, plot_value **args, int argc){
-    plot_value *res;
     plot_value *arg;
     int product=1, i;
 
@@ -201,28 +158,15 @@ plot_value * plot_func_multiply(struct plot_env *env, plot_value **args, int arg
         product *= arg->u.number.val;
     }
 
-    res = plot_alloc_value();
-    if( !res ){
-        #if DEBUG
-        puts("res failed call to plot_alloc_value");
-        #endif
-        return 0; /* ERROR */
-    }
-
-    res->type = plot_type_number;
-    res->u.number.val = product;
-
     #if DEBUG
     puts("returning product");
     #endif
-    return res;
-
+    return plot_new_number(product);
 }
 /* integer division
  * exact only
  */
 struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
     plot_value *arg;
     int quotient=0, i;
 
@@ -252,28 +196,16 @@ struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value **a
             quotient /= arg->u.number.val;
     }
 
-    res = plot_alloc_value();
-    if( !res ){
-        #if DEBUG
-        puts("res failed call to plot_alloc_value");
-        #endif
-        return 0; /* ERROR */
-    }
-
-    res->type = plot_type_number;
-    res->u.number.val = quotient;
-
     #if DEBUG
     puts("returning quotient");
     #endif
-    return res;
 
+    return plot_new_number(quotient);
 }
 
 /* remainder
  */
 struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *res;
     plot_value *arg;
     int remainder=0, i;
 
@@ -310,21 +242,11 @@ struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value 
             remainder %= arg->u.number.val;
     }
 
-    res = plot_alloc_value();
-    if( !res ){
-        #if DEBUG
-        puts("res failed call to plot_alloc_value");
-        #endif
-        return 0; /* ERROR */
-    }
-
-    res->type = plot_type_number;
-    res->u.number.val = remainder;
-
     #if DEBUG
     puts("returning remainder");
     #endif
-    return res;
+
+    return plot_new_number(remainder);
 }
 
 
@@ -335,7 +257,6 @@ struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value 
  */
 struct plot_value * plot_func_math_equal(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
-    plot_value *res;
     plot_value *arg;
     int i;
 
@@ -344,17 +265,6 @@ struct plot_value * plot_func_math_equal(struct plot_env *env, struct plot_value
     #if DEBUG
     puts("inside plot_func_math_equal");
     #endif
-
-    res = plot_alloc_value();
-    if( ! res ){
-        #if DEBUG
-        puts("called to plot_alloc_value failed");
-        #endif
-        return 0; /* FIXME error */
-    }
-
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
 
     for( i=0; i<argc; ++i ){
         arg = args[i];
@@ -379,20 +289,18 @@ struct plot_value * plot_func_math_equal(struct plot_env *env, struct plot_value
                 #if DEBUG
                 printf("'not equal' for i '%d'\n", i);
                 #endif
-                return res;
+                return plot_new_boolean(false);
             }
         }
     }
 
-    res->u.boolean.val = true;
-    return res;
+    return plot_new_boolean(true);
 }
 
 /* <
  */
 struct plot_value * plot_func_less(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
-    plot_value *res;
     plot_value *arg;
     int i;
 
@@ -401,17 +309,6 @@ struct plot_value * plot_func_less(struct plot_env *env, struct plot_value **arg
     #if DEBUG
     puts("inside plot_func_less");
     #endif
-
-    res = plot_alloc_value();
-    if( ! res ){
-        #if DEBUG
-        puts("called to plot_alloc_value failed");
-        #endif
-        return 0; /* FIXME error */
-    }
-
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
 
     for( i=0; i<argc; ++i ){
         arg = args[i];
@@ -436,23 +333,19 @@ struct plot_value * plot_func_less(struct plot_env *env, struct plot_value **arg
                 #if DEBUG
                 printf("not 'less than' for i '%d'\n", i);
                 #endif
-                return res;
+                return plot_new_boolean(false);
             }
             tmp.u.number.val = arg->u.number.val;
         }
     }
 
-    res->u.boolean.val = true;
-    return res;
-
-    return 0;
+    return plot_new_boolean(true);
 }
 
 /* >
  */
 struct plot_value * plot_func_greater(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
-    plot_value *res;
     plot_value *arg;
     int i;
 
@@ -461,17 +354,6 @@ struct plot_value * plot_func_greater(struct plot_env *env, struct plot_value **
     #if DEBUG
     puts("inside plot_func_greater");
     #endif
-
-    res = plot_alloc_value();
-    if( ! res ){
-        #if DEBUG
-        puts("called to plot_alloc_value failed");
-        #endif
-        return 0; /* FIXME error */
-    }
-
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
 
     for( i=0; i<argc; ++i ){
         arg = args[i];
@@ -496,22 +378,19 @@ struct plot_value * plot_func_greater(struct plot_env *env, struct plot_value **
                 #if DEBUG
                 printf("not 'greater than' for i '%d'\n", i);
                 #endif
-                return res;
+                return plot_new_boolean(false);
             }
             tmp.u.number.val = arg->u.number.val;
         }
     }
 
-    res->u.boolean.val = true;
-    return res;
-    return 0;
+    return plot_new_boolean(true);
 }
 
 /* <=
  */
 struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
-    plot_value *res;
     plot_value *arg;
     int i;
 
@@ -520,17 +399,6 @@ struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_value
     #if DEBUG
     puts("inside plot_func_less_equal");
     #endif
-
-    res = plot_alloc_value();
-    if( ! res ){
-        #if DEBUG
-        puts("called to plot_alloc_value failed");
-        #endif
-        return 0; /* FIXME error */
-    }
-
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
 
     for( i=0; i<argc; ++i ){
         arg = args[i];
@@ -555,22 +423,19 @@ struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_value
                 #if DEBUG
                 printf("not 'less than or equal' for i '%d'\n", i);
                 #endif
-                return res;
+                return plot_new_boolean(false);
             }
             tmp.u.number.val = arg->u.number.val;
         }
     }
 
-    res->u.boolean.val = true;
-    return res;
-    return 0;
+    return plot_new_boolean(true);
 }
 
 /* >=
  */
 struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
-    plot_value *res;
     int i;
     plot_value *arg;
 
@@ -579,17 +444,6 @@ struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_va
     #if DEBUG
     puts("inside plot_func_greater_equal");
     #endif
-
-    res = plot_alloc_value();
-    if( ! res ){
-        #if DEBUG
-        puts("called to plot_alloc_value failed");
-        #endif
-        return 0; /* FIXME error */
-    }
-
-    res->type = plot_type_boolean;
-    res->u.boolean.val = false;
 
     for( i=0; i<argc; ++i ){
         arg = args[i];
@@ -614,15 +468,13 @@ struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_va
                 #if DEBUG
                 printf("not 'less than or equal' for i '%d'\n", i);
                 #endif
-                return res;
+                return plot_new_boolean(false);
             }
             tmp.u.number.val = arg->u.number.val;
         }
     }
 
-    res->u.boolean.val = true;
-    return res;
-    return 0;
+    return plot_new_boolean(true);
 }
 
 
