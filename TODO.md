@@ -116,7 +116,7 @@ first milestone: 'core'
 * define
 * string datatype
 * boolean datatype
-* value testing functions: string? symbol? integer? number? function? boolean?
+* value testing functions: string? symbol? integer? number? procedure? boolean?
 * if form
 * lambda forms
 * equal?

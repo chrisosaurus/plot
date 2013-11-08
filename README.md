@@ -61,9 +61,7 @@ example: (see `make example`)
 
 planned work
 ------------
-The initial plan was to try to define a very minimal core language (in c) and implement the rest in plot itself.
-
-Now the current plan is to aim for r5rs compliance.
+The current plan is to aim for r5rs compliance with an eye towards r7rs-small.
 
 dependencies
 ------------
