@@ -46,7 +46,8 @@ struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_valu
     return plot_new_boolean( val->type == plot_type_number );
 }
 
-/* takes a list of expressions
+/* (+ number1 number2 ...)
+ * takes a list of expressions
  * evals each and then adds the expression's value if it is a number
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
@@ -84,7 +85,8 @@ plot_value * plot_func_add(struct plot_env *env, plot_value **args, int argc){
     return plot_new_number(sum);
 }
 
-/* takes a list of expressions
+/* (- number1 number2 ...)
+ * takes a list of expressions
  * evals each and then subtracts the expression's value if it is a number
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
@@ -126,7 +128,8 @@ plot_value * plot_func_subtract(struct plot_env *env, plot_value **args, int arg
     return plot_new_number(difference);
 }
 
-/* takes a list of expressions
+/* (* number1 number2 ...)
+ * takes a list of expressions
  * evals each and then multiplies the expression's value if it is a number
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
@@ -163,7 +166,8 @@ plot_value * plot_func_multiply(struct plot_env *env, plot_value **args, int arg
     #endif
     return plot_new_number(product);
 }
-/* integer division
+/* (/ number1 number2 ...)
+ * integer division
  * exact only
  */
 struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value **args, int argc){
@@ -203,7 +207,8 @@ struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value **a
     return plot_new_number(quotient);
 }
 
-/* remainder
+/* (remainder number1 number2 ...)
+ * remainder
  */
 struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *arg;
@@ -253,7 +258,8 @@ struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value 
 
 /******** comparison functions *******/
 
-/* mathmatical =
+/* (= number1 number2 ...)
+ * mathmatical =
  */
 struct plot_value * plot_func_math_equal(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
@@ -297,7 +303,7 @@ struct plot_value * plot_func_math_equal(struct plot_env *env, struct plot_value
     return plot_new_boolean(true);
 }
 
-/* <
+/* (< number1 number2 ...)
  */
 struct plot_value * plot_func_less(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
@@ -342,7 +348,7 @@ struct plot_value * plot_func_less(struct plot_env *env, struct plot_value **arg
     return plot_new_boolean(true);
 }
 
-/* >
+/* (> number1 number2 ...)
  */
 struct plot_value * plot_func_greater(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
@@ -387,7 +393,7 @@ struct plot_value * plot_func_greater(struct plot_env *env, struct plot_value **
     return plot_new_boolean(true);
 }
 
-/* <=
+/* (<= number1 number2 ...)
  */
 struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
@@ -432,7 +438,7 @@ struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_value
     return plot_new_boolean(true);
 }
 
-/* >=
+/* (>= number1 number2 ...)
  */
 struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_value **args, int argc){
     plot_value tmp;
