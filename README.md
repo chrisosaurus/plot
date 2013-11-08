@@ -78,7 +78,7 @@ You are able to compile and run plot manually though:
 
     cd /devel/plot # or wherever you cloned to
     make
-    ./plot t/integration.scm
+    ./plot t/example.scm
 
 license
 ---------
