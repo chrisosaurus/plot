@@ -480,7 +480,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
 /* eval a function call in an environment
  */
 plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
-    plot_value *val;
+    plot_value *val = 0;
     plot_value **vals;
     plot_value *func;
     plot_env *new_env;
