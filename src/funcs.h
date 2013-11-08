@@ -10,30 +10,37 @@ struct plot_expr;
 #include "number.h"
 #include "pair.h"
 
-/* print value to stdout
+/* (display obj)
+ * print value to stdout
+ * FIXME should generalise if spec allows
  */
 struct plot_value * plot_func_display(struct plot_env *env, struct plot_value **args, int argc);
 
-/* print a newline to stdout
+/* (newline)
+ * print a newline to stdout
  */
 struct plot_value * plot_func_newline(struct plot_env *env, struct plot_value **args, int argc);
 
 /********* equivalent predicates *********/
-/* equal?
+/* (equal? obj1 obj2)
+ * FIXME need to generalise
  */
 struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value **args, int argc);
 
 /********* value testing functions ********/
 
-/* boolean?
+/* (boolean? obj1)
+ * FIXME should generalise if spec allows
  */
 struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_value **args, int argc);
 
-/* symbol?
+/* (symbol? obj)
+ * FIXME should generalise if spec allows
  */
 struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_value **args, int argc);
 
-/* function?
+/* (procedure? obj)
+ * FIXME should generalise if spec allows
  */
 struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_value **args, int argc);
 
@@ -45,13 +52,19 @@ struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_v
  */
 int plot_truthy(plot_value *val);
 
-/* logical and of all arguments */
+/* (and obj1 obj2 ...)
+ * logical and of all arguments
+ */
 struct plot_value * plot_func_and(struct plot_env *env, struct plot_value **args, int argc);
 
-/* logical or of all arguments */
+/* (or obj1 obj2 ...)
+ * logical or of all arguments
+ */
 struct plot_value * plot_func_or(struct plot_env *env, struct plot_value **args, int argc);
 
-/* logical not of single argument */
+/* (not obj)
+ * logical not of single argument
+ */
 struct plot_value * plot_func_not(struct plot_env *env, struct plot_value **args, int argc);
 
 #endif

@@ -69,7 +69,8 @@ static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
     return plot_new_unspecified();
 }
 
-/* print value to stdout
+/* (display obj)
+ * print value to stdout
  */
 plot_value * plot_func_display(plot_env *env, plot_value **args, int argc){
     plot_value *arg;
@@ -91,7 +92,8 @@ plot_value * plot_func_display(plot_env *env, plot_value **args, int argc){
     return plot_func_display_value(env, arg);
 }
 
-/* print a newline to stdout
+/* (newline)
+ * print a newline to stdout
  */
 plot_value * plot_func_newline(plot_env *env, plot_value **args, int argc){
     /* FIXME currently ignores arguments, only there to match plot_func interface
@@ -103,7 +105,8 @@ plot_value * plot_func_newline(plot_env *env, plot_value **args, int argc){
 
 /********* equivalent predicates *********/
 
-/* equal?
+/* (equal? obj1 obj2)
+ * FIXME should generalise
  */
 struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value **args, int argc){
     #if DEBUG
@@ -181,7 +184,8 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
 
 /********* value testing functions ********/
 
-/* boolean?
+/* (boolean? obj)
+ * FIXME should generalise if spec allows
  */
 struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *val;
@@ -216,7 +220,8 @@ struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_val
     return plot_new_boolean( val->type == plot_type_boolean );
 }
 
-/* symbol?
+/* (symbol? obj)
+ * FIXME should generalise if spec allows
  */
 struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *val;
@@ -251,7 +256,8 @@ struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_valu
     return plot_new_boolean( val->type == plot_type_symbol );
 }
 
-/* function?
+/* (procedure? obj)
+ * FIXME should generalise if spec allows
  */
 struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_value **args, int argc){
     plot_value *val;
@@ -300,7 +306,9 @@ int plot_truthy(plot_value *val){
     return ret;
 }
 
-/* logical and of all arguments */
+/* (and obj1 obj2 ...)
+ * logical and of all arguments
+ */
 struct plot_value * plot_func_and(struct plot_env *env, struct plot_value **args, int argc){
     int i;
 
@@ -317,7 +325,9 @@ struct plot_value * plot_func_and(struct plot_env *env, struct plot_value **args
     return plot_new_boolean(true);
 }
 
-/* logical or of all arguments */
+/* (or obj1 obj2 ...)
+ * logical or of all arguments
+ */
 struct plot_value * plot_func_or(struct plot_env *env, struct plot_value **args, int argc){
     int i;
 
@@ -334,7 +344,9 @@ struct plot_value * plot_func_or(struct plot_env *env, struct plot_value **args,
     return plot_new_boolean(false);
 }
 
-/* logical not of single argument */
+/* (not obj)
+ * logical not of single argument
+ */
 struct plot_value * plot_func_not(struct plot_env *env, struct plot_value **args, int argc){
     if( argc != 1 ){
         return plot_runtime_error(plot_error_bad_args, "incorrect arguments: expected exactly 1", "plot_func_not");
