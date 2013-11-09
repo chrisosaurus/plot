@@ -17,7 +17,6 @@ operations:
 experimental:
 -------------
 * remove creation logic from parse and tests - centralise in function (will probably require merging of value and symbols in hash/env and gc interface)
-* use the above func in parse, plot.c and tests
 * refactor plot_is_form, plot_eval_form and plot_eval_sexpr to merge the former 2 (try and check value)
 
 garbage collection:
@@ -40,8 +39,6 @@ misc:
 * break math and comparison funcs into own files (.h and .c)
 * all math functions should check argument count
 * plot_handle_error should not be in funcs, funcs are things that can be assigned to plot_values
-* probably want to move plot bindings out of plot.c
-* simplify defining of plot bindings (counting of chars = lame)
 * too much repeated handling for stack unwinding in eval
 * want to also print context for errors (e.g. expr being evalled when error occured, expr at each stage of stack unwinding)
 
@@ -100,7 +97,6 @@ bugs:
 * break integration.scm tests into separate tests for each section
 * plot_new_string and plot_alloc_string are not really related, as the latter allocates an array and the former a value
 * need to update number.c to use plot_runtime_error system
-* every c function should have it's scheme usage in the comment
 * update funcs.c to use plot_runtime_error
 
 Milestones:

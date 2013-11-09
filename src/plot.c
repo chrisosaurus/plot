@@ -7,6 +7,8 @@
 #include "funcs.h"
 #include "plot.h"
 
+#include "bindings.h"
+
 #define LENGTH(x) (sizeof x / sizeof x[0])
 
 #ifndef PLOT_TESTS
@@ -56,103 +58,6 @@ typedef struct plot {
 } plot;
 
 static plot *plot_instance;
-
-/* functions to bind */
-struct plot_binding {
-    plot_symbol sym;
-    plot_value func;
-};
-
-#define PBB(str, len, func) {{str, len,  len}, {{-1, 0}, plot_type_builtin, {.builtin = {func}}}}
-
-struct plot_binding bindings[] = {
-    /* math functions */
-    PBB("+",         2, plot_func_add),
-    PBB("-",         2, plot_func_subtract),
-    PBB("*",         2, plot_func_multiply),
-    PBB("/",         2, plot_func_divide),
-    PBB("remainder",10, plot_func_remainder),
-
-    /* comparison functions */
-    PBB("=",         2, plot_func_math_equal),
-    PBB("<",         2, plot_func_less),
-    PBB(">",         2, plot_func_greater),
-    PBB("<=",        2, plot_func_less_equal),
-    PBB(">=",        2, plot_func_greater_equal),
-
-    /* equivalent predicates */
-    PBB("equal?",    2, plot_func_equal_test),
-
-    /* value testing functions */
-    PBB("boolean?",        9, plot_func_boolean_test),
-    PBB("string?",         8, plot_func_string_test),
-    PBB("symbol?",         8, plot_func_symbol_test),
-    PBB("number?",         8, plot_func_number_test),
-    PBB("procedure?",     11, plot_func_procedure_test),
-    PBB("char?",           6, plot_func_char_test),
-
-    /* display functions */
-    PBB("display",   7, plot_func_display),
-    PBB("newline",   7, plot_func_newline),
-
-    /* logical operations */
-    PBB("and",   4, plot_func_and),
-    PBB("or",    3, plot_func_or),
-    PBB("not",   4, plot_func_not),
-
-    /* string procedures */
-    PBB("string-length",  14, plot_func_string_length),
-    PBB("substring",      10, plot_func_substring),
-    PBB("string-append",  14, plot_func_string_append),
-    PBB("string-copy",    12, plot_func_string_copy),
-    PBB("string=?",        9, plot_func_string_equal_test),
-    PBB("string-ci=?",    12, plot_func_string_ci_equal),
-
-    PBB("make-string",    12, plot_func_make_string),
-    PBB("string",          7, plot_func_string),
-    PBB("string-ref",     11, plot_func_string_ref),
-    PBB("string-set!",    12, plot_func_string_set),
-    PBB("string<?",        9, plot_func_string_less_test),
-    PBB("string>?",        9, plot_func_string_greater_test),
-    PBB("string<=?",      10, plot_func_string_less_equal_test),
-    PBB("string>=?",      10, plot_func_string_greater_equal_test),
-    PBB("string-ci<?",    12, plot_func_string_ci_less_test),
-    PBB("string-ci>?",    12, plot_func_string_ci_greater_test),
-    PBB("string-ci<=?",   13, plot_func_string_ci_less_equal_test),
-    PBB("string-ci>=?",   13, plot_func_string_ci_greater_equal_test),
-    PBB("string->list",   13, plot_func_string_to_list),
-    PBB("list->string",   13, plot_func_list_to_string),
-    PBB("string-fill!",   13, plot_func_string_fill),
-
-    /* character procedures */
-    PBB("char=?",             7, plot_func_char_equal_test),
-    PBB("char-ci=?",         10, plot_func_char_ci_equal_test),
-    PBB("char<?",             7, plot_func_char_less_test),
-    PBB("char>?",             7, plot_func_char_greater_test),
-    PBB("char<=?",            8, plot_func_char_less_equal_test),
-    PBB("char>=?",            8, plot_func_char_greater_equal_test),
-    PBB("char-ci<?",         10, plot_func_char_ci_less_test),
-    PBB("char-ci>?",         10, plot_func_char_ci_greater_test),
-    PBB("char-ci<=?",        11, plot_func_char_ci_less_equal_test),
-    PBB("char-ci>=?",        11, plot_func_char_ci_greater_equal_test),
-
-    PBB("char-alphabetic?",  17, plot_func_char_alphabetic_test),
-    PBB("char-numeric?",     14, plot_func_char_numeric_test),
-    PBB("char-whitespace?",  17, plot_func_char_whitespace_test),
-    PBB("char-upper-case?",  17, plot_func_char_upper_case_test),
-    PBB("char-lower-case?",  17, plot_func_char_lower_case_test),
-    PBB("char->integer",     14, plot_func_char_to_integer),
-    PBB("integer->char",     14, plot_func_integer_to_char),
-    PBB("char-upcase",       12, plot_func_char_upcase),
-    PBB("char-downcase",     14, plot_func_char_downcase),
-
-    /* pair and list procedures */
-    PBB("pair?",      6, plot_func_pair_test),
-    PBB("cons",       5, plot_func_pair_cons),
-    PBB("car",        4, plot_func_pair_car),
-    PBB("cdr",        4, plot_func_pair_cdr)
-
-};
 
 static void plot_gc_incr(struct plot_gc *g);
 static void plot_gc_value_init(void);

@@ -67,7 +67,7 @@ dependencies
 ------------
 * libc
 * lib check is used for unit testing, in debian derived system this is simply 'check'
-* perl will be used as part of the build process to generate bindings between exported scheme functions and their c implementations
+* perl is used as part of the build process to generate bindings between exported scheme functions and their c implementations
 
 running
 ----------

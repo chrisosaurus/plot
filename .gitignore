@@ -4,3 +4,5 @@ a.out
 src/*.o
 t/*.o
 src/*.su
+src/bindings.h
+

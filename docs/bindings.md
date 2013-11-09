@@ -1,9 +1,10 @@
 bindings
 ========
 
-build/generate_bindings.h is a perl script that when run from the root of the
-project will inspect appropriate header files in order to extract information
-to facilitate bindings between scheme functions and their c implementations.
+build/generate_bindings.h is run during the build process in order to generate `src/bindings.h`
+
+this script will inspect certain header files (list is in source) and generate a the bindings
+from scheme functions to their c implementations.
 
 for example:
 
@@ -14,5 +15,4 @@ for example:
 
 when inspected will generate a bindings between `display` and `plot_func_display`
 
-Eventually this will be made part of the build process in order to replace the static list inside src/plot.c
 

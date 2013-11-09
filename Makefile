@@ -18,31 +18,17 @@ all: plot
 	@echo COMPILING CC $<
 	@${CC} -g -c ${CFLAGS} $< -DPLOT_TESTS -o $@
 
-plot: ${OBJ}
+plot: src/bindings.h ${OBJ}
 	@echo more compiling CC -o $@
 	@${CC} src/main.c -o $@ ${LDFLAGS} ${OBJ}
 	@make -s cleanobj
 
 # make with clang to produce different errors, includes testing code
-clang:
+clang: src/bindings.h
 	clang ${SRC} t/test_main.c -lcheck -Wall -Wextra
 
-# soft version for testing half baked tests
-tests_soft: clean ${OBJ}
-	@echo test_parse CC -o tests/test_llist.c
-	@# pthread, rt and m are all needed by certain versions of libcheck 
-	@${CC} -g -o run_tests t/test_main.c ${OBJ} -lpthread -lrt -lm -lcheck
-
-test_soft: tests_soft plot
-	@echo running test_llist
-	./run_tests
-	@echo "\nrunning example.scm"
-	./plot t/example.scm
-	@echo "\nrunning integration.scm"
-	./plot t/integration.scm
-
 # harsh version for checking sanity of test code
-compile_tests: clean ${TOBJ}
+compile_tests: clean src/bindings.h ${TOBJ}
 	@echo test_parse CC -o tests/test_llist.c
 	@# pthread, rt and m are all needed by certain versions of libcheck 
 	@${CC} -g -o run_tests t/test_main.c ${TOBJ} ${TEST_CFLAGS} -lpthread -lrt -lm -lcheck
@@ -84,9 +70,11 @@ foo: cleanobj
 clean: cleanobj
 	@echo cleaning executable
 	@rm -f plot run_tests
+	@echo cleaning auto-generated files
+	@rm -f src/bindings.h
 
 # generate plot bindings
-bindings:
+src/bindings.h:
 	./build/generate_bindings.pl
 
-.PHONY: all clean cleanobj test tests example integration clang test_soft tests_soft bindings
+.PHONY: all clean cleanobj test tests example integration clang test_soft tests_soft

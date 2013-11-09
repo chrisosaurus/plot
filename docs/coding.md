@@ -13,3 +13,13 @@ Procedures that us arrow in their scheme name should use `_to_` in their c funct
 `(char->integer ...)` => `plot_func_char_to_integer`
 
 
+every c function that should be exposed to the scheme runtime must be preceded by a function
+declaring it's c binding:
+
+    /* (display obj)
+     * print value to stdout
+     */
+    struct plot_value * plot_func_display(struct plot_env *env, struct plot_value **args, int argc);
+
+see `docs/bindings.md` for more information.
+
