@@ -85,4 +85,8 @@ clean: cleanobj
 	@echo cleaning executable
 	@rm -f plot run_tests
 
-.PHONY: all clean cleanobj test tests example integration clang test_soft tests_soft
+# generate plot bindings
+bindings:
+	./build/generate_bindings.pl
+
+.PHONY: all clean cleanobj test tests example integration clang test_soft tests_soft bindings
