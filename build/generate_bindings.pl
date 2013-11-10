@@ -31,7 +31,7 @@ struct plot_binding {
     plot_value func;
 };
 
-#define PBB(str, len, func) {{str, len,  len}, {{-1, 0}, plot_type_builtin, {.builtin = {func}}}}
+#define PBB(str, len, func) {{str, len,  len, 0}, {{-1, 0}, plot_type_builtin, {.builtin = {func}}}}
 
 struct plot_binding bindings[] = {
 ";

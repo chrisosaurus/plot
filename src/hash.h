@@ -55,7 +55,7 @@ void plot_hash_cleanup(plot_hash *hash);
 /* get value stored at key within hash
  * return value for key or 0 if key was not found
  */
-struct plot_value * plot_hash_get(const plot_hash *hash, const struct plot_symbol * key);
+struct plot_value * plot_hash_get(const plot_hash *hash, struct plot_symbol * key);
 
 /* set value to hash under key
  * keys must be unique within the hash
@@ -67,7 +67,7 @@ struct plot_value * plot_hash_get(const plot_hash *hash, const struct plot_symbo
  *
  * returns 1 on success, 0 on error
  */
-int plot_hash_set(plot_hash *hash, const struct plot_symbol * key, struct plot_value *value);
+int plot_hash_set(plot_hash *hash, struct plot_symbol * key, struct plot_value *value);
 
 #endif
 

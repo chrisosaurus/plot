@@ -39,7 +39,7 @@ struct plot_test_funcs_tests {
 #define PTF_VST(n) &(plot_value){{-1, 0}, plot_type_string, {.string={n, 10, 10}}}
 
 /* plot test value symbol */
-#define PTF_VSY(n) &(plot_value){{-1, 0}, plot_type_symbol, {.symbol={n, 10, 10}}}
+#define PTF_VSY(n) &(plot_value){{-1, 0}, plot_type_symbol, {.symbol={n, 10, 10, 0}}}
 
 /* plot test builtin value funct */
 #define PTF_VBU(f) &(plot_value){{-1, 0}, plot_type_builtin, {.builtin = {f}}}
@@ -214,6 +214,7 @@ START_TEST (test_funcs_env){
     sym.val = "+";
     sym.len = 2;
     sym.size = 2;
+    sym.hash = 0;
 
     add.type = plot_type_builtin;
     add.u.builtin.func = plot_func_add;
@@ -302,6 +303,7 @@ START_TEST (test_display){
     s->u.symbol.val = TEST_DISPLAY_SYMBOL;
     s->u.symbol.size = strlen(TEST_DISPLAY_SYMBOL) + 1;
     s->u.symbol.len = strlen(TEST_DISPLAY_SYMBOL) + 1;
+    s->u.symbol.hash = 0;
     fail_unless( 1 == plot_env_define(plot_get_global_env(), &(s->u.symbol), v) );
     plot_func_display(plot_get_global_env(), &s, 1);
     puts(""); /* trailing \n */

@@ -17,7 +17,7 @@
 #include "../src/plot.h"
 
 /* plot test value symbol */
-#define PT_VS(s) &(plot_symbol){s, 0, 0}
+#define PT_VS(s) &(plot_symbol){s, 0, 0, 0}
 
 START_TEST (test_garbage){
     struct plot_value *v;

@@ -214,6 +214,7 @@ static plot_expr * plot_parse_expr_string(plot_expr *expr, const char *source, s
  * expects first character of symbol to be at source[*upto]
  */
 static plot_expr * plot_parse_expr_symbol(plot_expr *expr, const char *source, size_t *upto){
+    char ch;
     size_t start = *upto;
     int len;
     int cont = 1;
@@ -225,7 +226,8 @@ static plot_expr * plot_parse_expr_symbol(plot_expr *expr, const char *source, s
 #endif
 
     while( cont ){
-        switch (source[*upto]){
+        ch = source[*upto];
+        switch (ch){
             case '\0':
             case ' ':
             case '\r':
@@ -240,6 +242,9 @@ static plot_expr * plot_parse_expr_symbol(plot_expr *expr, const char *source, s
                 cont = 0;
                 break;
             default:
+                if( ch < 33 || ch > 126 ){
+                    plot_fatal_error("symbol outside valid ascii range (33 <= symbol <= 126)");
+                }
                 /* probably part of symbol */
                 ++ *upto;
                 break;
@@ -258,6 +263,7 @@ static plot_expr * plot_parse_expr_symbol(plot_expr *expr, const char *source, s
      */
     expr->u.value->u.symbol.val = tmp = plot_alloc_string(len);
     strncpy(tmp, &source[start], len - 1);
+    plot_hash_symbol(&(expr->u.value->u.symbol));
 
 #if DEBUG
     printf("plot_parse_expr_symbol: end '%s'\n", expr->u.value->u.symbol.val);

@@ -64,7 +64,7 @@ void plot_env_cleanup(plot_env *env){
  *
  * return plot_value* or 0 when symbol is not found
  */
-plot_value * plot_env_get(const plot_env *env, const plot_symbol * sym){
+plot_value * plot_env_get(const plot_env *env, plot_symbol * sym){
     const plot_env *e;
     plot_value *v;
 
@@ -103,7 +103,7 @@ plot_value * plot_env_get(const plot_env *env, const plot_symbol * sym){
  *
  * returns 1 on success, 0 on error
  */
-int plot_env_define(plot_env *env, const plot_symbol * sym, plot_value * val){
+int plot_env_define(plot_env *env, plot_symbol * sym, plot_value * val){
     #if DEBUG
     puts("inside plot_env_define");
     #endif
@@ -125,7 +125,7 @@ int plot_env_define(plot_env *env, const plot_symbol * sym, plot_value * val){
  *
  * returns 1 on success, 0 on error
  */
-int plot_env_set(plot_env *env, const struct plot_symbol * sym, struct plot_value * val){
+int plot_env_set(plot_env *env, struct plot_symbol * sym, struct plot_value * val){
     plot_env *e;
     plot_value *v;
 

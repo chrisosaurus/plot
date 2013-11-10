@@ -66,6 +66,8 @@ typedef struct plot_symbol {
     int len;
     /* size is number of characters allocated */
     int size;
+    /* hash for this symbol's value, 0 means unhashed */
+    unsigned long long hash;
 } plot_symbol;
 
 typedef struct plot_string {
@@ -149,5 +151,14 @@ plot_value * plot_new_pair(struct plot_value *car, struct plot_value *cdr);
 plot_value * plot_new_error(plot_error_type type, const char *msg, const char *location);
 plot_value * plot_new_lambda(struct plot_env *env, struct plot_sexpr *body);
 plot_value * plot_new_builtin( struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc) );
+
+
+/* function to hash symbols
+ *
+ * a fatal error will be thrown if an invalid symbol is passed in
+ *
+ * function will not modify existing hash
+ */
+void plot_hash_symbol(plot_symbol *val);
 
 #endif

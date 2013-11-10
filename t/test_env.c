@@ -15,7 +15,7 @@
 START_TEST (test_env){
     plot_env *e;
     plot_value v;
-    plot_symbol s = (plot_symbol){"sym", 4, 4};
+    plot_symbol s = (plot_symbol){"sym", 4, 4, 0};
 
     fail_if( 0 == plot_init() );
 
@@ -26,6 +26,8 @@ START_TEST (test_env){
     fail_if( plot_env_get(e, &s) );
     fail_unless( plot_env_define(e, &s, &v) );
     fail_unless( &v == plot_env_get(e, &s) );
+
+    ck_assert_msg( 0 != s.hash, "Hash should have been set");
 
     puts("\tTesting define mutation");
     fail_unless( plot_env_define(e, &s, 0) );

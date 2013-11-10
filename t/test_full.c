@@ -60,7 +60,7 @@ static const char *test_full_harder_input = "(define adder\
                                              ";
 
 /* plot test value symbol */
-#define PT_VS(s) &(plot_symbol){s, 0, 0}
+#define PT_VS(s) &(plot_symbol){s, 0, 0, 0}
 
 START_TEST (test_full_harder){
     plot_program *prog;
