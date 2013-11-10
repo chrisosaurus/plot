@@ -166,7 +166,7 @@ static unsigned long long plot_hash_char_func(char ch){
  */
 void plot_hash_symbol(plot_symbol *s){
     int i;
-    unsigned long long hash;
+    unsigned long long hash = 0;
 
     if( !s ){
         /* will not return */
@@ -180,8 +180,10 @@ void plot_hash_symbol(plot_symbol *s){
 
     /* len - 1 as len includes null terminator */
     for( i=0; i< (s->len - 1); ++i ){
-        /* 94 is highest possible hash value for a char */
-        hash += lpow(94, i) * plot_hash_char_func( s->val[i] );
+        /* 94 is highest possible hash value for a char
+         * so we use 95 to prevent (or reduce) collision
+         */
+        hash += lpow(95, i) * plot_hash_char_func( s->val[i] );
     }
 
     s->hash = hash;
