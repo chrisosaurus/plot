@@ -95,6 +95,7 @@ bugs:
 * plot_new_string and plot_alloc_string are not really related, as the latter allocates an array and the former a value
 * need to update number.c to use plot_runtime_error system
 * update funcs.c to use plot_runtime_error
+* plot_eval_form should only return 0 on error, otherwise it is a runtime error
 
 Milestones:
 ===========
