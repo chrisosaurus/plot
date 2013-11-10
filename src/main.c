@@ -7,7 +7,6 @@
 #include "eval.h"
 
 #include "value.h"
-#include "variable.h"
 #include "types.h"
 #include "plot.h"
 
