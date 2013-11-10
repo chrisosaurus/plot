@@ -134,65 +134,6 @@ plot_value * plot_eval_value(plot_env *env, plot_value * val){
     return 0;
 }
 
-/* FIXME move elsewhere */
-/* return 1 if string names a form
- * oterwise returns 0
- */
-static int plot_is_form(plot_sexpr * sexpr){
-    plot_value *val;
-    #if DEBUG_FORM || DEBUG
-    puts("inside plot_is_form");
-    #endif
-
-    if( ! sexpr )
-        return 0;
-
-    if( ! sexpr->nchildren )
-        return 0;
-
-    if( sexpr->subforms[0].type != plot_expr_value )
-        return 0;
-
-    val = sexpr->subforms[0].u.value;
-    switch( val->type){
-        case plot_type_symbol:
-            if( ! strcmp(val->u.symbol.val, "define") ){
-                #if DEBUG_FORM || DEBUG
-                puts("\tdefine form found");
-                #endif
-                return 1;
-                }
-            if( ! strcmp(val->u.symbol.val, "lambda") ){
-                #if DEBUG_FORM || DEBUG
-                puts("\tlambda form found");
-                #endif
-                return 1;
-                }
-            if( ! strcmp(val->u.symbol.val, "if") ){
-                #if DEBUG_FORM || DEBUG
-                puts("\tif form found");
-                #endif
-                return 1;
-                }
-            if( ! strcmp(val->u.symbol.val, "set!") ){
-                #if DEBUG_FORM || DEBUG
-                puts("\tset! form found");
-                #endif
-                return 1;
-                }
-
-
-            break;
-        default:
-            break;
-    }
-
-    #if DEBUG_FORM || DEBUG
-    printf("\tno form found for '%s'\n", val->u.symbol.val);
-    #endif
-    return 0;
-}
-
 /* eval a sexpr in an environment
  * if sexpr is a form then plot_eval_form may be called which can
  *  modify the env
@@ -215,13 +156,16 @@ plot_value * plot_eval_sexpr(plot_env *env, plot_sexpr * sexpr){
         return 0; /* FIXME error, empty s-expr */
     }
 
-    if( plot_is_form(sexpr) ){
-        res = plot_eval_form(env, sexpr);
-        if( res && res->type == plot_type_error ){
+    res = plot_eval_form(env, sexpr);
+    /* if res is non-zero then this is a form and was evaluated */
+    if( res ){
+        if( res->type == plot_type_error ){
             puts("plot_eval_sexpr (form)");
         }
         return res;
     }
+
+    /* if we are here then plot_eval_form returned a 0 */
 
     res = plot_eval_func_call(env, sexpr);
     if( res && res->type == plot_type_error ){
@@ -264,16 +208,6 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
         #endif
         return 0; /* FIXME ERROR */
     }
-
-    tmp = plot_alloc_value();
-    if( ! tmp ){
-        #if DEBUG_FORM || DEBUG
-        puts("\tplot_eval_form: failed to create new value");
-        #endif
-        return 0; /* FIXME error */
-    }
-
-    tmp->type = plot_type_unspecified;
 
     form = sexpr->subforms[0].u.value;
     switch( form->type){
@@ -330,7 +264,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                 plot_env_define(env, &(name->u.symbol), value);
                 /* decrement value as eval and define will both increment it and we are not keeping a reference around */
                 plot_value_decr(value);
-                return tmp;
+                return plot_new_unspecified();
             }
             if( ! strcmp(form->u.symbol.val, "lambda") ){
                 if( sexpr->nchildren < 3 ){
@@ -358,6 +292,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                     }
                 }
 
+                tmp = plot_alloc_value();
                 tmp->type = plot_type_lambda;
                 tmp->u.lambda.env = env;
                 plot_env_incr(env);
@@ -427,10 +362,9 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                      *  specified, then the result of the expression is
                      *  unspecified"
                      */
-                    return tmp; /* success */
+                    return plot_new_unspecified(); /* success */
                 }
 
-                plot_value_decr(tmp); /* don't leak */
                 return value;
             }
             if( ! strcmp(form->u.symbol.val, "set!") ){
@@ -463,7 +397,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                     return 0; /* FIXME ERROR */
                 }
 
-                return tmp;
+                return plot_new_unspecified();
             }
             break;
         default:
@@ -474,7 +408,8 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
     puts("\tleaving plot_eval_form");
     #endif
 
-    return 0; /* FIXME ERROR */
+    /* returning 0 means this is not a form */
+    return 0;
 }
 
 /* eval a function call in an environment
