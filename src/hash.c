@@ -83,9 +83,9 @@ plot_value * plot_hash_get(const plot_hash *hash, plot_symbol * key){
 
     for( e = hash->head; e; e = e->next ){
         #if DEBUG
-        printf("\tcomparing: looking at key '%s', search string is '%s'\n", e->key->val, key->val);
+        printf("\tcomparing: looking at key '%s' (%llu), search string is '%s' (%llu)\n", e->key->val, e->key->hash, key->val, key->hash);
         #endif
-        if( ! strcmp(key->val, e->key->val) ){
+        if( key->hash == e->key->hash ){
             plot_value_incr(e->value);
             #if DEBUG || DEBUG_CLEANUP
             if( e->value ){

@@ -60,7 +60,7 @@ static const char *test_full_harder_input = "(define adder\
                                              ";
 
 /* plot test value symbol */
-#define PT_VS(s) &(plot_symbol){s, 0, 0, 0}
+#define PT_VS(s, l) &(plot_symbol){s, l, l, 0}
 
 START_TEST (test_full_harder){
     plot_program *prog;
@@ -95,20 +95,20 @@ START_TEST (test_full_harder){
     fail_if( 0 == plot_eval(plot_get_global_env(), prog) );
 
     /* check env */
-    val = plot_env_get(plot_get_global_env(), PT_VS("adder"));
+    val = plot_env_get(plot_get_global_env(), PT_VS("adder", 6));
     ck_assert_msg( 0 != val, "plot_env did not have 'adder' defined");
     ck_assert_msg( val->type == plot_type_lambda, "adder was not of type 'plot_type_lambda'");
 
-    val = plot_env_get(plot_get_global_env(), PT_VS("tmp"));
+    val = plot_env_get(plot_get_global_env(), PT_VS("tmp", 4));
     ck_assert_msg( 0 != val, "plot_env did not have 'tmp' defined");
     ck_assert_msg( val->type == plot_type_lambda, "tmp was not of type 'plot_type_lambda'");
 
-    val = plot_env_get(val->u.lambda.env, PT_VS("b"));
+    val = plot_env_get(val->u.lambda.env, PT_VS("b", 2));
     ck_assert_msg( 0 != val, "tmp's env did not have 'b' defined");
     ck_assert_msg( val->type == plot_type_number, "tmp's env type of 'b' was not 'plot_type_number'");
     ck_assert_msg( val->u.number.val == 10, "tmp's env value of 'b' was not '10'");
 
-    val = plot_env_get(plot_get_global_env(), PT_VS("end"));
+    val = plot_env_get(plot_get_global_env(), PT_VS("end", 4));
     ck_assert_msg( 0 != val, "plot_env did not have 'end' defined");
     ck_assert_msg( val->type == plot_type_number, "end was not of type 'plot_type_number'");
     ck_assert_msg( val->u.number.val == 25, "end did not have value '25'");
@@ -146,7 +146,7 @@ START_TEST (test_full_forms){
     fail_if( 0 == plot_eval(plot_get_global_env(), prog) );
 
     /* test results */
-    val = plot_env_get(plot_get_global_env(), PT_VS("a"));
+    val = plot_env_get(plot_get_global_env(), PT_VS("a", 2));
     ck_assert_msg( 0 != val, "env did not contain 'a'");
     ck_assert_msg( val->type == plot_type_number, "a was not of type 'plot_type_number'");
     ck_assert_msg( val->u.number.val == 5, "a did not have the value '5'");
@@ -160,7 +160,7 @@ START_TEST (test_full_forms){
     fail_if( 0 == plot_eval(plot_get_global_env(), prog) );
 
     /* test results */
-    val = plot_env_get(plot_get_global_env(), PT_VS("b"));
+    val = plot_env_get(plot_get_global_env(), PT_VS("b", 2));
     ck_assert_msg( 0 != val, "env did not contain 'b'");
     ck_assert_msg( val->type == plot_type_lambda, "b was not of type 'plot_type_lambda'");
 
@@ -173,7 +173,7 @@ START_TEST (test_full_forms){
     fail_if( 0 == plot_eval(plot_get_global_env(), prog) );
 
     /* test results */
-    val = plot_env_get(plot_get_global_env(), PT_VS("c"));
+    val = plot_env_get(plot_get_global_env(), PT_VS("c", 2));
     ck_assert_msg( 0 != val, "env did not contain 'c'");
     ck_assert_msg( val->type == plot_type_string, "c was not of type 'plot_type_string'");
     ck_assert_str_eq( val->u.string.val, "pass" );
@@ -207,27 +207,32 @@ START_TEST (test_full_unspecified){
     fail_if( 0 == plot_eval(plot_get_global_env(), prog) );
 
     sym.val = "a";
+    sym.hash = 0;
     val = plot_env_get( plot_get_global_env(), &sym);
     ck_assert_msg( 0 != val, "symbol a was not defined");
     ck_assert_msg( plot_type_unspecified == val->type, "symbol a did not have unspecified value");
 
     sym.val = "b";
+    sym.hash = 0;
     val = plot_env_get( plot_get_global_env(), &sym);
     ck_assert_msg( 0 != val, "symbol b was not defined");
     ck_assert_msg( plot_type_number == val->type, "symbol b was not a number");
     ck_assert_msg( 10 == val->u.number.val, "symbol b did not have value 10");
 
     sym.val = "c";
+    sym.hash = 0;
     val = plot_env_get( plot_get_global_env(), &sym);
     ck_assert_msg( 0 != val, "symbol c was not defined");
     ck_assert_msg( plot_type_unspecified == val->type, "symbol c did not have unspecified value");
 
     sym.val = "d";
+    sym.hash = 0;
     val = plot_env_get( plot_get_global_env(), &sym);
     ck_assert_msg( 0 != val, "symbol d was not defined");
     ck_assert_msg( plot_type_unspecified == val->type, "symbol d did not have unspecified value");
 
     sym.val = "e";
+    sym.hash = 0;
     val = plot_env_get( plot_get_global_env(), &sym);
     ck_assert_msg( 0 != val, "symbol e was not defined");
     ck_assert_msg( plot_type_unspecified == val->type, "symbol e did not have unspecified value");

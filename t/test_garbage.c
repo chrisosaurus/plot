@@ -17,7 +17,7 @@
 #include "../src/plot.h"
 
 /* plot test value symbol */
-#define PT_VS(s) &(plot_symbol){s, 0, 0, 0}
+#define PT_VS(s, l) &(plot_symbol){s, l, l, 0}
 
 START_TEST (test_garbage){
     struct plot_value *v;
@@ -52,7 +52,7 @@ START_TEST (test_garbage){
     puts("\t\ttesting eval");
     fail_if( 0 == plot_eval(plot_get_global_env(), prog) );
 
-    v = plot_env_get(plot_get_global_env(), PT_VS("result"));
+    v = plot_env_get(plot_get_global_env(), PT_VS("result", 7));
     /* define will create the value (with refount 1)
      * define then stored the value (refcount to 2) and then
      * decrs as it no longer needs the value (refcount back to 1)
