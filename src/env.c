@@ -72,6 +72,8 @@ plot_value * plot_env_get(const plot_env *env, plot_symbol * sym){
     puts("inside plot_env_get");
     #endif
 
+    plot_stats_env_get();
+
     if( ! sym ){
         #if DEBUG
         puts("\tnull sym");
@@ -80,6 +82,7 @@ plot_value * plot_env_get(const plot_env *env, plot_symbol * sym){
     }
 
     for( e=env; e; e=e->parent ){
+        plot_stats_env_loop();
         if( ! &(e->hash) )
             break;
         v = plot_hash_get(&(e->hash), sym);

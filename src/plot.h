@@ -101,4 +101,9 @@ struct plot_hash_entry * plot_alloc_hash_entry(void);
 /* allocate new string */
 char * plot_alloc_string(int len);
 
+void plot_stats_hash_get(void);
+void plot_stats_hash_comp(void);
+void plot_stats_env_get(void);
+void plot_stats_env_loop(void);
+
 #endif

@@ -13,6 +13,7 @@
 
 #ifndef PLOT_TESTS
 #define GC_STATS 1
+#define HASH_STATS 1
 #endif
 
 #define DEBUG 0
@@ -54,6 +55,18 @@ typedef struct plot {
 
     int num_he_reclaimed;
     int num_he_recycled;
+#endif
+#if HASH_STATS
+    /* comparisong inside hash_get */
+    int num_hash_comp;
+    /* calls to hash_get*/
+    int num_hash_get;
+    /* calls to env_get */
+    int num_env_get;
+    /* number of times env_get runs
+     * inside it's loop
+     */
+    int num_env_loop;
 #endif
 } plot;
 
@@ -134,6 +147,14 @@ void plot_cleanup(){
 
 #endif
 
+#if HASH_STATS
+    printf("###### plot hash stats #####\n");
+    printf("\thash_comp '%d'\n", plot_instance->num_hash_comp);
+    printf("\thash_get '%d'\n", plot_instance->num_hash_get);
+    printf("\tenv_get '%d'\n", plot_instance->num_env_get);
+    printf("\tenv_loop '%d'\n", plot_instance->num_env_loop);
+    printf("\n");
+#endif
     plot_env_cleanup(plot_instance->env);
     free(plot_instance);
 }
@@ -609,4 +630,33 @@ char * plot_alloc_string(int len){
     }
     return c;
 }
+
+void plot_stats_hash_get(void){
+#if HASH_STATS
+    if( ! plot_instance ) return;
+    ++plot_instance->num_hash_get;
+#endif
+}
+
+void plot_stats_hash_comp(void){
+#if HASH_STATS
+    if( ! plot_instance ) return;
+    ++plot_instance->num_hash_comp;
+#endif
+}
+
+void plot_stats_env_get(void){
+#if HASH_STATS
+    if( ! plot_instance ) return;
+    ++plot_instance->num_env_get;
+#endif
+}
+
+void plot_stats_env_loop(void){
+#if HASH_STATS
+    if( ! plot_instance ) return;
+    ++plot_instance->num_env_loop;
+#endif
+}
+
 
