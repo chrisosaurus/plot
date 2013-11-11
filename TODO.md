@@ -23,9 +23,7 @@ garbage collection:
 performance:
 ------------
 * recursion is currently very expensive (both in terms of stack and memory) -> need tail call optimisation
-* reduction of strcmp usage
 * more performant env structure
-* no need to have multiple 'unspecified' objects, could instead have 1 constant (and a plot_get_unspecified)
 
 misc:
 -----

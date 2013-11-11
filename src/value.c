@@ -5,11 +5,7 @@
 #include "plot.h"
 
 plot_value * plot_new_unspecified(void){
-    plot_value *res;
-    res = plot_alloc_value();
-    res->type = plot_type_unspecified;
-
-    return res;
+    return plot_get_unspecified_constant();
 }
 
 plot_value * plot_new_number(int value){
