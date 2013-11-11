@@ -19,7 +19,7 @@ START_TEST (test_hashing){
     s.hash =0;
 
     plot_hash_symbol(&s);
-    printf("lambda test got hash '%lu'\n", s.hash);
+    printf("lambda test got hash '%llu'\n", s.hash);
     ck_assert_msg( s.hash == 508553539801, "lambda hash was not as expected");
 
     s.val = "define";
@@ -27,7 +27,7 @@ START_TEST (test_hashing){
     s.hash =0;
 
     plot_hash_symbol(&s);
-    printf("define test got hash '%lu'\n", s.hash);
+    printf("define test got hash '%llu'\n", s.hash);
     ck_assert_msg( s.hash == 540325222373, "define hash was not as expected");
 
     s.val = "if";
@@ -35,7 +35,7 @@ START_TEST (test_hashing){
     s.hash =0;
 
     plot_hash_symbol(&s);
-    printf("if test got hash '%lu'\n", s.hash);
+    printf("if test got hash '%llu'\n", s.hash);
     ck_assert_msg( s.hash == 6723, "if hash was not as expected");
 
     s.val = "set!";
@@ -43,7 +43,7 @@ START_TEST (test_hashing){
     s.hash =0;
 
     plot_hash_symbol(&s);
-    printf("set! test got hash '%lu'\n", s.hash);
+    printf("set! test got hash '%llu'\n", s.hash);
     ck_assert_msg( s.hash == 1622113, "set! hash was not as expected");
 
     puts("\tCompleted!");
