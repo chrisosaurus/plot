@@ -1,7 +1,7 @@
 #ifndef PLOT_H
 #define PLOT_H
 
-#define HASH_STATS 1
+#define HASH_STATS 0
 
 /**** functions for dealing with plot's internal state ******/
 
