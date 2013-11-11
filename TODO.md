@@ -14,10 +14,6 @@ operations:
 * string->list
 * list->string
 
-experimental:
--------------
-* remove creation logic from parse and tests - centralise in function (will probably require merging of value and symbols in hash/env and gc interface)
-
 garbage collection:
 -------------------
 * implement arena growth

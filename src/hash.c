@@ -1,4 +1,3 @@
-#include <string.h> /* strcmp */
 #include <stdio.h> /* puts */
 
 #include "value.h"
@@ -85,6 +84,8 @@ plot_value * plot_hash_get(const plot_hash *hash, plot_symbol * key){
         #if DEBUG
         printf("\tcomparing: looking at key '%s' (%llu), search string is '%s' (%llu)\n", e->key->val, e->key->hash, key->val, key->hash);
         #endif
+        if( key->hash < e->key->hash )
+            break;
         if( key->hash == e->key->hash ){
             plot_value_incr(e->value);
             #if DEBUG || DEBUG_CLEANUP
@@ -118,7 +119,7 @@ plot_value * plot_hash_get(const plot_hash *hash, plot_symbol * key){
  */
 int plot_hash_set(plot_hash *hash, plot_symbol * key, plot_value *value){
     plot_hash_entry **e, *n;
-    int sc=1; /* default value of 1, 0 is only used to mean we are re-defining a symbol */
+    int new=1; /* default value of 1, 0 is only used to mean we are re-defining a symbol */
 
     #if DEBUG
     puts("inside plot_hash_set");
@@ -134,12 +135,15 @@ int plot_hash_set(plot_hash *hash, plot_symbol * key, plot_value *value){
     plot_hash_symbol(key);
 
     for( e=&hash->head; e && (*e); e = &(*e)->next ){
-        sc = strcmp(key->val, (*e)->key->val);
+        #if DEBUG
+        printf("\tcomparing: looking at key '%s' (%llu), search string is '%s' (%llu)\n", (*e)->key->val, (*e)->key->hash, key->val, key->hash);
+        #endif
         /* stop iterating when we find an existing entry with a key 'after' us
          */
-        if(  sc < 0 ) /* TRUE IFF key < (*e)->key */
+        if(  key->hash < (*e)->key->hash ) /* TRUE IFF key < (*e)->key */
             break;
-        if( sc == 0 ){ /* TRUE IFF key == (*e)->key */
+        if( key->hash == (*e)->key->hash ){ /* TRUE IFF key == (*e)->key */
+            new = 0; /* not new, don't increment counter */
             /* overriding, need to decr value here */
             plot_value_decr((*e)->value);
             break;
@@ -167,7 +171,7 @@ int plot_hash_set(plot_hash *hash, plot_symbol * key, plot_value *value){
     n->next = *e;
     *e = n;
 
-    if( sc ) /* only increment if we are no re-defining */
+    if( new ) /* only increment if we are no re-defining */
         hash->n_elems++;
 
     #if DEBUG
