@@ -13,7 +13,6 @@
 
 #ifndef PLOT_TESTS
 #define GC_STATS 1
-#define HASH_STATS 1
 #endif
 
 #define DEBUG 0
@@ -631,32 +630,25 @@ char * plot_alloc_string(int len){
     return c;
 }
 
-void plot_stats_hash_get(void){
 #if HASH_STATS
+void plot_stats_hash_get(void){
     if( ! plot_instance ) return;
     ++plot_instance->num_hash_get;
-#endif
 }
 
 void plot_stats_hash_comp(void){
-#if HASH_STATS
     if( ! plot_instance ) return;
     ++plot_instance->num_hash_comp;
-#endif
 }
 
 void plot_stats_env_get(void){
-#if HASH_STATS
     if( ! plot_instance ) return;
     ++plot_instance->num_env_get;
-#endif
 }
 
 void plot_stats_env_loop(void){
-#if HASH_STATS
     if( ! plot_instance ) return;
     ++plot_instance->num_env_loop;
-#endif
 }
-
+#endif
 

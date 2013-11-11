@@ -78,7 +78,9 @@ plot_value * plot_hash_get(const plot_hash *hash, plot_symbol * key){
         return 0; /* ERROR no hash or key specified */
     }
 
+    #if HASH_STATS
     plot_stats_hash_get();
+    #endif
     plot_hash_symbol(key);
 
     for( e = hash->head; e; e = e->next ){
@@ -86,7 +88,9 @@ plot_value * plot_hash_get(const plot_hash *hash, plot_symbol * key){
         printf("\tcomparing: looking at key '%s' (%llu), search string is '%s' (%llu)\n", e->key->val, e->key->hash, key->val, key->hash);
         #endif
 
+        #if HASH_STATS
         plot_stats_hash_comp();
+        #endif
 
         if( key->hash < e->key->hash )
             break;
