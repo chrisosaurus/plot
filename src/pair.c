@@ -72,4 +72,83 @@ struct plot_value * plot_func_pair_cdr(struct plot_env *env, struct plot_value *
     return res;
 }
 
+/* (set-car! pair obj)
+ */
+struct plot_value * plot_func_pair_set_car(struct plot_env *env, struct plot_value **args, int argc){
+    if( argc != 2 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_set_car");
+    }
+
+    if( args[0]->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not a pair", "plot_func_pair_set_car");
+    }
+
+    plot_value_decr(args[0]->u.pair.car);
+    args[0]->u.pair.car = args[1];
+    plot_value_incr(args[0]->u.pair.car);
+
+    return plot_new_unspecified();
+}
+
+/* (set-cdr! pair obj)
+ */
+struct plot_value * plot_func_pair_set_cdr(struct plot_env *env, struct plot_value **args, int argc){
+    if( argc != 2 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_set_cdr");
+    }
+
+    if( args[0]->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not a pair", "plot_func_pair_set_cdr");
+    }
+
+    plot_value_decr(args[0]->u.pair.cdr);
+    args[0]->u.pair.cdr = args[1];
+    plot_value_incr(args[0]->u.pair.cdr);
+
+    return plot_new_unspecified();
+}
+
+/* (null? obj)
+ * return #t iff obj is the empty list, otherwise #f
+ */
+struct plot_value * plot_func_pair_null_test(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_null_test");
+}
+
+/* (list? obj)
+ * return #t iff obj is a list, otherwise returns #f
+ */
+struct plot_value * plot_func_pair_list_test(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_list_test");
+}
+
+/* (list obj ...)
+ * list constructor
+ * returns a newly allocated made up of all the objects specified
+ * terminated by empty list
+ */
+struct plot_value * plot_func_pair_list(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_list");
+}
+
+/* (length list)
+ * returns list length
+ */
+struct plot_value * plot_func_pair_length(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_length");
+}
+
+/* (append list ...)
+ * returns a newly allocated list made up on the concatenation of all provided lists
+ */
+struct plot_value * plot_func_pair_append(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_append");
+}
+
+/* (reverse list)
+ * return new allocated list containing all the values form list in reverse order
+ */
+struct plot_value * plot_func_pair_reverse(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_reverse");
+}
 

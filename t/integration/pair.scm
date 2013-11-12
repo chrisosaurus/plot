@@ -28,12 +28,20 @@
   (if (not (pair? 14))
     (if (= 14 (car (cons 14 0)))
       (if (= 3 (cdr (cons 0 3)))
-        (pass "thirty two")
-        (fail "thirty two case 4"))
-      (fail "thirty two case 3"))
-    (fail "thirty two case 2"))
-  (fail "thirty two case 1"));
+        (pass "one")
+        (fail "one case 4"))
+      (fail "one case 3"))
+    (fail "one case 2"))
+  (fail "one case 1"));
 
+(define tmp-list (cons 1 0))
+(set-car! tmp-list 12)
+(set-cdr! tmp-list 21)
+(if (equal? (car tmp-list) 12)
+  (if (equal? (cdr tmp-list) 21)
+    (pass "two")
+    (fail "two case 2"))
+  (fail "two case 1"))
 
 ;; tests completed, print results
 (println "pair test results")

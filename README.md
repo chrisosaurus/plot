@@ -25,7 +25,7 @@ a brief summary:
 * positive integer literals
 * boolean literals
 * char literals
-* pair datatype (currently lack literals)
+* pair and list datatypes (currently lack literals)
 * basic integer procedures
 * printing of values (`display`)
 * printing of newline (`newline`)
