@@ -79,13 +79,11 @@ bugs:
 * remove value-creation logic from parse and unit tests, instead expose functions that encapsulate it
 * string do not currently support escaping
 * everything parse
-* runtime error feedback is rubbish, e.g. using a function that doesn't exist
 * escaping in strings will copy over the escape character and include it in size/len
 * plot runtime errors may leak previously allocated values, need to decr before throwing error.
 * break integration.scm tests into separate tests for each section
 * plot_new_string and plot_alloc_string are not really related, as the latter allocates an array and the former a value
 * need to update number.c to use plot_runtime_error system
-* update funcs.c to use plot_runtime_error
 * plot_eval_form should only return 0 on error, otherwise it is a runtime error
 
 Milestones:

@@ -76,17 +76,13 @@ plot_value * plot_func_display(plot_env *env, plot_value **args, int argc){
     plot_value *arg;
 
     if( argc != 1 ){
-        #if DEBUG
-        puts("incorrect number of args to plot_func_display");
-        #endif
-        return 0; /* FIXME error */
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_display");
     }
 
     arg = args[0];
 
     if( ! arg ){
-        puts("argument was NULL");
-        return 0;
+        return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_display");
     }
 
     return plot_func_display_value(env, arg);
@@ -113,25 +109,16 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
     puts("inside plot_func_equal");
     #endif
 
-    if( ! env ){
-        #if DEBUG
-        puts("\tenv if NULL");
-        #endif
-        return 0;
-    }
-
     if( argc != 2 ){
-        #if DEBUG
-        puts("\tinvalid number of args (expected 2)");
-        #endif
-        return 0;
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_equal_test");
     }
 
-    if( ! args[0] || ! args[1] ){
-        #if DEBUG
-        puts("\targs were NULL");
-        #endif
-        return 0;
+    if( ! args[0] ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_equal_test");
+    }
+
+    if( ! args[1] ){
+        return plot_runtime_error(plot_error_bad_args, "second arg was null", "plot_func_equal_test");
     }
 
     if( args[0]->type != args[1]->type ){
@@ -194,27 +181,14 @@ struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_val
     puts("inside plot_func_boolean_test");
     #endif
 
-    if( ! env ){
-        #if DEBUG
-        puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
-    }
-
     if( argc != 1 ){
-        #if DEBUG
-        puts("incorrect number of args to plot_func_boolean_test");
-        #endif
-        return 0; /* FIXME error */
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_boolean_test");
     }
 
     val = args[0];
 
     if( ! val ){
-        #if DEBUG
-        puts("call to plot_eval_expr returned NULL");
-        #endif
-        return 0; /* FIXME error */
+        return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_boolean_test");
     }
 
     return plot_new_boolean( val->type == plot_type_boolean );
@@ -230,27 +204,15 @@ struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_valu
     puts("inside plot_func_symbol_test");
     #endif
 
-    if( ! env ){
-        #if DEBUG
-        puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
-    }
-
     if( argc != 1 ){
-        #if DEBUG
-        puts("incorrect number of args to plot_func_symbol_test");
-        #endif
-        return 0; /* FIXME error */
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_symbol_test");
+
     }
 
     val = args[0];
 
     if( ! val ){
-        #if DEBUG
-        puts("call to plot_eval_expr returned NULL");
-        #endif
-        return 0; /* FIXME error */
+        return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_symbol_test");
     }
 
     return plot_new_boolean( val->type == plot_type_symbol );
@@ -266,27 +228,14 @@ struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_v
     puts("inside plot_func_procedure_test");
     #endif
 
-    if( ! env ){
-        #if DEBUG
-        puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
-    }
-
     if( argc != 1 ){
-        #if DEBUG
-        puts("incorrect number of args to plot_func_procedure_test");
-        #endif
-        return 0; /* FIXME error */
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_procedure_test");
     }
 
     val = args[0];
 
     if( ! val ){
-        #if DEBUG
-        puts("call to plot_eval_expr returned NULL");
-        #endif
-        return 0; /* FIXME error */
+        return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_procedure_test");
     }
 
     return plot_new_boolean( val->type == plot_type_builtin || val->type == plot_type_lambda );
