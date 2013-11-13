@@ -29,9 +29,6 @@ misc:
 -----
 * 'Testing parse error handling TODO' error
 * write stack (for runtime and internal stacks)
-* break math and comparison funcs into own files (.h and .c)
-* all math functions should check argument count
-* plot_handle_error should not be in funcs, funcs are things that can be assigned to plot_values
 * too much repeated handling for stack unwinding in eval
 * want to also print context for errors (e.g. expr being evalled when error occured, expr at each stage of stack unwinding)
 

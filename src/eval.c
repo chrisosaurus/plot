@@ -18,6 +18,43 @@
 #define DEBUG_FUNC 0
 #define DEBUG_FORM 0
 
+/* FIXME some rather ugly error display
+ * tidy this up
+ */
+static void display_expr(plot_expr *expr);
+
+static void display_sexpr(plot_sexpr * sexpr){
+    int i;
+
+    fputs("(", stdout);
+    for(i = 0; i < sexpr->nchildren; ++i){
+        display_expr(&sexpr->subforms[i]);
+        if( i < sexpr->nchildren - 1 ){
+            fputs(" ", stdout);
+        }
+    }
+    fputs(")", stdout);
+}
+
+static void display_expr(plot_expr *expr){
+    if( expr->type == plot_expr_sexpr ){
+        display_sexpr(&expr->u.sexpr);
+    } else {
+        plot_func_display(0, &expr->u.value , 1);
+    }
+}
+
+static void display_error_sexpr(plot_sexpr *sexpr){
+    fputs(">\t", stdout);
+    display_sexpr(sexpr);
+    fputs("\n", stdout);
+}
+
+static void display_error_expr(plot_expr *expr){
+    fputs(">\t", stdout);
+    display_expr(expr);
+    fputs("\n", stdout);
+}
 
 /* evals a prog in an environment
  * returns 1 for success, 0 for error
@@ -72,7 +109,8 @@ plot_value * plot_eval_expr(plot_env *env, plot_expr * expr){
             #endif
             res = plot_eval_value(env, expr->u.value);
             if( res && res->type == plot_type_error ){
-                puts("plot_eval_expr (resue)");
+                puts("plot_eval_expr (value)");
+                display_error_expr(expr);
             }
             return res;
             break;
@@ -83,6 +121,7 @@ plot_value * plot_eval_expr(plot_env *env, plot_expr * expr){
             res = plot_eval_sexpr(env, &(expr->u.sexpr));
             if( res && res->type == plot_type_error ){
                 puts("plot_eval_expr (sexpr)");
+                display_error_expr(expr);
             }
             return res;
             break;
@@ -161,6 +200,7 @@ plot_value * plot_eval_sexpr(plot_env *env, plot_sexpr * sexpr){
     if( res ){
         if( res->type == plot_type_error ){
             puts("plot_eval_sexpr (form)");
+            display_error_sexpr(sexpr);
         }
         return res;
     }
@@ -170,6 +210,7 @@ plot_value * plot_eval_sexpr(plot_env *env, plot_sexpr * sexpr){
     res = plot_eval_func_call(env, sexpr);
     if( res && res->type == plot_type_error ){
         puts("plot_eval_sexpr (func call)");
+        display_error_sexpr(sexpr);
     }
     return res;
 }
@@ -473,6 +514,7 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
                 }
                 if( val->type == plot_type_error ){
                     puts("plot_eval_func_call (arg)");
+                    display_error_expr(&sexpr->subforms[1 + i]);
                     return val;
                 }
                 vals[i] = val;
@@ -553,7 +595,7 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
 
             break;
         default:
-            val = plot_runtime_error(plot_error_internal, "trying to call non-function", "plot_eval_func_call");
+            val = plot_runtime_error(plot_error_runtime, "trying to call non-function", "plot_eval_func_call");
             if( func->type == plot_type_symbol ){
                 printf("Trying to call literal symbol '%s'\n", func->u.symbol.val);
             } else {
@@ -561,6 +603,7 @@ plot_value * plot_eval_func_call(plot_env *env, plot_sexpr * sexpr){
                 plot_func_display(env, &func, 1);
                 puts("");
             }
+            display_error_expr(&sexpr->subforms[0]);
             return val;
             break;
     }

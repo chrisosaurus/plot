@@ -37,6 +37,8 @@ typedef enum plot_error_type{
     plot_error_internal,
     /* unbound symbol encountered */
     plot_error_unbound_symbol,
+    /* runtime error in source program */
+    plot_error_runtime,
 
     /* function not implemented yet */
     plot_error_unimplemented,

@@ -203,12 +203,15 @@ struct plot_value * plot_runtime_error(plot_error_type type, const char *msg, co
         case plot_error_undefined:
             error_type_str = "symbol is undefined";
             break;
+        case plot_error_runtime:
+            error_type_str = "runtime error in source program";
+            break;
         default:
             error_type_str = "IMPOSSIBLE ERROR";
             break;
     }
 
-    printf("Error encountered in '%s', error message: '%s', error type: '%s'\n", err->u.error.location, err->u.error.msg, error_type_str);
+    printf("Error encountered in '%s':\n\terror message: '%s'\n\terror type: '%s'\n\n", err->u.error.location, err->u.error.msg, error_type_str);
     return err;
 }
 
