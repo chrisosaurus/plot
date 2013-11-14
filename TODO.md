@@ -3,8 +3,6 @@ TODO(s):
 
 operations:
 -----------
-* string<?
-* string >?
 * string<=?
 * string>=?
 * string-ci<?
