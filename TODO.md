@@ -1,5 +1,6 @@
 TODO(s):
 =====
+witch target spec to r7rs, update references to r5rs to r7rs equiv.
 
 operations:
 -----------
@@ -17,6 +18,15 @@ operations:
 * reverse
 * eq?
 * eqv?
+
+forms:
+------
+* quote
+* define function short-hand
+* begin
+* cond
+* case
+* case-lambda
 
 garbage collection:
 -------------------
@@ -64,6 +74,7 @@ features:
 * quoting
 * variable arguments
 * want a way of printing literal syntax (without attempting to eval)
+* begin work on library system
 
 runtime:
 ---------
