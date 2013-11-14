@@ -396,8 +396,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                 }
             } else {
                 plot_value_decr(value);
-                /* FIXME need to define an 'undef' value
-                 * (display (if #f "hello")) ;; => ??
+                /* (display (if #f "hello")) ;; => unspecified
                  * in csi this is 'unspecified'
                  * in racket (lang scheme) there is no output
                  *
@@ -409,6 +408,11 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                  * r6rs says: (11.4.3 page 33)
                  *  "if the <test> yields #f and no <alternate> is
                  *  specified, then the result of the expression is
+                 *  unspecified"
+                 *
+                 * r7rs says: (4.1.5 page 13)
+                 *  "if the <test> yields a false value and no <alternative>
+                 *  if specified, then the result of teh expression is
                  *  unspecified"
                  */
                 return plot_new_unspecified(); /* success */
