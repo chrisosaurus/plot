@@ -73,7 +73,6 @@ typedef struct plot_symbol {
 } plot_symbol;
 
 typedef struct plot_string {
-    /* FIXME scheme strings are mutable */
     char *val;
     /* len is number of characters used
      * including \0 terminator
