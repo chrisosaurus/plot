@@ -442,13 +442,59 @@ struct plot_value * plot_func_string_greater_test(struct plot_env *env, struct p
 /* (string<=? string1 string2)
  */
 struct plot_value * plot_func_string_less_equal_test(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_less_equal_test");
+    int i;
+    char *ch;
+
+    if( argc < 2 ){
+        return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_func_string_less_equal_test");
+    }
+
+    if( args[0]->type != plot_type_string ){
+        return plot_runtime_error(plot_error_bad_args, "arg was not of type plot_type_string", "plot_func_less_equal_test");
+    }
+
+    ch = args[0]->u.string.val;
+
+    for( i=1; i<argc; ++i ){
+        if( args[i]->type != plot_type_string ){
+            return plot_runtime_error(plot_error_bad_args, "arg was not of type plot_type_string", "plot_func_less_equal_test");
+        }
+        if( strcmp(ch, args[i]->u.string.val) > 0 ){
+            return plot_new_boolean(false);
+        }
+        ch = args[i]->u.string.val;
+    }
+
+    return plot_new_boolean(true);
 }
 
 /* (string>=? string1 string 2)
  */
 struct plot_value * plot_func_string_greater_equal_test(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_greater_equal_test");
+    int i;
+    char *ch;
+
+    if( argc < 2 ){
+        return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_func_string_greater_equal_test");
+    }
+
+    if( args[0]->type != plot_type_string ){
+        return plot_runtime_error(plot_error_bad_args, "arg was not of type plot_type_string", "plot_func_greater_equal_test");
+    }
+
+    ch = args[0]->u.string.val;
+
+    for( i=1; i<argc; ++i ){
+        if( args[i]->type != plot_type_string ){
+            return plot_runtime_error(plot_error_bad_args, "arg was not of type plot_type_string", "plot_func_greater_equal_test");
+        }
+        if( strcmp(ch, args[i]->u.string.val) < 0 ){
+            return plot_new_boolean(false);
+        }
+        ch = args[i]->u.string.val;
+    }
+
+    return plot_new_boolean(true);
 }
 
 /* (string-ci<? string1 string 2)

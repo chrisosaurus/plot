@@ -161,11 +161,11 @@ List of r5rs sections and notes on implementation progress and any deviations fr
         `string-fill!`
         `string<?`
         `string>?`
+        `string<=?`
+        `string>=?`
 
     the following procedures are pending implementation
     (exposed to runtime but not yet callable):
-        `string<=?`
-        `string>=?`
         `string-ci<?`
         `string-ci>?`
         `string-ci<=?`
