@@ -9,6 +9,14 @@ operations:
 * string-ci>=?
 * string->list
 * list->string
+* null?
+* list
+* list?
+* length
+* append
+* reverse
+* eq?
+* eqv?
 
 garbage collection:
 -------------------

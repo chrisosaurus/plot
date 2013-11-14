@@ -66,7 +66,7 @@ List of r5rs sections and notes on implementation progress and any deviations fr
         `<=`
         `>=`
 
-    the following numerical arithmetic procedures are impelmented:
+    the following numerical arithmetic procedures are implemented:
         `+`
         `-`
         `*`
@@ -93,6 +93,7 @@ List of r5rs sections and notes on implementation progress and any deviations fr
         `set-cdr!`
 
     pending implementation:
+        `list`
         `null?`
         `list?`
         `length`
