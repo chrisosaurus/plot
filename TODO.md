@@ -78,6 +78,7 @@ features:
 * variable arguments
 * want a way of printing literal syntax (without attempting to eval)
 * begin work on library system
+* allow c functions ('builtin's) to be syntactic
 
 runtime:
 ---------

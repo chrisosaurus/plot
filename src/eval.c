@@ -222,7 +222,6 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
     plot_value *form;
     plot_value *name;
     plot_value *value;
-    plot_value *tmp;
     int i;
 
     #if DEBUG_FORM || DEBUG
@@ -260,57 +259,92 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
     switch( form->u.symbol.hash ){
 
         case 540325222373: /* define */
-            if( sexpr->nchildren != 3 ){
+            /* define has 2 forms:
+             * (define a <value>)
+             * (define (b args) <function body>)
+             */
+            if( sexpr->nchildren < 3 ){
                 #if DEBUG_FORM || DEBUG
                 printf("\tDEFINE: incorrect number of children '%d'\n", sexpr->nchildren);
                 #endif
                 return 0; /* FIXME ERROR */
             }
 
-            if( sexpr->subforms[1].type != plot_expr_value ){
+            if( sexpr->subforms[1].type == plot_expr_sexpr ){
+                /* function form */
+                if( sexpr->subforms[1].u.sexpr.nchildren < 1){
+                    puts("DEFINE: incorrect function declaration");
+                    return 0; /* FIXME error */
+                }
+                if( sexpr->subforms[1].u.sexpr.subforms[0].type != plot_expr_value ){
+                    puts("DEFINE: invalid function name");
+                    return 0; /* FIXME error */
+                }
+                name = sexpr->subforms[1].u.sexpr.subforms[0].u.value;
+                /* FIXME hack to get define function form
+                 * remove declared function name
+                 *
+                 * move down the subforms array in order to remove function name
+                 */
+
+                for( i=0; i< (sexpr->subforms[1].u.sexpr.nchildren - 1); ++i ){
+                    sexpr->subforms[1].u.sexpr.subforms[i] = sexpr->subforms[1].u.sexpr.subforms[i+1];
+                }
+
+                --sexpr->subforms[1].u.sexpr.nchildren;
+
+                value = plot_new_lambda(env, sexpr);
+                plot_env_define(env, &(name->u.symbol), value);
+                plot_value_decr(value);
+
+            } else if( sexpr->subforms[1].type == plot_expr_value ){
+                /* value form */
+                name = sexpr->subforms[1].u.value;
+                if( name->type != plot_type_symbol ){
+                    #if DEBUG_FORM || DEBUG
+                    puts("\tDEFINE: incorrect 1st arg value type");
+                    #endif
+                    return 0; /* FIXME ERROR */
+                }
+
+                #if DEBUG_FORM || DEBUG
+                puts("\tDEFINE: getting value to store");
+                #endif
+
+                /* 2nd subform isnt known to be a value ! */
+                value = plot_eval_expr(env, &(sexpr->subforms[2]));
+                if( ! value ){
+                    #if DEBUG_FORM || DEBUG
+                    puts("\tDEFINE: failed to eval_value");
+                    #endif
+                    return 0; /* FIXME ERROR */
+                }
+
+                if( value->type == plot_type_error ){
+                    puts("plot_eval_form (define)");
+                    return value;
+                }
+
+                #if DEBUG_FORM || DEBUG
+                puts("\tDEFINE: value fetched");
+                #endif
+
+                #if DEBUG_FORM || DEBUG
+                puts("\tDEFINE: success!");
+                printf("\tStoring value type '%d', under name '%s'\n'", value->type, name->u.symbol.val);
+                #endif
+                plot_env_define(env, &(name->u.symbol), value);
+                /* decrement value as eval and define will both increment it and we are not keeping a reference around */
+                plot_value_decr(value);
+
+            } else {
+                /* error */
                 #if DEBUG_FORM || DEBUG
                 puts("\tDEFINE: incorrect 1st arg expr type");
                 #endif
                 return 0; /* FIXME ERROR */
             }
-            /* do we even know this is a value yet ? */
-            name = sexpr->subforms[1].u.value;
-            if( name->type != plot_type_symbol ){
-                #if DEBUG_FORM || DEBUG
-                puts("\tDEFINE: incorrect 1st arg value type");
-                #endif
-                return 0; /* FIXME ERROR */
-            }
 
-            #if DEBUG_FORM || DEBUG
-            puts("\tDEFINE: getting value to store");
-            #endif
-
-            /* 2nd subform isnt known to be a value ! */
-            value = plot_eval_expr(env, &(sexpr->subforms[2]));
-            if( ! value ){
-                #if DEBUG_FORM || DEBUG
-                puts("\tDEFINE: failed to eval_value");
-                #endif
-                return 0; /* FIXME ERROR */
-            }
-
-            if( value->type == plot_type_error ){
-                puts("plot_eval_form (define)");
-                return value;
-            }
-
-            #if DEBUG_FORM || DEBUG
-            puts("\tDEFINE: value fetched");
-            #endif
-
-            #if DEBUG_FORM || DEBUG
-            puts("\tDEFINE: success!");
-            printf("\tStoring value type '%d', under name '%s'\n'", value->type, name->u.symbol.val);
-            #endif
-            plot_env_define(env, &(name->u.symbol), value);
-            /* decrement value as eval and define will both increment it and we are not keeping a reference around */
-            plot_value_decr(value);
             return plot_new_unspecified();
             break;
 
@@ -340,12 +374,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                 }
             }
 
-            tmp = plot_alloc_value();
-            tmp->type = plot_type_lambda;
-            tmp->u.lambda.env = env;
-            plot_env_incr(env);
-            tmp->u.lambda.body = sexpr;
-            return tmp;
+            return plot_new_lambda(env, sexpr);
             break;
 
         case 6723: /* if */

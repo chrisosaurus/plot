@@ -223,6 +223,14 @@
   (pass "twenty")
   (fail "twenty"))
 
+;; testing define function form
+(define (twenty-one x y z)
+  (+ x y z))
+
+(if (equal? (twenty-one 1 2 3) (twenty-one 3 2 1))
+  (pass "twenty one")
+  (fail "twenty once"))
+
 
 ;; tests completed, print results
 (println "basic test results")

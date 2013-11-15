@@ -104,6 +104,8 @@ plot_value * plot_new_lambda(struct plot_env *env, struct plot_sexpr *body){
     res->u.lambda.env = env;
     res->u.lambda.body = body;
 
+    plot_env_incr(env);
+
     return res;
 }
 
