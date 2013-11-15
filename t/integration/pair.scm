@@ -53,3 +53,7 @@
 (display tests-failed)
 (println " tests failed")
 
+;; indicate failure
+(if (> tests-failed 0)
+  (exit 1))
+

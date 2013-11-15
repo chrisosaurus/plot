@@ -104,7 +104,6 @@ bugs:
 * need to update number.c to use plot_runtime_error system
 * plot_eval_form should only return 0 on error, otherwise it is a runtime error
 * implementation of define function shorthand is ugly
-* unit testing tools are insufficient, missed failing `or` test for quite a while - need to make a failed scheme unit test exit 1
 
 Milestones:
 ===========

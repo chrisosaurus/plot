@@ -304,4 +304,23 @@ struct plot_value * plot_func_not(struct plot_env *env, struct plot_value **args
     return plot_new_boolean( ! plot_truthy(args[0]) );
 }
 
+/* (exit obj)
+ * FIXME not standard compliant, see r7rs page 59 section 6.14
+ *
+ * exits normally iff obj is #t or 0
+ * otherwise is equiv to (exit 1)
+ *
+ */
+struct plot_value * plot_func_exit(struct plot_env *env, struct plot_value **args, int argc){
+    if( argc == 1){
+        if( args[0]->type == plot_type_boolean && args[0]->u.boolean.val == true ){
+            exit(0);
+        }
+        if( args[0]->type == plot_type_number && args[0]->u.number.val == 0 ){
+            exit(0);
+        }
+    }
+    exit(1);
+}
+
 
