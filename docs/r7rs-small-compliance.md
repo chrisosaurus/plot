@@ -241,8 +241,10 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `newline`
 
 6.14 System interface
-    plot has a basic `exit` procedure that is currently non-compliant.
-    `(exit #t)` and `(exit 0)` will exit 0 (success)
+    plot has both `exit` and `emergency-exit`, but as plot currently
+    lacks dynamic-wind they are both the same.
+
+    `(exit)`,`(exit #t)` and `(exit 0)` will exit 0 (success)
     any other value will exit 1 (failure)
 
 

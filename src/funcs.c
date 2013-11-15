@@ -305,14 +305,38 @@ struct plot_value * plot_func_not(struct plot_env *env, struct plot_value **args
 }
 
 /* (exit obj)
- * FIXME not standard compliant, see r7rs page 59 section 6.14
+ * exit after running all dynamic-wind `after` procedures
+ * FIXME plot currently lacks dynamic-wind so this is equivalent to `emergency-exit`
  *
- * exits normally iff obj is #t or 0
- * otherwise is equiv to (exit 1)
+ * exits with success for the following calls:
+ *      (exit)
+ *      (exit 0)
+ *      (exit #t)
+ *
+ * otherwise exits failure
  *
  */
 struct plot_value * plot_func_exit(struct plot_env *env, struct plot_value **args, int argc){
-    if( argc == 1){
+    /* return required to keep compiler happy */
+    return plot_func_emergency_exit(env, args, argc);
+}
+
+/* (emergency-exit obj)
+ * emergency-exit will immediately exit the program without running any dynamic-unwind
+ *
+ * exits with success for the following calls:
+ *      (emergency-exit)
+ *      (emergency-exit 0)
+ *      (emergency-exit #t)
+ *
+ * otherwise exits failure
+ *
+ */
+struct plot_value * plot_func_emergency_exit(struct plot_env *env, struct plot_value **args, int argc){
+    if( argc == 0 ){
+        exit(0);
+    }
+    if( argc == 1 ){
         if( args[0]->type == plot_type_boolean && args[0]->u.boolean.val == true ){
             exit(0);
         }
