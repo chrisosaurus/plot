@@ -21,6 +21,7 @@ a brief summary:
 * if forms
 * lambda form
 * set! form
+* begin form
 * string literals
 * positive integer literals
 * boolean literals

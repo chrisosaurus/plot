@@ -231,6 +231,14 @@
   (pass "twenty one")
   (fail "twenty once"))
 
+;; testing begin form
+(define twenty-two #f)
+(if (begin
+      (set! twenty-two #t)
+      twenty-two)
+  (pass "twenty two")
+  (fail "twenty two"))
+
 
 ;; tests completed, print results
 (println "basic test results")

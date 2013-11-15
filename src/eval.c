@@ -258,6 +258,15 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
     plot_hash_symbol(&(form->u.symbol));
     switch( form->u.symbol.hash ){
 
+        case 6416384521: /* begin */
+            /* evaluate each sub expression in the current env */
+            for( i=1; i<sexpr->nchildren; ++i ){
+                value = plot_eval_expr(env, &(sexpr->subforms[i]));
+            }
+            /* return value of final expression */
+            return value;
+            break;
+
         case 540325222373: /* define */
             /* define has 2 forms:
              * (define a <value>)

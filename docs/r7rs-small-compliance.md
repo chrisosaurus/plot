@@ -40,6 +40,13 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
 4.2.2 Binding constructs
     no derived binding construct are currently implemented.
 
+4.2.3 Sequencing
+    plot supports the second form of begin
+        `(begin <expr1> <expr2> ... )`
+
+    more thought has to be given to the first form
+        `(begin <expression or definition> ... )`
+
 4.2.5 Delayed evaluation
     the following forms should be implemented soon:
         `delay`

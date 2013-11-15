@@ -184,6 +184,7 @@ void plot_hash_symbol(plot_symbol *s){
         hash += lpow(95, i) * plot_hash_char_func( s->val[i] );
     }
 
+    //printf("hash for '%s' is '%llu'\n", s->val, hash);
     s->hash = hash;
 }
 
