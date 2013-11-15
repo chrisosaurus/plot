@@ -23,7 +23,6 @@ operations:
 forms:
 ------
 * quote
-* define function short-hand
 * begin
 * cond
 * case
@@ -104,6 +103,8 @@ bugs:
 * plot_new_string and plot_alloc_string are not really related, as the latter allocates an array and the former a value
 * need to update number.c to use plot_runtime_error system
 * plot_eval_form should only return 0 on error, otherwise it is a runtime error
+* implementation of define function shorthand is ugly
+* unit testing tools are insufficient, missed failing `or` test for quite a while
 
 Milestones:
 ===========

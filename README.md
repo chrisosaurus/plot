@@ -17,7 +17,7 @@ current state
 For an up-to-date summary or plot's implementation status see `docs/r7rs-small-compliance.md`
 
 a brief summary:
-* define form (value only, no lambda shorthand)
+* define form
 * if forms
 * lambda form
 * set! form
@@ -35,10 +35,9 @@ a brief summary:
 
 example: (see `make example`)
 
-    (define println
-      (lambda (v)
-        (display v)
-        (newline)))
+    (define (println v)
+      (display v)
+      (newline))
 
     (define adder
       (lambda (b)

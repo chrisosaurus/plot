@@ -56,16 +56,14 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
 
 5.3 Variable definitions
     `define` form is implemented.
-    NB: define form does not currently allow for function short-hand
 
-    this is valid:
+    `define` has 2 different forms:
         (define a
-            (lambda ()
-                1))
+            (lambda (x)
+                (+ x 1)))
 
-    this is not yet valid:
-        (define (a)
-            1)
+        (define (a x)
+            (+ x 1))
 
 5.4 Syntax definitions
     plot does not yet have syntax definitions.

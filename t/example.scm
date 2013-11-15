@@ -1,7 +1,6 @@
-(define println
-  (lambda (v)
-    (display v)
-    (newline)))
+(define (println v)
+  (display v)
+  (newline))
 
 (define adder
   (lambda (b)
