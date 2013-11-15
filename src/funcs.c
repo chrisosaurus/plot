@@ -286,7 +286,7 @@ struct plot_value * plot_func_or(struct plot_env *env, struct plot_value **args,
 
     for( i=0; i<argc; ++i ){
         if( plot_truthy(args[i]) ){
-            return plot_new_boolean(false);
+            return plot_new_boolean(true);
         }
     }
 
