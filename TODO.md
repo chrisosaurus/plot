@@ -23,7 +23,6 @@ operations:
 forms:
 ------
 * quote
-* begin
 * cond
 * case
 * case-lambda
@@ -59,7 +58,6 @@ parse:
 eval:
 -----
 * eval documentation
-* add some heavier unit testing coverage for eval (test each individual func)
 
 read:
 -----
@@ -78,28 +76,21 @@ features:
 * want a way of printing literal syntax (without attempting to eval)
 * begin work on library system
 * allow c functions ('builtin's) to be syntactic
+* migrate form logic out of eval_form and into syntactic builtins, this will also allow them to be overwritten as per the spec.
 
 runtime:
 ---------
 * eval should keep a stack of the internal functions it uses (for internal debugging)
 * eval should keep a stack of the programs functions (for program debugging)
-* need an init routine to create initial env (including loading all built-in functions in)
-* devise error handling strategy - should functions call plot_handle_error or return plot_values (or type plot_error) ?
-* think a bit more about memory allocation and ref counting / garbage collection
-* improve plot_error
-* use plot_error
 * tail call optimisation
-* garbage collector
 
 bugs:
 -----
 * parsing of # is silly
-* remove value-creation logic from parse and unit tests, instead expose functions that encapsulate it
 * string do not currently support escaping
 * everything parse
 * escaping in strings will copy over the escape character and include it in size/len
 * plot runtime errors may leak previously allocated values, need to decr before throwing error.
-* break integration.scm tests into separate tests for each section
 * plot_new_string and plot_alloc_string are not really related, as the latter allocates an array and the former a value
 * need to update number.c to use plot_runtime_error system
 * plot_eval_form should only return 0 on error, otherwise it is a runtime error
