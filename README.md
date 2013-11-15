@@ -1,6 +1,6 @@
 plot
 ====
-Plot is a toy interpreter for the r5rs scheme standard.
+Plot is a toy interpreter for the r7rs-small (WG1) scheme standard.
 
 The goal of plot is to write a simple language and then spend some time writing applications in it.
 I am writing plot mostly for the sake of playing around with implementing a language.
@@ -14,7 +14,7 @@ plot - Noun; A plan made in secret by a group of people to do something illegal 
 
 current state
 -------------
-For an up-to-date summary or plot's implementation status see `docs/r5rs.md`
+For an up-to-date summary or plot's implementation status see `docs/r7rs-small-compliance.md`
 
 a brief summary:
 * define form (value only, no lambda shorthand)
@@ -61,7 +61,7 @@ example: (see `make example`)
 
 planned work
 ------------
-The current plan is to aim for r5rs compliance with an eye towards r7rs-small.
+Plot is aiming for r7rs-small (WG1) compliance.
 
 dependencies
 ------------

@@ -1,6 +1,7 @@
 TODO(s):
 =====
-witch target spec to r7rs, update references to r5rs to r7rs equiv.
+
+Update code comments to reference r7rs.
 
 operations:
 -----------
@@ -27,6 +28,8 @@ forms:
 * cond
 * case
 * case-lambda
+* delay
+* force
 
 garbage collection:
 -------------------
