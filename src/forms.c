@@ -18,11 +18,16 @@
  */
 struct plot_value * plot_form_begin(struct plot_env *env, struct plot_sexpr *sexpr){
     int i;
-    plot_value *value;
+    plot_value *value = 0;
 
     for( i=0; i< sexpr->nchildren; ++i ){
         value = plot_eval_expr(env, &(sexpr->subforms[i]));
     }
+
+    if( ! value ){
+        value = plot_new_unspecified();
+    }
+
     return value;
 }
 
