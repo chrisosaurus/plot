@@ -119,6 +119,17 @@ plot_value * plot_new_builtin( struct plot_value * (*func)(struct plot_env *env,
     return res;
 }
 
+plot_value * plot_new_syntactic( struct plot_value * (*func)(struct plot_env *env, struct plot_sexpr *sexpr) ){
+    plot_value *res;
+    res = plot_alloc_value();
+
+    res->type = plot_type_syntactic;
+    res->u.syntactic.func = func;
+
+    return res;
+}
+
+
 /* raise l to power i
  */
 static unsigned long long lpow(unsigned long long l, int i){

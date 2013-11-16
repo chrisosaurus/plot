@@ -48,6 +48,9 @@ static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
         case plot_type_builtin:
             puts("Unable to print a builtin function at this point in time");
             break;
+        case plot_type_syntactic:
+            puts("Unable to print a syntactic form at this point in time");
+            break;
         case plot_type_error:
             return plot_runtime_error(plot_error_internal, "trying to print an error value", "plot_func_display_value");
             break;

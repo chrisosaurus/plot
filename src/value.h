@@ -6,8 +6,12 @@
 typedef enum plot_value_type{
     plot_type_number,
     plot_type_symbol,
+    /* a function written in plot */
     plot_type_lambda,
+    /* a function written in c */
     plot_type_builtin,
+    /* a syntactic form written in c */
+    plot_type_syntactic,
     plot_type_error,
     plot_type_string,
     plot_type_boolean,
@@ -118,6 +122,14 @@ typedef struct plot_builtin {
     struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc);
 } plot_builtin;
 
+typedef struct plot_syntactic {
+    /* env to evaluate within
+     * args is an array of plot_expr *(s) to apply function to
+     * argc is the number of them
+     */
+    struct plot_value * (*func)(struct plot_env *env, struct plot_sexpr *sexpr);
+} plot_syntactic;
+
 #include "plot.h" /* needed for plot_gc */
 
 typedef struct plot_value {
@@ -128,6 +140,7 @@ typedef struct plot_value {
         plot_symbol    symbol;
         plot_lambda    lambda;
         plot_builtin   builtin;
+        plot_syntactic syntactic;
         plot_error     error;
         plot_string    string;
         plot_boolean   boolean;
@@ -152,6 +165,7 @@ plot_value * plot_new_pair(struct plot_value *car, struct plot_value *cdr);
 plot_value * plot_new_error(plot_error_type type, const char *msg, const char *location);
 plot_value * plot_new_lambda(struct plot_env *env, struct plot_sexpr *body);
 plot_value * plot_new_builtin( struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc) );
+plot_value * plot_new_syntactic( struct plot_value * (*func)(struct plot_env *env, struct plot_sexpr *sexpr) );
 
 
 /* function to hash symbols

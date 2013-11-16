@@ -75,8 +75,6 @@ features:
 * variable arguments
 * want a way of printing literal syntax (without attempting to eval)
 * begin work on library system
-* allow c functions ('builtin's) to be syntactic
-* migrate form logic out of eval_form and into syntactic builtins, this will also allow them to be overwritten as per the spec.
 
 runtime:
 ---------
