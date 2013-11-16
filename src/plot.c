@@ -11,7 +11,7 @@
 
 #define LENGTH(x) (sizeof x / sizeof x[0])
 
-#ifndef PLOT_TESTS
+#ifdef PLOT_DEBUG
 #define GC_STATS 1
 #endif
 

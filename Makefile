@@ -4,34 +4,33 @@ include config.mk
 
 SRC = src/read.c src/parse.c src/eval.c src/hash.c src/env.c src/funcs.c src/plot.c src/character.c src/string.c src/number.c src/pair.c src/value.c
 OBJ = ${SRC:.c=.o}
-TOBJ = ${SRC:.c=.to}
 
-all: plot
+EXTRAFLAGS =
+
+# default to including debug output
+all: debug
 
 %.o: %.c
 	@echo COMPILING CC $<
-	@${CC} -g -c ${CFLAGS} $< -o $@
-
-# some features of plot should be off during testing
-# e.g. output of `plot GC stats` during plot_cleanup
-%.to: %.c
-	@echo COMPILING CC $<
-	@${CC} -g -c ${CFLAGS} $< -DPLOT_TESTS -o $@
+	@${CC} -g -c ${CFLAGS} $< ${EXTRAFLAGS} -o $@
 
 plot: src/bindings.h ${OBJ}
 	@echo more compiling CC -o $@
-	@${CC} src/main.c -o $@ ${LDFLAGS} ${OBJ}
+	@${CC} src/main.c -o $@ ${LDFLAGS} -DPLOT_DEBUG ${OBJ}
 	@make -s cleanobj
+
+# build plot with debug output
+debug:
+	@make -s EXTRAFLAGS="-DPLOT_DEBUG" plot
 
 # make with clang to produce different errors, includes testing code
 clang: src/bindings.h
 	clang ${SRC} t/test_main.c -lcheck -Wall -Wextra
 
-# harsh version for checking sanity of test code
-compile_tests: clean src/bindings.h ${TOBJ}
+compile_tests: clean src/bindings.h ${OBJ}
 	@echo test_parse CC -o tests/test_llist.c
 	@# pthread, rt and m are all needed by certain versions of libcheck 
-	@${CC} -g -o run_tests t/test_main.c ${TOBJ} ${TEST_CFLAGS} -lpthread -lrt -lm -lcheck
+	@${CC} -g -o run_tests t/test_main.c ${OBJ} ${TEST_CFLAGS} -lpthread -lrt -lm -lcheck
 
 # run tests
 run_tests: compile_tests plot
@@ -77,4 +76,4 @@ clean: cleanobj
 src/bindings.h:
 	./build/generate_bindings.pl
 
-.PHONY: all clean cleanobj test tests example integration clang test_soft tests_soft
+.PHONY: all clean cleanobj test tests example integration clang test_soft tests_soft debug
