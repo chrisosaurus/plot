@@ -119,20 +119,22 @@ int plot_init(void){
         return 0;
     }
 
-    /* global bindings */
-    /* FIXME
-     *  define-library
-     *  import
-     *  export - only exists within define-library
-     *
-     * exported by (plot internal)
-     *  plot-bind
+    /* library form bindings
+     * e.g.:
+     *      define-library
+     *      import
+     *      export
      */
+    for( i=0; i<LENGTH(library_forms); ++i ){
+        if( ! plot_env_define( plot_instance->env, &(library_forms[i].sym), &(library_forms[i].func) ) ){
+            printf("error in plot_init defining library form symbol '%s'\n", library_forms[i].sym.val);
+        }
+    }
 
     /* internal bindings */
     for( i=0; i<LENGTH(bindings); ++i ){
         if( ! plot_env_define( plot_instance->bindings, &(bindings[i].sym), &(bindings[i].func) ) ){
-            printf("error in plot_init defining symbol '%s'\n", bindings[i].sym.val);
+            printf("error in plot_init defining internal binding symbol '%s'\n", bindings[i].sym.val);
         }
     }
 

@@ -33,6 +33,10 @@ use File::Slurp;
 #   'plot_form_if'
 #   'struct plot_expr **args'
 #
+#
+# the first line of a comment may also end with the string " - library form" to indicate the following
+#   definition should be loaded into the initial env
+#
 # using this information we are able to generate the list of bound functions pre-runtime
 
 # headers to interrogate
@@ -53,7 +57,6 @@ struct plot_binding {
 /* Plot Syntactic */
 #define PS(str, len, func) {{str, len,  len, 0}, {{-1, 0}, plot_type_syntactic, {.syntactic = {func}}}}
 
-struct plot_binding bindings[] = {
 ";
 
 
@@ -63,12 +66,12 @@ print $output join "\n", map {"#include \"$_\""} @headers;
 
 print $output "\n", $boilder_plate;
 
-my @bindings;
+my (@bindings, @library_forms);
 
 for my $header (@headers){
     # NB: we prepend 'src/'
     my $contents = read_file "src/$header"; # File::Slurp read_file
-    while ($contents =~ m#^\/ \* \s+ \( (?<scheme> \S+ ) .+ \s+
+    while ($contents =~ m#^\/ \* \s+ \( (?<scheme> \S+ ) [^\)]* \) \s* (?<library_form> \- \s* library \s* form )? \s+
                       (?: ^ \s* \* [^\/]* \s+ )*
                       (?: ^ \s* \* \/ \s* ) \s+
                           ^ struct \s plot_value \s* \* \s* (?<cfunc> [^\(]+ ) \( \s* struct \s plot_env \s* \* \s* env, \s* struct \s plot_(?<type> sexpr | value) .*   $ #xmg){
@@ -77,16 +80,31 @@ for my $header (@headers){
 
         if( $+{type} eq 'sexpr' ){
             #syntactic form
-            push @bindings, "\tPS(\"$+{scheme}\", $len, $+{cfunc})";
+            if( exists $+{library_form} ){
+                push @library_forms, "\tPS(\"$+{scheme}\", $len, $+{cfunc})";
+            } else {
+                push @bindings, "\tPS(\"$+{scheme}\", $len, $+{cfunc})";
+            }
         } else {
             #builtin
-            push @bindings, "\tPB(\"$+{scheme}\", $len, $+{cfunc})";
+            if( exists $+{library_form} ){
+                push @library_forms, "\tPB(\"$+{scheme}\", $len, $+{cfunc})";
+            } else {
+                push @bindings, "\tPB(\"$+{scheme}\", $len, $+{cfunc})";
+            }
         }
     }
 }
 
-print $output join ",\n", @bindings;
+# print initial bound set ('library forms')
+print $output "struct plot_binding library_forms[] = {\n";
+print $output join ",\n", @library_forms;
+# close library_forms[]
+print $output "\n};\n\n";
 
+# print other bindings
+print $output "struct plot_binding bindings[] = {\n";
+print $output join ",\n", @bindings;
 # close bindings[]
 print $output "\n};\n\n";
 
