@@ -14,6 +14,37 @@
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
+/* (define-library (library name) body...)
+ * define a library
+ */
+struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_sexpr *sexpr){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_define_library");
+}
+
+/* (import (library name) ...)
+ * import some libraries
+ */
+struct plot_value * plot_form_import(struct plot_env *env, struct plot_sexpr *sexpr){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_import");
+}
+
+/* (export identifier ... )
+ * export some identifiers
+ */
+struct plot_value * plot_form_export(struct plot_env *env, struct plot_sexpr *sexpr){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_export");
+}
+
+/* (plot-bind identifier ... )
+ * looks through plot's internal bindings and binds
+ * identifiers to current scope
+ *
+ * eventually exported by (plot internal)
+ */
+struct plot_value * plot_form_plot_bind(struct plot_env *env, struct plot_sexpr *sexpr){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_plot_bind");
+}
+
 /* (begin body...)
  */
 struct plot_value * plot_form_begin(struct plot_env *env, struct plot_sexpr *sexpr){

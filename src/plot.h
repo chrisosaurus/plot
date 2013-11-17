@@ -17,10 +17,16 @@
 int plot_init(void);
 
 struct plot_env;
+
 /* return root env
  * root env represents 'global' scope
  */
 struct plot_env * plot_get_global_env(void);
+
+/* return internal-bindings env
+ * used by plot_form_plot_bind
+ */
+struct plot_env * plot_get_internal_bindings(void);
 
 /* plot_cleanup cleans up internal state
  * must be last method called

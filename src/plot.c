@@ -146,6 +146,13 @@ struct plot_env * plot_get_global_env(void){
     return plot_instance->env;
 }
 
+struct plot_env * plot_get_internal_bindings(void){
+    if( ! plot_instance )
+        return 0;
+
+    return plot_instance->bindings;
+}
+
 void plot_cleanup(){
 #if GC_STATS
 
