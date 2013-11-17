@@ -38,6 +38,9 @@ static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
         case plot_type_character:
             printf("%c", val->u.character.val);
             break;
+        case plot_type_null:
+            fputs("()", stdout);
+            break;
         case plot_type_pair:
             fputs("(", stdout);
             plot_func_display_value(env, val->u.pair.car);

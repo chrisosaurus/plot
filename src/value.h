@@ -17,6 +17,8 @@ typedef enum plot_value_type{
     plot_type_boolean,
     plot_type_character,
     plot_type_pair,
+    /* null does NOT have a matching union member */
+    plot_type_null,
     /* this type represents expressions that do not yield a value
      * '(if #f "hello")' => unspecified
      * '(define a "world")' => unspecified

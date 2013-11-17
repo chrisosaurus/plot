@@ -112,7 +112,11 @@ struct plot_value * plot_func_pair_set_cdr(struct plot_env *env, struct plot_val
  * return #t iff obj is the empty list, otherwise #f
  */
 struct plot_value * plot_func_pair_null_test(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_null_test");
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 arg", "plot_func_pair_null_test");
+    }
+
+    return plot_new_boolean( args[0]->type == plot_type_null );
 }
 
 /* (list? obj)
