@@ -153,6 +153,7 @@ void plot_cleanup(){
     printf("###### plot hash stats #####\n");
     printf("\thash_comp '%d'\n", plot_instance->num_hash_comp);
     printf("\thash_get '%d'\n", plot_instance->num_hash_get);
+    printf("\tcomp/get '%f'\n", (double) plot_instance->num_hash_comp /  (double) plot_instance->num_hash_get);
     printf("\tenv_get '%d'\n", plot_instance->num_env_get);
     printf("\tenv_loop '%d'\n", plot_instance->num_env_loop);
     printf("\n");
