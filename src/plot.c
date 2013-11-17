@@ -11,10 +11,6 @@
 
 #define LENGTH(x) (sizeof x / sizeof x[0])
 
-#ifdef PLOT_DEBUG
-#define GC_STATS 1
-#endif
-
 #define DEBUG 0
 
 typedef struct plot {
