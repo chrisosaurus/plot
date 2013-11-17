@@ -16,7 +16,13 @@
 typedef struct plot {
     /* error value returned by plot_error */
     struct plot_value error;
+    /* default global env */
     struct plot_env *env;
+    /* known internal definitions
+     * possibly exposed to userland
+     * via plot-bind
+     */
+    struct plot_env *bindings;
 
     /**** GC arena ****/
     /* array of malloc'd values */
@@ -106,8 +112,26 @@ int plot_init(void){
         return 0;
     }
 
+    plot_instance->bindings = plot_alloc_env(0);
+    if( ! plot_instance->env ){
+        puts("call to plot_env_init for internal bindings failed");
+        plot_cleanup();
+        return 0;
+    }
+
+    /* global bindings */
+    /* FIXME
+     *  define-library
+     *  import
+     *  export - only exists within define-library
+     *
+     * exported by (plot internal)
+     *  plot-bind
+     */
+
+    /* internal bindings */
     for( i=0; i<LENGTH(bindings); ++i ){
-        if( ! plot_env_define( plot_instance->env, &(bindings[i].sym), &(bindings[i].func) ) ){
+        if( ! plot_env_define( plot_instance->bindings, &(bindings[i].sym), &(bindings[i].func) ) ){
             printf("error in plot_init defining symbol '%s'\n", bindings[i].sym.val);
         }
     }
