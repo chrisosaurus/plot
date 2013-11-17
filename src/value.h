@@ -153,6 +153,11 @@ typedef struct plot_value {
     } u;
 } plot_value;
 
+/* plot_value deconstructor
+ * correctly decr any values held within value
+ */
+void plot_value_decons(plot_value *value);
+
 /* functions to allocate and setup a new plot_value
  */
 plot_value * plot_new_unspecified(void);

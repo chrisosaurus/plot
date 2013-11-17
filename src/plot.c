@@ -283,10 +283,7 @@ void plot_value_decr(struct plot_value *p){
             //fprintf(stderr, "RECLAIMING\n"); // 2692537
             p->gc.next = (struct plot_gc *) plot_instance->value_reclaimed;
             plot_instance->value_reclaimed = p;
-            /* if plot_value is a lambda we must also decr the env */
-            if( p->type == plot_type_lambda ){
-                plot_env_decr(p->u.lambda.env);
-            }
+            plot_value_decons(p);
             p->type = plot_type_reclaimed; /* FIXME useful for testing */
         #if DEBUG
         } else {
