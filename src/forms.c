@@ -275,7 +275,21 @@ struct plot_value * plot_form_set(struct plot_env *env, struct plot_sexpr *sexpr
 }
 
 struct plot_value * plot_form_quote(struct plot_env *env, struct plot_sexpr *sexpr){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_form_quote");
+    switch( sexpr->subforms[1].type ){
+        case plot_expr_value:
+            return sexpr->subforms[1].u.value;
+            break;
+        case plot_expr_sexpr:
+            /* FIXME
+             * '(a b c) => (list 'a 'b 'c)
+             */
+            return plot_runtime_error(plot_error_unimplemented, "quoted s expressions are not yet implemented", "plot_form_quote");
+            break;
+        default:
+            break;
+    }
+    plot_fatal_error("Impossible expression type given to plot_form_quote");
+    return 0;
 }
 
 

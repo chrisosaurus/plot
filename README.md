@@ -23,6 +23,7 @@ a brief summary:
 * set! form
 * begin form
 * string literals
+* quote form (pairs and list are not yet supported)
 * positive integer literals
 * boolean literals
 * char literals

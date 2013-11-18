@@ -7,13 +7,18 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     tail recursion is not implemented but is planned.
 
 4.1.2 Literal expressions
-    literals are implemented for all implemented types:
+    quoting is implemented, both (quote datum) and 'datum
+
+    literals are implemented for the following types:
         character
         string
         boolean
         number (exact positive integer, no negative literals yet)
-        symbol (although there is not yet quoting)
+        symbol
         function (lambda form)
+
+    literals for the following types are pending implementation:
+        pairs and lists
 
 4.1.4 Procedures
     `lambda` form is implemented
@@ -116,8 +121,8 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     `not` is implemented.
 
 6.4 Pairs and lists
-    pairs and lists are implemented.
-    plot currently lacks quoting, so literal pairs and lists are not yet possible.
+    pairs and lists are implemented,
+    pair and list literals are pending implementation.
 
     implemented procedures from this section:
         `pair?`
@@ -126,10 +131,10 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `cdr`
         `set-car!`
         `set-cdr!`
-
-    pending implementation:
         `list`
         `null?`
+
+    pending implementation:
         `list?`
         `length`
         `append`
@@ -137,8 +142,7 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
 
 6.5 Symbols
     symbols are implemented along with the testing procedures `symbol?`,
-    NB: however quoting is not yet implemented and thus symbols
-    are currently always resolved via the env so `symbol?` can never return true.
+    literal symbols are supported via quoting `'symbol`.
 
 6.6 Characters
     The subset of this section that is in r5rs is implemented.
