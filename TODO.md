@@ -21,7 +21,6 @@ operations:
 
 forms:
 ------
-* quote
 * cond
 * case
 * case-lambda

@@ -338,12 +338,40 @@ static plot_expr * plot_parse_expr_number(plot_expr *expr, const char *source, s
  * expects quote to be at source[*upto]
  */
 static plot_expr * plot_parse_expr_quote(plot_expr *expr, const char *source, size_t *upto){
+    int max_children = 2;
+    plot_expr *children = calloc(max_children, sizeof(*children)); /* FIXME fixed size */
+
 #if DEBUG
     puts("plot_parse_expr_quote: start");
 #endif
 
-    plot_fatal_error("plot_parse_expr_quote: Unimplemented");
-    return 0; /* FIXME */
+    /* FIXME check if quote
+     * consume quote
+     */
+    ++*upto;
+
+    /* return an s-expr of the form
+     * (quote <data)
+     */
+    expr->type = plot_expr_sexpr;
+
+    expr->u.sexpr.subforms = children;
+    expr->u.sexpr.nchildren = 2;
+    expr->u.sexpr.subforms = children;
+
+    expr->u.sexpr.subforms[0].type = plot_expr_value;
+    expr->u.sexpr.subforms[0].u.value = plot_new_symbol("quote", 6);
+
+    if( ! plot_parse_expr(&(expr->u.sexpr.subforms[1]), source, upto) ){
+        puts("\t\t Error in plot_parse_expr_quote when calling plot_parse_expr, returning\n");
+        return 0;
+    }
+
+#if DEBUG
+    puts("plot_parse_expr_quote: fin");
+#endif
+
+    return expr;
 }
 
 /* plot_parse_expr will consume a token upto a separator (but will not consume the separator)

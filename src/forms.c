@@ -274,5 +274,8 @@ struct plot_value * plot_form_set(struct plot_env *env, struct plot_sexpr *sexpr
     return plot_new_unspecified();
 }
 
+struct plot_value * plot_form_quote(struct plot_env *env, struct plot_sexpr *sexpr){
+    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_form_quote");
+}
 
 
