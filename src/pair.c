@@ -132,7 +132,16 @@ struct plot_value * plot_func_pair_list_test(struct plot_env *env, struct plot_v
  * terminated by empty list
  */
 struct plot_value * plot_func_pair_list(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_list");
+    int i;
+    plot_value *current;
+
+    current = plot_new_null();
+
+    for( i=argc; i>0; --i ){
+        current = plot_new_pair(args[i - 1], current);
+    }
+
+    return current;
 }
 
 /* (length list)

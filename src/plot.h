@@ -107,6 +107,7 @@ struct plot_hash_entry * plot_alloc_hash_entry(void);
 char * plot_alloc_string(int len);
 
 struct plot_value * plot_get_unspecified_constant(void);
+struct plot_value * plot_get_null_constant(void);
 
 void plot_stats_hash_get(void);
 void plot_stats_hash_comp(void);

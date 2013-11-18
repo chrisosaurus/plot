@@ -43,6 +43,15 @@
     (fail "two case 2"))
   (fail "two case 1"))
 
+;; basic (list) testing
+(if (null? (list))
+  (if (null? (cdr (list 1)))
+    (if (null? (cdr (cdr (list 1 2))))
+      (pass "three")
+      (fail "three case 3"))
+    (fail "three case 2"))
+  (fail "three case 1"))
+
 ;; tests completed, print results
 (println "pair test results")
 (display tests-passed)

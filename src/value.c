@@ -97,6 +97,10 @@ plot_value * plot_new_pair(struct plot_value *car, struct plot_value *cdr){
     return res;
 }
 
+plot_value * plot_new_null(void){
+    return plot_get_null_constant();
+}
+
 plot_value * plot_new_error(plot_error_type type, const char *msg, const char *location){
     plot_value *res;
     res = plot_alloc_value();
