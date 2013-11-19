@@ -11,13 +11,10 @@ operations:
 * string-ci>=?
 * string->list
 * list->string
-* list
 * list?
 * length
 * append
 * reverse
-* eq?
-* eqv?
 
 forms:
 ------
