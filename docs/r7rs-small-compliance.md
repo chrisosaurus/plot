@@ -84,9 +84,10 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     plot has short-term plans to include library support.
 
 6.1 Equivalence predicates
-    `eq?` is not implemented.
-    `eqv?` is not implemented.
-    `equal?` is implemented.
+    `eq?`, `eqv?` and `equal?` are implemented.
+    All 3 are currently the same function and all test for 'deep equality' (`equal?`).
+    This may be changed later to be more inline with the spec, but in it's current form
+    this is (as far as I know) standard-compliant.
 
 6.2 Numbers
     exact integers are implemented although

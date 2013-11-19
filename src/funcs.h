@@ -23,9 +23,22 @@ struct plot_value * plot_func_newline(struct plot_env *env, struct plot_value **
 
 /********* equivalent predicates *********/
 /* (equal? obj1 obj2)
+ * in plot equal?, eqv? and eq? are equivalent.
  * FIXME need to generalise
  */
 struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (eqv? obj1 obj2)
+ * in plot equal?, eqv? and eq? are equivalent.
+ * FIXME need to generalise
+ */
+struct plot_value * plot_func_eqv_test(struct plot_env *env, struct plot_value **args, int argc);
+
+/* (eq? obj1 obj2)
+ * in plot equal?, eqv? and eq? are equivalent.
+ * FIXME need to generalise
+ */
+struct plot_value * plot_func_eq_test(struct plot_env *env, struct plot_value **args, int argc);
 
 /********* value testing functions ********/
 

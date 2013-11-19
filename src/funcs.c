@@ -108,6 +108,7 @@ plot_value * plot_func_newline(plot_env *env, plot_value **args, int argc){
 /********* equivalent predicates *********/
 
 /* (equal? obj1 obj2)
+ * in plot equal?, eqv? and eq? are equivalent.
  * FIXME should generalise
  */
 struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value **args, int argc){
@@ -174,6 +175,23 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
     plot_fatal_error("plot_func_equal: out of switch, impossible args[0]->type");
     return 0; /* IMPOSSIBLE as plot_fatal_error does not return */
 }
+
+/* (eqv? obj1 obj2)
+ * in plot equal?, eqv? and eq? are equivalent.
+ * FIXME need to generalise
+ */
+struct plot_value * plot_func_eqv_test(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_func_equal_test(env, args, argc);
+}
+
+/* (eq? obj1 obj2)
+ * in plot equal?, eqv? and eq? are equivalent.
+ * FIXME need to generalise
+ */
+struct plot_value * plot_func_eq_test(struct plot_env *env, struct plot_value **args, int argc){
+    return plot_func_equal_test(env, args, argc);
+}
+
 
 /********* value testing functions ********/
 
