@@ -239,6 +239,18 @@
   (pass "twenty two")
   (fail "twenty two"))
 
+;; testing new cases for equality predicates
+(if (eq? (list) (list))
+  (if (eq? lambda lambda)
+    (if (eqv? define define)
+      (if (not (eq? define lambda))
+        (if (not (eqv? define set!))
+          (pass "twenty three")
+          (fail "twenty three case 5"))
+        (fail "twenty three case 4"))
+      (fail "twenty three case 3"))
+    (fail "twenty three case 2"))
+  (fail "twenty three case 1"))
 
 ;; tests completed, print results
 (println "basic test results")

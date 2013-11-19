@@ -89,6 +89,9 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     This may be changed later to be more inline with the spec, but in it's current form
     this is (as far as I know) standard-compliant.
 
+    All 3 forms should work for all currently implemented types except for 
+    pairs and lists.
+
 6.2 Numbers
     exact integers are implemented although
     there is not yet support for literal negative integers
@@ -124,6 +127,7 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
 6.4 Pairs and lists
     pairs and lists are implemented,
     pair and list literals are pending implementation.
+    pair and list equality is currently not implemented (eq family will throw a plot_runtime_error).
 
     implemented procedures from this section:
         `pair?`

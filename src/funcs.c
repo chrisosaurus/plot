@@ -152,6 +152,16 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
         case plot_type_builtin:
             return plot_new_boolean( args[0]->u.builtin.func == args[1]->u.builtin.func );
             break;
+        case plot_type_syntactic:
+            return plot_new_boolean( args[0]->u.syntactic.func == args[1]->u.syntactic.func );
+            break;
+        case plot_type_null:
+            /* both arguments are of the same type, '() = '() */
+            return plot_new_boolean(true);
+            break;
+        case plot_type_pair:
+            return plot_runtime_error(plot_error_unimplemented, "pair and list equality is not yet implemented", "plot_func_equal_test");
+            break;
         case plot_type_error:
             plot_fatal_error("plot_func_equal: saw plot_type_error");
             break;
