@@ -21,6 +21,9 @@ struct plot_value * plot_form_begin(struct plot_env *env, struct plot_sexpr *sex
     plot_value *value = 0;
 
     for( i=0; i< sexpr->nchildren; ++i ){
+        if( i > 0 ){
+            plot_value_decr(value);
+        }
         value = plot_eval_expr(env, &(sexpr->subforms[i]));
     }
 

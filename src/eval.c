@@ -330,6 +330,9 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
              * return value of final expr
              */
             for( i=2; i < func->u.lambda.body->nchildren; ++i ){
+                if( i > 2 ){
+                    plot_value_decr(val);
+                }
                 val = plot_eval_expr(new_env, &(func->u.lambda.body->subforms[i]) );
                 if( val && val->type == plot_type_error ){
                     puts("plot_eval_form (lambda body)");
