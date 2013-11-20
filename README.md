@@ -34,6 +34,7 @@ a brief summary:
 * comments (`;`)
 * type testing functions: `boolean?`, `string?`, `number?`, `symbol?`, `procedure?`, and `char?`
 * garbage collection of runtime values (`value`, `env` and `hash_entry`)
+* `delay` and `force` for lazyness
 
 example: (see `make example`)
 

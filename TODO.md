@@ -29,8 +29,6 @@ forms:
 * cond
 * case
 * case-lambda
-* delay
-* force
 
 garbage collection:
 -------------------

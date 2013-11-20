@@ -381,4 +381,26 @@ struct plot_value * plot_func_emergency_exit(struct plot_env *env, struct plot_v
     exit(1);
 }
 
+/* (force promise)
+ */
+struct plot_value * plot_func_force(struct plot_env *env, struct plot_value **args, int argc){
+    plot_value *val;
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_force");
+    }
+
+    val = args[0];
+
+    if( val->type != plot_type_promise ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_promise", "plot_func_force");
+    }
+
+    if( ! val->u.promise.value ){
+        val->u.promise.value = plot_eval_expr(env, val->u.promise.expr);
+        plot_value_incr(val->u.promise.value);
+    }
+
+    return val->u.promise.value;
+}
+
 

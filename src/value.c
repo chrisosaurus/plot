@@ -113,6 +113,26 @@ plot_value * plot_new_error(plot_error_type type, const char *msg, const char *l
     return res;
 }
 
+plot_value * plot_new_promise(struct plot_env *env, struct plot_expr *expr){
+    plot_value *res;
+    res = plot_alloc_value();
+
+    res->type = plot_type_promise;
+    res->u.promise.env = env;
+
+    /* expr is only evaluated once
+     */
+    res->u.promise.expr = expr;
+
+    /* value is only set once forced
+     */
+    res->u.promise.value = 0;
+
+    plot_env_incr(env);
+
+    return res;
+}
+
 plot_value * plot_new_lambda(struct plot_env *env, struct plot_sexpr *body){
     plot_value *res;
     res = plot_alloc_value();

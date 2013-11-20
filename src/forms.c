@@ -295,4 +295,17 @@ struct plot_value * plot_form_quote(struct plot_env *env, struct plot_sexpr *sex
     return 0;
 }
 
+/* (delay expr)
+ */
+struct plot_value * plot_form_delay(struct plot_env *env, struct plot_sexpr *sexpr){
+    plot_value *val;
+
+    if( sexpr->nchildren != 2 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 argument", "plot_form_delay");
+    }
+
+    val = plot_new_promise(env, &(sexpr->subforms[1]));
+    return val;
+}
+
 

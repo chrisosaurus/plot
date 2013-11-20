@@ -107,5 +107,9 @@ struct plot_value * plot_func_exit(struct plot_env *env, struct plot_value **arg
  */
 struct plot_value * plot_func_emergency_exit(struct plot_env *env, struct plot_value **args, int argc);
 
+/* (force promise)
+ */
+struct plot_value * plot_func_force(struct plot_env *env, struct plot_value **args, int argc);
+
 
 #endif

@@ -252,6 +252,23 @@
     (fail "twenty three case 2"))
   (fail "twenty three case 1"))
 
+;; delay and force
+(define twenty-four 0)
+(define twenty-four-promise (delay (set! twenty-four (+ twenty-four 1))))
+(if (not (= twenty-four 0))
+  (fail "twenty four case 1")
+  (begin
+    ;; should produce side effect of incrementing twenty-four
+    (force twenty-four-promise)
+    (if (not (= twenty-four 1))
+      (fail "twenty four case 2")
+      (begin
+        ;; should NOT produce any side effect
+        (force twenty-four-promise)
+        (if (not (= twenty-four 1))
+          (fail "twenty four case 3")
+          (pass "twenty four"))))))
+
 ;; tests completed, print results
 (println "basic test results")
 (display tests-passed)

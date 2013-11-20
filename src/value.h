@@ -17,6 +17,7 @@ typedef enum plot_value_type{
     plot_type_boolean,
     plot_type_character,
     plot_type_pair,
+    plot_type_promise,
     /* null does NOT have a matching union member */
     plot_type_null,
     /* this type represents expressions that do not yield a value
@@ -113,7 +114,7 @@ struct plot_env;
 
 typedef struct plot_lambda {
     struct plot_env *env;
-    const struct plot_sexpr *body;
+    struct plot_sexpr *body;
 } plot_lambda;
 
 typedef struct plot_builtin {
@@ -132,6 +133,17 @@ typedef struct plot_syntactic {
     struct plot_value * (*func)(struct plot_env *env, struct plot_sexpr *sexpr);
 } plot_syntactic;
 
+/* a promise is the value type returned by delay
+ * value is set IFF the body has already been evaluated
+ * the body must only be evaluated once and value must be set to the result
+ * subsequent calls return value
+ */
+typedef struct plot_promise {
+    struct plot_env *env;
+    struct plot_expr *expr;
+    struct plot_value *value;
+} plot_promise;
+
 #include "plot.h" /* needed for plot_gc */
 
 typedef struct plot_value {
@@ -140,6 +152,7 @@ typedef struct plot_value {
     union {
         plot_number    number;
         plot_symbol    symbol;
+        plot_promise   promise;
         plot_lambda    lambda;
         plot_builtin   builtin;
         plot_syntactic syntactic;
@@ -171,6 +184,7 @@ plot_value * plot_new_string(char * val, int len);
 plot_value * plot_new_pair(struct plot_value *car, struct plot_value *cdr);
 plot_value * plot_new_null(void);
 plot_value * plot_new_error(plot_error_type type, const char *msg, const char *location);
+plot_value * plot_new_promise(struct plot_env *env, struct plot_expr *expr);
 plot_value * plot_new_lambda(struct plot_env *env, struct plot_sexpr *body);
 plot_value * plot_new_builtin( struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc) );
 plot_value * plot_new_syntactic( struct plot_value * (*func)(struct plot_env *env, struct plot_sexpr *sexpr) );
