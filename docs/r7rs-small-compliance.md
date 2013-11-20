@@ -137,10 +137,10 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `set-car!`
         `set-cdr!`
         `list`
+        `list?`
         `null?`
 
     pending implementation:
-        `list?`
         `length`
         `append`
         `reverse`

@@ -121,9 +121,21 @@ struct plot_value * plot_func_pair_null_test(struct plot_env *env, struct plot_v
 
 /* (list? obj)
  * return #t iff obj is a list, otherwise returns #f
+ * FIXME generalise
  */
 struct plot_value * plot_func_pair_list_test(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_list_test");
+    plot_value *val;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_pair_list_test");
+    }
+
+    val = args[0];
+    while( val->type == plot_type_pair ){
+        val = val->u.pair.cdr;
+    }
+
+    return plot_new_boolean(val->type == plot_type_null);
 }
 
 /* (list obj ...)

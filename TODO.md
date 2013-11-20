@@ -11,7 +11,6 @@ operations:
 * string-ci>=?
 * string->list
 * list->string
-* list?
 * length
 * append
 * reverse
@@ -90,6 +89,7 @@ bugs:
 * implementation of define function shorthand is ugly
 * parsing feedback is terrible
 * parser is non standard compliant, `(if(` should beahve.
+* plot_runtime_errors should probably use scheme name (rather than c implementation name)
 
 Milestones:
 ===========

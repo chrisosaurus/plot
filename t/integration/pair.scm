@@ -52,6 +52,15 @@
     (fail "three case 2"))
   (fail "three case 1"))
 
+;; list? testing
+(if (list? (list))
+  (if (list? (list 1 2 3))
+    (if (not (list? #t))
+      (pass "four")
+      (fail "four case 3"))
+    (fail "four case 2"))
+  (fail "four case 1"))
+
 ;; tests completed, print results
 (println "pair test results")
 (display tests-passed)
