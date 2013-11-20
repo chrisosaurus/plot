@@ -140,10 +140,10 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `list?`
         `null?`
         `length`
+        `reverse`
 
     pending implementation:
         `append`
-        `reverse`
 
 6.5 Symbols
     symbols are implemented along with the testing procedures `symbol?`,

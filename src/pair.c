@@ -188,6 +188,39 @@ struct plot_value * plot_func_pair_append(struct plot_env *env, struct plot_valu
  * return new allocated list containing all the values form list in reverse order
  */
 struct plot_value * plot_func_pair_reverse(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_reverse");
+    plot_value *val, *tmp;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_pair_reverse");
+    }
+
+    switch( args[0]->type ){
+        case plot_type_pair:
+            break;
+        case plot_type_null:
+            return plot_new_null();
+            break;
+        default:
+            return plot_runtime_error(plot_error_bad_args, "first arg was not a list", "plot_func_pair_reverse");
+            break;
+    }
+
+    tmp = args[0];
+    val = plot_new_null();
+
+    while( tmp->type == plot_type_pair ){
+        plot_value_incr(tmp->u.pair.car);
+        val = plot_new_pair(tmp->u.pair.car, val);
+        tmp = tmp->u.pair.cdr;
+    }
+
+    if( tmp->type == plot_type_null ){
+        return val;
+    } else {
+        /* FIXME need to tidy up locally
+         * created objects and ref counts
+         */
+        return plot_runtime_error(plot_error_bad_args, "obj was not a list, encountered unexpected type", "plot_func_pair_reverse");
+    }
 }
 

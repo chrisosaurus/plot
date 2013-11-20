@@ -12,7 +12,6 @@ operations:
 * string->list
 * list->string
 * append
-* reverse
 
 forms:
 ------

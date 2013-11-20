@@ -71,6 +71,15 @@
     (fail "five case 2"))
   (fail "five case 1"))
 
+(if (= 4 (car (reverse (list 1 2 3 4))))
+  (if (= 3 (length (reverse (list 1 2 3))))
+    (if (= 9 (car (cdr (reverse (list 5 6 7 8 9 10)))))
+      (pass "six")
+      (fail "six case 3"))
+    (fail "six case 2"))
+  (fail "six case 1"))
+
+
 ;; tests completed, print results
 (println "pair test results")
 (display tests-passed)
