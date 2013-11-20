@@ -158,9 +158,23 @@ struct plot_value * plot_func_pair_list(struct plot_env *env, struct plot_value 
 
 /* (length list)
  * returns list length
+ * FIXME may want to trigger an error if obj is not a list
  */
 struct plot_value * plot_func_pair_length(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_length");
+    int len = 0;
+    plot_value *val;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "pot_func_pair_length");
+    }
+
+    val = args[0];
+    while( val->type == plot_type_pair ){
+        ++len;
+        val = val->u.pair.cdr;
+    }
+
+    return plot_new_number(len);
 }
 
 /* (append list ...)

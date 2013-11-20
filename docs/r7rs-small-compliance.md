@@ -139,9 +139,9 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `list`
         `list?`
         `null?`
+        `length`
 
     pending implementation:
-        `length`
         `append`
         `reverse`
 

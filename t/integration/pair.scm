@@ -61,6 +61,16 @@
     (fail "four case 2"))
   (fail "four case 1"))
 
+;; length testing
+(if (= 7 (length (list 1 2 3 4 5 6 7)))
+  (if (= 0 (length (list)))
+    ;; FIXME this is probably incorrect, may want to throw a runtime error
+    (if (= 0 (length #t))
+      (pass "five")
+      (fail "five case 3"))
+    (fail "five case 2"))
+  (fail "five case 1"))
+
 ;; tests completed, print results
 (println "pair test results")
 (display tests-passed)

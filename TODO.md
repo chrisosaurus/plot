@@ -11,7 +11,6 @@ operations:
 * string-ci>=?
 * string->list
 * list->string
-* length
 * append
 * reverse
 
