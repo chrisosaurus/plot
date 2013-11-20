@@ -12,6 +12,17 @@ operations:
 * string->list
 * list->string
 * append
+* make-list
+* list-tail
+* list-ref
+* list-set!
+* memq
+* memv
+* member
+* assq
+* assv
+* assoc
+* list-copy
 
 forms:
 ------

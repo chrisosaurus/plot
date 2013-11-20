@@ -144,6 +144,17 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
 
     pending implementation:
         `append`
+        `make-list`
+        `list-tail`
+        `list-ref`
+        `list-set!`
+        `memq`
+        `memv`
+        `member`
+        `assq`
+        `assv`
+        `assoc`
+        `list-copy`
 
 6.5 Symbols
     symbols are implemented along with the testing procedures `symbol?`,
