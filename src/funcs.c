@@ -397,9 +397,9 @@ struct plot_value * plot_func_force(struct plot_env *env, struct plot_value **ar
 
     if( ! val->u.promise.value ){
         val->u.promise.value = plot_eval_expr(env, val->u.promise.expr);
-        plot_value_incr(val->u.promise.value);
     }
 
+    plot_value_incr(val->u.promise.value);
     return val->u.promise.value;
 }
 
