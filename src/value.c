@@ -8,11 +8,19 @@
  * correctly decr any values held within value
  */
 void plot_value_decons(plot_value *value){
-    if( value->type == plot_type_lambda ){
-        plot_env_decr(value->u.lambda.env);
-    } else if( value->type == plot_type_pair ){
-        plot_value_decr(value->u.pair.car);
-        plot_value_decr(value->u.pair.cdr);
+    switch( value->type ){
+        case plot_type_promise:
+            plot_env_decr(value->u.promise.env);
+            break;
+        case plot_type_lambda:
+            plot_env_decr(value->u.lambda.env);
+            break;
+        case plot_type_pair:
+            plot_value_decr(value->u.pair.car);
+            plot_value_decr(value->u.pair.cdr);
+            break;
+        default:
+            break;
     }
 }
 
