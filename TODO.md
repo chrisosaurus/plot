@@ -12,7 +12,6 @@ operations:
 * string->list
 * list->string
 * append
-* make-list
 * list-tail
 * list-ref
 * list-set!

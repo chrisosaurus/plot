@@ -230,7 +230,33 @@ struct plot_value * plot_func_pair_reverse(struct plot_env *env, struct plot_val
  * if `fill` is provided then each element will be set, otherwise contents are unspecified
  */
 struct plot_value * plot_func_pair_make_list(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_make_list");
+    int i;
+    plot_value *fill;
+    plot_value *list;
+
+    if( argc < 1 || argc > 2 ){
+        return plot_runtime_error(plot_error_bad_args, "expected either 1 or 2 arguments", "plot_func_pair_make_list");
+    }
+
+    if( args[0]->type != plot_type_number ){
+        return plot_runtime_error(plot_error_bad_args, "first argument is not of type plot_type_number", "plot_func_pair_make_list");
+    }
+
+    if( argc == 2 ){
+        fill = args[1];
+    } else {
+        fill = plot_new_unspecified();
+    }
+
+    list = plot_new_null();
+
+    for( i=0; i< args[0]->u.number.val; ++i ){
+        plot_value_incr(fill);
+        list = plot_new_pair(fill, list);
+    }
+
+    return list;
+
 }
 
 /* (list-tail list k)

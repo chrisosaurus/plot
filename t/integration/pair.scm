@@ -79,6 +79,12 @@
     (fail "six case 2"))
   (fail "six case 1"))
 
+(define seven (make-list 12 "hhmmmm"))
+(if (= 12 (length seven))
+  (if (string=? "hhmmmm" (car (cdr (cdr (cdr seven)))))
+    (pass "seven")
+    (fail "seven case 2"))
+  (fail "seven case 1"))
 
 ;; tests completed, print results
 (println "pair test results")
