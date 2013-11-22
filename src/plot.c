@@ -22,7 +22,7 @@ typedef struct plot {
      * possibly exposed to userland
      * via plot-bind
      */
-    struct plot_env *bindings;
+    struct plot_env *library_forms;
 
     /**** GC arena ****/
     /* array of malloc'd values */
@@ -112,29 +112,31 @@ int plot_init(void){
         return 0;
     }
 
-    plot_instance->bindings = plot_alloc_env(0);
+    plot_instance->library_forms = plot_alloc_env(0);
     if( ! plot_instance->env ){
         puts("call to plot_env_init for internal bindings failed");
         plot_cleanup();
         return 0;
     }
 
-    /* library form bindings
+    /* core form bindings
      * e.g.:
      *      define-library
      *      import
      *      export
      */
-    for( i=0; i<LENGTH(library_forms); ++i ){
-        if( ! plot_env_define( plot_instance->env, &(library_forms[i].sym), &(library_forms[i].func) ) ){
-            printf("error in plot_init defining library form symbol '%s'\n", library_forms[i].sym.val);
+    for( i=0; i<LENGTH(core_forms); ++i ){
+        if( ! plot_env_define( plot_instance->env, &(core_forms[i].sym), &(core_forms[i].func) ) ){
+            printf("error in plot_init defining core form symbol '%s'\n", core_forms[i].sym.val);
+
         }
     }
 
-    /* internal bindings */
-    for( i=0; i<LENGTH(bindings); ++i ){
-        if( ! plot_env_define( plot_instance->bindings, &(bindings[i].sym), &(bindings[i].func) ) ){
-            printf("error in plot_init defining internal binding symbol '%s'\n", bindings[i].sym.val);
+    /* library form bindings
+     */
+    for( i=0; i<LENGTH(library_forms); ++i ){
+        if( ! plot_env_define( plot_instance->library_forms, &(library_forms[i].sym), &(library_forms[i].func) ) ){
+            printf("error in plot_init defining internal binding symbol '%s'\n", library_forms[i].sym.val);
         }
     }
 
@@ -148,11 +150,11 @@ struct plot_env * plot_get_global_env(void){
     return plot_instance->env;
 }
 
-struct plot_env * plot_get_internal_bindings(void){
+struct plot_env * plot_get_library_forms(void){
     if( ! plot_instance )
         return 0;
 
-    return plot_instance->bindings;
+    return plot_instance->library_forms;
 }
 
 void plot_cleanup(){

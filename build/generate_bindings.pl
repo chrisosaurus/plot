@@ -66,46 +66,48 @@ print $output join "\n", map {"#include \"$_\""} @headers;
 
 print $output "\n", $boilder_plate;
 
-my (@bindings, @library_forms);
+my (@library_forms, @core_forms);
 
 for my $header (@headers){
     # NB: we prepend 'src/'
     my $contents = read_file "src/$header"; # File::Slurp read_file
-    while ($contents =~ m#^\/ \* \s+ \( (?<scheme> \S+ ) [^\)]* \) \s* (?<library_form> \- \s* library \s* form )? \s+
+    while ($contents =~ m#^\/ \* \s+ \( (?<scheme> \S+ ) [^\)]* \) \s* (?<args> (?:\s*\-\w+\s*)*  )? \s+
                       (?: ^ \s* \* [^\/]* \s+ )*
                       (?: ^ \s* \* \/ \s* ) \s+
-                          ^ struct \s plot_value \s* \* \s* (?<cfunc> [^\(]+ ) \( \s* struct \s plot_env \s* \* \s* env, \s* struct \s plot_(?<type> sexpr | value) .*   $ #xmg){
+                          ^ struct \s plot_value \s* \* \s* (?<cfunc> [^\(]+ ) \( .*   $ #xmg){
 
         my $len = length($+{scheme}) + 1;
 
-        if( $+{type} eq 'sexpr' ){
-            #syntactic form
-            if( exists $+{library_form} ){
-                push @library_forms, "\tPS(\"$+{scheme}\", $len, $+{cfunc})";
-            } else {
-                push @bindings, "\tPS(\"$+{scheme}\", $len, $+{cfunc})";
-            }
+        my @args = split '\s+', $+{args};
+        my $contents;
+
+        if( grep "-syntax", @args ){
+            $contents = "\tPS(\"$+{scheme}\", $len, $+{cfunc})";
         } else {
-            #builtin
-            if( exists $+{library_form} ){
-                push @library_forms, "\tPB(\"$+{scheme}\", $len, $+{cfunc})";
-            } else {
-                push @bindings, "\tPB(\"$+{scheme}\", $len, $+{cfunc})";
-            }
+            # builtin is default
+            $contents = "\tPB(\"$+{scheme}\", $len, $+{cfunc})";
         }
+
+        if( grep "-core", @args ){
+            push @core_forms, $contents;
+        } else {
+            # library form is default
+            push @library_forms, $contents;
+        }
+
     }
 }
 
 # print initial bound set ('library forms')
-print $output "struct plot_binding library_forms[] = {\n";
+print $output "struct plot_binding core_forms[] = {\n";
 # FIXME temprarily moving all bindings into library_forms (until we can actually bind libraries)
-print $output join ",\n", (@library_forms, @bindings);
+print $output join ",\n", (@core_forms, @library_forms);
 # close library_forms[]
 print $output "\n};\n\n";
 
 # print other bindings
-print $output "struct plot_binding bindings[] = {\n";
-print $output join ",\n", @bindings;
+print $output "struct plot_binding library_forms[] = {\n";
+print $output join ",\n", @library_forms;
 # close bindings[]
 print $output "\n};\n\n";
 

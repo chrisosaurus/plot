@@ -26,7 +26,7 @@ struct plot_env * plot_get_global_env(void);
 /* return internal-bindings env
  * used by plot_form_plot_bind
  */
-struct plot_env * plot_get_internal_bindings(void);
+struct plot_env * plot_get_library_forms(void);
 
 /* plot_cleanup cleans up internal state
  * must be last method called
