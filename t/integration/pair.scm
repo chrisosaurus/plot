@@ -90,6 +90,11 @@
   (pass "eight")
   (fail "eight"))
 
+(define nine (list 1 2 3 4))
+(if (equal? (car (cdr (cdr nine))) (car (cdr (cdr (list-copy nine)))))
+  (pass "nine")
+  (fail "nine"))
+
 ;; tests completed, print results
 (println "pair test results")
 (display tests-passed)

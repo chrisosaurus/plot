@@ -143,6 +143,7 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `length`
         `reverse`
         `make-list`
+        `list-copy`
 
     pending implementation:
         `append`
@@ -155,7 +156,6 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `assq`
         `assv`
         `assoc`
-        `list-copy`
 
 6.5 Symbols
     symbols are implemented along with the testing procedures `symbol?`,

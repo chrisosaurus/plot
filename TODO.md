@@ -20,7 +20,6 @@ operations:
 * assq
 * assv
 * assoc
-* list-copy
 
 forms:
 ------

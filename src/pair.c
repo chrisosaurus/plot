@@ -369,6 +369,27 @@ struct plot_value * plot_func_pair_assoc(struct plot_env *env, struct plot_value
  * error if obj is circular
  */
 struct plot_value * plot_func_pair_list_copy(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_list_copy");
+    plot_value *head, **cur;
+    plot_value *old;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_pair_list_copy");
+    }
+
+    if( args[0]->type != plot_type_pair && args[0]->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_pair or plot_type_null", "plot_func_pair_list_copy");
+    }
+
+    head = plot_new_null();
+    cur = &head;
+
+    for( old=args[0]; old->type != plot_type_null; old = old->u.pair.cdr ){
+        *cur = plot_new_pair(old->u.pair.car, 0);
+        cur = &(*cur)->u.pair.cdr;
+    }
+
+    *cur = plot_new_null();
+
+    return head;
 }
 
