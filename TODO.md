@@ -1,6 +1,8 @@
 TODO(s):
 =====
 
+Internal interface change.
+
 Update code comments to reference r7rs.
 
 operations:

@@ -14,6 +14,8 @@ plot - Noun; A plan made in secret by a group of people to do something illegal 
 
 current state
 -------------
+Plot is currently undergoing some internal interface changes so it may be unstable.
+
 For an up-to-date summary or plot's implementation status see `docs/r7rs-small-compliance.md`
 
 a brief summary:
