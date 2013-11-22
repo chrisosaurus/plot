@@ -385,6 +385,7 @@ struct plot_value * plot_func_pair_list_copy(struct plot_env *env, struct plot_v
 
     for( old=args[0]; old->type != plot_type_null; old = old->u.pair.cdr ){
         *cur = plot_new_pair(old->u.pair.car, 0);
+        plot_value_incr(old->u.pair.car);
         cur = &(*cur)->u.pair.cdr;
     }
 
