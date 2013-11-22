@@ -524,7 +524,33 @@ struct plot_value * plot_func_string_ci_greater_equal_test(struct plot_env *env,
 /* (string->list string)
  */
 struct plot_value * plot_func_string_to_list(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_to_list");
+    plot_value *head, **cur;
+    int i;
+
+    if( argc != 1 ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_string_to_list");
+    }
+
+    if( args[0]->type != plot_type_string ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_to_list");
+    }
+
+
+    head = 0;
+    cur = &head;
+
+    /* NB: -1 because len includes trailing \0
+     */
+    for(i=0; i< args[0]->u.string.len-1; ++i){
+        /* NB: temporarily inserting 0 which we override later
+         * either with another pair or a null
+         */
+        *cur = plot_new_pair( plot_new_character(args[0]->u.string.val[i]), 0 );
+        cur = &(*cur)->u.pair.cdr;
+    }
+
+    *cur = plot_new_null();
+    return head;
 }
 
 /* (list->string list)

@@ -220,6 +220,7 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `string>?`
         `string<=?`
         `string>=?`
+        `string->list`
 
     the following procedures are pending implementation
     (exposed to runtime but not yet callable):
@@ -227,7 +228,6 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `string-ci>?`
         `string-ci<=?`
         `string-ci>=?`
-        `string->list`
         `list->string`
 
 6.8 Vectors

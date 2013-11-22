@@ -9,7 +9,6 @@ operations:
 * string-ci>?
 * string-ci<=?
 * string-ci>=?
-* string->list
 * list->string
 * append
 * list-tail

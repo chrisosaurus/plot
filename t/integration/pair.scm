@@ -86,6 +86,10 @@
     (fail "seven case 2"))
   (fail "seven case 1"))
 
+(if (char=? #\o (car (cdr (cdr (cdr (cdr (string->list "hellow")))))))
+  (pass "eight")
+  (fail "eight"))
+
 ;; tests completed, print results
 (println "pair test results")
 (display tests-passed)
