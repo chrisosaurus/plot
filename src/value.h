@@ -8,8 +8,11 @@ typedef enum plot_value_type{
     plot_type_symbol,
     /* a function written in plot */
     plot_type_lambda,
-    /* a function written in c */
-    plot_type_builtin,
+    /* a function written in c
+     * NB: legacy refers to using the old argument interface of
+     * struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc);
+     */
+    plot_type_legacy,
     /* a syntactic form written in c */
     plot_type_syntactic,
     plot_type_error,
@@ -117,13 +120,17 @@ typedef struct plot_lambda {
     struct plot_sexpr *body;
 } plot_lambda;
 
-typedef struct plot_builtin {
+/* a function written in c
+ * NB: legacy refers to using the old argument interface of
+ * struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc);
+ */
+typedef struct plot_legacy {
     /* env to evaluate within
      * args is an array of plot_value *(s) to apply function to
      * argc is the number of them
      */
     struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc);
-} plot_builtin;
+} plot_legacy;
 
 typedef struct plot_syntactic {
     /* env to evaluate within
@@ -154,7 +161,7 @@ typedef struct plot_value {
         plot_symbol    symbol;
         plot_promise   promise;
         plot_lambda    lambda;
-        plot_builtin   builtin;
+        plot_legacy    legacy;
         plot_syntactic syntactic;
         plot_error     error;
         plot_string    string;
@@ -186,7 +193,7 @@ plot_value * plot_new_null(void);
 plot_value * plot_new_error(plot_error_type type, const char *msg, const char *location);
 plot_value * plot_new_promise(struct plot_env *env, struct plot_expr *expr);
 plot_value * plot_new_lambda(struct plot_env *env, struct plot_sexpr *body);
-plot_value * plot_new_builtin( struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc) );
+plot_value * plot_new_legacy( struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc) );
 plot_value * plot_new_syntactic( struct plot_value * (*func)(struct plot_env *env, struct plot_sexpr *sexpr) );
 
 

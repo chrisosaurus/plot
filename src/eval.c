@@ -245,9 +245,9 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
             return func;
             break;
 
-        case plot_type_builtin:
+        case plot_type_legacy:
             #if DEBUG_FUNC || DEBUG
-            puts("\tcalling a builtin function...");
+            puts("\tcalling a legacy builtin function...");
             #endif
 
             /* FIXME dirty */
@@ -256,7 +256,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
             for( i=0; i < sexpr->nchildren - 1; ++i ){
                 val = plot_eval_expr(env, &(sexpr->subforms[1 + i]));
                 if( ! val ){
-                    return plot_runtime_error(plot_error_internal, "BUILTIN call: evaluating argument returned NULL", "plot_eval_form");
+                    return plot_runtime_error(plot_error_internal, "LEGACY BUILTIN call: evaluating argument returned NULL", "plot_eval_form");
                 }
                 if( val->type == plot_type_error ){
                     puts("plot_eval_form (arg)");
@@ -265,7 +265,7 @@ plot_value * plot_eval_form(plot_env *env, plot_sexpr * sexpr){
                 }
                 vals[i] = val;
             }
-            val = func->u.builtin.func( env, vals, sexpr->nchildren - 1);
+            val = func->u.legacy.func( env, vals, sexpr->nchildren - 1);
             for( i=0; i < sexpr->nchildren - 1; ++i ){
                 plot_value_decr(vals[i]);
             }

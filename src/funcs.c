@@ -48,8 +48,8 @@ static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
             plot_func_display_value(env, val->u.pair.cdr);
             fputs(")", stdout);
             break;
-        case plot_type_builtin:
-            puts("Unable to print a builtin function at this point in time");
+        case plot_type_legacy:
+            puts("Unable to print a legacy builtin function at this point in time");
             break;
         case plot_type_syntactic:
             puts("Unable to print a syntactic form at this point in time");
@@ -149,8 +149,8 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
                 args[0]->u.lambda.body == args[1]->u.lambda.body
             );
             break;
-        case plot_type_builtin:
-            return plot_new_boolean( args[0]->u.builtin.func == args[1]->u.builtin.func );
+        case plot_type_legacy:
+            return plot_new_boolean( args[0]->u.legacy.func == args[1]->u.legacy.func );
             break;
         case plot_type_syntactic:
             return plot_new_boolean( args[0]->u.syntactic.func == args[1]->u.syntactic.func );
@@ -272,7 +272,7 @@ struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_v
         return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_procedure_test");
     }
 
-    return plot_new_boolean( val->type == plot_type_builtin || val->type == plot_type_lambda );
+    return plot_new_boolean( val->type == plot_type_legacy || val->type == plot_type_lambda );
 }
 
 /* returns 1 if value is considered truthy

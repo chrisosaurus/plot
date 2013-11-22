@@ -154,12 +154,12 @@ plot_value * plot_new_lambda(struct plot_env *env, struct plot_sexpr *body){
     return res;
 }
 
-plot_value * plot_new_builtin( struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc) ){
+plot_value * plot_new_legacy( struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc) ){
     plot_value *res;
     res = plot_alloc_value();
 
-    res->type = plot_type_builtin;
-    res->u.builtin.func = func;
+    res->type = plot_type_legacy;
+    res->u.legacy.func = func;
 
     return res;
 }

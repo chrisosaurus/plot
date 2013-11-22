@@ -41,14 +41,14 @@ struct plot_test_funcs_tests {
 /* plot test value symbol */
 #define PTF_VSY(n) &(plot_value){{-1, 0}, plot_type_symbol, {.symbol={n, 10, 10, 0}}}
 
-/* plot test builtin value funct */
-#define PTF_VBU(f) &(plot_value){{-1, 0}, plot_type_builtin, {.builtin = {f}}}
+/* plot test legacy value funct */
+#define PTF_VLU(f) &(plot_value){{-1, 0}, plot_type_legacy, {.legacy = {f}}}
 
 /* length of array */
 #define PTF_LENGTH(x) (sizeof x / sizeof x[0])
 
-/* call builtin given index */
-#define PTF_CALL_BUILTIN(i) tests[i].func->u.builtin.func
+/* call legacy given index */
+#define PTF_CALL_LEGACY(i) tests[i].func->u.legacy.func
 
 /* yield args and len given index */
 #define PTF_ARGS(i) tests[i].args, PTF_LENGTH(tests[i].args)
@@ -69,11 +69,11 @@ START_TEST (test_funcs_math){
 
     struct plot_test_funcs_tests tests[] = {
         /* function                     ( args1,            arg2 )                   = expected            "failure message" */
-        {PTF_VBU(plot_func_add),         { PTF_VN( 2),  PTF_VN( 3)  },  {.expected =  5},     "failed test for plot_func_add"},
-        {PTF_VBU(plot_func_subtract),    { PTF_VN(10),  PTF_VN( 7)  },  {.expected =  3},     "failed test for plot_func_subtract"},
-        {PTF_VBU(plot_func_multiply),    { PTF_VN( 5),  PTF_VN(15)  },  {.expected = 75},     "failed test for plot_func_multiply"},
-        {PTF_VBU(plot_func_divide),      { PTF_VN(10),  PTF_VN( 3)  },  {.expected =  3},     "failed test for plot_func_divide"},
-        {PTF_VBU(plot_func_remainder),   { PTF_VN(10),  PTF_VN( 3)  },  {.expected =  1},     "failed test for plot_func_remainder"}
+        {PTF_VLU(plot_func_add),         { PTF_VN( 2),  PTF_VN( 3)  },  {.expected =  5},     "failed test for plot_func_add"},
+        {PTF_VLU(plot_func_subtract),    { PTF_VN(10),  PTF_VN( 7)  },  {.expected =  3},     "failed test for plot_func_subtract"},
+        {PTF_VLU(plot_func_multiply),    { PTF_VN( 5),  PTF_VN(15)  },  {.expected = 75},     "failed test for plot_func_multiply"},
+        {PTF_VLU(plot_func_divide),      { PTF_VN(10),  PTF_VN( 3)  },  {.expected =  3},     "failed test for plot_func_divide"},
+        {PTF_VLU(plot_func_remainder),   { PTF_VN(10),  PTF_VN( 3)  },  {.expected =  1},     "failed test for plot_func_remainder"}
     };
 
     puts("\ttesting math functions");
@@ -82,7 +82,7 @@ START_TEST (test_funcs_math){
     fail_if( 0 == plot_get_global_env() );
 
     for( i=0; i < PTF_LENGTH(tests); ++i ){
-        r = PTF_CALL_BUILTIN(i)( plot_get_global_env(), PTF_ARGS(i) );
+        r = PTF_CALL_LEGACY(i)( plot_get_global_env(), PTF_ARGS(i) );
         if( 0 == r ){
             puts(PTF_ERR(i));
             puts("received a NULL return value");
@@ -106,11 +106,11 @@ START_TEST (test_funcs_comparison){
 
     struct plot_test_funcs_tests tests[] = {
         /* function                             ( args1,               arg2 )                  = expected                   "failure message" */
-        {PTF_VBU(plot_func_math_equal),               { PTF_VN( 1),  PTF_VN( 2)  },  {.expected_val = false},     "failed test for plot_func_math_equal"},
-        {PTF_VBU(plot_func_less),                { PTF_VN( 3),  PTF_VN( 5)  },  {.expected_val = true},      "failed test for plot_func_less"},
-        {PTF_VBU(plot_func_greater),             { PTF_VN( 1),  PTF_VN( 1)  },  {.expected_val = false},     "failed test for plot_func_greater"},
-        {PTF_VBU(plot_func_less_equal),          { PTF_VN(10),  PTF_VN(10)  },  {.expected_val = true},      "failed test for plot_func_less_equal"},
-        {PTF_VBU(plot_func_greater_equal),       { PTF_VN( 8),  PTF_VN( 7)  },  {.expected_val = true},      "failed test for plot_func_greater_equal"}
+        {PTF_VLU(plot_func_math_equal),               { PTF_VN( 1),  PTF_VN( 2)  },  {.expected_val = false},     "failed test for plot_func_math_equal"},
+        {PTF_VLU(plot_func_less),                { PTF_VN( 3),  PTF_VN( 5)  },  {.expected_val = true},      "failed test for plot_func_less"},
+        {PTF_VLU(plot_func_greater),             { PTF_VN( 1),  PTF_VN( 1)  },  {.expected_val = false},     "failed test for plot_func_greater"},
+        {PTF_VLU(plot_func_less_equal),          { PTF_VN(10),  PTF_VN(10)  },  {.expected_val = true},      "failed test for plot_func_less_equal"},
+        {PTF_VLU(plot_func_greater_equal),       { PTF_VN( 8),  PTF_VN( 7)  },  {.expected_val = true},      "failed test for plot_func_greater_equal"}
     };
 
     puts("\ttesting comparison functions");
@@ -119,7 +119,7 @@ START_TEST (test_funcs_comparison){
     fail_if( 0 == plot_get_global_env() );
 
     for( i=0; i < PTF_LENGTH(tests); ++i ){
-        r = PTF_CALL_BUILTIN(i)( plot_get_global_env(), PTF_ARGS(i) );
+        r = PTF_CALL_LEGACY(i)( plot_get_global_env(), PTF_ARGS(i) );
         if( 0 == r ){
             puts(PTF_ERR(i));
             puts("received a NULL return value");
@@ -143,25 +143,25 @@ START_TEST (test_funcs_value_tests){
 
     struct plot_test_funcs_tests tests[] = {
         /* function                             ( args1 )                   = expected                  "failure message" */
-        {PTF_VBU(plot_func_boolean_test),        { PTF_VN( 1)},      {.expected_val = false},    "failed test for plot_func_boolean_test (negative)"},
-        {PTF_VBU(plot_func_boolean_test),        { PTF_VBO( false)},  {.expected_val = true},     "failed test for plot_func_boolean_test (positive)"},
+        {PTF_VLU(plot_func_boolean_test),        { PTF_VN( 1)},      {.expected_val = false},    "failed test for plot_func_boolean_test (negative)"},
+        {PTF_VLU(plot_func_boolean_test),        { PTF_VBO( false)},  {.expected_val = true},     "failed test for plot_func_boolean_test (positive)"},
 
-        {PTF_VBU(plot_func_string_test),         { PTF_VN( 3)},      {.expected_val = false},    "failed test for plot_func_string_test (negative)"},
-        {PTF_VBU(plot_func_string_test),         { PTF_VST("hello")},{.expected_val = true},     "failed test for plot_func_string_test (positive)"},
+        {PTF_VLU(plot_func_string_test),         { PTF_VN( 3)},      {.expected_val = false},    "failed test for plot_func_string_test (negative)"},
+        {PTF_VLU(plot_func_string_test),         { PTF_VST("hello")},{.expected_val = true},     "failed test for plot_func_string_test (positive)"},
 
 /* FIXME TODO we cannot yet properly store a symbol as a value (would require quoting
  * so symbol? will always be false as it either fails to look up the symbol, or the value returned is not a symbol
  *
  * this is the correct behavior pre-quoting
  */
-//        {PTF_VBU(plot_func_symbol_test),         { PTF_VST("NOPE")}, {.expected_val = false},    "failed test for plot_func_symbol_test (negative)"},
-//        {PTF_VBU(plot_func_symbol_test),         { PTF_VSY("sym")},  {.expected_val = true},     "failed test for plot_func_symbol_test (positive)"},
+//        {PTF_VLU(plot_func_symbol_test),         { PTF_VST("NOPE")}, {.expected_val = false},    "failed test for plot_func_symbol_test (negative)"},
+//        {PTF_VLU(plot_func_symbol_test),         { PTF_VSY("sym")},  {.expected_val = true},     "failed test for plot_func_symbol_test (positive)"},
 
-        {PTF_VBU(plot_func_number_test),         { PTF_VBO(true)},    {.expected_val = false},    "failed test for plot_func_number_test (negative)"},
-        {PTF_VBU(plot_func_number_test),         { PTF_VN(10)},      {.expected_val = true},     "failed test for plot_func_number_test (positive)"},
+        {PTF_VLU(plot_func_number_test),         { PTF_VBO(true)},    {.expected_val = false},    "failed test for plot_func_number_test (negative)"},
+        {PTF_VLU(plot_func_number_test),         { PTF_VN(10)},      {.expected_val = true},     "failed test for plot_func_number_test (positive)"},
 
-        {PTF_VBU(plot_func_procedure_test),       { PTF_VBO(true)},    {.expected_val = false},    "failed test for plot_func_procedure_test (negative)"},
-        {PTF_VBU(plot_func_procedure_test),       { PTF_VBU(plot_func_procedure_test)},  {.expected_val = true},      "failed test for plot_func_procedure_test (positive)"}
+        {PTF_VLU(plot_func_procedure_test),       { PTF_VBO(true)},    {.expected_val = false},    "failed test for plot_func_procedure_test (negative)"},
+        {PTF_VLU(plot_func_procedure_test),       { PTF_VLU(plot_func_procedure_test)},  {.expected_val = true},      "failed test for plot_func_procedure_test (positive)"}
     };
 
     puts("\ttesting comparison functions");
@@ -170,7 +170,7 @@ START_TEST (test_funcs_value_tests){
     fail_if( 0 == plot_get_global_env() );
 
     for( i=0; i < PTF_LENGTH(tests); ++i ){
-        r = PTF_CALL_BUILTIN(i)( plot_get_global_env(), PTF_ARGS_LEN(i, 1) );
+        r = PTF_CALL_LEGACY(i)( plot_get_global_env(), PTF_ARGS_LEN(i, 1) );
         if( 0 == r ){
             puts(PTF_ERR(i));
             puts("received a NULL return value");
@@ -193,7 +193,7 @@ END_TEST
 #undef PTF_VBO
 #undef PTF_VSY
 #undef PTF_VST
-#undef PTF_VBU
+#undef PTF_VLU
 #undef PTF_LENGTH
 #undef PTF_CALL_FUNC
 #undef PTF_ARGS
@@ -216,16 +216,16 @@ START_TEST (test_funcs_env){
     sym.size = 2;
     sym.hash = 0;
 
-    add.type = plot_type_builtin;
-    add.u.builtin.func = plot_func_add;
+    add.type = plot_type_legacy;
+    add.u.legacy.func = plot_func_add;
     add.gc.refcount = 1;
     puts("\tdefining function add");
     fail_unless( 1 == plot_env_define(env, &sym, &add) );
 
     puts("\ttesting fetching function");
     fail_if( 0 == (f = plot_env_get(env, &sym)) );
-    fail_unless( f->type == plot_type_builtin );
-    fail_unless( f->u.builtin.func == plot_func_add );
+    fail_unless( f->type == plot_type_legacy );
+    fail_unless( f->u.legacy.func == plot_func_add );
 
     plot_env_cleanup(env);
     plot_cleanup();
@@ -319,8 +319,8 @@ START_TEST (test_display){
 
 
     puts("\t\ttesting display of function");
-    v->type = plot_type_builtin;
-    v->u.builtin.func = 0;
+    v->type = plot_type_legacy;
+    v->u.legacy.func = 0;
     plot_func_display(plot_get_global_env(), &v, 1);
 
     puts("\t\ttesting display of error (error expected)");

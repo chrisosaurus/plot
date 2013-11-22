@@ -7,7 +7,7 @@ use File::Slurp;
 # we step through each of the specified functions and capture all the c functions that
 # have a correctly formatted comments declaring their scheme bindings
 #
-# example of a builtin:
+# example of a legacy builtin:
 #
 #    /* (display obj)
 #    ...
@@ -52,8 +52,8 @@ struct plot_binding {
     plot_value func;
 };
 
-/* Plot Builtin */
-#define PB(str, len, func) {{str, len,  len, 0}, {{-1, 0}, plot_type_builtin, {.builtin = {func}}}}
+/* Plot Legacy Builtin */
+#define PLB(str, len, func) {{str, len,  len, 0}, {{-1, 0}, plot_type_legacy, {.legacy = {func}}}}
 /* Plot Syntactic */
 #define PS(str, len, func) {{str, len,  len, 0}, {{-1, 0}, plot_type_syntactic, {.syntactic = {func}}}}
 
@@ -84,8 +84,8 @@ for my $header (@headers){
         if( grep "-syntax", @args ){
             $contents = "\tPS(\"$+{scheme}\", $len, $+{cfunc})";
         } else {
-            # builtin is default
-            $contents = "\tPB(\"$+{scheme}\", $len, $+{cfunc})";
+            # legacy builtin is default
+            $contents = "\tPLB(\"$+{scheme}\", $len, $+{cfunc})";
         }
 
         if( grep "-core", @args ){
