@@ -316,6 +316,12 @@ struct plot_value * plot_form_set(struct plot_env *env, struct plot_value *sexpr
 }
 
 struct plot_value * plot_form_quote(struct plot_env *env, struct plot_value *sexpr){
+    /* current position in input */
+    plot_value *in;
+    /* output */
+    plot_value *out, **cur;
+
+
     #if DEBUG_FORM || DEBUG
     puts("quote of sexpr:");
     display_error_expr(sexpr);
@@ -325,12 +331,20 @@ struct plot_value * plot_form_quote(struct plot_env *env, struct plot_value *sex
         return plot_runtime_error(plot_error_bad_args, "malformed quote expression", "plot_form_quote");
     }
 
+    out = 0;
+    cur = &out;
+
     switch( car(cdr(sexpr))->type ){
         case plot_type_pair:
-            /* FIXME
+            /* return map quote cdr(sexpr);
              * '(a b c) => (list 'a 'b 'c)
              */
-            return plot_runtime_error(plot_error_unimplemented, "quoted s expressions are not yet implemented", "plot_form_quote");
+            for( in=car(cdr(sexpr)); in->type == plot_type_pair; in = cdr(in) ){
+                *cur = plot_new_pair( 0, plot_new_null() );
+                car(*cur) = plot_form_quote( env, plot_new_pair( plot_new_symbol("quote", 6), plot_new_pair( car(in), plot_new_null())) );
+                cur = &cdr(*cur);
+            }
+            return out;
             break;
         default:
             return car(cdr(sexpr));

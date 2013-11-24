@@ -16,9 +16,10 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         number (exact positive integer, no negative literals yet)
         symbol
         function (lambda form)
+        lists
 
     literals for the following types are pending implementation:
-        pairs and lists
+        pairs (improper lists)
 
 4.1.4 Procedures
     `lambda` form is implemented
@@ -127,8 +128,9 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
 
 6.4 Pairs and lists
     pairs and lists are implemented,
-    pair and list literals are pending implementation.
-    pair and list equality is currently not implemented (eq family will throw a plot_runtime_error).
+    lists literals are implemented.
+    pair (improper list) literals are pending implementation.
+    pair and list equality is currently not implemented (`eq` family will throw a plot_runtime_error).
 
     implemented procedures from this section:
         `pair?`

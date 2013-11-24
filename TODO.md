@@ -66,9 +66,9 @@ testing:
 
 features:
 ---------
+* quoting of improper lists, pairs e.g. '(a.b)
 * write repl front-end
 * macro system
-* quoting
 * variable arguments
 * want a way of printing literal syntax (without attempting to eval)
 * begin work on library system

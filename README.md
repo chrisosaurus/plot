@@ -25,7 +25,7 @@ a brief summary:
 * set! form
 * begin form
 * string literals
-* quote form (pairs and list are not yet supported)
+* quote form (lists implemented, improper lists not yet implemented)
 * positive integer literals
 * boolean literals
 * char literals
