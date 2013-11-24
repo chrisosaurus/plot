@@ -2,6 +2,7 @@
 #include <string.h> /* strlen */
 
 #include "value.h"
+#include "funcs.h"
 #include "plot.h"
 
 /* plot_value deconstructor
@@ -121,7 +122,7 @@ plot_value * plot_new_error(plot_error_type type, const char *msg, const char *l
     return res;
 }
 
-plot_value * plot_new_promise(struct plot_env *env, struct plot_expr *expr){
+plot_value * plot_new_promise(struct plot_env *env, struct plot_value *expr){
     plot_value *res;
     res = plot_alloc_value();
 
@@ -141,7 +142,7 @@ plot_value * plot_new_promise(struct plot_env *env, struct plot_expr *expr){
     return res;
 }
 
-plot_value * plot_new_lambda(struct plot_env *env, struct plot_sexpr *body){
+plot_value * plot_new_lambda(struct plot_env *env, struct plot_value *body){
     plot_value *res;
     res = plot_alloc_value();
 
@@ -164,7 +165,7 @@ plot_value * plot_new_legacy( struct plot_value * (*func)(struct plot_env *env, 
     return res;
 }
 
-plot_value * plot_new_syntactic( struct plot_value * (*func)(struct plot_env *env, struct plot_sexpr *sexpr) ){
+plot_value * plot_new_syntactic( struct plot_value * (*func)(struct plot_env *env, struct plot_value *sexpr) ){
     plot_value *res;
     res = plot_alloc_value();
 
@@ -243,4 +244,86 @@ void plot_hash_symbol(plot_symbol *s){
     //printf("hash for '%s' is '%llu'\n", s->val, hash);
     s->hash = hash;
 }
+
+/* turn an existing plot_value into a constant
+ */
+void plot_value_constantify(plot_value *val){
+    val->gc.refcount = -1;
+}
+
+void display_type(plot_value *val){
+    switch(val->type){
+        case plot_type_number:
+            puts("type is number");
+            break;
+        case plot_type_symbol:
+            puts("type is symbol");
+            break;
+        case plot_type_lambda:
+            puts("type is lambda");
+            break;
+        case plot_type_legacy:
+            puts("type is legacy");
+            break;
+        case plot_type_syntactic:
+            puts("type is syntactic");
+            break;
+        case plot_type_error:
+            puts("type is error");
+            break;
+        case plot_type_string:
+            puts("type is string");
+            break;
+        case plot_type_boolean:
+            puts("type is boolean");
+            break;
+        case plot_type_character:
+            puts("type is character");
+            break;
+        case plot_type_pair:
+            puts("type is pair");
+            break;
+        case plot_type_promise:
+            puts("type is promise");
+            break;
+        case plot_type_null:
+            puts("type is null");
+            break;
+        case plot_type_unspecified:
+            puts("type is unspecified");
+            break;
+        case plot_type_reclaimed:
+            puts("type is reclaimed");
+            break;
+        default:
+            puts("UNKNOWN TYPE");
+            break;
+    }
+}
+
+void display_expr(plot_value * sexpr){
+    plot_value *val;
+
+    if( sexpr->type == plot_type_pair ){
+        fputs("(", stdout);
+        for( val = sexpr; val->type != plot_type_null; val = cdr(val) ){
+            display_expr(car(val));
+            if( cdr(val)->type != plot_type_null ){
+                /* if there is more to come */
+                fputs(" ", stdout);
+            }
+        }
+        fputs(")", stdout);
+    } else {
+        /* FIXME legacy interface */
+        plot_func_display(0, &sexpr, 1);
+    }
+}
+
+void display_error_expr(plot_value *expr){
+    fputs(">\t", stdout);
+    display_expr(expr);
+    fputs("\n", stdout);
+}
+
 

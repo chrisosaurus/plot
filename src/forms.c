@@ -3,7 +3,6 @@
 #include "forms.h"
 #include "value.h"
 #include "plot.h"
-#include "types.h"
 #include "funcs.h"
 #include "eval.h"
 #include "hash.h"
@@ -17,21 +16,21 @@
 /* (define-library (library name) body...)
  * define a library
  */
-struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_sexpr *sexpr){
+struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_value *sexpr){
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_define_library");
 }
 
 /* (import (library name) ...)
  * import some libraries
  */
-struct plot_value * plot_form_import(struct plot_env *env, struct plot_sexpr *sexpr){
+struct plot_value * plot_form_import(struct plot_env *env, struct plot_value *sexpr){
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_import");
 }
 
 /* (export identifier ... )
  * export some identifiers
  */
-struct plot_value * plot_form_export(struct plot_env *env, struct plot_sexpr *sexpr){
+struct plot_value * plot_form_export(struct plot_env *env, struct plot_value *sexpr){
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_export");
 }
 
@@ -41,21 +40,21 @@ struct plot_value * plot_form_export(struct plot_env *env, struct plot_sexpr *se
  *
  * eventually exported by (plot internal)
  */
-struct plot_value * plot_form_plot_bind(struct plot_env *env, struct plot_sexpr *sexpr){
+struct plot_value * plot_form_plot_bind(struct plot_env *env, struct plot_value *sexpr){
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_plot_bind");
 }
 
 /* (begin body...)
  */
-struct plot_value * plot_form_begin(struct plot_env *env, struct plot_sexpr *sexpr){
-    int i;
+struct plot_value * plot_form_begin(struct plot_env *env, struct plot_value *sexpr){
     plot_value *value = 0;
+    plot_value *cur;
 
-    for( i=0; i< sexpr->nchildren; ++i ){
-        if( i > 0 ){
+    for( cur=cdr(sexpr); cur->type != plot_type_null; cur = cdr(cur) ){
+        if( value ){
             plot_value_decr(value);
         }
-        value = plot_eval_expr(env, &(sexpr->subforms[i]));
+        value = plot_eval_expr(env, car(cur));
     }
 
     if( ! value ){
@@ -68,52 +67,49 @@ struct plot_value * plot_form_begin(struct plot_env *env, struct plot_sexpr *sex
 
 /* (define what value)
  */
-struct plot_value * plot_form_define(struct plot_env *env, struct plot_sexpr *sexpr){
-    int i;
+struct plot_value * plot_form_define(struct plot_env *env, struct plot_value *sexpr){
     plot_value *value;
     plot_value *name;
+    plot_value *body;
+    plot_value *args;
+
+    /* FIXME need to check sexpr */
 
     /* define has 2 forms:
      * (define a <value>)
      * (define (b args) <function body>)
      */
-    if( sexpr->nchildren < 3 ){
-        #if DEBUG_FORM || DEBUG
-        printf("\tDEFINE: incorrect number of children '%d'\n", sexpr->nchildren);
-        #endif
-        return 0; /* FIXME ERROR */
-    }
 
-    if( sexpr->subforms[1].type == plot_expr_sexpr ){
+    name = car(cdr(sexpr));
+    body = car(cdr(cdr(sexpr)));
+
+    #if DEBUG
+    puts("define with name:");
+    display_error_expr(name);
+    puts("with body:");
+    display_error_expr(body);
+    #endif
+
+    if( name->type == plot_type_pair ){
         /* function form */
-        if( sexpr->subforms[1].u.sexpr.nchildren < 1){
-            puts("DEFINE: incorrect function declaration");
-            return 0; /* FIXME error */
-        }
-        if( sexpr->subforms[1].u.sexpr.subforms[0].type != plot_expr_value ){
-            puts("DEFINE: invalid function name");
-            return 0; /* FIXME error */
-        }
-        name = sexpr->subforms[1].u.sexpr.subforms[0].u.value;
-        /* FIXME hack to get define function form
-         * remove declared function name
+        /* FIXME need to verify form */
+
+        args = cdr(name);
+        name = car(name);
+        /* remove declared function name
          *
          * move down the subforms array in order to remove function name
          */
 
-        for( i=0; i< (sexpr->subforms[1].u.sexpr.nchildren - 1); ++i ){
-            sexpr->subforms[1].u.sexpr.subforms[i] = sexpr->subforms[1].u.sexpr.subforms[i+1];
-        }
-
-        --sexpr->subforms[1].u.sexpr.nchildren;
-
-        value = plot_new_lambda(env, sexpr);
+        /* FIXME bit of a hack, should tidy up */
+        value = plot_new_lambda(env, plot_new_pair( plot_new_symbol("lambda", 7), plot_new_pair(args, plot_new_pair(body, plot_new_null()))) );
         plot_env_define(env, &(name->u.symbol), value);
         plot_value_decr(value);
 
-    } else if( sexpr->subforms[1].type == plot_expr_value ){
+    } else {
         /* value form */
-        name = sexpr->subforms[1].u.value;
+        /* FIXME need to verify form */
+
         if( name->type != plot_type_symbol ){
             #if DEBUG_FORM || DEBUG
             puts("\tDEFINE: incorrect 1st arg value type");
@@ -126,7 +122,7 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_sexpr *se
         #endif
 
         /* 2nd subform isnt known to be a value ! */
-        value = plot_eval_expr(env, &(sexpr->subforms[2]));
+        value = plot_eval_expr(env, body);
         if( ! value ){
             #if DEBUG_FORM || DEBUG
             puts("\tDEFINE: failed to eval_value");
@@ -150,13 +146,6 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_sexpr *se
         plot_env_define(env, &(name->u.symbol), value);
         /* decrement value as eval and define will both increment it and we are not keeping a reference around */
         plot_value_decr(value);
-
-    } else {
-        /* error */
-        #if DEBUG_FORM || DEBUG
-        puts("\tDEFINE: incorrect 1st arg expr type");
-        #endif
-        return 0; /* FIXME ERROR */
     }
 
     return plot_new_unspecified();
@@ -164,29 +153,25 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_sexpr *se
 
 /* (lambda args body...)
  */
-struct plot_value * plot_form_lambda(struct plot_env *env, struct plot_sexpr *sexpr){
-    int i;
+struct plot_value * plot_form_lambda(struct plot_env *env, struct plot_value *sexpr){
+    plot_value *args, *arg;
+    plot_value *body;
 
-    if( sexpr->nchildren < 3 ){
-        #if DEBUG_FORM || DEBUG
-        printf("\tLAMBDA: incorrect number of children, need at least 3, got '%d'\n", sexpr->nchildren);
-        #endif
-        return 0; /* FIXME error */
-    }
+    /* FIXME need to check sexpr */
 
-    /* check 2nd subform is an sexpr (param list) */
-    if( sexpr->subforms[1].type != plot_expr_sexpr ){
-        puts("\tLAMBDA: param list expected");
-        return 0; /* FIXME error */
+    /* (lambda args body... )
+     */
+
+    args = car(cdr(sexpr));
+    body = cdr(cdr(sexpr));
+
+    if( body->type == plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "no body found", "plot_form_lambda");
     }
 
     /* check all subforms are symbols */
-    for( i=0; i< sexpr->subforms[1].u.sexpr.nchildren; ++i ){
-        if( sexpr->subforms[1].u.sexpr.subforms[i].type != plot_expr_value ){
-            puts("LAMBDA: invalid param type, expected value");
-            return 0; /* FIXME error */
-        }
-        if( sexpr->subforms[1].u.sexpr.subforms[i].u.value->type != plot_type_symbol ){
+    for( arg=args; arg->type != plot_type_null; arg = cdr(arg) ){
+        if( car(arg)->type != plot_type_symbol ){
             puts("LAMBDA: invalid param type, expected symbol");
             return 0; /* FIXME error */
         }
@@ -198,18 +183,31 @@ struct plot_value * plot_form_lambda(struct plot_env *env, struct plot_sexpr *se
 /* (if cond if-expr else-expr)
  * (if cond if-expr)
  */
-struct plot_value * plot_form_if(struct plot_env *env, struct plot_sexpr *sexpr){
+struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr){
     plot_value *value;
+    plot_value *cond;
+    plot_value *if_expr;
+    plot_value *else_expr = 0;
+
+    /* FIXME check sexpr form */
 
     /* scheme if's can have 2 forms
      * (if cond if-expr) ; 'guard'
      * (if cond if-expr else-expr) ; 'branching'
      */
-    if( sexpr->nchildren != 3 && sexpr->nchildren != 4 ){
-        return 0; /* FIXME ERROR */
+
+    cond = car(cdr(sexpr));
+    if_expr = car(cdr(cdr(sexpr)));
+    else_expr = cdr(cdr(cdr(sexpr)));
+    if( else_expr->type == plot_type_pair ) {
+        else_expr = car(else_expr);
+    } else {
+        /* null */
+        else_expr = 0;
     }
+
     /* decr is handled in plot_truthy */
-    value = plot_eval_expr(env, &(sexpr->subforms[1]));
+    value = plot_eval_expr(env, cond);
     if( ! value ){
         #if DEBUG_FORM || DEBUG
         puts("\teval of if condition returned NULL");
@@ -222,7 +220,7 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_sexpr *sexpr)
     }
     if( plot_truthy(value) ){
         plot_value_decr(value);
-        value = plot_eval_expr(env, &(sexpr->subforms[2]));
+        value = plot_eval_expr(env, if_expr);
         if( ! value ){
             #if DEBUG_FORM || DEBUG
             puts("\teval of if true branch returned NULL");
@@ -233,9 +231,9 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_sexpr *sexpr)
             puts("plot_eval_form (if if-expr)");
             return value;
         }
-    } else if( sexpr->nchildren == 4){ /* (if cond if-expr else-expr) */
+    } else if( else_expr ){ /* (if cond if-expr else-expr) */
         plot_value_decr(value);
-        value = plot_eval_expr(env, &(sexpr->subforms[3]));
+        value = plot_eval_expr(env, else_expr);
         if( ! value ){
             #if DEBUG_FORM || DEBUG
             puts("\teval of if false branch returned NULL");
@@ -275,20 +273,29 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_sexpr *sexpr)
 
 /* (set! variable value)
  */
-struct plot_value * plot_form_set(struct plot_env *env, struct plot_sexpr *sexpr){
+struct plot_value * plot_form_set(struct plot_env *env, struct plot_value *sexpr){
     plot_value *value;
+    plot_value *name, *expr;
 
-    if( sexpr->nchildren != 3 ){
-        puts("\tset! had incorrect number of arguments");
-        return 0; /* FIXME ERROR */
+    /* (set! variable expr)
+     * car = symbol set!
+     * cdr =
+     *  car = symbol <variable>
+     *  cdr =
+     *      car = <expr>
+     *      cdr = null
+     */
+
+    name = car(cdr(sexpr));
+    expr = car(cdr(cdr(sexpr)));
+
+    if( car(sexpr)->type != plot_type_symbol ||
+        name->type != plot_type_symbol ||
+        cdr(cdr(cdr(sexpr)))->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "malformed set! form", "plot_form_set");
     }
 
-    if( sexpr->subforms[1].type != plot_expr_value || sexpr->subforms[1].u.value->type != plot_type_symbol ){
-        puts("\tset! first argument is wrong type (either not value or not symbol)");
-        return 0; /* FIXME ERROR */
-    }
-
-    value = plot_eval_expr(env, &(sexpr->subforms[2]));
+    value = plot_eval_expr(env, expr);
     if( ! value ){
         #if DEBUG_FORM || DEBUG
         puts("\teval of set value returned NULL");
@@ -300,7 +307,7 @@ struct plot_value * plot_form_set(struct plot_env *env, struct plot_sexpr *sexpr
         return value;
     }
 
-    if( ! plot_env_set(env, &(sexpr->subforms[1].u.value->u.symbol), value) ){
+    if( ! plot_env_set(env, &(name->u.symbol), value) ){
         puts("\tset! call to plot_env_set failed");
         return 0; /* FIXME ERROR */
     }
@@ -308,34 +315,48 @@ struct plot_value * plot_form_set(struct plot_env *env, struct plot_sexpr *sexpr
     return plot_new_unspecified();
 }
 
-struct plot_value * plot_form_quote(struct plot_env *env, struct plot_sexpr *sexpr){
-    switch( sexpr->subforms[1].type ){
-        case plot_expr_value:
-            return sexpr->subforms[1].u.value;
-            break;
-        case plot_expr_sexpr:
+struct plot_value * plot_form_quote(struct plot_env *env, struct plot_value *sexpr){
+    #if DEBUG_FORM || DEBUG
+    puts("quote of sexpr:");
+    display_error_expr(sexpr);
+    #endif
+
+    if( car(sexpr)->type != plot_type_symbol || cdr(cdr(sexpr))->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "malformed quote expression", "plot_form_quote");
+    }
+
+    switch( car(cdr(sexpr))->type ){
+        case plot_type_pair:
             /* FIXME
              * '(a b c) => (list 'a 'b 'c)
              */
             return plot_runtime_error(plot_error_unimplemented, "quoted s expressions are not yet implemented", "plot_form_quote");
             break;
         default:
+            return car(cdr(sexpr));
             break;
     }
+
     plot_fatal_error("Impossible expression type given to plot_form_quote");
     return 0;
 }
 
 /* (delay expr)
  */
-struct plot_value * plot_form_delay(struct plot_env *env, struct plot_sexpr *sexpr){
+struct plot_value * plot_form_delay(struct plot_env *env, struct plot_value *sexpr){
     plot_value *val;
+    /* delay will have
+     * car = symbol delay
+     * cdr =
+     *  car = expr
+     *  cdr = null
+     */
 
-    if( sexpr->nchildren != 2 ){
-        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 argument", "plot_form_delay");
+    if( car(sexpr)->type != plot_type_symbol || cdr(cdr(sexpr))->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "malformed delay expression", "plot_form_delay");
     }
 
-    val = plot_new_promise(env, &(sexpr->subforms[1]));
+    val = plot_new_promise(env, car(cdr(sexpr)));
     return val;
 }
 

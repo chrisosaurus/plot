@@ -361,7 +361,7 @@ void plot_gc_value_init(void){
      *
      * and now, after enc-cleanup (fibo 31) only needs 52
      */
-    plot_instance->num_value_allocated = 1000;
+    plot_instance->num_value_allocated = 2000;
     plot_instance->value_arena = calloc( plot_instance->num_value_allocated, sizeof (struct plot_value) );
     if( ! plot_instance->value_arena ){
         puts("plot_gc_value_init ERROR: failed to calloc value arena");
@@ -446,7 +446,7 @@ void plot_gc_env_init(void){
     #if GC_STATS
     plot_instance->num_env_reclaimed = 0;
     #endif
-    plot_instance->num_env_allocated = 1000;
+    plot_instance->num_env_allocated = 2000;
     plot_instance->env_arena = calloc( plot_instance->num_env_allocated, sizeof (struct plot_env) );
     if( ! plot_instance->env_arena ){
         puts("plot_gc_env_init ERROR: failed to calloc env arena");
@@ -529,7 +529,7 @@ void plot_gc_he_init(void){
     #if GC_STATS
     plot_instance->num_he_reclaimed = 0;
     #endif
-    plot_instance->num_he_allocated = 1000;
+    plot_instance->num_he_allocated = 2000;
     plot_instance->he_arena = calloc( plot_instance->num_he_allocated, sizeof (struct plot_hash_entry) );
     if( ! plot_instance->he_arena ){
         puts("plot_gc_he_init ERROR: failed to calloc hv arena");
@@ -703,5 +703,6 @@ void plot_stats_env_loop(void){
     if( ! plot_instance ) return;
     ++plot_instance->num_env_loop;
 }
+
 #endif
 

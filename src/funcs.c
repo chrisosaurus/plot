@@ -3,7 +3,6 @@
 #include <string.h>
 
 #include "value.h"
-#include "types.h"
 #include "hash.h"
 #include "env.h"
 #include "funcs.h"

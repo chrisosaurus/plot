@@ -101,6 +101,11 @@ typedef struct plot_pair {
     struct plot_value *cdr;
 } plot_pair;
 
+/* FIXME may want to move to functions that check types
+ */
+#define car(v) ((v)->u.pair.car)
+#define cdr(v) ((v)->u.pair.cdr)
+
 #if 0
 
 typedef struct plot_vector {
@@ -117,7 +122,7 @@ struct plot_env;
 
 typedef struct plot_lambda {
     struct plot_env *env;
-    struct plot_sexpr *body;
+    struct plot_value *body;
 } plot_lambda;
 
 /* a function written in c
@@ -134,10 +139,10 @@ typedef struct plot_legacy {
 
 typedef struct plot_syntactic {
     /* env to evaluate within
-     * args is an array of plot_expr *(s) to apply function to
+     * args is a plot list
      * argc is the number of them
      */
-    struct plot_value * (*func)(struct plot_env *env, struct plot_sexpr *sexpr);
+    struct plot_value * (*func)(struct plot_env *env, struct plot_value *sexpr);
 } plot_syntactic;
 
 /* a promise is the value type returned by delay
@@ -147,7 +152,7 @@ typedef struct plot_syntactic {
  */
 typedef struct plot_promise {
     struct plot_env *env;
-    struct plot_expr *expr;
+    struct plot_value *expr;
     struct plot_value *value;
 } plot_promise;
 
@@ -191,10 +196,14 @@ plot_value * plot_new_string(char * val, int len);
 plot_value * plot_new_pair(struct plot_value *car, struct plot_value *cdr);
 plot_value * plot_new_null(void);
 plot_value * plot_new_error(plot_error_type type, const char *msg, const char *location);
-plot_value * plot_new_promise(struct plot_env *env, struct plot_expr *expr);
-plot_value * plot_new_lambda(struct plot_env *env, struct plot_sexpr *body);
+plot_value * plot_new_promise(struct plot_env *env, struct plot_value *expr);
+plot_value * plot_new_lambda(struct plot_env *env, struct plot_value *body);
 plot_value * plot_new_legacy( struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc) );
-plot_value * plot_new_syntactic( struct plot_value * (*func)(struct plot_env *env, struct plot_sexpr *sexpr) );
+plot_value * plot_new_syntactic( struct plot_value * (*func)(struct plot_env *env, struct plot_value *sexpr) );
+
+/* turn an existing plot_value into a constant
+ */
+void plot_value_constantify(plot_value *val);
 
 
 /* function to hash symbols
@@ -204,5 +213,9 @@ plot_value * plot_new_syntactic( struct plot_value * (*func)(struct plot_env *en
  * function will not modify existing hash
  */
 void plot_hash_symbol(plot_symbol *val);
+
+void display_type(plot_value *val);
+void display_expr(plot_value * sexpr);
+void display_error_expr(plot_value *expr);
 
 #endif

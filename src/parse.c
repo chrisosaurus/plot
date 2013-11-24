@@ -4,7 +4,6 @@
 #include <ctype.h> /* isdigit */
 
 #include "value.h"
-#include "types.h"
 #include "parse.h"
 #include "plot.h"
 
@@ -17,14 +16,13 @@ void plot_parse_comment(const char *source, size_t *upto);
  */
 
 /* provides an interface to convert a string to a plot_program (AST)
- * return a plot_program* or 0 for error
+ * return a plot_value * (list) or 0 for error
  */
-plot_program * plot_parse(const char *source){
+plot_value * plot_parse(const char *source){
     size_t i=0;
-    plot_program *prog = calloc(1, sizeof(*prog));
-    prog->nchildren = 0;
-    prog->max_children = 100;
-    prog->exprs = calloc(prog->max_children, sizeof(*(prog->exprs))); /* FIXME fixed size */
+    plot_value *head, **cur; /* list */
+    head = 0;
+    cur = &head;
 
     /* a plot_program is a colletion of s-expressions */
     while( source[i] != '\0' ){
@@ -37,15 +35,18 @@ plot_program * plot_parse(const char *source){
                 #if DEBUG
                     puts("plot_parse: calling plot_parse_expr");
                 #endif
-                if( prog->nchildren >= prog->max_children ){
-                    puts("\t\t error in plot_parse, max_children exceeded, returning");
-                    return 0;
+                if( *cur ){
+                    /* cur will be a constant null, but decr to keep consistency */
+                    plot_value_decr(*cur);
                 }
-                if( ! plot_parse_expr(&(prog->exprs[prog->nchildren++]),source, &i) ){
+                *cur = plot_new_pair(0, plot_new_null());
+                car(*cur) = plot_parse_expr(source, &i);
+                if( ! car(*cur) ){
                     puts("\t\t error in plot_parse calling plot_parse_expr, returning");
                     return 0;
                     break;
                 }
+                cur = &cdr(*cur);
                 break;
             case ' ':
             case '\r':
@@ -63,7 +64,7 @@ plot_program * plot_parse(const char *source){
                 break;
         }
     }
-    return prog;
+    return head;
 }
 
 /* internal method used by plot_parse_expr
@@ -76,9 +77,10 @@ plot_program * plot_parse(const char *source){
  *
  * expects first character of value to be at source[*upto]
  */
-static plot_expr * plot_parse_expr_hash(plot_expr *expr, const char *source, size_t *upto){
+static plot_value * plot_parse_expr_hash(const char *source, size_t *upto){
     /* char_start is where the character constant started */
     size_t char_start = 0;
+    plot_value *val;
 
     if( ! source[*upto] == '#' ){
         plot_fatal_error("plot_parse_expr_hash: first character was not '#'");
@@ -90,21 +92,18 @@ static plot_expr * plot_parse_expr_hash(plot_expr *expr, const char *source, siz
 
     ++ *upto;
 
-    expr->type = plot_expr_value;
-    expr->u.value = plot_alloc_constant();
-
     switch (source[*upto]){
         case 't':
-            expr->u.value->type = plot_type_boolean;
-            expr->u.value->u.boolean.val = true;
+            val = plot_new_boolean(true);
+            plot_value_constantify(val);
             ++ *upto;
-            return expr;
+            return val;
             break;
         case 'f':
-            expr->u.value->type = plot_type_boolean;
-            expr->u.value->u.boolean.val = false;
+            val = plot_new_boolean(false);
+            plot_value_constantify(val);
             ++ *upto;
-            return expr;
+            return val;
             break;
         case '\\':
             /* skip past the \ */
@@ -118,31 +117,33 @@ static plot_expr * plot_parse_expr_hash(plot_expr *expr, const char *source, siz
 
     /* here means we are dealing with a character literal */
     if( char_start ){
-        expr->u.value->type = plot_type_character;
-
         /* try complex character literals first */
         if( ! strncmp(&source[char_start], "newline", 7) ){
-            expr->u.value->u.character.val = '\n';
+            val = plot_new_character('\n');
+            plot_value_constantify(val);
             *upto += 7;
-            return expr;
+            return val;
         }
         if( ! strncmp(&source[char_start], "space", 5) ){
-            expr->u.value->u.character.val = ' ';
+            val = plot_new_character(' ');
+            plot_value_constantify(val);
             *upto += 5;
-            return expr;
+            return val;
         }
 
         /* otherwise we are a simple (single letter) character literal */
-        expr->u.value->u.character.val = source[char_start];
+        val = plot_new_character( source[char_start] );
+        plot_value_constantify(val);
         ++ *upto;
-        return expr;
+        return val;
     }
 
 #if DEBUG
     puts("plot_parse_expr_hash: end");
 #endif
 
-    return expr;
+    plot_fatal_error("Impossible case in plot_parse_expr_hash");
+    return 0;
 }
 
 /* internal method used by plot_parse_expr
@@ -150,10 +151,11 @@ static plot_expr * plot_parse_expr_hash(plot_expr *expr, const char *source, siz
  *
  * expects first character of string to be at source[*upto]
  */
-static plot_expr * plot_parse_expr_string(plot_expr *expr, const char *source, size_t *upto){
+static plot_value * plot_parse_expr_string(const char *source, size_t *upto){
     size_t start;
     int cont = 1;
     int escaped = 0; /* is the next character escaped? set by / */
+    plot_value *val;
 
     int len;
 
@@ -193,19 +195,16 @@ static plot_expr * plot_parse_expr_string(plot_expr *expr, const char *source, s
      * insert a null terminator instead
      */
     len = (*upto) - start; /* includes null term */
-    expr->type  = plot_expr_value;
-    expr->u.value = plot_alloc_constant();
-    expr->u.value->type = plot_type_string;
-    expr->u.value->u.string.len = len;
-    expr->u.value->u.string.size = len;
-    expr->u.value->u.string.val = plot_alloc_string(len);
-    strncpy(expr->u.value->u.string.val, &source[start], len - 1);
+    val = plot_new_string( plot_alloc_string(len), len);
+    plot_value_constantify(val);
+
+    strncpy(val->u.string.val, &source[start], len - 1);
 
 #if DEBUG
-    printf("plot_parse_expr_string: end '%s'\n", expr->u.value->u.string.val);
+    printf("plot_parse_expr_string: end '%s'\n", val->u.string.val);
 #endif
 
-    return expr;
+    return val;
 }
 
 /* internal method used by plot_parse_expr
@@ -213,12 +212,13 @@ static plot_expr * plot_parse_expr_string(plot_expr *expr, const char *source, s
  *
  * expects first character of symbol to be at source[*upto]
  */
-static plot_expr * plot_parse_expr_symbol(plot_expr *expr, const char *source, size_t *upto){
+static plot_value * plot_parse_expr_symbol(const char *source, size_t *upto){
     char ch;
     size_t start = *upto;
     int len;
     int cont = 1;
     char *tmp;
+    plot_value *val;
 
 #if DEBUG
     puts("plot_parse_expr_symbol: start");
@@ -252,24 +252,22 @@ static plot_expr * plot_parse_expr_symbol(plot_expr *expr, const char *source, s
     }
 
     len = (*upto) - start + 1; /* +1 to include null term */
-    expr->type = plot_expr_value;
-    expr->u.value = plot_alloc_constant();
-    expr->u.value->type = plot_type_symbol;
-    expr->u.value->u.symbol.len = len;
-    expr->u.value->u.symbol.size = len;
     /* NB: we also assign to tmp so that we can
      * then write to it without violating const
      * from plot symbol val
      */
-    expr->u.value->u.symbol.val = tmp = plot_alloc_string(len);
+    tmp = plot_alloc_string(len);
     strncpy(tmp, &source[start], len - 1);
-    plot_hash_symbol(&(expr->u.value->u.symbol));
+    val = plot_new_symbol(tmp, len);
+    plot_value_constantify(val);
+
+    plot_hash_symbol(&(val->u.symbol));
 
 #if DEBUG
-    printf("plot_parse_expr_symbol: end '%s'\n", expr->u.value->u.symbol.val);
+    printf("plot_parse_expr_symbol: end '%s'\n", val->u.symbol.val);
 #endif
 
-    return expr;
+    return val;
 }
 
 /* internal method used by plot_parse_expr
@@ -277,10 +275,11 @@ static plot_expr * plot_parse_expr_symbol(plot_expr *expr, const char *source, s
  *
  * expects first character of number to be at source[*upto]
  */
-static plot_expr * plot_parse_expr_number(plot_expr *expr, const char *source, size_t *upto){
+static plot_value * plot_parse_expr_number(const char *source, size_t *upto){
     int cont = 1;
     size_t start = *upto;
     char *end;
+    plot_value *val;
 
 #if DEBUG
     puts("plot_parse_expr_number: start");
@@ -312,10 +311,8 @@ static plot_expr * plot_parse_expr_number(plot_expr *expr, const char *source, s
         plot_fatal_error("plot_parse_expr_number: no digits consumed");
     }
 
-    expr->type = plot_expr_value;
-    expr->u.value = plot_alloc_constant();
-    expr->u.value->type = plot_type_number;
-    expr->u.value->u.number.val = strtol( &source[start], &end, 10);
+    val = plot_new_number(strtol( &source[start], &end, 10));
+    plot_value_constantify(val);
     /* end should be first non-digit
      * it should also be where we stopped parsing
      */
@@ -324,10 +321,10 @@ static plot_expr * plot_parse_expr_number(plot_expr *expr, const char *source, s
     }
 
 #if DEBUG
-    printf("plot_parse_expr_number: end '%d'\n", expr->u.value->u.number.val);
+    printf("plot_parse_expr_number: end '%d'\n", val->u.number.val);
 #endif
 
-    return expr;
+    return val;
 }
 
 /* FIXME ignore unused parameter warnings */
@@ -337,9 +334,8 @@ static plot_expr * plot_parse_expr_number(plot_expr *expr, const char *source, s
  *
  * expects quote to be at source[*upto]
  */
-static plot_expr * plot_parse_expr_quote(plot_expr *expr, const char *source, size_t *upto){
-    int max_children = 2;
-    plot_expr *children = calloc(max_children, sizeof(*children)); /* FIXME fixed size */
+static plot_value * plot_parse_expr_quote(const char *source, size_t *upto){
+    plot_value *val;
 
 #if DEBUG
     puts("plot_parse_expr_quote: start");
@@ -351,18 +347,24 @@ static plot_expr * plot_parse_expr_quote(plot_expr *expr, const char *source, si
     ++*upto;
 
     /* return an s-expr of the form
-     * (quote <data)
+     * (quote <data>)
+     *
+     * we represent this as
+     * car = (quote <data>)
+     * cdr = null
      */
-    expr->type = plot_expr_sexpr;
 
-    expr->u.sexpr.subforms = children;
-    expr->u.sexpr.nchildren = 2;
-    expr->u.sexpr.subforms = children;
+    val = plot_new_pair(0, plot_new_pair(0, plot_new_null()));
+    car(val) = plot_new_symbol("quote", 6);
+    plot_value_constantify(car(val));
+    car(cdr(val)) = plot_parse_expr(source, upto);
 
-    expr->u.sexpr.subforms[0].type = plot_expr_value;
-    expr->u.sexpr.subforms[0].u.value = plot_new_symbol("quote", 6);
+    #if DEBUG
+    puts("parsed quote:");
+    display_error_expr(val);
+    #endif
 
-    if( ! plot_parse_expr(&(expr->u.sexpr.subforms[1]), source, upto) ){
+    if( ! cdr(car(val)) ){
         puts("\t\t Error in plot_parse_expr_quote when calling plot_parse_expr, returning\n");
         return 0;
     }
@@ -371,16 +373,17 @@ static plot_expr * plot_parse_expr_quote(plot_expr *expr, const char *source, si
     puts("plot_parse_expr_quote: fin");
 #endif
 
-    return expr;
+    return val;
 }
 
 /* plot_parse_expr will consume a token upto a separator (but will not consume the separator)
  * *upto is an offset into the source
  * *upto represents where plot_parse_sexpr starts and it will update it to match where it got up to
- * return a plot_expr* or 0 for errors
+ * return a plot_value * (list) or 0 for errors
  * */
-plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
+plot_value * plot_parse_expr(const char *source, size_t *upto){
     int cont = 1;
+    plot_value *val;
 
     while( cont ){
         switch( source[ *upto ] ){
@@ -391,20 +394,20 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
                 #if DEBUG
                     puts("plot_parse_expr: calling plot_parse_expr_hash");
                 #endif
-                return plot_parse_expr_hash(expr, source, upto);
+                return plot_parse_expr_hash(source, upto);
                 break;
             case '\'':
                 #if DEBUG
                     puts("plot_parse_expr: calling plot_parse_expr_quote");
                 #endif
-                return plot_parse_expr_quote(expr, source, upto);
+                return plot_parse_expr_quote(source, upto);
                 break;
             case '"':
                 #if DEBUG
                     puts("plot_parse_expr: calling plot_parse_expr_string");
                 #endif
                 /* start of string */
-                return plot_parse_expr_string(expr, source, upto);
+                return plot_parse_expr_string(source, upto);
                 break;
             case '\0':
                 #if DEBUG
@@ -429,12 +432,12 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
                     puts("plot_parse_expr: calling plot_parse_sexpr");
                 #endif
                 /* ( start of s_expr */
-                expr->type = plot_expr_sexpr;
-                if( ! plot_parse_sexpr(&(expr->u.sexpr), source, upto) ){
+                val = plot_parse_sexpr(source, upto);
+                if( ! val ){
                     puts("\t\t Error in plot_parse_expr when calling plot_parse_sexpr, returning\n");
                     return 0;
                 }
-                return expr;
+                return val;
                 break;
             case ']':
             case ')':
@@ -457,40 +460,38 @@ plot_expr * plot_parse_expr(plot_expr *expr, const char *source, size_t *upto){
                 #if DEBUG
                     puts("plot_parse_expr: calling plot_parse_expr_number");
                 #endif
-                return plot_parse_expr_number(expr, source, upto);
+                return plot_parse_expr_number(source, upto);
                 break;
             default:
                 #if DEBUG
                     puts("plot_parse_expr: calling plot_parse_expr_symbol");
                 #endif
                 /* symbol */
-                return plot_parse_expr_symbol(expr, source, upto);
+                return plot_parse_expr_symbol(source, upto);
                 break;
         }
     }
 
-    #if DEBUG
-        puts("plot_parse_expr: returning expr...");
-    #endif
-    return expr;
+    plot_fatal_error("Impossible situation in plot_parse_expr");
+    return 0;
 }
 
 /* plot_parse_sexpr will consume a token upto and including the matching close paren
  * *upto is an offset into the source
  * *upto represents where plot_parse_sexpr starts and it will update it to match where it got up to
  * *sexpr is the allocated location to save parsed s_expr
- * return the plot_sexpr* (same as *sexpr) or 0 for errors
+ * return the plot_value* (list) or 0 for errors
  */
-plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, const char *source, size_t *upto){
+plot_value * plot_parse_sexpr(const char *source, size_t *upto){
     int start = *upto;
     int cont = 1; /* continue */
 
-    int nchildren = 0;
-    int max_children = 10;
-    plot_expr *children = calloc(max_children, sizeof(*children)); /* FIXME fixed size */
-
     /* opening bracket we encountered, if ( then closing bracket must be ), if [ the closing must be ] */
     char bracket;
+
+    plot_value *head, **cur;
+    head = 0;
+    cur = &head;
 
     bracket = source[start];
 
@@ -509,8 +510,8 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, const char *source, size_t *upt
                 /* FIXME error, can not have \0 when looking for closing bracket */
                 /* end of the line */
                 cont = 0;
-                break;
                 return 0;
+                break;
             case ']':
             case ')':
                 cont = 0;
@@ -527,10 +528,17 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, const char *source, size_t *upt
                 puts("\n\nplot_parse_sexpr: calling plot_parse_expr");
                 #endif
                 /* ( and [ also use this path (as they are compound sexpressions) */
-                if( ! plot_parse_expr(&(children[nchildren++]), source, upto) ){
+                /* about to overwrite cur, decr, doesnt matter as null is constant, but better to be consistent */
+                if( *cur ){
+                    plot_value_decr(*cur);
+                }
+                *cur = plot_new_pair(0, plot_new_null());
+                car(*cur) = plot_parse_expr(source, upto);
+                if( ! car(*cur) ){
                     puts("\t\tError in plot_parse_sexpr, called to plot_parse_expr failed\n");
                     return 0;
                 }
+                cur = &cdr(*cur);
                 break;
         }
     }
@@ -549,11 +557,11 @@ plot_sexpr * plot_parse_sexpr(plot_sexpr *sexpr, const char *source, size_t *upt
     }
     ++ *upto;
 
-    /* only modufy *sexpr if there were no errors */
-    sexpr->nchildren = nchildren;
-    sexpr->subforms = children;
+    /* empty list */
+    if( ! head )
+        return plot_new_null();
 
-    return sexpr;
+    return head;
 }
 
 void plot_parse_comment(const char *source, size_t *upto){

@@ -7,14 +7,15 @@
 #include "eval.h"
 
 #include "value.h"
-#include "types.h"
+#include "funcs.h"
+#include "value.h"
 #include "plot.h"
 
 void usage(void);
 
 int main(int argc, char **argv){
     char *source, *filename;
-    plot_program *prog;
+    plot_value *prog;
 
     if( argc < 2 ){
         puts("No scheme source file specified");
