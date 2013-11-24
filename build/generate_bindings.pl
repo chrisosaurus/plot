@@ -55,7 +55,7 @@ struct plot_binding {
 /* Plot Legacy Builtin */
 #define PLB(str, len, func) {{str, len,  len, 0}, {{-1, 0}, plot_type_legacy, {.legacy = {func}}}}
 /* Plot Syntactic */
-#define PS(str, len, func) {{str, len,  len, 0}, {{-1, 0}, plot_type_syntactic, {.syntactic = {func}}}}
+#define PS(str, len, func) {{str, len,  len, 0}, {{-1, 0}, plot_type_form, {.form = {func, 1}}}}
 
 ";
 

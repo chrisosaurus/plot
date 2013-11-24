@@ -50,8 +50,8 @@ static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
         case plot_type_legacy:
             puts("Unable to print a legacy builtin function at this point in time");
             break;
-        case plot_type_syntactic:
-            puts("Unable to print a syntactic form at this point in time");
+        case plot_type_form:
+            puts("Unable to print a form at this point in time");
             break;
         case plot_type_error:
             return plot_runtime_error(plot_error_internal, "trying to print an error value", "plot_func_display_value");
@@ -151,8 +151,8 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
         case plot_type_legacy:
             return plot_new_boolean( args[0]->u.legacy.func == args[1]->u.legacy.func );
             break;
-        case plot_type_syntactic:
-            return plot_new_boolean( args[0]->u.syntactic.func == args[1]->u.syntactic.func );
+        case plot_type_form:
+            return plot_new_boolean( args[0]->u.form.func == args[1]->u.form.func );
             break;
         case plot_type_null:
             /* both arguments are of the same type, '() = '() */

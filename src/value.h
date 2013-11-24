@@ -14,7 +14,7 @@ typedef enum plot_value_type{
      */
     plot_type_legacy,
     /* a syntactic form written in c */
-    plot_type_syntactic,
+    plot_type_form,
     plot_type_error,
     plot_type_string,
     plot_type_boolean,
@@ -137,13 +137,17 @@ typedef struct plot_legacy {
     struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc);
 } plot_legacy;
 
-typedef struct plot_syntactic {
+typedef struct plot_form {
     /* env to evaluate within
      * args is a plot list
      * argc is the number of them
      */
     struct plot_value * (*func)(struct plot_env *env, struct plot_value *sexpr);
-} plot_syntactic;
+    /* flag is 1 is this form is syntactic, otherwise 0
+     * a syntactic form receives it's argument un-evaluated
+     */
+    int syntactic;
+} plot_form;
 
 /* a promise is the value type returned by delay
  * value is set IFF the body has already been evaluated
@@ -167,7 +171,7 @@ typedef struct plot_value {
         plot_promise   promise;
         plot_lambda    lambda;
         plot_legacy    legacy;
-        plot_syntactic syntactic;
+        plot_form      form;
         plot_error     error;
         plot_string    string;
         plot_boolean   boolean;
@@ -199,7 +203,7 @@ plot_value * plot_new_error(plot_error_type type, const char *msg, const char *l
 plot_value * plot_new_promise(struct plot_env *env, struct plot_value *expr);
 plot_value * plot_new_lambda(struct plot_env *env, struct plot_value *body);
 plot_value * plot_new_legacy( struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc) );
-plot_value * plot_new_syntactic( struct plot_value * (*func)(struct plot_env *env, struct plot_value *sexpr) );
+plot_value * plot_new_form( struct plot_value * (*func)(struct plot_env *env, struct plot_value *sexpr), int syntactic);
 
 /* turn an existing plot_value into a constant
  */

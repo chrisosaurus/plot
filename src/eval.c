@@ -224,13 +224,18 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
             /* FIXME also dirty */
             free(vals);
             return val;
-        case plot_type_syntactic:
+        case plot_type_form:
             #if DEBUG_FUNC || DEBUG
             puts("calling syntactic with sexpr:");
             display_error_expr(sexpr);
             #endif
 
-            return func->u.syntactic.func( env, sexpr );
+            if( func->u.form.syntactic ){
+                return func->u.form.func( env, sexpr );
+            } else {
+                plot_fatal_error("non-syntactic forms not yet implemented");
+                return 0;
+            }
             break;
         case plot_type_lambda:
             #if DEBUG_FUNC || DEBUG

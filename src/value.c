@@ -165,12 +165,13 @@ plot_value * plot_new_legacy( struct plot_value * (*func)(struct plot_env *env, 
     return res;
 }
 
-plot_value * plot_new_syntactic( struct plot_value * (*func)(struct plot_env *env, struct plot_value *sexpr) ){
+plot_value * plot_new_form( struct plot_value * (*func)(struct plot_env *env, struct plot_value *sexpr), int syntactic){
     plot_value *res;
     res = plot_alloc_value();
 
-    res->type = plot_type_syntactic;
-    res->u.syntactic.func = func;
+    res->type = plot_type_form;
+    res->u.form.func = func;
+    res->u.form.syntactic = syntactic;
 
     return res;
 }
@@ -265,8 +266,8 @@ void display_type(plot_value *val){
         case plot_type_legacy:
             puts("type is legacy");
             break;
-        case plot_type_syntactic:
-            puts("type is syntactic");
+        case plot_type_form:
+            puts("type is form");
             break;
         case plot_type_error:
             puts("type is error");
