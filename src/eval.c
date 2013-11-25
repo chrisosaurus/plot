@@ -231,7 +231,8 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
             #endif
 
             if( func->u.form.syntactic ){
-                return func->u.form.func( env, sexpr );
+                /* use cdr here to 'trim' the first symbol (e.g. `lambda`) */
+                return func->u.form.func( env, cdr(sexpr) );
             } else {
                 plot_fatal_error("non-syntactic forms not yet implemented");
                 return 0;
@@ -259,7 +260,7 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
              *  define(new-env, parameter, argument)
              */
             curarg = cdr(sexpr);
-            for( cur = car(cdr(func->u.lambda.body)); cur->type != plot_type_null; cur = cdr(cur) ){
+            for( cur = car(func->u.lambda.body); cur->type != plot_type_null; cur = cdr(cur) ){
                 if( car(curarg)->type == plot_type_null ){
                     /* FIXME NO ARG */
                 }
@@ -293,7 +294,7 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
              * return value of final expr
              */
             val = 0;
-            for( cur = cdr(cdr(func->u.lambda.body)); cur->type != plot_type_null; cur = cdr(cur) ){
+            for( cur = cdr(func->u.lambda.body); cur->type != plot_type_null; cur = cdr(cur) ){
                 #if DEBUG || DEBUG_FORM
                 puts("body part");
                 display_error_expr(car(cur));

@@ -50,7 +50,7 @@ struct plot_value * plot_form_begin(struct plot_env *env, struct plot_value *sex
     plot_value *value = 0;
     plot_value *cur;
 
-    for( cur=cdr(sexpr); cur->type != plot_type_null; cur = cdr(cur) ){
+    for( cur=sexpr; cur->type != plot_type_null; cur = cdr(cur) ){
         if( value ){
             plot_value_decr(value);
         }
@@ -73,15 +73,15 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_value *se
     plot_value *body;
     plot_value *args;
 
-    /* FIXME need to check sexpr */
+    /* FIXME need to check args */
 
     /* define has 2 forms:
      * (define a <value>)
      * (define (b args) <function body>)
      */
 
-    name = car(cdr(sexpr));
-    body = car(cdr(cdr(sexpr)));
+    name = car(sexpr);
+    body = car(cdr(sexpr));
 
     #if DEBUG
     puts("define with name:");
@@ -102,7 +102,7 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_value *se
          */
 
         /* FIXME bit of a hack, should tidy up */
-        value = plot_new_lambda(env, plot_new_pair( plot_new_symbol("lambda", 7), plot_new_pair(args, plot_new_pair(body, plot_new_null()))) );
+        value = plot_new_lambda(env, plot_new_pair( args, plot_new_pair(body, plot_new_null())));
         plot_env_define(env, &(name->u.symbol), value);
         plot_value_decr(value);
 
@@ -162,8 +162,8 @@ struct plot_value * plot_form_lambda(struct plot_env *env, struct plot_value *se
     /* (lambda args body... )
      */
 
-    args = car(cdr(sexpr));
-    body = cdr(cdr(sexpr));
+    args = car(sexpr);
+    body = cdr(sexpr);
 
     if( body->type == plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "no body found", "plot_form_lambda");
@@ -196,9 +196,9 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr)
      * (if cond if-expr else-expr) ; 'branching'
      */
 
-    cond = car(cdr(sexpr));
-    if_expr = car(cdr(cdr(sexpr)));
-    else_expr = cdr(cdr(cdr(sexpr)));
+    cond = car(sexpr);
+    if_expr = car(cdr(sexpr));
+    else_expr = cdr(cdr(sexpr));
     if( else_expr->type == plot_type_pair ) {
         else_expr = car(else_expr);
     } else {
@@ -286,12 +286,11 @@ struct plot_value * plot_form_set(struct plot_env *env, struct plot_value *sexpr
      *      cdr = null
      */
 
-    name = car(cdr(sexpr));
-    expr = car(cdr(cdr(sexpr)));
+    name = car(sexpr);
+    expr = car(cdr(sexpr));
 
-    if( car(sexpr)->type != plot_type_symbol ||
-        name->type != plot_type_symbol ||
-        cdr(cdr(cdr(sexpr)))->type != plot_type_null ){
+    if( name->type != plot_type_symbol ||
+        cdr(cdr(sexpr))->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "malformed set! form", "plot_form_set");
     }
 
@@ -327,27 +326,23 @@ struct plot_value * plot_form_quote(struct plot_env *env, struct plot_value *sex
     display_error_expr(sexpr);
     #endif
 
-    if( car(sexpr)->type != plot_type_symbol || cdr(cdr(sexpr))->type != plot_type_null ){
-        return plot_runtime_error(plot_error_bad_args, "malformed quote expression", "plot_form_quote");
-    }
-
     out = 0;
     cur = &out;
 
-    switch( car(cdr(sexpr))->type ){
+    switch( car(sexpr)->type ){
         case plot_type_pair:
             /* return map quote cdr(sexpr);
              * '(a b c) => (list 'a 'b 'c)
              */
-            for( in=car(cdr(sexpr)); in->type == plot_type_pair; in = cdr(in) ){
+            for( in=car(sexpr); in->type == plot_type_pair; in = cdr(in) ){
                 *cur = plot_new_pair( 0, plot_new_null() );
-                car(*cur) = plot_form_quote( env, plot_new_pair( plot_new_symbol("quote", 6), plot_new_pair( car(in), plot_new_null())) );
+                car(*cur) = plot_form_quote( env,  plot_new_pair( car(in), plot_new_null() ) );
                 cur = &cdr(*cur);
             }
             return out;
             break;
         default:
-            return car(cdr(sexpr));
+            return car(sexpr);
             break;
     }
 
@@ -366,11 +361,11 @@ struct plot_value * plot_form_delay(struct plot_env *env, struct plot_value *sex
      *  cdr = null
      */
 
-    if( car(sexpr)->type != plot_type_symbol || cdr(cdr(sexpr))->type != plot_type_null ){
+    if( cdr(sexpr)->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "malformed delay expression", "plot_form_delay");
     }
 
-    val = plot_new_promise(env, car(cdr(sexpr)));
+    val = plot_new_promise(env, car(sexpr));
     return val;
 }
 

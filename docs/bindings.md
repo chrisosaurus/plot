@@ -28,3 +28,10 @@ You can combine `syntax` either either of the other two arguments, e.g `-core -s
 
 If no argument is found the default is `library`.
 
+argument interface
+------------------
+
+a function is given it's arguments as a plot list (chain of pairs where the final cdr is a null, cars contain data)
+
+a form received a plot list of it's arguments pre-eval
+
