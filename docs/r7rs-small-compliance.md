@@ -242,6 +242,11 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     `procedure?` is implemented.
     all other procedures from this section are not implemented.
 
+    the following are pending implementation:
+        `apply`
+        `map
+        `for-each`
+
 6.11 Exceptions
     Plot has the beginnings of an exception system, however it is not
     currently exposed to plot programs.

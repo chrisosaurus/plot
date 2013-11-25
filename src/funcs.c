@@ -251,29 +251,6 @@ struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_valu
     return plot_new_boolean( val->type == plot_type_symbol );
 }
 
-/* (procedure? obj)
- * FIXME should generalise if spec allows
- */
-struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *val;
-
-    #if DEBUG
-    puts("inside plot_func_procedure_test");
-    #endif
-
-    if( argc != 1 ){
-        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_procedure_test");
-    }
-
-    val = args[0];
-
-    if( ! val ){
-        return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_procedure_test");
-    }
-
-    return plot_new_boolean( val->type == plot_type_legacy || val->type == plot_type_lambda );
-}
-
 /* returns 1 if value is considered truthy
  * returns 0 if falsy
  */

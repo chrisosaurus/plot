@@ -52,11 +52,6 @@ struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_val
  */
 struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_value **args, int argc);
 
-/* (procedure? obj)
- * FIXME should generalise if spec allows
- */
-struct plot_value * plot_func_procedure_test(struct plot_env *env, struct plot_value **args, int argc);
-
 /****** logical operations ******/
 
 /* truthy not exposed to runtime

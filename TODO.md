@@ -10,7 +10,6 @@ operations:
 * string-ci<=?
 * string-ci>=?
 * list->string
-
 * append
 * list-tail
 * list-ref
@@ -21,6 +20,9 @@ operations:
 * assq
 * assv
 * assoc
+* apply
+* map
+* for-each
 
 forms:
 ------
