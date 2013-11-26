@@ -38,7 +38,30 @@ struct plot_value * plot_func_control_procedure_test(struct plot_env *env, struc
  * (apply + 3 '(1 3)) ; => 7
  */
 struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "pending implementation", "plot_func_control_");
+    plot_value *func;
+
+    /* FIXME waiting on plot_func_pair_list being a form */
+    //plot_value *newargs;
+
+    func = car(args);
+
+    switch(func->type){
+        case plot_type_lambda:
+            return plot_runtime_error(plot_error_bad_args, "apply is not yet implemented for lambda functions", "plot_func_control_apply");
+            break;
+        case plot_type_form:
+            //func->u.form.func(env, args);
+            return plot_runtime_error(plot_error_bad_args, "apply is not yet implemented for forms", "plot_func_control_apply");
+            break;
+        case plot_type_legacy:
+            return plot_runtime_error(plot_error_bad_args, "apply is not implemented for legacy builtins (legacy builtins are slowly being removed)", "plot_func_control_apply");
+            break;
+        default:
+            return plot_runtime_error(plot_error_bad_args, "first argument is not a function", "plot_func_control_apply");
+            break;
+    }
+
+    return 0;
 }
 
 /* (map proc list1 list2...)
