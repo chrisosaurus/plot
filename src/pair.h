@@ -87,7 +87,7 @@ struct plot_value * plot_func_pair_reverse(struct plot_env *env, struct plot_val
  * returns a newly allocated list of k elements
  * if `fill` is provided then each element will be set, otherwise contents are unspecified
  */
-struct plot_value * plot_func_pair_make_list(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_pair_make_list(struct plot_env *env, struct plot_value *args);
 
 /* (list-tail list k)
  * returns sublist of list obtained by omitting the first k elements
