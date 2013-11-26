@@ -307,7 +307,7 @@ struct plot_value * plot_func_pair_make_list(struct plot_env *env, struct plot_v
  *
  * error if list has fewer than k elements
  */
-struct plot_value * plot_func_pair_list_tail(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_pair_list_tail(struct plot_env *env, struct plot_value *args){
     return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_list_tail");
 }
 
@@ -318,7 +318,7 @@ struct plot_value * plot_func_pair_list_tail(struct plot_env *env, struct plot_v
  * error if list has fewer than k elements
  * list is allowed to be circular
  */
-struct plot_value * plot_func_pair_list_ref(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_pair_list_ref(struct plot_env *env, struct plot_value *args){
     return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_list_ref");
 }
 
@@ -327,7 +327,7 @@ struct plot_value * plot_func_pair_list_ref(struct plot_env *env, struct plot_va
  *
  * error if k is not a valid index into list
  */
-struct plot_value * plot_func_pair_list_set(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_pair_list_set(struct plot_env *env, struct plot_value *args){
     return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_list_set");
 }
 
@@ -339,7 +339,7 @@ struct plot_value * plot_func_pair_list_set(struct plot_env *env, struct plot_va
  *
  * compares using `eqq?`
  */
-struct plot_value * plot_func_pair_memq(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_pair_memq(struct plot_env *env, struct plot_value *args){
     return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_memq");
 }
 
@@ -351,7 +351,7 @@ struct plot_value * plot_func_pair_memq(struct plot_env *env, struct plot_value 
  *
  * compares using `eqv?`
  */
-struct plot_value * plot_func_pair_memv(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_pair_memv(struct plot_env *env, struct plot_value *args){
     return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_memv");
 }
 
@@ -363,7 +363,7 @@ struct plot_value * plot_func_pair_memv(struct plot_env *env, struct plot_value 
  *
  * compares using provided `compare` proc, otherwise uses `equal?`
  */
-struct plot_value * plot_func_pair_member(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_pair_member(struct plot_env *env, struct plot_value *args){
     return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_member");
 }
 
@@ -375,7 +375,7 @@ struct plot_value * plot_func_pair_member(struct plot_env *env, struct plot_valu
  *
  * compares using `eq?`
  */
-struct plot_value * plot_func_pair_assq(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_pair_assq(struct plot_env *env, struct plot_value *args){
     return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_assq");
 }
 
@@ -387,7 +387,7 @@ struct plot_value * plot_func_pair_assq(struct plot_env *env, struct plot_value 
  *
  * compares using `eqv?`
  */
-struct plot_value * plot_func_pair_assv(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_pair_assv(struct plot_env *env, struct plot_value *args){
     return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_assv");
 }
 
@@ -400,7 +400,7 @@ struct plot_value * plot_func_pair_assv(struct plot_env *env, struct plot_value 
  *
  * compares using provided `compare` proc, otherwise uses `equal?`
  */
-struct plot_value * plot_func_pair_assoc(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_pair_assoc(struct plot_env *env, struct plot_value *args){
     return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_assoc");
 }
 
