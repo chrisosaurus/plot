@@ -45,10 +45,9 @@
   (pass "four")
   (fail "four"))
 
-; unimplemented
-;(if (equal? 1 (car '(1 2 3 4)))
-;  (pass "five")
-;  (fail "five"))
+(if (equal? 1 (car '(1 2 3 4)))
+  (pass "five")
+  (fail "five"))
 
 
 ;; tests completed, print results
