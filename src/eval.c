@@ -230,12 +230,28 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
             display_error_expr(sexpr);
             #endif
 
+            /* form.syntactic is true IFF this is a syntactic form
+             *  syntactic forms received their arguments pre-evaluation
+             *  normal forms have their arguments evaluated before seeing them
+             */
             if( func->u.form.syntactic ){
                 /* use cdr here to 'trim' the first symbol (e.g. `lambda`) */
                 return func->u.form.func( env, cdr(sexpr) );
             } else {
-                plot_fatal_error("non-syntactic forms not yet implemented");
-                return 0;
+                /* val is the head of the list of args we pass into the function */
+                val = null;
+                /* vals is our current tail */
+                vals = &val;
+                /* we use curarg for the current argument we are evaling
+                 * before placing it into vals
+                 */
+                for( curarg = cdr(sexpr); curarg->type == plot_type_pair; curarg = cdr(curarg) ){
+                    /* eval and shove into list */
+                    *vals = cons(0, null);
+                    car(*vals) = plot_eval_expr(env, car(curarg));
+                    vals = &cdr(*vals);
+                }
+                return func->u.form.func( env, val );
             }
             break;
         case plot_type_lambda:
