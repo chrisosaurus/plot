@@ -180,6 +180,6 @@ struct plot_value * plot_func_pair_assoc(struct plot_env *env, struct plot_value
  * an obj which is not a list is returned unchanged
  * error if obj is circular
  */
-struct plot_value * plot_func_pair_list_copy(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_pair_list_copy(struct plot_env *env, struct plot_value *args);
 
 #endif
