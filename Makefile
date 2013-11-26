@@ -48,6 +48,8 @@ run_tests: compile_tests plot
 	./plot t/integration/pair.scm
 	@echo "\nrunning quote.scm"
 	./plot t/integration/quote.scm
+	@echo "\nrunning control.scm"
+	./plot t/integration/control.scm
 	@make -s cleanobj
 
 test: run_tests cleanobj

@@ -19,7 +19,7 @@ operations:
 * assq
 * assv
 * assoc
-* apply
+* apply - make r7rs compliant
 * map
 * for-each
 

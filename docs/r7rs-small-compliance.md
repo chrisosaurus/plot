@@ -241,9 +241,9 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
 6.10 Control features
     `procedure?` is implemented.
     all other procedures from this section are not implemented.
+    `apply` is implemented but is not yet fully r7rs-compliant.
 
     the following are pending implementation:
-        `apply`
         `map
         `for-each`
 

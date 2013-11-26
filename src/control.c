@@ -31,17 +31,31 @@ struct plot_value * plot_func_control_procedure_test(struct plot_env *env, struc
 }
 
 /* (apply proc args1 ... args)
- * calls proc with the elements of the list
- * (append (list arg1...) args) as the argument
+ * FIXME not r7rs compliant as we currently call func with argument set to (append arg1 ... argn)
+ * where spec says:
+ *   calls proc with the elements of the list
+ *   (append (list arg1...) args) as the argument
  *
- * (apply + '(3 4))   ; => 7
- * (apply + 3 '(1 3)) ; => 7
+ * spec allows for both:
+ *  (apply + '(3 4))   ; => 7
+ *  (apply + 3 '(1 3)) ; => 7
  */
 struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_value *args){
     plot_value *func;
+    plot_value *newargs;
 
-    /* FIXME waiting on plot_func_pair_list being a form */
-    //plot_value *newargs;
+    /* FIXME not r7rs compliant
+     * spec says the argument should be
+     * (append (list arg1...) args)
+     *
+     * this allows for
+     *  (apply + 1 2 '(3 4 5)) ; =>15
+     * but not
+     *  (apply + 1 2) ; => error
+     * nor
+     *  (apply '(1 2 3) '(4 5 6)) ; => error
+     */
+    newargs = plot_func_pair_append(env, args);
 
     func = car(args);
 
@@ -50,8 +64,7 @@ struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_va
             return plot_runtime_error(plot_error_bad_args, "apply is not yet implemented for lambda functions", "plot_func_control_apply");
             break;
         case plot_type_form:
-            //func->u.form.func(env, args);
-            return plot_runtime_error(plot_error_bad_args, "apply is not yet implemented for forms", "plot_func_control_apply");
+            return func->u.form.func(env, newargs);
             break;
         case plot_type_legacy:
             return plot_runtime_error(plot_error_bad_args, "apply is not implemented for legacy builtins (legacy builtins are slowly being removed)", "plot_func_control_apply");

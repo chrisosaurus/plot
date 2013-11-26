@@ -13,11 +13,14 @@ struct plot_value;
 struct plot_value * plot_func_control_procedure_test(struct plot_env *env, struct plot_value *args);
 
 /* (apply proc args1 ... args)
- * calls proc with the elements of the list
- * (append (list arg1...) args) as the argument
+ * FIXME not r7rs compliant as we currently call func with argument set to (append arg1 ... argn)
+ * where spec says:
+ *   calls proc with the elements of the list
+ *   (append (list arg1...) args) as the argument
  *
- * (apply + '(3 4))   ; => 7
- * (apply + 3 '(1 3)) ; => 7
+ * spec allows for both:
+ *  (apply + '(3 4))   ; => 7
+ *  (apply + 3 '(1 3)) ; => 7
  */
 struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_value *args);
 
