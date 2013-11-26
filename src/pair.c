@@ -325,7 +325,31 @@ struct plot_value * plot_func_pair_list_tail(struct plot_env *env, struct plot_v
  * list is allowed to be circular
  */
 struct plot_value * plot_func_pair_list_ref(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_list_ref");
+    int k;
+    plot_value *cur;
+
+    if( args->type != plot_type_pair || car(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected 2 args of type list and number", "plot_func_pair_list_ref");
+    }
+
+    k = car(cdr(args))->u.number.val;
+
+    if( k < 0 ){
+        return plot_runtime_error(plot_error_bad_args, "negative index provided is illegal", "plot_func_pair_list_ref");
+    }
+
+    for( cur = car(args); k > 0; --k ){
+        cur = cdr(cur);
+        if( cur->type != plot_type_pair ){
+            return plot_runtime_error(plot_error_runtime, "provided k is not a valid index into provided list", "plot_func_pair_list_ref");
+        }
+    }
+
+    /* k is now 0
+     * args has to be a pair
+     */
+    plot_value_incr(car(cur));
+    return car(cur);
 }
 
 /* (list-set! list k obj)

@@ -11,7 +11,6 @@ operations:
 * string-ci>=?
 * list->string
 * list-tail
-* list-ref
 * memq
 * memv
 * member

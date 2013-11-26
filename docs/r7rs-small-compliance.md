@@ -148,10 +148,10 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `list-copy`
         `append`
         `list-set!`
+        `list-ref`
 
     pending implementation:
         `list-tail`
-        `list-ref`
         `memq`
         `memv`
         `member`

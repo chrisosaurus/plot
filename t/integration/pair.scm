@@ -105,8 +105,10 @@
 (list-set! eleven 0 'a)
 (list-set! eleven 3 'c)
 (if (equal? (car eleven) 'a)
-  (if (equal? (car (cdr (cdr (cdr eleven)))) 'c)
-    (pass "eleven")
+  (if (equal? (list-ref eleven 3) 'c)
+    (if (equal? (list-ref eleven 1) 1)
+      (pass "eleven")
+      (fail "eleven case 3"))
     (fail "eleven case 2"))
   (fail "eleven case 1"))
 
