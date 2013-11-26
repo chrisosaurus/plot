@@ -146,9 +146,9 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `reverse`
         `make-list`
         `list-copy`
+        `append`
 
     pending implementation:
-        `append`
         `list-tail`
         `list-ref`
         `list-set!`

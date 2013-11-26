@@ -95,6 +95,12 @@
   (pass "nine")
   (fail "nine"))
 
+(if (equal?
+      (car (cdr (cdr '(1 2 3 4))))
+      (car (cdr (cdr (append '(1) '(2 3 4))))))
+  (pass "ten")
+  (fail "ten"))
+
 ;; tests completed, print results
 (println "pair test results")
 (display tests-passed)

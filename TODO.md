@@ -12,7 +12,6 @@ operations:
 * string-ci<=?
 * string-ci>=?
 * list->string
-* append
 * list-tail
 * list-ref
 * list-set!

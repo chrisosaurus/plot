@@ -1,5 +1,6 @@
 #include "value.h"
 #include "pair.h"
+#include <stdio.h>
 
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -179,9 +180,51 @@ struct plot_value * plot_func_pair_length(struct plot_env *env, struct plot_valu
 
 /* (append list ...)
  * returns a newly allocated list made up on the concatenation of all provided lists
+ * final item can be a non-list, in which case the resulting list is an improper-list
+ *
+ * if there are no arguments then the empty list is returned
+ *
+ * the result is a newly allocated list except that it shares structure with the final arg
+ *
+ * (append '(1 2 3) '(4 5 6))   ; => '(1 2 3 4 5 6)
+ * (append '(1 2 3) '(4 5 6) 7) ; => '(1 2 3 4 5 6 . 7)
+ *
+ * results will be messy if any of the args except for the final one are not lists
+ * (append 'a '(1 2 3) 'a '(4 5 6) 7 ) ; => '(1 2 3 4 5 6 . 7)
+ * notice how both the 'a (s) are not present in the final output.
+ *
+ * you should not rely on this behavior as it is non-standard, in the future plot may
+ * throw errors
+ *
+ * FIXME consider throwing errors on non-lists as non-last arguments.
  */
-struct plot_value * plot_func_pair_append(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_append");
+struct plot_value * plot_func_pair_append(struct plot_env *env, struct plot_value *args){
+    plot_value *head, **outcur, *arg, *elem;
+
+    head = null;
+    outcur = &head;
+    arg = args;
+
+    /* each argument is a list, so for each argument we need to iterate
+     * through the sublist copying over the elements until we find the tail
+     */
+    for( arg = args; arg->type == plot_type_pair; arg = cdr(arg) ){
+        for( elem = car(arg); elem->type == plot_type_pair; elem = cdr(elem) ){
+            *outcur = cons(0, null);
+            car(*outcur) = car(elem);
+            plot_value_incr(car(elem));
+            outcur = &cdr(*outcur);
+        }
+
+        /* need to deal with final element which may not be a list */
+        if( elem->type != plot_type_null ){
+            /* neither pair nor null */
+            *outcur = elem;
+            plot_value_incr(elem);
+        }
+    }
+
+    return head;
 }
 
 /* (reverse list)
