@@ -251,7 +251,11 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
                     car(*vals) = plot_eval_expr(env, car(curarg));
                     vals = &cdr(*vals);
                 }
-                return func->u.form.func( env, val );
+                /* reusing cur, poorly named */
+                cur = func->u.form.func( env, val );
+                /* need to cleanup created list */
+                plot_value_decr(val);
+                return cur;
             }
             break;
         case plot_type_lambda:
