@@ -144,17 +144,20 @@ struct plot_value * plot_func_pair_list_test(struct plot_env *env, struct plot_v
  * returns a newly allocated made up of all the objects specified
  * terminated by empty list
  */
-struct plot_value * plot_func_pair_list(struct plot_env *env, struct plot_value **args, int argc){
-    int i;
-    plot_value *current;
+struct plot_value * plot_func_pair_list(struct plot_env *env, struct plot_value *args){
+    plot_value *head, **cur, *in;
 
-    current = plot_new_null();
+    head = null;
+    cur = &head;
 
-    for( i=argc; i>0; --i ){
-        current = plot_new_pair(args[i - 1], current);
+    for( in = args; in->type == plot_type_pair; in = cdr(in) ){
+        *cur = cons(0, null);
+        car(*cur) = car(in);
+        plot_value_incr(car(in));
+        cur = &cdr(*cur);
     }
 
-    return current;
+    return head;
 }
 
 /* (length list)
