@@ -334,7 +334,34 @@ struct plot_value * plot_func_pair_list_ref(struct plot_env *env, struct plot_va
  * error if k is not a valid index into list
  */
 struct plot_value * plot_func_pair_list_set(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_list_set");
+    int k;
+    plot_value *cur;
+
+    if( args->type != plot_type_pair || car(args)->type != plot_type_pair || car(cdr(args))->type != plot_type_number ){
+        return plot_runtime_error(plot_error_bad_args, "expected 3 args of type list, number and any", "plot_func_pair_list_set");
+    }
+
+    k = car(cdr(args))->u.number.val;
+
+    if( k < 0 ){
+        return plot_runtime_error(plot_error_bad_args, "negative index provided is illegal", "plot_func_pair_list_set");
+    }
+
+    for( cur = car(args); k > 0; --k ){
+        cur = cdr(cur);
+        if( cur->type != plot_type_pair ){
+            return plot_runtime_error(plot_error_runtime, "provided k is not a valid index into provided list", "plot_func_pair_list_set");
+        }
+    }
+
+    /* k is now 0
+     * args has to be a pair
+     */
+    plot_value_decr(car(cur));
+    car(cur) = car(cdr(cdr(args)));
+    plot_value_incr(car(cur));
+
+    return plot_new_unspecified();
 }
 
 /* (memq obj list)

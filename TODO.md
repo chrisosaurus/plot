@@ -12,7 +12,6 @@ operations:
 * list->string
 * list-tail
 * list-ref
-* list-set!
 * memq
 * memv
 * member

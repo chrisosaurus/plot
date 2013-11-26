@@ -101,6 +101,15 @@
   (pass "ten")
   (fail "ten"))
 
+(define eleven '(0 1 2 3))
+(list-set! eleven 0 'a)
+(list-set! eleven 3 'c)
+(if (equal? (car eleven) 'a)
+  (if (equal? (car (cdr (cdr (cdr eleven)))) 'c)
+    (pass "eleven")
+    (fail "eleven case 2"))
+  (fail "eleven case 1"))
+
 ;; tests completed, print results
 (println "pair test results")
 (display tests-passed)
