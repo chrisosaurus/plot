@@ -52,7 +52,7 @@ struct plot_value * plot_func_pair_list(struct plot_env *env, struct plot_value 
 /* (length list)
  * returns list length
  */
-struct plot_value * plot_func_pair_length(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_pair_length(struct plot_env *env, struct plot_value *args);
 
 
 /* (append list ...)
