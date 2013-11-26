@@ -52,31 +52,23 @@ struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_valu
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
  */
-plot_value * plot_func_add(struct plot_env *env, plot_value **args, int argc){
+plot_value * plot_func_add(struct plot_env *env, plot_value *args){
     plot_value *arg;
-    int sum=0, i;
+    int sum=0;
 
     #if DEBUG
     puts("inside plot_func_add");
     #endif
 
-    for( i=0; i<argc; ++i ){
-        arg = args[i];
-        if( ! arg ){
-            #if DEBUG
-            puts("argument to plot_func_add was null");
-            #endif
-            return 0; /* ERROR */
-        }
-
-        if( ! (arg->type == plot_type_number) ){
+    for( arg = args; arg->type == plot_type_pair; arg = cdr(arg) ){
+        if( car(arg)->type != plot_type_number ){
             #if DEBUG
             puts("arg is not a number");
             #endif
             return 0; /* ERROR */
         }
 
-        sum += arg->u.number.val;
+        sum += car(arg)->u.number.val;
     }
 
     #if DEBUG
@@ -91,35 +83,26 @@ plot_value * plot_func_add(struct plot_env *env, plot_value **args, int argc){
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
  */
-plot_value * plot_func_subtract(struct plot_env *env, plot_value **args, int argc){
+plot_value * plot_func_subtract(struct plot_env *env, plot_value *args){
     plot_value *arg;
-    int difference=0, i;
+    int difference = 0;
 
     #if DEBUG
     puts("inside plot_func_subtract");
     #endif
 
-    for( i=0; i<argc; ++i ){
-        arg = args[i];
-        if( ! arg ){
-            #if DEBUG
-            puts("arg was NULL");
-            #endif
-            return 0; /* ERROR */
+    if( car(args)->type != plot_type_number ){
+        return plot_runtime_error(plot_error_bad_args, "argument is not a number", "plot_func_subtract");
+    }
+
+    difference = car(args)->u.number.val;
+
+    for( arg = cdr(args); arg->type == plot_type_pair; arg = cdr(arg) ){
+        if( car(arg)->type != plot_type_number ){
+            return plot_runtime_error(plot_error_bad_args, "argument is not a number", "plot_func_subtract");
         }
 
-        if( ! (arg->type == plot_type_number) ){
-            #if DEBUG
-            puts("value returned by plot_eval is not a number");
-            #endif
-            return 0; /* ERROR */
-        }
-
-        if( i == 0 ){
-            difference = arg->u.number.val;
-        } else {
-            difference -= arg->u.number.val;
-        }
+        difference -= car(arg)->u.number.val;
     }
     #if DEBUG
     puts("returning difference");
@@ -134,31 +117,20 @@ plot_value * plot_func_subtract(struct plot_env *env, plot_value **args, int arg
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
  */
-plot_value * plot_func_multiply(struct plot_env *env, plot_value **args, int argc){
+plot_value * plot_func_multiply(struct plot_env *env, plot_value *args){
     plot_value *arg;
-    int product=1, i;
+    int product=1;
 
     #if DEBUG
     puts("inside plot_func_multiply");
     #endif
 
-    for( i=0; i<argc; ++i ){
-        arg = args[i];
-        if( ! arg ){
-            #if DEBUG
-            puts("arg was NULL");
-            #endif
-            return 0; /* ERROR */
+    for( arg = args; arg->type == plot_type_pair; arg = cdr(arg) ){
+        if( car(arg)->type != plot_type_number ){
+            return plot_runtime_error(plot_error_bad_args, "argument is not a number", "plot_func_subtract");
         }
 
-        if( ! (arg->type == plot_type_number) ){
-            #if DEBUG
-            puts("value returned by plot_eval is not a number");
-            #endif
-            return 0; /* ERROR */
-        }
-
-        product *= arg->u.number.val;
+        product *= car(arg)->u.number.val;
     }
 
     #if DEBUG
@@ -166,38 +138,31 @@ plot_value * plot_func_multiply(struct plot_env *env, plot_value **args, int arg
     #endif
     return plot_new_number(product);
 }
+
 /* (/ number1 number2 ...)
  * integer division
  * exact only
  */
-struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value *args){
     plot_value *arg;
-    int quotient=0, i;
+    int quotient=0;
 
     #if DEBUG
     puts("inside plot_func_divide");
     #endif
 
-    for( i=0; i<argc; ++i ){
-        arg = args[i];
-        if( ! arg ){
-            #if DEBUG
-            puts("arg was NULL");
-            #endif
-            return 0; /* ERROR */
+    if( car(args)->type != plot_type_number ){
+        return plot_runtime_error(plot_error_bad_args, "argument is not a number", "plot_func_divide");
+    }
+
+    quotient = car(args)->u.number.val;
+
+    for( arg = args; arg->type == plot_type_pair; arg = cdr(arg) ){
+        if( car(arg)->type != plot_type_number ){
+            return plot_runtime_error(plot_error_bad_args, "argument is not a number", "plot_func_divide");
         }
 
-        if( ! (arg->type == plot_type_number) ){
-            #if DEBUG
-            puts("value returned by plot_eval is not a number");
-            #endif
-            return 0; /* ERROR */
-        }
-
-        if( i == 0 )
-            quotient = arg->u.number.val;
-        else
-            quotient /= arg->u.number.val;
+        quotient /= car(arg)->u.number.val;
     }
 
     #if DEBUG
@@ -210,41 +175,26 @@ struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value **a
 /* (remainder number1 number2 ...)
  * remainder
  */
-struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value *args){
     plot_value *arg;
-    int remainder=0, i;
+    int remainder=0;
 
     #if DEBUG
     puts("inside plot_func_remainder");
     #endif
 
-    if( argc != 2 ){
-        #if DEBUG
-        puts("exected exactly 2 arguments");
-        #endif
-        return 0; /* FIXME ERROR */
+    if( car(args)->type != plot_type_number ){
+        return plot_runtime_error(plot_error_bad_args, "argument is not a number", "plot_func_divide");
     }
 
-    for( i=0; i<argc; ++i ){
-        arg = args[i];
-        if( ! arg ){
-            #if DEBUG
-            puts("arg was NULL");
-            #endif
-            return 0; /* ERROR */
+    remainder = car(args)->u.number.val;
+
+    for( arg = cdr(args); arg->type == plot_type_pair; arg = cdr(arg) ){
+        if( car(arg)->type != plot_type_number ){
+            return plot_runtime_error(plot_error_bad_args, "argument is not a number", "plot_func_divide");
         }
 
-        if( ! (arg->type == plot_type_number) ){
-            #if DEBUG
-            puts("value returned by plot_eval is not a number");
-            #endif
-            return 0; /* ERROR */
-        }
-
-        if( i == 0 )
-            remainder = arg->u.number.val;
-        else
-            remainder %= arg->u.number.val;
+        remainder %= car(arg)->u.number.val;
     }
 
     #if DEBUG

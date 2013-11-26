@@ -16,7 +16,7 @@ struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_valu
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
  */
-struct plot_value * plot_func_add(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_add(struct plot_env *env, struct plot_value *args);
 
 /* (- number1 number2 ...)
  * takes a list of expressions
@@ -24,7 +24,7 @@ struct plot_value * plot_func_add(struct plot_env *env, struct plot_value **args
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
  */
-struct plot_value * plot_func_subtract(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_subtract(struct plot_env *env, struct plot_value *args);
 
 /* (* number1 number2 ...)
  * takes a list of expressions
@@ -32,17 +32,17 @@ struct plot_value * plot_func_subtract(struct plot_env *env, struct plot_value *
  * if any of the expressions evaluate to something other than an error
  * throw plot_error_bad_args
  */
-struct plot_value * plot_func_multiply(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_multiply(struct plot_env *env, struct plot_value *args);
 
 /* (/ number1 number2 ...)
  * integer division
  * exact only
  */
-struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value *args);
 
 /* (remainder number1 number2 ...)
  */
-struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value *args);
 
 
 /******** comparison functions *******/
