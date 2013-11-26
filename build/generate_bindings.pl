@@ -56,6 +56,8 @@ struct plot_binding {
 #define PLB(str, len, func) {{str, len,  len, 0}, {{-1, 0}, plot_type_legacy, {.legacy = {func}}}}
 /* Plot Syntactic */
 #define PS(str, len, func) {{str, len,  len, 0}, {{-1, 0}, plot_type_form, {.form = {func, 1}}}}
+/* Plot Form, notice the second element of form is 0 (this is true iff syntactic form) */
+#define PF(str, len, func) {{str, len,  len, 0}, {{-1, 0}, plot_type_form, {.form = {func, 0}}}}
 
 ";
 
@@ -74,7 +76,8 @@ for my $header (@headers){
     while ($contents =~ m#^\/ \* \s+ \( (?<scheme> \S+ ) [^\)]* \) \s* (?<args> (?:\s*\-\w+\s*)*  )? \s+
                       (?: ^ \s* \* [^\/]* \s+ )*
                       (?: ^ \s* \* \/ \s* ) \s+
-                          ^ struct \s plot_value \s* \* \s* (?<cfunc> [^\(]+ ) \( .*   $ #xmg){
+                          ^ struct \s plot_value \s* \* \s* (?<cfunc> [^\(]+ ) \( \s* struct \s plot_env \s* \* \s* env, \s* struct \s plot_value \s* (?<func_type>\**) \s* \w .* $ #xmg){
+
 
         my $len = length($+{scheme}) + 1;
 
@@ -82,7 +85,11 @@ for my $header (@headers){
         my $contents;
 
         if( grep "-syntax", @args ){
+            # syntactic form
             $contents = "\tPS(\"$+{scheme}\", $len, $+{cfunc})";
+        } elsif( $+{func_type} eq '*' ){
+            # non-syntactic form
+            $contents = "\tPF(\"$+{scheme}\", $len, $+{cfunc})";
         } else {
             # legacy builtin is default
             $contents = "\tPLB(\"$+{scheme}\", $len, $+{cfunc})";
