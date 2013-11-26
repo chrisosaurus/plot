@@ -103,8 +103,10 @@ typedef struct plot_pair {
 
 /* FIXME may want to move to functions that check types
  */
+#define cons(l,r) (plot_new_pair(l,r))
 #define car(v) ((v)->u.pair.car)
 #define cdr(v) ((v)->u.pair.cdr)
+#define null (plot_new_null())
 
 #if 0
 
