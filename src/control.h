@@ -10,15 +10,16 @@ struct plot_value;
 /* (procedure? obj)
  * FIXME should generalise if spec allows
  */
-struct plot_value * plot_func_control_procedure_test(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_control_procedure_test(struct plot_env *env, struct plot_value *args);
 
 /* (apply proc args1 ... args)
  * calls proc with the elements of the list
  * (append (list arg1...) args) as the argument
  *
- * (apply + (list 3 4)) ; => 7
+ * (apply + '(3 4))   ; => 7
+ * (apply + 3 '(1 3)) ; => 7
  */
-struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_value *args);
 
 /* (map proc list1 list2...)
  * error if proc does not accept as many args as there are lists
@@ -32,7 +33,7 @@ struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_va
  *
  * (map cadr '((a b) (d e) (g h)) ; => (b e h)
  */
-struct plot_value * plot_func_control_map(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_control_map(struct plot_env *env, struct plot_value *args);
 
 /* (for-each proc list1 list2... )
  * error if proc does not accept as many args as there are lists
@@ -49,6 +50,6 @@ struct plot_value * plot_func_control_map(struct plot_env *env, struct plot_valu
  *
  *
  */
-struct plot_value * plot_func_control_for_each(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_control_for_each(struct plot_env *env, struct plot_value *args);
 
 #endif
