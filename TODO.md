@@ -60,6 +60,7 @@ parse:
 eval:
 -----
 * eval documentation
+* tidy up eval_form variables
 
 read:
 -----
@@ -77,6 +78,7 @@ features:
 * variable arguments
 * want a way of printing literal syntax (without attempting to eval)
 * begin work on library system
+* play around with `display_error_expr` as it is proving very useful, should probably give it a more general name
 
 runtime:
 ---------
