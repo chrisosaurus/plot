@@ -27,7 +27,7 @@ struct plot_value * plot_func_control_procedure_test(struct plot_env *env, struc
         return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_procedure_test");
     }
 
-    return plot_new_boolean( val->type == plot_type_legacy || val->type == plot_type_lambda );
+    return plot_new_boolean( val->type == plot_type_legacy || val->type == plot_type_lambda || val->type == plot_type_form  );
 }
 
 /* (apply proc args1 ... args)
