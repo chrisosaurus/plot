@@ -80,7 +80,7 @@ struct plot_value * plot_func_pair_append(struct plot_env *env, struct plot_valu
 /* (reverse list)
  * return new allocated list containing all the values form list in reverse order
  */
-struct plot_value * plot_func_pair_reverse(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_pair_reverse(struct plot_env *env, struct plot_value *args);
 
 /* (make-list k)
  * (make-list k fill)

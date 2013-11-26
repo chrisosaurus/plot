@@ -230,31 +230,31 @@ struct plot_value * plot_func_pair_append(struct plot_env *env, struct plot_valu
 /* (reverse list)
  * return new allocated list containing all the values form list in reverse order
  */
-struct plot_value * plot_func_pair_reverse(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_pair_reverse(struct plot_env *env, struct plot_value *args){
     plot_value *val, *tmp;
 
-    if( argc != 1 ){
+    if( args->type == plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_pair_reverse");
     }
 
-    switch( args[0]->type ){
+    switch( car(args)->type ){
         case plot_type_pair:
             break;
         case plot_type_null:
-            return plot_new_null();
+            return null;
             break;
         default:
             return plot_runtime_error(plot_error_bad_args, "first arg was not a list", "plot_func_pair_reverse");
             break;
     }
 
-    tmp = args[0];
-    val = plot_new_null();
+    tmp = car(args);
+    val = null;
 
     while( tmp->type == plot_type_pair ){
-        plot_value_incr(tmp->u.pair.car);
-        val = plot_new_pair(tmp->u.pair.car, val);
-        tmp = tmp->u.pair.cdr;
+        plot_value_incr(car(tmp));
+        val = plot_new_pair(car(tmp), val);
+        tmp = cdr(tmp);
     }
 
     if( tmp->type == plot_type_null ){
