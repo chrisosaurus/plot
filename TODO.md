@@ -1,8 +1,6 @@
 TODO(s):
 =====
 
-Make generate_bindings aware of forms, syntactic and not (and aware of deprecated interface)
-
 Update code comments to reference r7rs.
 
 operations:
