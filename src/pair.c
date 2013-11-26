@@ -1,5 +1,5 @@
-#include "value.h"
 #include "pair.h"
+#include "value.h"
 #include <stdio.h>
 
 /* ignore unused parameter warnings */
@@ -10,44 +10,51 @@
 /* (pair? obj)
  * return #t iff obj is of type plot_type_pair
  */
-struct plot_value * plot_func_pair_test(struct plot_env *env, struct plot_value **args, int argc){
-    if( argc != 1 ){
+struct plot_value * plot_func_pair_test(struct plot_env *env, struct plot_value *args){
+    if( args->type != plot_type_pair ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 argument", "plot_func_pair_test");
     }
 
-    return plot_new_boolean( args[0]->type == plot_type_pair );
+    return plot_new_boolean( car(args)->type == plot_type_pair );
 }
 
 /* (cons v1 v2)
  * return a pair with v1 as car and v2 as cdr
  */
-struct plot_value * plot_func_pair_cons(struct plot_env *env, struct plot_value **args, int argc){
-    if( argc != 2 ){
+struct plot_value * plot_func_pair_cons(struct plot_env *env, struct plot_value *args){
+    plot_value *l, *r;
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 2 arguments", "plot_func_pair_cons");
     }
 
-    plot_value_incr(args[0]);
+    l = car(args);
+    r = car(cdr(args));
 
-    plot_value_incr(args[1]);
+    plot_value_incr(l);
 
-    return plot_new_pair(args[0], args[1]);
+    plot_value_incr(r);
+
+    return plot_new_pair(l, r);
 }
 
 /* (car obj)
  * return contents of car or error
  */
-struct plot_value * plot_func_pair_car(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_pair_car(struct plot_env *env, struct plot_value *args){
     plot_value *res;
 
-    if( argc != 1 ){
+    if( args->type == plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 argument", "plot_func_pair_car");
     }
 
-    if( args[0]->type != plot_type_pair ){
+    if( args->u.pair.car->type != plot_type_pair ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_pair", "plot_func_pair_car");
     }
 
-    res = args[0]->u.pair.car;
+    /* do not want to use car and cdr macro here in case we redirect
+     * the macros to point to these functions
+     */
+    res = args->u.pair.car->u.pair.car;
     plot_value_incr(res);
 
     return res;
@@ -56,18 +63,21 @@ struct plot_value * plot_func_pair_car(struct plot_env *env, struct plot_value *
 /* (cdr obj)
  * returns contents of cdr or error
  */
-struct plot_value * plot_func_pair_cdr(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_pair_cdr(struct plot_env *env, struct plot_value *args){
     plot_value *res;
 
-    if( argc != 1 ){
+    if( args->type == plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 argument", "plot_func_pair_cdr");
     }
 
-    if( args[0]->type != plot_type_pair ){
+    if( args->u.pair.car->type != plot_type_pair ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_pair", "plot_func_pair_cdr");
     }
 
-    res = args[0]->u.pair.cdr;
+    /* do not want to use car and cdr macro here in case we redirect
+     * the macros to point to these functions
+     */
+    res = args->u.pair.car->u.pair.cdr;
     plot_value_incr(res);
 
     return res;
@@ -75,36 +85,42 @@ struct plot_value * plot_func_pair_cdr(struct plot_env *env, struct plot_value *
 
 /* (set-car! pair obj)
  */
-struct plot_value * plot_func_pair_set_car(struct plot_env *env, struct plot_value **args, int argc){
-    if( argc != 2 ){
-        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_set_car");
+struct plot_value * plot_func_pair_set_car(struct plot_env *env, struct plot_value *args){
+    plot_value *new;
+    if( cdr(args)->type == plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_set_cdr");
     }
 
-    if( args[0]->type != plot_type_pair ){
-        return plot_runtime_error(plot_error_bad_args, "first arg was not a pair", "plot_func_pair_set_car");
+    if( car(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not a pair", "plot_func_pair_set_cdr");
     }
 
-    plot_value_decr(args[0]->u.pair.car);
-    args[0]->u.pair.car = args[1];
-    plot_value_incr(args[0]->u.pair.car);
+    new = car(cdr(args));
+
+    plot_value_decr(car(car(args)));
+    car(car(args)) = new;
+    plot_value_incr(new);
 
     return plot_new_unspecified();
 }
 
 /* (set-cdr! pair obj)
  */
-struct plot_value * plot_func_pair_set_cdr(struct plot_env *env, struct plot_value **args, int argc){
-    if( argc != 2 ){
+struct plot_value * plot_func_pair_set_cdr(struct plot_env *env, struct plot_value *args){
+    plot_value *new;
+    if( cdr(args)->type == plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_set_cdr");
     }
 
-    if( args[0]->type != plot_type_pair ){
+    if( car(args)->type != plot_type_pair ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not a pair", "plot_func_pair_set_cdr");
     }
 
-    plot_value_decr(args[0]->u.pair.cdr);
-    args[0]->u.pair.cdr = args[1];
-    plot_value_incr(args[0]->u.pair.cdr);
+    new = car(cdr(args));
+
+    plot_value_decr(cdr(car(args)));
+    cdr(car(args)) = new;
+    plot_value_incr(new);
 
     return plot_new_unspecified();
 }
@@ -112,31 +128,20 @@ struct plot_value * plot_func_pair_set_cdr(struct plot_env *env, struct plot_val
 /* (null? obj)
  * return #t iff obj is the empty list, otherwise #f
  */
-struct plot_value * plot_func_pair_null_test(struct plot_env *env, struct plot_value **args, int argc){
-    if( argc != 1 ){
-        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 arg", "plot_func_pair_null_test");
-    }
-
-    return plot_new_boolean( args[0]->type == plot_type_null );
+struct plot_value * plot_func_pair_null_test(struct plot_env *env, struct plot_value *args){
+    return plot_new_boolean( car(args)->type == plot_type_null );
 }
 
 /* (list? obj)
  * return #t iff obj is a list, otherwise returns #f
  * FIXME generalise
  */
-struct plot_value * plot_func_pair_list_test(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value *val;
+struct plot_value * plot_func_pair_list_test(struct plot_env *env, struct plot_value *args){
+    plot_value *cur;
 
-    if( argc != 1 ){
-        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_pair_list_test");
-    }
+    for( cur = car(args); cur->type == plot_type_pair; cur = cdr(cur) );
 
-    val = args[0];
-    while( val->type == plot_type_pair ){
-        val = val->u.pair.cdr;
-    }
-
-    return plot_new_boolean(val->type == plot_type_null);
+    return plot_new_boolean(cur->type == plot_type_null);
 }
 
 /* (list obj ...)
