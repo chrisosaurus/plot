@@ -273,9 +273,9 @@
 (define twenty-six #t)
 (if (equal? 'greater
             (cond
-              ((< 3 2) (begin
-                         (set! twenty-six #f)
-                         'less))
+              ((< 3 2) => (begin
+                            (set! twenty-six #f)
+                            'less))
               ((> 3 2) 'greater)
               (else    (begin
                          (set! twenty-six #f)

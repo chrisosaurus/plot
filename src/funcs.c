@@ -253,6 +253,8 @@ struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_valu
 
 /* returns 1 if value is considered truthy
  * returns 0 if falsy
+ *
+ * will decr supplied val
  */
 int plot_truthy(plot_value *val){
     int ret = 1;

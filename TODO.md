@@ -20,7 +20,6 @@ operations:
 
 forms:
 ------
-* cond
 * case
 * case-lambda
 
@@ -34,6 +33,7 @@ performance:
 ------------
 * recursion is currently very expensive (both in terms of stack and memory) -> need tail call optimisation
 * more performant env structure
+* consider caching of booleans (similar to null and unspecified)
 
 misc:
 -----

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h> /* strcmp */
 
 #include "forms.h"
 #include "value.h"
@@ -271,10 +272,10 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr)
     return value;
 }
 
-/* (cond (<test> <expression>)...)
+/* (cond (<test> <expression>)...) -syntax
  *
  * (cond ((> 3 2) 'greater)
- *       ((< 3 2) 'less)
+ *       ((< 3 2) => 'less)
  *       (else 'equal))
  *
  * a cond is a set of <test> <expression> pairs which are tried in order:
@@ -285,9 +286,72 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr)
  *
  *   if all <test>s are tried and found to be false then the value of the cond
  *     is unspecified.
+ *
+ *   possible forms:
+ *      ((< 3 2) 'greater)
+ *      (else 'equal)
+ *      ((> 3 2) => 'less)
+ *
  */
 struct plot_value * plot_form_cond(struct plot_env *env, struct plot_value *sexpr){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_form_cond");
+    /* current cursor into args */
+    plot_value *cur;
+    /* result from an eval call */
+    plot_value *res;
+    /* temporary value used in testing and eval */
+    plot_value *tmp;
+
+    if( sexpr->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected at least 1 cond clause", "plot_form_cond");
+    }
+
+    for( cur = sexpr; cur->type == plot_type_pair; cur = cdr(cur) ){
+        if( cur->type != plot_type_pair ){
+            return plot_runtime_error(plot_error_bad_args, "expected cond clause", "plot_form_cond");
+        }
+
+        if( car(cur)->type != plot_type_pair ){
+            return plot_runtime_error(plot_error_bad_args, "expected cond clause", "plot_form_cond");
+        }
+
+        /* assign test position to tmp */
+        tmp = car(car(cur));
+
+        /* if tmp is 'else' then it is considered true */
+        if( tmp->type == plot_type_symbol && !strcmp("else", tmp->u.symbol.val) ){
+            /* NB: plot_eval_truthy will handle our decr for us */
+            res = plot_new_boolean(1);
+        } else {
+            /* otherwise we eval */
+            /* NB: plot_eval_truthy will handle our decr for us */
+            res = plot_eval_expr(env, tmp);
+        }
+
+        /* test for truthyness
+         * plot_eval_truthy will handle our decr for us
+         */
+        if( plot_truthy(res) ){
+            if( cdr(car(cur))->type != plot_type_pair ){
+                return plot_runtime_error(plot_error_bad_args, "expected cond expression, none found", "plot_form_cond");
+            }
+
+            /* assign expression to tmp */
+            tmp = car(cdr(car(cur)));
+
+            /* if this is `=>` then the next element is the expression */
+            if( tmp->type == plot_type_symbol && !strcmp("=>", tmp->u.symbol.val) ){
+                if( cdr(cdr(car(cur)))->type != plot_type_pair ){
+                    return plot_runtime_error(plot_error_bad_args, "expected cond expression, none found in => cond clause", "plot_form_cond");
+                }
+                tmp = car(cdr(cdr(car(cur))));
+            }
+
+            res = plot_eval_expr(env, tmp);
+            return res;
+        }
+    }
+
+    return plot_new_unspecified();
 }
 
 

@@ -21,6 +21,7 @@ For an up-to-date summary or plot's implementation status see `docs/r7rs-small-c
 a brief summary:
 * define form
 * if forms
+* cond form
 * lambda form
 * set! form
 * begin form

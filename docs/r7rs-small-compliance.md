@@ -36,9 +36,9 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     the following procedures are implemented:
         `and`
         `or`
+        `cond`
 
     the following forms should be implemented shortly:
-        `cond`
         `case`
         `when`
         `unless`

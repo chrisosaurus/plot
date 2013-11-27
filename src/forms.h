@@ -47,7 +47,7 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr)
 /* (cond (<test> <expression>)...) -syntax
  *
  * (cond ((> 3 2) 'greater)
- *       ((< 3 2) 'less)
+ *       ((< 3 2) => 'less)
  *       (else 'equal))
  *
  * a cond is a set of <test> <expression> pairs which are tried in order:
@@ -58,6 +58,12 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr)
  *
  *   if all <test>s are tried and found to be false then the value of the cond
  *     is unspecified.
+ *
+ *   possible forms:
+ *      ((< 3 2) 'greater)
+ *      (else 'equal)
+ *      ((> 3 2) => 'less)
+ *
  */
 struct plot_value * plot_form_cond(struct plot_env *env, struct plot_value *sexpr);
 
