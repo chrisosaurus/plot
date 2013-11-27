@@ -239,9 +239,9 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     Bytevectors are not currently implemented.
 
 6.10 Control features
-    `procedure?` is implemented.
-    all other procedures from this section are not implemented.
-    `apply` is implemented.
+    The following procedures are implemented:
+        `procedure?`
+        `apply`
 
     the following are pending implementation:
         `map
