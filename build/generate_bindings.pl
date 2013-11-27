@@ -73,7 +73,7 @@ my (@library_forms, @core_forms);
 for my $header (@headers){
     # NB: we prepend 'src/'
     my $contents = read_file "src/$header"; # File::Slurp read_file
-    while ($contents =~ m#^\/ \* \s+ \( (?<scheme> \S+ ) [^\)]* \) \s* (?<args> (?:\s*\-\w+\s*)*  )? \s+
+    while ($contents =~ m#^\/ \* \s+ \( (?<scheme> \S+ ) .* \) \s* (?<args> (?:\s*\-\w+\s*)*  )? \s+
                       (?: ^ \s* \* [^\/]* \s+ )*
                       (?: ^ \s* \* \/ \s* ) \s+
                           ^ struct \s plot_value \s* \* \s* (?<cfunc> [^\(]+ ) \( \s* struct \s plot_env \s* \* \s* env, \s* struct \s plot_value \s* (?<func_type>\**) \s* \w .* $ #xmg){
