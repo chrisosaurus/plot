@@ -314,7 +314,33 @@ struct plot_value * plot_func_pair_make_list(struct plot_env *env, struct plot_v
  * error if list has fewer than k elements
  */
 struct plot_value * plot_func_pair_list_tail(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_list_tail");
+    plot_value *cur;
+    int k;
+
+    if( args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 arguments", "plot_func_pair_list_tail");
+    }
+
+    if( car(args)->type != plot_type_pair && car(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "first argument was not a list", "plot_func_pair_list_tail");
+    }
+
+    if( car(cdr(args))->type != plot_type_number ){
+        return plot_runtime_error(plot_error_bad_args, "second arg was not a number", "plot_func_pair_list_tail");
+    }
+
+    cur = car(args);
+    k = car(cdr(args))->u.number.val;
+
+    for( ; k > 0; --k ){
+        if( cur->type != plot_type_pair ){
+            return plot_runtime_error(plot_error_bad_args, "k was too large an index for provided list", "plot_func_pair_list_tail");
+        }
+        cur = cdr(cur);
+    }
+
+    plot_value_incr(cur);
+    return cur;
 }
 
 /* (list-ref list k)

@@ -112,6 +112,11 @@
     (fail "eleven case 2"))
   (fail "eleven case 1"))
 
+(define twelve '(0 1 2 3 4 5))
+(if (equal? 4 (length (list-tail twelve 2)))
+  (pass "twelve")
+  (fail "twelve"))
+
 ;; tests completed, print results
 (println "pair test results")
 (display tests-passed)

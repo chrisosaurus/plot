@@ -10,7 +10,6 @@ operations:
 * string-ci<=?
 * string-ci>=?
 * list->string
-* list-tail
 * memq
 * memv
 * member
