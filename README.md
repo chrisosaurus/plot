@@ -30,7 +30,7 @@ a brief summary:
 * positive integer literals
 * boolean literals
 * char literals
-* pair and list datatypes (currently lack literals)
+* pair and list datatypes (currently lack literals for pairs)
 * basic integer procedures
 * printing of values (`display`)
 * printing of newline (`newline`)
