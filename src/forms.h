@@ -44,7 +44,7 @@ struct plot_value * plot_form_lambda(struct plot_env *env, struct plot_value *se
  */
 struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr);
 
-/* (cond (<test> <expression>)...)
+/* (cond (<test> <expression>)...) -syntax
  *
  * (cond ((> 3 2) 'greater)
  *       ((< 3 2) 'less)

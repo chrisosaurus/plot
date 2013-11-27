@@ -269,6 +269,23 @@
           (fail "twenty four case 3")
           (pass "twenty four"))))))
 
+;; basic cond testing
+(define twenty-six #t)
+(if (equal? 'greater
+            (cond
+              ((< 3 2) (begin
+                         (set! twenty-six #f)
+                         'less))
+              ((> 3 2) 'greater)
+              (else    (begin
+                         (set! twenty-six #f)
+                         'equal))))
+  (if twenty-six
+    (pass "twenty five")
+    (fail "twenty five case 2"))
+  (fail "twenty five case 1"))
+
+
 ;; tests completed, print results
 (println "basic test results")
 (display tests-passed)
