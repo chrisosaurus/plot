@@ -31,21 +31,18 @@ struct plot_value * plot_func_control_procedure_test(struct plot_env *env, struc
 }
 
 /* (apply proc args1 ... args)
- * FIXME not r7rs compliant as we currently call func with argument set to (append arg1 ... argn)
- * where spec says:
  *   calls proc with the elements of the list
  *   (append (list arg1...) args) as the argument
  *
- * spec allows for both:
+ * allows for both:
  *  (apply + '(3 4))   ; => 7
  *  (apply + 3 '(1 3)) ; => 7
  */
 struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_value *args){
     plot_value *func;
-    plot_value *newargs;
+    plot_value *newargs, **curna, *arg;
 
-    /* FIXME not r7rs compliant
-     * spec says the argument should be
+    /* r7rs spec says the argument should be
      * (append (list arg1...) args)
      *
      * this allows for
@@ -55,7 +52,23 @@ struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_va
      * nor
      *  (apply '(1 2 3) '(4 5 6)) ; => error
      */
-    newargs = plot_func_pair_append(env, args);
+    newargs = null;
+    curna = &newargs;
+
+    /* we only loop up to the 2nd to last pair (inclusive)
+     * we want to save the last pair
+     */
+    for( arg = cdr(args); cdr(arg)->type == plot_type_pair; arg = cdr(arg) ){
+        if( car(arg)->type == plot_type_pair ){
+            return plot_runtime_error(plot_error_bad_args, "only the final arg to apply can be a list", "plot_func_control_apply");
+        }
+        *curna = cons(0, null);
+        car(*curna) = car(arg);
+        plot_value_incr(car(*curna));
+        curna = &cdr(*curna);
+    }
+
+    newargs = plot_func_pair_append(env, cons(plot_func_pair_list(env, newargs), arg));
 
     func = car(args);
 

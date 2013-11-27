@@ -26,6 +26,10 @@
   (pass "one")
   (fail "one"))
 
+(if (= 9 (apply + 1 2 '(1 2 3)))
+  (pass "two")
+  (fail "two"))
+
 ;; tests completed, print results
 (println "pair test results")
 (display tests-passed)
