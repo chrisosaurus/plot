@@ -44,6 +44,23 @@ struct plot_value * plot_form_lambda(struct plot_env *env, struct plot_value *se
  */
 struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr);
 
+/* (cond (<test> <expression>)...)
+ *
+ * (cond ((> 3 2) 'greater)
+ *       ((< 3 2) 'less)
+ *       (else 'equal))
+ *
+ * a cond is a set of <test> <expression> pairs which are tried in order:
+ *   if a <test> results in #t (or a truthy value) then expression is eval-ed
+ *     and the result of the cond expression is the result of this expression.
+ *
+ *   else is always true.
+ *
+ *   if all <test>s are tried and found to be false then the value of the cond
+ *     is unspecified.
+ */
+struct plot_value * plot_form_cond(struct plot_env *env, struct plot_value *sexpr);
+
 /* (set! variable value) -syntax
  */
 struct plot_value * plot_form_set(struct plot_env *env, struct plot_value *sexpr);
