@@ -238,7 +238,9 @@ static plot_value * plot_parse_expr_symbol(const char *source, size_t *upto){
                 break;
             case ')':
             case ']':
-                /* end, leave for parent to consume*/
+            case '(':
+            case '[':
+                /* end of symbol, leave for parent to consume */
                 cont = 0;
                 break;
             default:

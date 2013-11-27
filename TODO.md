@@ -91,7 +91,6 @@ bugs:
 * need to update number.c to use plot_runtime_error system
 * plot_eval_form should only return 0 on error, otherwise it is a runtime error
 * parsing feedback is terrible
-* parser is non standard compliant, `(if(` should behave.
 * plot_runtime_errors should probably use scheme name (rather than c implementation name)
 * look very carefully at gc around force (incr when generated vs incr when returned)
 
