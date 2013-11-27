@@ -251,6 +251,30 @@ struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_valu
     return plot_new_boolean( val->type == plot_type_symbol );
 }
 
+/* (symbol=? obj1 obj2)
+ * returns #t iff obj1 and obj2 are both symbols and are considered equal
+ * otherwise returns #f
+ */
+struct plot_value * plot_func_symbol_equal_test(struct plot_env *env, struct plot_value *args){
+    plot_value *o1, *o2;
+
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair || cdr(cdr(args))->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_symbol_equal_test");
+    }
+
+    o1 = car(args);
+    if( o1->type != plot_type_symbol ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_symbol", "plot_func_symbol_equal_test");
+    }
+
+    o2 = car(cdr(args));
+    if( o2->type != plot_type_symbol ){
+        return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_symbol", "plot_func_symbol_equal_test");
+    }
+
+    return plot_new_boolean( ! strcmp( o1->u.symbol.val, o2->u.symbol.val ));
+}
+
 /* returns 1 if value is considered truthy
  * returns 0 if falsy
  *

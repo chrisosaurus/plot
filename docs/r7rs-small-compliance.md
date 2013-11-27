@@ -162,6 +162,7 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
 6.5 Symbols
     symbols are implemented along with the testing procedures `symbol?`,
     literal symbols are supported via quoting `'symbol`.
+    `symbol=?` is implemented.
 
 6.6 Characters
     The subset of this section that is in r5rs is implemented.

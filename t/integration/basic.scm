@@ -285,6 +285,11 @@
     (fail "twenty five case 2"))
   (fail "twenty five case 1"))
 
+(if (symbol=? 'hello 'hello)
+  (if (not (symbol=? 'hello 'world))
+    (pass "twenty six")
+    (fail "twenty six case 2"))
+  (fail "twenty six case 1"))
 
 ;; tests completed, print results
 (println "basic test results")
