@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "pair.h" /* needed for plot_func_pair_length used in list_to_string */
 #include "string.h"
 #include "value.h"
 
@@ -555,8 +556,59 @@ struct plot_value * plot_func_string_to_list(struct plot_env *env, struct plot_v
 
 /* (list->string list)
  */
-struct plot_value * plot_func_list_to_string(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_list_to_string");
+struct plot_value * plot_func_list_to_string(struct plot_env *env, struct plot_value *args){
+    /* length if list consumed and string produced (excluding null terminator) */
+    int len;
+    /* pointer to alloc'd string */
+    char *str;
+    /* iterator used for copying over characters */
+    int i;
+    /* return value and intermediate result from `length` */
+    plot_value *ret;
+    /* current cursor through input list */
+    plot_value *cur;
+
+    /* check arguments */
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 argument", "plot_func_list_to_string");
+    }
+
+    if( car(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not a list", "plot_func_list_to_string");
+    }
+
+    ret = plot_func_pair_length(env, args);
+    if( ret->type != plot_type_number ){
+        return plot_runtime_error(plot_error_bad_args, "call to `length` returned bad result", "plot_func_list_to_string");
+    }
+
+    /* calculate length of list so we can perform a single allocation */
+    len = ret->u.number.val;
+    plot_value_decr(ret);
+    ret = 0;
+
+    /* allocate new string */
+    str = plot_alloc_string(len);
+
+    /* copy over characters */
+    cur = car(args);
+    for( i=0; i<len; ++i ){
+        if( cur->type != plot_type_pair ){
+            return plot_runtime_error(plot_error_internal, "list ended prematurely", "plot_func_list_to_string");
+        }
+        if( car(cur)->type != plot_type_character ){
+            return plot_runtime_error(plot_error_bad_args, "first argument was not a list of characters", "plot_func_list_to_string");
+        }
+        str[i] = car(cur)->u.character.val;
+        cur = cdr(cur);
+    }
+
+    /* box up our value
+     * NB len +1 as len has to include trailing null terminator
+     */
+    ret = plot_new_string(str, len + 1);
+
+    return ret;
 }
 
 /* (string-fill! string char)

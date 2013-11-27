@@ -101,7 +101,7 @@ struct plot_value * plot_func_string_to_list(struct plot_env *env, struct plot_v
 
 /* (list->string list)
  */
-struct plot_value * plot_func_list_to_string(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_list_to_string(struct plot_env *env, struct plot_value *args);
 
 /* (string-fill! string char)
  */

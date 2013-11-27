@@ -63,20 +63,23 @@
   (fail "four case 1"))
 
 ;; testing 6.3.5 string procedures
-(if #f
-(if (string-ci=? "hello" (list->string (string->list "hello")))
+(if (string-ci=? "hello" (list->string (string->list "HeLlO")))
   (if (char=? (string-ref "hello" 1) #\e)
     (if (string=? (make-string 4 #\q) "qqqq")
-      ;; A < z, a > z (ascii)
-      (if (string-ci>? "A" "z")
-        (if (string-ci=? "hello" (string #\H #\E #\L #\L #\O))
-          (pass "five")
-          (fail "five case 5"))
-        (fail "five case 4"))
+      (pass "five")
       (fail "five case 3"))
     (fail "five case 2"))
   (fail "five case 1"))
+
+;; A < z, a > z (ascii)
+(if #f
+(if (string-ci>? "A" "z")
+  (if (string-ci=? "hello" (string #\H #\E #\L #\L #\O))
+    (pass "six")
+    (fail "six case 2"))
+  (fail "six case 2"))
 )
+
 
 
 ;; tests completed, print results
