@@ -77,14 +77,14 @@ static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
 /* (display obj)
  * print value to stdout
  */
-plot_value * plot_func_display(plot_env *env, plot_value **args, int argc){
+plot_value * plot_func_display(plot_env *env, plot_value *args){
     plot_value *arg;
 
-    if( argc != 1 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_display");
     }
 
-    arg = args[0];
+    arg = car(args);
 
     if( ! arg ){
         return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_display");

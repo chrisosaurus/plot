@@ -14,7 +14,7 @@ struct plot_expr;
  * print value to stdout
  * FIXME should generalise if spec allows
  */
-struct plot_value * plot_func_display(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_display(struct plot_env *env, struct plot_value *args);
 
 /* (newline)
  * print a newline to stdout

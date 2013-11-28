@@ -341,7 +341,7 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
                 printf("Trying to call literal symbol '%s'\n", func->u.symbol.val);
             } else {
                 printf("Trying to call value: ");
-                plot_func_display(env, &func, 1);
+                plot_func_display(env, func);
                 puts("");
             }
             display_error_expr(sexpr);

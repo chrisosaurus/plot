@@ -316,8 +316,7 @@ void display_expr(plot_value * sexpr){
         }
         fputs(")", stdout);
     } else {
-        /* FIXME legacy interface */
-        plot_func_display(0, &sexpr, 1);
+        plot_func_display(0, sexpr);
     }
 }
 
