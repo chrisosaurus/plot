@@ -96,9 +96,12 @@ plot_value * plot_func_display(plot_env *env, plot_value *args){
 /* (newline)
  * print a newline to stdout
  */
-plot_value * plot_func_newline(plot_env *env, plot_value **args, int argc){
-    /* FIXME currently ignores arguments, only there to match plot_func interface
-     */
+plot_value * plot_func_newline(plot_env *env, plot_value *args){
+    /* do not allow any arguments */
+    if( args->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 0 arguments", "plot_func_newline");
+    }
+
     puts("");
 
     return plot_new_unspecified();

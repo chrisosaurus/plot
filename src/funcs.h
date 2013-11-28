@@ -19,7 +19,7 @@ struct plot_value * plot_func_display(struct plot_env *env, struct plot_value *a
 /* (newline)
  * print a newline to stdout
  */
-struct plot_value * plot_func_newline(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_newline(struct plot_env *env, struct plot_value *args);
 
 /********* equivalent predicates *********/
 /* (equal? obj1 obj2)
