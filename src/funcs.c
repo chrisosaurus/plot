@@ -113,49 +113,58 @@ plot_value * plot_func_newline(plot_env *env, plot_value *args){
  * in plot equal?, eqv? and eq? are equivalent.
  * FIXME should generalise
  */
-struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value *args){
+    plot_value *o1, *o2;
+
     #if DEBUG
     puts("inside plot_func_equal");
     #endif
 
-    if( argc != 2 ){
+    if( args->type != plot_type_pair ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_equal_test");
     }
+    o1 = car(args);
 
-    if( ! args[0] ){
+    if( ! o1 ){
         return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_equal_test");
     }
 
-    if( ! args[1] ){
+    if( cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_equal_test");
+    }
+
+    o2 = car(cdr(args));
+
+    if( ! o2 ){
         return plot_runtime_error(plot_error_bad_args, "second arg was null", "plot_func_equal_test");
     }
 
-    if( args[0]->type != args[1]->type ){
+    if( o1->type != o2->type ){
         #if DEBUG
         puts("\targs were not of the same type");
         #endif
         return plot_new_boolean(false);
     }
 
-    switch( args[0]->type ){
+    switch( o1->type ){
         case plot_type_number:
-            return plot_new_boolean( args[0]->u.number.val == args[1]->u.number.val );
+            return plot_new_boolean( o1->u.number.val == o2->u.number.val );
             break;
         case plot_type_symbol:
-            return plot_new_boolean( ! strcmp( args[0]->u.symbol.val, args[1]->u.symbol.val ) );
+            return plot_new_boolean( ! strcmp( o1->u.symbol.val, o2->u.symbol.val ) );
             break;
         case plot_type_lambda:
             return plot_new_boolean(
-                args[0]->u.lambda.env == args[1]->u.lambda.env
+                o1->u.lambda.env == o2->u.lambda.env
                 &&
-                args[0]->u.lambda.body == args[1]->u.lambda.body
+                o1->u.lambda.body == o2->u.lambda.body
             );
             break;
         case plot_type_legacy:
-            return plot_new_boolean( args[0]->u.legacy.func == args[1]->u.legacy.func );
+            return plot_new_boolean( o1->u.legacy.func == o2->u.legacy.func );
             break;
         case plot_type_form:
-            return plot_new_boolean( args[0]->u.form.func == args[1]->u.form.func );
+            return plot_new_boolean( o1->u.form.func == o2->u.form.func );
             break;
         case plot_type_null:
             /* both arguments are of the same type, '() = '() */
@@ -168,19 +177,19 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
             plot_fatal_error("plot_func_equal: saw plot_type_error");
             break;
         case plot_type_string:
-            return plot_new_boolean( ! strcmp( args[0]->u.string.val, args[1]->u.string.val ) );
+            return plot_new_boolean( ! strcmp( o1->u.string.val, o2->u.string.val ) );
             break;
         case plot_type_boolean:
-            return plot_new_boolean( args[0]->u.boolean.val == args[1]->u.boolean.val );
+            return plot_new_boolean( o1->u.boolean.val == o2->u.boolean.val );
             break;
         case plot_type_character:
-            return plot_new_boolean( args[0]->u.character.val == args[1]->u.boolean.val );
+            return plot_new_boolean( o1->u.character.val == o2->u.boolean.val );
             break;
         case plot_type_reclaimed:
             plot_fatal_error("plot_func_equal: saw plot_type_reclaimed");
             break;
         default:
-            plot_fatal_error("plot_func_equal: impossible args[0]->type");
+            plot_fatal_error("plot_func_equal: impossible o1->type");
             break;
     }
 
@@ -192,16 +201,16 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
  * in plot equal?, eqv? and eq? are equivalent.
  * FIXME need to generalise
  */
-struct plot_value * plot_func_eqv_test(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_func_equal_test(env, args, argc);
+struct plot_value * plot_func_eqv_test(struct plot_env *env, struct plot_value *args){
+    return plot_func_equal_test(env, args);
 }
 
 /* (eq? obj1 obj2)
  * in plot equal?, eqv? and eq? are equivalent.
  * FIXME need to generalise
  */
-struct plot_value * plot_func_eq_test(struct plot_env *env, struct plot_value **args, int argc){
-    return plot_func_equal_test(env, args, argc);
+struct plot_value * plot_func_eq_test(struct plot_env *env, struct plot_value *args){
+    return plot_func_equal_test(env, args);
 }
 
 
