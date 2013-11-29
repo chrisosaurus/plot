@@ -1,5 +1,7 @@
 #include "pair.h"
 #include "value.h"
+#include "funcs.h" /* equal?, plot_truthy */
+#include "eval.h" /* plot_eval_form */
 #include <stdio.h>
 
 /* ignore unused parameter warnings */
@@ -447,7 +449,80 @@ struct plot_value * plot_func_pair_memv(struct plot_env *env, struct plot_value 
  * compares using provided `compare` proc, otherwise uses `equal?`
  */
 struct plot_value * plot_func_pair_member(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_member");
+    /* current pos in list */
+    plot_value *cur;
+    /* func given or default */
+    plot_value *func;
+    /* result from a call */
+    plot_value *res;
+    /* arg to a call */
+    plot_value *arg;
+    /* my return value */
+    plot_value *ret;
+
+    if( args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected either 2 or 3 arguments", "plot_func_pair_member");
+    }
+
+    /* temporarily re-using arg */
+    arg = cdr(args);
+
+    if( arg->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected either 2 or 3 arguments, got 1", "plot_func_pair_member");
+    }
+
+    /* temporarily re-using arg */
+    arg = cdr(arg);
+
+    if( arg->type == plot_type_null ){
+        /* default to `equal?` */
+        func = plot_new_form(plot_func_equal_test, 0);
+    } else if( arg->type == plot_type_pair ){
+        /* then car(arg) is our function */
+        func = car(arg);
+
+        /* first incr is because we later decr it
+         * we must decr it as in the default case of using `equal?`
+         * plot_new_form will return a value with refcount of 1
+         */
+        plot_value_incr(func);
+
+        /* check we received no more than 2 args */
+        /* temporarily re-using arg */
+        arg = cdr(arg);
+        if( arg->type != plot_type_null ){
+            return plot_runtime_error(plot_error_bad_args, "expected no more than 2 args", "plot_func_pair_member");
+        }
+    } else {
+        return plot_runtime_error(plot_error_internal, "Error in argument passing", "plot_func_pair_member");
+    }
+
+    ret = plot_new_boolean(0);
+    arg = cons(func, cons(0, cons(0, null)));
+    /* supplied obj to compare to */
+    car(cdr(cdr(arg))) = car(args);
+
+    for( cur = car(cdr(args)); cur->type == plot_type_pair; cur = cdr(cur) ){
+        /* object in list to compare */
+        car(cdr(arg)) = car(cur);
+
+        /* decr of res is handled by truthy */
+        res = plot_eval_form(env, arg);
+        if( plot_truthy(res) ){
+            plot_value_decr(ret);
+            ret = cur;
+            plot_value_incr(ret);
+            break;
+        }
+    }
+
+    /* avoid collecting any of the elements in the list */
+    car(cdr(arg)) = 0;
+    car(cdr(cdr(arg))) = 0;
+
+    /* func only has a ref count of 1 so it gced for us by decr or arg */
+    plot_value_decr(arg);
+    return ret;
 }
 
 /* (assq obj alist)

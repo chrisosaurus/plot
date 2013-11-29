@@ -11,7 +11,6 @@ operations:
 * string-ci>=?
 * memq
 * memv
-* member
 * assq
 * assv
 * assoc

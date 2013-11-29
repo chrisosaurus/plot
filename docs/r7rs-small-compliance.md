@@ -150,11 +150,11 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `list-set!`
         `list-ref`
         `list-tail`
+        `member`
 
     pending implementation:
         `memq`
         `memv`
-        `member`
         `assq`
         `assv`
         `assoc`

@@ -117,6 +117,23 @@
   (pass "twelve")
   (fail "twelve"))
 
+;; testing member
+(define thirteen '(0 1 2 3))
+; member func that will always return f
+; this means member will always fail
+(define (thirteen-f a b)
+  #f)
+
+(if (equal? 1 (car (member 1 thirteen)))
+  (if (equal? 2 (length (member 2 thirteen)))
+    (if (not (pair? (member 4 thirteen)))
+      (if (not (pair? (member 0 thirteen thirteen-f)))
+        (pass "thirteen")
+        (fail "thirteen case 4"))
+      (fail "thirteen case 3"))
+    (fail "thirteen case 2"))
+  (fail "thirteen case 1"))
+
 ;; tests completed, print results
 (println "pair test results")
 (display tests-passed)

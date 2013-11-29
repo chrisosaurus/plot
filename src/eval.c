@@ -329,7 +329,12 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
                 }
             }
             plot_env_decr(new_env);
-            plot_value_decr(func);
+            /* only decr if the function was received by resolving a symbol
+             * as fetching from an env causes an incr
+             */
+            if( car(sexpr)->type == plot_type_symbol ){
+                plot_value_decr(func);
+            }
             //printf("after lambda we have '%d' refs\n", func->gc.refcount);
             //printf("and our env has '%d'\n", func->u.lambda.env->gc.refcount);
             return val;
