@@ -306,15 +306,15 @@ int plot_truthy(plot_value *val){
 /* (and obj1 obj2 ...)
  * logical and of all arguments
  */
-struct plot_value * plot_func_and(struct plot_env *env, struct plot_value **args, int argc){
-    int i;
+struct plot_value * plot_func_and(struct plot_env *env, struct plot_value *args){
+    plot_value *cur;
 
-    if( argc < 2 ){
-        return plot_runtime_error(plot_error_bad_args, "insufficient arguments, expected 2", "plot_func_add");
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "insufficient arguments, expected at least 2", "plot_func_add");
     }
 
-    for( i=0; i<argc; ++i ){
-        if( ! plot_truthy(args[i]) ){
+    for( cur = args; cur->type == plot_type_pair; cur = cdr(cur) ){
+        if( ! plot_truthy(car(cur)) ){
             return plot_new_boolean(false);
         }
     }
@@ -325,15 +325,15 @@ struct plot_value * plot_func_and(struct plot_env *env, struct plot_value **args
 /* (or obj1 obj2 ...)
  * logical or of all arguments
  */
-struct plot_value * plot_func_or(struct plot_env *env, struct plot_value **args, int argc){
-    int i;
+struct plot_value * plot_func_or(struct plot_env *env, struct plot_value *args){
+    plot_value *cur;
 
-    if( argc < 2 ){
-        return plot_runtime_error(plot_error_bad_args, "insufficient arguments, expected 2", "plot_func_or");
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "insufficient arguments, expected at least 2", "plot_func_or");
     }
 
-    for( i=0; i<argc; ++i ){
-        if( plot_truthy(args[i]) ){
+    for( cur = args; cur->type == plot_type_pair; cur = cdr(cur) ){
+        if( plot_truthy(car(cur)) ){
             return plot_new_boolean(true);
         }
     }
@@ -344,12 +344,12 @@ struct plot_value * plot_func_or(struct plot_env *env, struct plot_value **args,
 /* (not obj)
  * logical not of single argument
  */
-struct plot_value * plot_func_not(struct plot_env *env, struct plot_value **args, int argc){
-    if( argc != 1 ){
+struct plot_value * plot_func_not(struct plot_env *env, struct plot_value *args){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "incorrect arguments: expected exactly 1", "plot_func_not");
     }
 
-    return plot_new_boolean( ! plot_truthy(args[0]) );
+    return plot_new_boolean( ! plot_truthy(car(args)) );
 }
 
 /* (exit obj)

@@ -71,17 +71,17 @@ int plot_truthy(plot_value *val);
 /* (and obj1 obj2 ...)
  * logical and of all arguments
  */
-struct plot_value * plot_func_and(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_and(struct plot_env *env, struct plot_value *args);
 
 /* (or obj1 obj2 ...)
  * logical or of all arguments
  */
-struct plot_value * plot_func_or(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_or(struct plot_env *env, struct plot_value *args);
 
 /* (not obj)
  * logical not of single argument
  */
-struct plot_value * plot_func_not(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_not(struct plot_env *env, struct plot_value *args);
 
 /* (exit obj)
  * exit after running all dynamic-wind `after` procedures
