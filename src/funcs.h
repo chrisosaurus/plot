@@ -45,12 +45,12 @@ struct plot_value * plot_func_eq_test(struct plot_env *env, struct plot_value *a
 /* (boolean? obj1)
  * FIXME should generalise if spec allows
  */
-struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_value *args);
 
 /* (symbol? obj)
  * FIXME should generalise if spec allows
  */
-struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_value *args);
 
 /* (symbol=? obj1 obj2)
  * returns #t iff obj1 and obj2 are both symbols and are considered equal

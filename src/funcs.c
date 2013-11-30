@@ -219,18 +219,18 @@ struct plot_value * plot_func_eq_test(struct plot_env *env, struct plot_value *a
 /* (boolean? obj)
  * FIXME should generalise if spec allows
  */
-struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_value *args){
     plot_value *val;
 
     #if DEBUG
     puts("inside plot_func_boolean_test");
     #endif
 
-    if( argc != 1 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_boolean_test");
     }
 
-    val = args[0];
+    val = car(args);
 
     if( ! val ){
         return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_boolean_test");
@@ -242,19 +242,19 @@ struct plot_value * plot_func_boolean_test(struct plot_env *env, struct plot_val
 /* (symbol? obj)
  * FIXME should generalise if spec allows
  */
-struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_symbol_test(struct plot_env *env, struct plot_value *args){
     plot_value *val;
 
     #if DEBUG
     puts("inside plot_func_symbol_test");
     #endif
 
-    if( argc != 1 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_symbol_test");
 
     }
 
-    val = args[0];
+    val = car(args);
 
     if( ! val ){
         return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_symbol_test");
