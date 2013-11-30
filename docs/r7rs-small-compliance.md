@@ -132,7 +132,7 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     pair (improper list) literals are pending implementation.
     pair and list equality is currently not implemented (`eq` family will throw a plot_runtime_error).
 
-    implemented procedures from this section:
+    All procedures from this section are implemented:
         `pair?`
         `cons`
         `car`
@@ -150,14 +150,12 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `list-set!`
         `list-ref`
         `list-tail`
-        `member`
-        `assoc`
-
-    pending implementation:
         `memq`
         `memv`
+        `member`
         `assq`
         `assv`
+        `assoc`
 
 6.5 Symbols
     symbols are implemented along with the testing procedures `symbol?`,

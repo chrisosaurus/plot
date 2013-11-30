@@ -425,7 +425,30 @@ struct plot_value * plot_func_pair_list_set(struct plot_env *env, struct plot_va
  * compares using `eqq?`
  */
 struct plot_value * plot_func_pair_memq(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_memq");
+    plot_value *func;
+    plot_value *res;
+
+    if( args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_memq");
+    }
+
+    if( cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_memq");
+    }
+
+    if( cdr(cdr(args))->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_memq");
+    }
+
+    func = plot_new_form(plot_func_eq_test, 0);
+    cdr(cdr(args)) = cons(func, null);
+
+    res = plot_func_pair_member(env, args);
+
+    plot_value_decr(cdr(cdr(args)));
+    cdr(cdr(args)) = null;
+
+    return res;
 }
 
 /* (memv obj list)
@@ -437,7 +460,30 @@ struct plot_value * plot_func_pair_memq(struct plot_env *env, struct plot_value 
  * compares using `eqv?`
  */
 struct plot_value * plot_func_pair_memv(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_memv");
+    plot_value *func;
+    plot_value *res;
+
+    if( args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_memv");
+    }
+
+    if( cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_memv");
+    }
+
+    if( cdr(cdr(args))->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_memv");
+    }
+
+    func = plot_new_form(plot_func_eqv_test, 0);
+    cdr(cdr(args)) = cons(func, null);
+
+    res = plot_func_pair_member(env, args);
+
+    plot_value_decr(cdr(cdr(args)));
+    cdr(cdr(args)) = null;
+
+    return res;
 }
 
 /* (member obj list)
@@ -534,7 +580,30 @@ struct plot_value * plot_func_pair_member(struct plot_env *env, struct plot_valu
  * compares using `eq?`
  */
 struct plot_value * plot_func_pair_assq(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_assq");
+    plot_value *func;
+    plot_value *res;
+
+    if( args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_assq");
+    }
+
+    if( cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_assq");
+    }
+
+    if( cdr(cdr(args))->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_assq");
+    }
+
+    func = plot_new_form(plot_func_eq_test, 0);
+    cdr(cdr(args)) = cons(func, null);
+
+    res = plot_func_pair_assoc(env, args);
+
+    plot_value_decr(cdr(cdr(args)));
+    cdr(cdr(args)) = null;
+
+    return res;
 }
 
 /* (assv obj alist)
@@ -546,7 +615,30 @@ struct plot_value * plot_func_pair_assq(struct plot_env *env, struct plot_value 
  * compares using `eqv?`
  */
 struct plot_value * plot_func_pair_assv(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "unimplemented", "plot_func_pair_assv");
+    plot_value *func;
+    plot_value *res;
+
+    if( args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_assv");
+    }
+
+    if( cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_assv");
+    }
+
+    if( cdr(cdr(args))->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_assv");
+    }
+
+    func = plot_new_form(plot_func_eqv_test, 0);
+    cdr(cdr(args)) = cons(func, null);
+
+    res = plot_func_pair_assoc(env, args);
+
+    plot_value_decr(cdr(cdr(args)));
+    cdr(cdr(args)) = null;
+
+    return res;
 }
 
 /* (assoc obj alist)

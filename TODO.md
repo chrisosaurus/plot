@@ -9,10 +9,6 @@ operations:
 * string-ci>?
 * string-ci<=?
 * string-ci>=?
-* memq
-* memv
-* assq
-* assv
 * map
 * for-each
 
