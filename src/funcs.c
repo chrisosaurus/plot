@@ -364,9 +364,9 @@ struct plot_value * plot_func_not(struct plot_env *env, struct plot_value *args)
  * otherwise exits failure
  *
  */
-struct plot_value * plot_func_exit(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_exit(struct plot_env *env, struct plot_value *args){
     /* return required to keep compiler happy */
-    return plot_func_emergency_exit(env, args, argc);
+    return plot_func_emergency_exit(env, args);
 }
 
 /* (emergency-exit obj)
@@ -380,30 +380,34 @@ struct plot_value * plot_func_exit(struct plot_env *env, struct plot_value **arg
  * otherwise exits failure
  *
  */
-struct plot_value * plot_func_emergency_exit(struct plot_env *env, struct plot_value **args, int argc){
-    if( argc == 0 ){
+struct plot_value * plot_func_emergency_exit(struct plot_env *env, struct plot_value *args){
+    if( args->type == plot_type_null ){
         exit(0);
     }
-    if( argc == 1 ){
-        if( args[0]->type == plot_type_boolean && args[0]->u.boolean.val == true ){
-            exit(0);
-        }
-        if( args[0]->type == plot_type_number && args[0]->u.number.val == 0 ){
-            exit(0);
-        }
+
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected either 0 or 1 arguments", "plot_func_ememgency_exit");
+    }
+
+    if( car(args)->type == plot_type_boolean && car(args)->u.boolean.val == true ){
+        exit(0);
+    }
+    if( car(args)->type == plot_type_number && car(args)->u.number.val == 0 ){
+        exit(0);
     }
     exit(1);
 }
 
 /* (force promise)
  */
-struct plot_value * plot_func_force(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_force(struct plot_env *env, struct plot_value *args){
     plot_value *val;
-    if( argc != 1 ){
+
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_force");
     }
 
-    val = args[0];
+    val = car(args);
 
     if( val->type != plot_type_promise ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_promise", "plot_func_force");

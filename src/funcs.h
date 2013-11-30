@@ -95,7 +95,7 @@ struct plot_value * plot_func_not(struct plot_env *env, struct plot_value *args)
  * otherwise exits failure
  *
  */
-struct plot_value * plot_func_exit(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_exit(struct plot_env *env, struct plot_value *args);
 
 /* (emergency-exit obj)
  * emergency-exit will immediately exit the program without running any dynamic-unwind
@@ -108,11 +108,11 @@ struct plot_value * plot_func_exit(struct plot_env *env, struct plot_value **arg
  * otherwise exits failure
  *
  */
-struct plot_value * plot_func_emergency_exit(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_emergency_exit(struct plot_env *env, struct plot_value *args);
 
 /* (force promise)
  */
-struct plot_value * plot_func_force(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_force(struct plot_env *env, struct plot_value *args);
 
 
 #endif
