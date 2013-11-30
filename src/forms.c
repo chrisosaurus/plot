@@ -112,10 +112,7 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_value *se
         /* FIXME need to verify form */
 
         if( name->type != plot_type_symbol ){
-            #if DEBUG_FORM || DEBUG
-            puts("\tDEFINE: incorrect 1st arg value type");
-            #endif
-            return 0; /* FIXME ERROR */
+            return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_symbol", "plot_form_define");
         }
 
         #if DEBUG_FORM || DEBUG
@@ -125,10 +122,7 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_value *se
         /* 2nd subform isnt known to be a value ! */
         value = plot_eval_expr(env, body);
         if( ! value ){
-            #if DEBUG_FORM || DEBUG
-            puts("\tDEFINE: failed to eval_value");
-            #endif
-            return 0; /* FIXME ERROR */
+            return plot_runtime_error(plot_error_internal, "call to eval expr returned null", "plot_form_define");
         }
 
         if( value->type == plot_type_error ){
@@ -173,8 +167,7 @@ struct plot_value * plot_form_lambda(struct plot_env *env, struct plot_value *se
     /* check all subforms are symbols */
     for( arg=args; arg->type != plot_type_null; arg = cdr(arg) ){
         if( car(arg)->type != plot_type_symbol ){
-            puts("LAMBDA: invalid param type, expected symbol");
-            return 0; /* FIXME error */
+            return plot_runtime_error(plot_error_internal, "invalid parameter, not of type plot_type_symbol", "plot_form_define");
         }
     }
 
