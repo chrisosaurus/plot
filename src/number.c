@@ -1,13 +1,8 @@
-#include <stdio.h> /* debugging output */
-
 #include "number.h"
 #include "value.h"
 
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
-
-#define DEBUG 0
-
 
 /***** mathmatical functions ******/
 
@@ -39,24 +34,14 @@ plot_value * plot_func_add(struct plot_env *env, plot_value *args){
     plot_value *arg;
     int sum=0;
 
-    #if DEBUG
-    puts("inside plot_func_add");
-    #endif
-
     for( arg = args; arg->type == plot_type_pair; arg = cdr(arg) ){
         if( car(arg)->type != plot_type_number ){
-            #if DEBUG
-            puts("arg is not a number");
-            #endif
-            return 0; /* ERROR */
+            return plot_runtime_error(plot_error_bad_args, "arg was not of type plot_type_number", "plot_func_add");
         }
 
         sum += car(arg)->u.number.val;
     }
 
-    #if DEBUG
-    puts("returning sum of 2 numbers");
-    #endif
     return plot_new_number(sum);
 }
 
@@ -69,10 +54,6 @@ plot_value * plot_func_add(struct plot_env *env, plot_value *args){
 plot_value * plot_func_subtract(struct plot_env *env, plot_value *args){
     plot_value *arg;
     int difference = 0;
-
-    #if DEBUG
-    puts("inside plot_func_subtract");
-    #endif
 
     if( car(args)->type != plot_type_number ){
         return plot_runtime_error(plot_error_bad_args, "argument is not a number", "plot_func_subtract");
@@ -87,9 +68,6 @@ plot_value * plot_func_subtract(struct plot_env *env, plot_value *args){
 
         difference -= car(arg)->u.number.val;
     }
-    #if DEBUG
-    puts("returning difference");
-    #endif
 
     return plot_new_number(difference);
 }
@@ -104,10 +82,6 @@ plot_value * plot_func_multiply(struct plot_env *env, plot_value *args){
     plot_value *arg;
     int product=1;
 
-    #if DEBUG
-    puts("inside plot_func_multiply");
-    #endif
-
     for( arg = args; arg->type == plot_type_pair; arg = cdr(arg) ){
         if( car(arg)->type != plot_type_number ){
             return plot_runtime_error(plot_error_bad_args, "argument is not a number", "plot_func_subtract");
@@ -116,9 +90,6 @@ plot_value * plot_func_multiply(struct plot_env *env, plot_value *args){
         product *= car(arg)->u.number.val;
     }
 
-    #if DEBUG
-    puts("returning product");
-    #endif
     return plot_new_number(product);
 }
 
@@ -129,10 +100,6 @@ plot_value * plot_func_multiply(struct plot_env *env, plot_value *args){
 struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value *args){
     plot_value *arg;
     int quotient=0;
-
-    #if DEBUG
-    puts("inside plot_func_divide");
-    #endif
 
     if( car(args)->type != plot_type_number ){
         return plot_runtime_error(plot_error_bad_args, "argument is not a number", "plot_func_divide");
@@ -148,10 +115,6 @@ struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value *ar
         quotient /= car(arg)->u.number.val;
     }
 
-    #if DEBUG
-    puts("returning quotient");
-    #endif
-
     return plot_new_number(quotient);
 }
 
@@ -161,10 +124,6 @@ struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value *ar
 struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value *args){
     plot_value *arg;
     int remainder=0;
-
-    #if DEBUG
-    puts("inside plot_func_remainder");
-    #endif
 
     if( car(args)->type != plot_type_number ){
         return plot_runtime_error(plot_error_bad_args, "argument is not a number", "plot_func_divide");
@@ -179,10 +138,6 @@ struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value 
 
         remainder %= car(arg)->u.number.val;
     }
-
-    #if DEBUG
-    puts("returning remainder");
-    #endif
 
     return plot_new_number(remainder);
 }
