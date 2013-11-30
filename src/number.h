@@ -8,7 +8,7 @@ struct plot_value;
 
 /* (number? obj)
  */
-struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_value *args);
 
 /* (+ number1 number2 ...)
  * takes a list of expressions

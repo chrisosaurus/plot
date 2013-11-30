@@ -13,34 +13,17 @@
 
 /* number?
  */
-struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_value *args){
     plot_value *val;
 
-    #if DEBUG
-    puts("inside plot_func_number_test");
-    #endif
-
-    if( ! env ){
-        #if DEBUG
-        puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_number_test");
     }
 
-    if( argc != 1 ){
-        #if DEBUG
-        puts("incorrect number of args to plot_func_number_test");
-        #endif
-        return 0; /* FIXME error */
-    }
-
-    val = args[0];
+    val = car(args);
 
     if( ! val ){
-        #if DEBUG
-        puts("call to plot_eval_expr returned NULL");
-        #endif
-        return 0; /* FIXME error */
+        return plot_runtime_error(plot_error_internal, "arg was null", "plot_func_number_test");
     }
 
     return plot_new_boolean( val->type == plot_type_number );
