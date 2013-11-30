@@ -9,7 +9,6 @@
 #include <stdlib.h>
 
 #include "../src/value.h"
-#include "../src/types.h"
 #include "../src/env.h"
 #include "../src/parse.h"
 #include "../src/eval.h"
@@ -21,7 +20,7 @@
 
 START_TEST (test_garbage){
     struct plot_value *v;
-    struct plot_program *prog;
+    struct plot_value *prog;
 
     puts("\nTesting garbage collection");
     fail_if( 0 == plot_init() );

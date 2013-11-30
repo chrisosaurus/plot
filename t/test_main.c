@@ -12,13 +12,8 @@
  */
 #define PLOT_TEST_MAIN
 #include "test_read.c"
-#include "test_parse.c"
-#include "test_eval.c"
 #include "test_hash.c"
 #include "test_env.c"
-#include "test_funcs.c"
-#include "test_forms.c"
-#include "test_full.c"
 #include "test_garbage.c"
 #include "test_hashing.c"
 
@@ -31,20 +26,9 @@ int main(void){
 
     MAIN_ADD_SUITE(read)
 
-    MAIN_ADD_SUITE(parse)
-
-    MAIN_ADD_SUITE(eval)
-
-    MAIN_ADD_SUITE(full)
-
-    MAIN_ADD_SUITE(forms)
-
     MAIN_ADD_SUITE(hash)
 
     MAIN_ADD_SUITE(env)
-
-    MAIN_ADD_SUITE(funcs)
-    MAIN_ADD_SUITE(funcs_error)
 
     MAIN_ADD_SUITE(garbage)
 
