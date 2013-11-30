@@ -13,82 +13,64 @@
 
 /******* string procedures *******/
 
-/* string?
+/* (string? obj)
+ * returns #t iff obj is of type string
+ * #f otherwise
  */
-struct plot_value * plot_func_string_test(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string_test(struct plot_env *env, struct plot_value *args){
     plot_value *val;
 
-    #if DEBUG
-    puts("inside plot_func_boolean_test");
-    #endif
-
-    if( ! env ){
-        #if DEBUG
-        puts("env is NULL");
-        #endif
-        return 0; /* FIXME error */
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_string_test");
     }
 
-    if( argc != 1 ){
-        #if DEBUG
-        puts("incorrect number of args to plot_func_string_test");
-        #endif
-        return 0; /* FIXME error */
-    }
-
-    val = args[0];
-
-    if( ! val ){
-        #if DEBUG
-        puts("call to plot_eval_expr returned NULL");
-        #endif
-        return 0; /* FIXME error */
-    }
+    val = car(args);
 
     return plot_new_boolean( val->type == plot_type_string );
 }
 
-/* return plot number representing length of string (excluding null terminator)
+/* (string-length string)
+ * return plot number representing length of string (excluding null terminator)
  * 'number of characters in string'
  */
-struct plot_value * plot_func_string_length(struct plot_env *env, struct plot_value **args, int argc){
-    if( argc != 1 ){
+struct plot_value * plot_func_string_length(struct plot_env *env, struct plot_value *args){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected 1 arg", "plot_func_string_length");
     }
 
-    if( args[0]->type != plot_type_string ){
+    if( car(args)->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_lenght");
     }
 
-    return plot_new_number( args[0]->u.string.len - 1 ); /* len includes null terminator */
+    return plot_new_number( car(args)->u.string.len - 1 ); /* len includes null terminator */
 }
 
 /* (substring string start end)
  * 0 <= start <= end <= (string-length string)
  * returns a string from start (inclusive) to end (exclusive)
  */
-struct plot_value * plot_func_substring(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_substring(struct plot_env *env, struct plot_value *args){
     plot_value *res;
     int start, end;
     int len;
 
-    if( argc != 3 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair || cdr(cdr(args))->type != plot_type_pair || cdr(cdr(cdr(args)))->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 3 args", "plot_func_substring");
     }
 
-    if( args[0]->type != plot_type_string ){
+    if( car(args)->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_substring");
     }
 
-    if( args[1]->type != plot_type_number ){
+    if( car(cdr(args))->type != plot_type_number ){
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_number", "plot_func_substring");
     }
-    start = args[1]->u.number.val;
+    start = car(cdr(args))->u.number.val;
 
-    if( args[2]->type != plot_type_number ){
+    if( car(cdr(cdr(args)))->type != plot_type_number ){
         return plot_runtime_error(plot_error_bad_args, "third arg was not of type plot_type_number", "plot_func_substring");
     }
-    end = args[2]->u.number.val;
+    end = car(cdr(cdr(args)))->u.number.val;
 
     if( start > end ){
         return plot_runtime_error(plot_error_bad_args, "start was greater than end, impossible substring", "plot_func_substring");
@@ -101,7 +83,7 @@ struct plot_value * plot_func_substring(struct plot_env *env, struct plot_value 
     /* len is 1-based counting and includes \0 terminator
      * end is 0-based counting
      */
-    if( end >= (args[0]->u.string.len - 1) ){
+    if( end >= (car(args)->u.string.len - 1) ){
         return plot_runtime_error(plot_error_bad_args, "provided end value is not within string", "plot_func_substring");
     }
 
@@ -109,7 +91,7 @@ struct plot_value * plot_func_substring(struct plot_env *env, struct plot_value 
     len = (end - start) + 1;
     res = plot_new_string( plot_alloc_string(len), len );
 
-    strncpy(res->u.string.val, &(args[0]->u.string.val[start]), len - 1);
+    strncpy(res->u.string.val, &(car(args)->u.string.val[start]), len - 1);
     res->u.string.val[ end-start ] = '\0';
 
     return res;
@@ -119,20 +101,20 @@ struct plot_value * plot_func_substring(struct plot_env *env, struct plot_value 
  * returns a new string whose characters form the concatentation
  * of the given strings
  */
-struct plot_value * plot_func_string_append(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string_append(struct plot_env *env, struct plot_value *args){
     plot_value *res;
-    int i;
+    plot_value *cur;
     int len = 0;
 
-    if( argc < 1 ){
+    if( args->type != plot_type_pair ){
         return plot_runtime_error(plot_error_bad_args, "expected at least one argument", "plot_func_substring");
     }
 
-    for( i=0; i<argc; ++i ){
-        if( args[i]->type != plot_type_string ){
+    for( cur = args; cur->type == plot_type_pair; cur = cdr(cur) ){
+        if( car(cur)->type != plot_type_string ){
             return plot_runtime_error(plot_error_bad_args, "argument was not of type plot_type_string", "plot_func_substring");
         }
-        len += args[i]->u.string.len - 1; /* do not include null terminator in count */
+        len += car(cur)->u.string.len - 1; /* do not include null terminator in count */
     }
 
     /* our final null terminator */
@@ -148,9 +130,9 @@ struct plot_value * plot_func_string_append(struct plot_env *env, struct plot_va
      * string to write
      */
     len = 0;
-    for( i=0; i<argc; ++i ){
-        strncpy( &(res->u.string.val[len]), args[i]->u.string.val, args[i]->u.string.len );
-        len += args[i]->u.string.len - 1;
+    for( cur = args; cur->type == plot_type_pair; cur = cdr(cur) ){
+        strncpy( &(res->u.string.val[len]), car(cur)->u.string.val, car(cur)->u.string.len );
+        len += car(cur)->u.string.len - 1;
     }
 
     return res;
@@ -159,24 +141,24 @@ struct plot_value * plot_func_string_append(struct plot_env *env, struct plot_va
 /* (string-copy string)
  * returns a newly allocated copy of the given string
  */
-struct plot_value * plot_func_string_copy(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string_copy(struct plot_env *env, struct plot_value *args){
     plot_value *ret;
 
-    if( argc != 1 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected 1 arg", "plot_func_string_copy");
     }
 
-    if( args[0]->type != plot_type_string ){
+    if( car(args)->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_copy");
     }
 
     ret = plot_alloc_value();
     ret->type = plot_type_string;
-    ret->u.string.size = args[0]->u.string.size;
-    ret->u.string.len = args[0]->u.string.len;
+    ret->u.string.size = car(args)->u.string.size;
+    ret->u.string.len = car(args)->u.string.len;
 
     ret->u.string.val = plot_alloc_string(ret->u.string.len);
-    strncpy(ret->u.string.val, args[0]->u.string.val, ret->u.string.len - 1);
+    strncpy(ret->u.string.val, car(args)->u.string.val, ret->u.string.len - 1);
 
     return ret;
 }
@@ -185,12 +167,12 @@ struct plot_value * plot_func_string_copy(struct plot_env *env, struct plot_valu
  * string equality test (case sensitive)
  * returns #t iff both strings are the same length and contain the same characters
  */
-struct plot_value * plot_func_string_equal_test(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string_equal_test(struct plot_env *env, struct plot_value *args){
     /* FIXME r5rs page 30 section 6.3.5 allows
      * for an implementation to generalise equality functions
      * to many args
      */
-    if( argc != 2 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair || cdr(cdr(args))->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected 2 args", "plot_func_string_equal");
     }
 
@@ -199,19 +181,19 @@ struct plot_value * plot_func_string_equal_test(struct plot_env *env, struct plo
      *
      * runtime error vs false
      */
-    if( args[0]->type != plot_type_string ){
+    if( car(args)->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_equal");
     }
 
-    if( args[1]->type != plot_type_string ){
+    if( car(cdr(args))->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_string", "plot_func_string_equal");
     }
 
-    if( args[0]->u.string.len != args[1]->u.string.len ){
+    if( car(args)->u.string.len != car(cdr(args))->u.string.len ){
         return plot_new_boolean(false);
     }
 
-    if( strcmp(args[0]->u.string.val, args[1]->u.string.val) ){
+    if( strcmp(car(args)->u.string.val, car(cdr(args))->u.string.val) ){
         return plot_new_boolean(false);
     }
 
@@ -222,20 +204,20 @@ struct plot_value * plot_func_string_equal_test(struct plot_env *env, struct plo
  * string case-insensitive equality test
  * returns #t iff both string are the same length and contains the same characters
  */
-struct plot_value * plot_func_string_ci_equal(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string_ci_equal(struct plot_env *env, struct plot_value *args){
     int i;
     plot_value *a, *b;
 
-    if( argc != 2 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair || cdr(cdr(args))->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected 2 args", "plot_func_string_ci_equal");
     }
 
-    a = args[0];
+    a = car(args);
     if( a->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_ci_equal");
     }
 
-    b = args[1];
+    b = car(cdr(args));
     if( b->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_string", "plot_func_string_ci_equal");
     }
@@ -256,30 +238,33 @@ struct plot_value * plot_func_string_ci_equal(struct plot_env *env, struct plot_
 /* (make-string len)
  * (make-string len char)
  */
-struct plot_value * plot_func_make_string(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_make_string(struct plot_env *env, struct plot_value *args){
     plot_value *res;
     int len;
 
-    if( argc != 1 && argc != 2 ){
+    if( args->type != plot_type_pair ){
+    //if( argc != 1 && argc != 2 ){
         return plot_runtime_error(plot_error_bad_args, "expected either 1 or 2 arguments", "plot_func_make_string");
     }
 
-    if( args[0]->type != plot_type_number ){
+    if( car(args)->type != plot_type_number ){
         return plot_runtime_error(plot_error_bad_args, "first argument was not of type plot_type_number", "plot_func_make_string");
     }
 
-    len = args[0]->u.number.val + 1;
+    len = car(args)->u.number.val + 1;
     res = plot_new_string(plot_alloc_string(len), len);
 
-    if( argc == 2 ){
-        if( args[1]->type != plot_type_character ){
+    if( cdr(args)->type == plot_type_null ){
+        res->u.string.val[0] = '\0';
+    } else if( cdr(args)->type == plot_type_pair ){
+        if( car(cdr(args))->type != plot_type_character ){
             plot_value_decr(res);
             return plot_runtime_error(plot_error_bad_args, "second argument was not of type plot_type_character", "plot_func_make_string");
         }
-        memset( res->u.string.val, args[1]->u.character.val, sizeof(char) * (res->u.string.len - 1) );
+        memset( res->u.string.val, car(cdr(args))->u.character.val, sizeof(char) * (res->u.string.len - 1) );
         res->u.string.val[ res->u.string.len - 1] = '\0';
     } else {
-        res->u.string.val[0] = '\0';
+        return plot_runtime_error(plot_error_bad_args, "expected either 1 or 2 arguments", "plot_func_make_string");
     }
 
     return res;
@@ -289,210 +274,216 @@ struct plot_value * plot_func_make_string(struct plot_env *env, struct plot_valu
  * FIXME spec is unclear about the minimum number of arguments
  * I will assume 1 as a minimum
  */
-struct plot_value * plot_func_string(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string(struct plot_env *env, struct plot_value *args){
     plot_value *res;
     int i, len;
+    plot_value *cur;
 
-    if( argc < 1 ){
+    if( args->type != plot_type_pair ){
         return plot_runtime_error(plot_error_bad_args, "expected at least 1 argument", "plot_func_string");
     }
 
-    len = argc + 1; /* null terminator */
+    i = 0;
+    for( cur = args; cur->type == plot_type_pair; cur = cdr(cur) ){
+        ++i;
+    }
+    len = i + 1; /* null terminator */
     res = plot_new_string(plot_alloc_string(len), len);
 
-    for(i=0; i<argc; ++i ){
-        if( args[i]->type != plot_type_character ){
+    i=0;
+    for( cur = args; cur->type == plot_type_pair; cur = cdr(cur) ){
+        if( car(cur)->type != plot_type_character ){
             plot_value_decr(res);
             return plot_runtime_error(plot_error_bad_args, "argument was not of type plot_type_character", "plot_func_string");
         }
-        res->u.string.val[i] = args[i]->u.character.val;
+        res->u.string.val[i++] = car(cur)->u.character.val;
     }
 
-    res->u.string.val[ argc ] = '\0';
+    res->u.string.val[i] = '\0';
     return res;
 }
 
 /* (string-ref string k)
  * return char at k, zero-origin indexing
  */
-struct plot_value * plot_func_string_ref(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string_ref(struct plot_env *env, struct plot_value *args){
     int i;
 
-    if( argc != 2 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair || cdr(cdr(args))->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 2 arguments", "plot_func_string_ref");
     }
 
-    if( args[0]->type != plot_type_string ){
+    if( car(args)->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_ref");
     }
 
-    if( args[1]->type != plot_type_number ){
+    if( car(cdr(args))->type != plot_type_number ){
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_number", "plot_func_string_ref");
     }
 
-    i = args[1]->u.number.val;
+    i = car(cdr(args))->u.number.val;
 
     /* NB: len - 1 as len is a size (counts from 1) and includes null terminator
      * whereas index is an index (counts from 0)
      *
      * >= as if we have size 5 (excluding null term) then 5 is not a valid index (highest valid index would be 4)
      */
-    if( i >= args[0]->u.string.len - 1 ){
+    if( i >= car(args)->u.string.len - 1 ){
         return plot_runtime_error(plot_error_bad_args, "supplied index was out of range", "plot_func_string_ref");
     }
 
-    return plot_new_character( args[0]->u.string.val[i] );
+    return plot_new_character( car(args)->u.string.val[i] );
 }
 
 /* (string-set! string k char)
  * k is index, set character at index k to character char
  */
-struct plot_value * plot_func_string_set(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string_set(struct plot_env *env, struct plot_value *args){
     int i;
 
-    if( argc != 3 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair || cdr(cdr(args))->type != plot_type_pair || cdr(cdr(cdr(args)))->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 3 arguments", "plot_func_string_set");
     }
 
-    if( args[0]->type != plot_type_string ){
+    if( car(args)->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_set");
     }
 
-    if( args[1]->type != plot_type_number ){
+    if( car(cdr(args))->type != plot_type_number ){
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_number", "plot_func_string_set");
     }
 
-    i = args[1]->u.number.val;
+    i = car(cdr(args))->u.number.val;
 
     /* NB: len - 1 as len is a size (counts from 1) and includes null terminator
      * whereas index is an index (counts from 0)
      *
      * >= as if we have size 5 (excluding null term) then 5 is not a valid index (highest valid index would be 4)
      */
-    if( i >= args[0]->u.string.len - 1 ){
+    if( i >= car(args)->u.string.len - 1 ){
         return plot_runtime_error(plot_error_bad_args, "specified index was out of range", "plot_func_string_set");
     }
 
-    if( args[2]->type != plot_type_character ){
+    if( car(cdr(cdr(args)))->type != plot_type_character ){
         return plot_runtime_error(plot_error_bad_args, "third arg was not of type plot_type_character", "plot_func_string_set");
     }
 
-    args[0]->u.string.val[i] = args[2]->u.character.val;
+    car(args)->u.string.val[i] = car(cdr(cdr(args)))->u.character.val;
 
     return plot_new_unspecified();
 }
 
-/* (string<? string1 string2)
+/* (string<? string1 string2 ...)
  */
-struct plot_value * plot_func_string_less_test(struct plot_env *env, struct plot_value **args, int argc){
-    int i;
+struct plot_value * plot_func_string_less_test(struct plot_env *env, struct plot_value *args){
     char *ch;
+    plot_value *cur;
 
-    if( argc < 2 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair || cdr(cdr(args))->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_func_string_less_test");
     }
 
-    if( args[0]->type != plot_type_string ){
+    if( car(args)->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "arg was not of type plot_type_string", "plot_func_less_test");
     }
 
-    ch = args[0]->u.string.val;
+    ch = car(args)->u.string.val;
 
-    for( i=1; i<argc; ++i ){
-        if( args[i]->type != plot_type_string ){
+    for( cur = cdr(args); cur->type == plot_type_pair; cur = cdr(cur) ){
+        if( car(cur)->type != plot_type_string ){
             return plot_runtime_error(plot_error_bad_args, "arg was not of type plot_type_string", "plot_func_less_test");
         }
-        if( strcmp(ch, args[i]->u.string.val) >= 0 ){
+        if( strcmp(ch, car(cur)->u.string.val) >= 0 ){
             return plot_new_boolean(false);
         }
-        ch = args[i]->u.string.val;
+        ch = car(cur)->u.string.val;
     }
 
     return plot_new_boolean(true);
 }
 
-/* (string>? string1 string2)
+/* (string>? string1 string2 ...)
  */
-struct plot_value * plot_func_string_greater_test(struct plot_env *env, struct plot_value **args, int argc){
-    int i;
+struct plot_value * plot_func_string_greater_test(struct plot_env *env, struct plot_value *args){
     char *ch;
+    plot_value *cur;
 
-    if( argc < 2 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair || cdr(cdr(args))->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_func_string_greater_test");
     }
 
-    if( args[0]->type != plot_type_string ){
+    if( car(args)->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "arg was not of type plot_type_string", "plot_func_greater_test");
     }
 
-    ch = args[0]->u.string.val;
+    ch = car(args)->u.string.val;
 
-    for( i=1; i<argc; ++i ){
-        if( args[i]->type != plot_type_string ){
+    for( cur = cdr(args); cur->type == plot_type_pair; cur = cdr(cur) ){
+        if( car(cur)->type != plot_type_string ){
             return plot_runtime_error(plot_error_bad_args, "arg was not of type plot_type_string", "plot_func_greater_test");
         }
-        if( strcmp(ch, args[i]->u.string.val) <= 0 ){
+        if( strcmp(ch, car(cur)->u.string.val) <= 0 ){
             return plot_new_boolean(false);
         }
-        ch = args[i]->u.string.val;
+        ch = car(cur)->u.string.val;
     }
 
     return plot_new_boolean(true);
 }
 
-/* (string<=? string1 string2)
+/* (string<=? string1 string2 ...)
  */
-struct plot_value * plot_func_string_less_equal_test(struct plot_env *env, struct plot_value **args, int argc){
-    int i;
+struct plot_value * plot_func_string_less_equal_test(struct plot_env *env, struct plot_value *args){
     char *ch;
+    plot_value *cur;
 
-    if( argc < 2 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair || cdr(cdr(args))->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_func_string_less_equal_test");
     }
 
-    if( args[0]->type != plot_type_string ){
+    if( car(args)->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "arg was not of type plot_type_string", "plot_func_less_equal_test");
     }
 
-    ch = args[0]->u.string.val;
+    ch = car(args)->u.string.val;
 
-    for( i=1; i<argc; ++i ){
-        if( args[i]->type != plot_type_string ){
+    for( cur = cdr(args); cur->type == plot_type_pair; cur = cdr(cur) ){
+        if( car(cur)->type != plot_type_string ){
             return plot_runtime_error(plot_error_bad_args, "arg was not of type plot_type_string", "plot_func_less_equal_test");
         }
-        if( strcmp(ch, args[i]->u.string.val) > 0 ){
+        if( strcmp(ch, car(cur)->u.string.val) > 0 ){
             return plot_new_boolean(false);
         }
-        ch = args[i]->u.string.val;
+        ch = car(cur)->u.string.val;
     }
 
     return plot_new_boolean(true);
 }
 
-/* (string>=? string1 string 2)
+/* (string>=? string1 string2 ...)
  */
-struct plot_value * plot_func_string_greater_equal_test(struct plot_env *env, struct plot_value **args, int argc){
-    int i;
+struct plot_value * plot_func_string_greater_equal_test(struct plot_env *env, struct plot_value *args){
     char *ch;
+    plot_value *cur;
 
-    if( argc < 2 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair || cdr(cdr(args))->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_func_string_greater_equal_test");
     }
 
-    if( args[0]->type != plot_type_string ){
+    if( car(args)->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "arg was not of type plot_type_string", "plot_func_greater_equal_test");
     }
 
-    ch = args[0]->u.string.val;
+    ch = car(args)->u.string.val;
 
-    for( i=1; i<argc; ++i ){
-        if( args[i]->type != plot_type_string ){
+    for( cur = cdr(args); cur->type == plot_type_pair; cur = cdr(cur) ){
+        if( car(cur)->type != plot_type_string ){
             return plot_runtime_error(plot_error_bad_args, "arg was not of type plot_type_string", "plot_func_greater_equal_test");
         }
-        if( strcmp(ch, args[i]->u.string.val) < 0 ){
+        if( strcmp(ch, car(cur)->u.string.val) < 0 ){
             return plot_new_boolean(false);
         }
-        ch = args[i]->u.string.val;
+        ch = car(cur)->u.string.val;
     }
 
     return plot_new_boolean(true);
@@ -500,39 +491,39 @@ struct plot_value * plot_func_string_greater_equal_test(struct plot_env *env, st
 
 /* (string-ci<? string1 string 2)
  */
-struct plot_value * plot_func_string_ci_less_test(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string_ci_less_test(struct plot_env *env, struct plot_value *args){
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_ci_less_test");
 }
 
-/* (string-ci>? string1 string 2)
+/* (string-ci>? string1 string2)
  */
-struct plot_value * plot_func_string_ci_greater_test(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string_ci_greater_test(struct plot_env *env, struct plot_value *args){
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_ci_greater_test");
 }
 
-/* (string-ci<=? string1 string 2)
+/* (string-ci<=? string1 string2)
  */
-struct plot_value * plot_func_string_ci_less_equal_test(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string_ci_less_equal_test(struct plot_env *env, struct plot_value *args){
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_ci_less_equal_test");
 }
 
 /* (string-ci>=? string1 string2)
  */
-struct plot_value * plot_func_string_ci_greater_equal_test(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string_ci_greater_equal_test(struct plot_env *env, struct plot_value *args){
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_string_ci_greater_equal_test");
 }
 
 /* (string->list string)
  */
-struct plot_value * plot_func_string_to_list(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string_to_list(struct plot_env *env, struct plot_value *args){
     plot_value *head, **cur;
     int i;
 
-    if( argc != 1 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_string_to_list");
     }
 
-    if( args[0]->type != plot_type_string ){
+    if( car(args)->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_to_list");
     }
 
@@ -542,11 +533,11 @@ struct plot_value * plot_func_string_to_list(struct plot_env *env, struct plot_v
 
     /* NB: -1 because len includes trailing \0
      */
-    for(i=0; i< args[0]->u.string.len-1; ++i){
+    for(i=0; i< car(args)->u.string.len-1; ++i){
         /* NB: temporarily inserting 0 which we override later
          * either with another pair or a null
          */
-        *cur = plot_new_pair( plot_new_character(args[0]->u.string.val[i]), 0 );
+        *cur = plot_new_pair( plot_new_character(car(args)->u.string.val[i]), 0 );
         cur = &(*cur)->u.pair.cdr;
     }
 
@@ -613,31 +604,31 @@ struct plot_value * plot_func_list_to_string(struct plot_env *env, struct plot_v
 
 /* (string-fill! string char)
  */
-struct plot_value * plot_func_string_fill(struct plot_env *env, struct plot_value **args, int argc){
+struct plot_value * plot_func_string_fill(struct plot_env *env, struct plot_value *args){
     int i;
     char ch;
 
-    if( argc != 2 ){
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair || cdr(cdr(args))->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 2 arguments", "plot_func_string_fill");
     }
 
-    if( args[0]->type != plot_type_string ){
+    if( car(args)->type != plot_type_string ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_string_fill");
     }
 
-    if( args[1]->type != plot_type_character){
+    if( car(cdr(args))->type != plot_type_character){
         return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_character", "plot_func_string_fill");
     }
 
-    ch = args[1]->u.character.val;
+    ch = car(cdr(args))->u.character.val;
 
     /* NB: len - 1 as len is a size (counts from 1) and includes null terminator
      * whereas i is an index (counts from 0)
      *
      * >= as if we have size 5 (excluding null term) then 5 is not a valid index (highest valid index would be 4)
      */
-    for(i=0; i < args[0]->u.string.len - 1; ++i){
-        args[0]->u.string.val[i] = ch;
+    for(i=0; i < car(args)->u.string.len - 1; ++i){
+        car(args)->u.string.val[i] = ch;
     }
 
     return plot_new_unspecified();
