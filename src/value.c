@@ -155,16 +155,6 @@ plot_value * plot_new_lambda(struct plot_env *env, struct plot_value *body){
     return res;
 }
 
-plot_value * plot_new_legacy( struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc) ){
-    plot_value *res;
-    res = plot_alloc_value();
-
-    res->type = plot_type_legacy;
-    res->u.legacy.func = func;
-
-    return res;
-}
-
 plot_value * plot_new_form( struct plot_value * (*func)(struct plot_env *env, struct plot_value *sexpr), int syntactic){
     plot_value *res;
     res = plot_alloc_value();
@@ -262,9 +252,6 @@ void display_type(plot_value *val){
             break;
         case plot_type_lambda:
             puts("type is lambda");
-            break;
-        case plot_type_legacy:
-            puts("type is legacy");
             break;
         case plot_type_form:
             puts("type is form");

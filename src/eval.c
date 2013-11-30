@@ -165,8 +165,6 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
     plot_value *func;
     plot_env *new_env;
     plot_value *cur, *curarg;
-    int len;
-    int i;
 
     #if DEBUG_FUNC || DEBUG
     puts("inside plot_eval_form");
@@ -194,36 +192,6 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
             return func;
             break;
 
-        case plot_type_legacy:
-            #if DEBUG_FUNC || DEBUG
-            puts("\tcalling a legacy builtin function...");
-            #endif
-
-            /* FIXME dirty shim will be removed*/
-            for( len=0, cur=cdr(sexpr); cur->type != plot_type_null ; cur = cdr(cur)) {
-                ++len;
-            }
-            vals = calloc( len, sizeof *vals);
-            /* eval each argument and add to list */
-            for( i=0, cur=cdr(sexpr); cur->type != plot_type_null; ++i, cur = cdr(cur) ){
-                val = plot_eval_expr(env, car(cur));
-                if( ! val ){
-                    display_error_expr(car(cur));
-                    return plot_runtime_error(plot_error_internal, "LEGACY BUILTIN call: evaluating argument returned NULL", "plot_eval_form");
-                }
-                if( val->type == plot_type_error ){
-                    display_error_expr(cur);
-                    return val;
-                }
-                vals[i] = val;
-            }
-            val = func->u.legacy.func( env, vals, len);
-            for( i=0; i < len; ++i ){
-                plot_value_decr(vals[i]);
-            }
-            /* FIXME also dirty */
-            free(vals);
-            return val;
         case plot_type_form:
             #if DEBUG_FUNC || DEBUG
             puts("calling syntactic with sexpr:");

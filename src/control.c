@@ -27,7 +27,7 @@ struct plot_value * plot_func_control_procedure_test(struct plot_env *env, struc
         return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_procedure_test");
     }
 
-    return plot_new_boolean( val->type == plot_type_legacy || val->type == plot_type_lambda || val->type == plot_type_form  );
+    return plot_new_boolean( val->type == plot_type_lambda || val->type == plot_type_form  );
 }
 
 /* (apply proc args1 ... args)
@@ -78,9 +78,6 @@ struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_va
             break;
         case plot_type_form:
             return func->u.form.func(env, newargs);
-            break;
-        case plot_type_legacy:
-            return plot_runtime_error(plot_error_bad_args, "apply is not implemented for legacy builtins (legacy builtins are slowly being removed)", "plot_func_control_apply");
             break;
         default:
             return plot_runtime_error(plot_error_bad_args, "first argument is not a function", "plot_func_control_apply");

@@ -7,13 +7,6 @@ use File::Slurp;
 # we step through each of the specified functions and capture all the c functions that
 # have a correctly formatted comments declaring their scheme bindings
 #
-# example of a legacy builtin:
-#
-#    /* (display obj)
-#    ...
-#    */
-#    struct plot_value * plot_func_display(struct plot_env *env, struct plot_value **args, int argc);
-#
 # from this we extract the 3 useful pieces of information
 #   'display'
 #   'plot_func_display'
@@ -52,8 +45,6 @@ struct plot_binding {
     plot_value func;
 };
 
-/* Plot Legacy Builtin */
-#define PLB(str, len, func) {{str, len,  len, 0}, {{-1, 0}, plot_type_legacy, {.legacy = {func}}}}
 /* Plot Syntactic */
 #define PS(str, len, func) {{str, len,  len, 0}, {{-1, 0}, plot_type_form, {.form = {func, 1}}}}
 /* Plot Form, notice the second element of form is 0 (this is true iff syntactic form) */
@@ -87,12 +78,9 @@ for my $header (@headers){
         if( grep "-syntax", @args ){
             # syntactic form
             $contents = "\tPS(\"$+{scheme}\", $len, $+{cfunc})";
-        } elsif( $+{func_type} eq '*' ){
-            # non-syntactic form
-            $contents = "\tPF(\"$+{scheme}\", $len, $+{cfunc})";
         } else {
-            # legacy builtin is default
-            $contents = "\tPLB(\"$+{scheme}\", $len, $+{cfunc})";
+            # non-syntactic form is default
+            $contents = "\tPF(\"$+{scheme}\", $len, $+{cfunc})";
         }
 
         if( grep "-core", @args ){
