@@ -134,6 +134,23 @@
     (fail "thirteen case 2"))
   (fail "thirteen case 1"))
 
+;; testing assoc
+(define fourteen '((0 #\a) (1 #\b) (2 #\c) (3 #\d)))
+; assoc func that will always return f
+; this means assoc will always fail
+(define (fourteen-f a b)
+  #f)
+
+(if (equal? #\b (car(cdr (assoc 1 fourteen))))
+  (if (equal? 2 (length (assoc 0 fourteen)))
+    (if (not (pair? (assoc 4 fourteen)))
+      (if (not (pair? (assoc 1 fourteen fourteen-f)))
+        (pass "fourteen")
+        (fail "fourteen case 4"))
+      (fail "fourteen  case 3"))
+    (fail "fourteen case 2"))
+  (fail "fourteen case 1"))
+
 ;; tests completed, print results
 (println "pair test results")
 (display tests-passed)

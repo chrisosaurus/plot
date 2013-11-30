@@ -151,13 +151,13 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `list-ref`
         `list-tail`
         `member`
+        `assoc`
 
     pending implementation:
         `memq`
         `memv`
         `assq`
         `assv`
-        `assoc`
 
 6.5 Symbols
     symbols are implemented along with the testing procedures `symbol?`,

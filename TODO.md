@@ -13,7 +13,6 @@ operations:
 * memv
 * assq
 * assv
-* assoc
 * map
 * for-each
 
