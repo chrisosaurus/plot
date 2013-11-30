@@ -194,43 +194,24 @@ struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value 
 /* (= number1 number2 ...)
  * mathmatical =
  */
-struct plot_value * plot_func_math_equal(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value tmp;
-    plot_value *arg;
-    int i;
+struct plot_value * plot_func_math_equal(struct plot_env *env, struct plot_value *args){
+    plot_value *tmp;
+    plot_value *cur;
 
-    tmp.type = plot_type_number;
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_func_equal");
+    }
 
-    #if DEBUG
-    puts("inside plot_func_math_equal");
-    #endif
-
-    for( i=0; i<argc; ++i ){
-        arg = args[i];
-        if( ! arg ){
-            #if DEBUG
-            puts("arg was NULL");
-            #endif
-            return 0; /* FIXME error */
+    tmp = car(args);
+    for( cur = cdr(args); cur->type == plot_type_pair; cur = cdr(cur) ){
+        if( car(cur)->type != plot_type_number ){
+            return plot_runtime_error(plot_error_bad_args, "argument was not of type plot_type_number", "plot_func_equal");
         }
 
-        if( arg->type != plot_type_number ){
-            #if DEBUG
-            puts("evaled expr did not yield number");
-            #endif
-            return 0; /* FIXME error */
+        if( tmp->u.number.val != car(cur)->u.number.val){
+            return plot_new_boolean(false);
         }
-
-        if( i == 0 ){
-            tmp.u.number.val = arg->u.number.val;
-        } else {
-            if( tmp.u.number.val != arg->u.number.val ){
-                #if DEBUG
-                printf("'not equal' for i '%d'\n", i);
-                #endif
-                return plot_new_boolean(false);
-            }
-        }
+        tmp = car(cur);
     }
 
     return plot_new_boolean(true);
@@ -238,44 +219,24 @@ struct plot_value * plot_func_math_equal(struct plot_env *env, struct plot_value
 
 /* (< number1 number2 ...)
  */
-struct plot_value * plot_func_less(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value tmp;
-    plot_value *arg;
-    int i;
+struct plot_value * plot_func_less(struct plot_env *env, struct plot_value *args){
+    plot_value *tmp;
+    plot_value *cur;
 
-    tmp.type = plot_type_number;
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_func_less");
+    }
 
-    #if DEBUG
-    puts("inside plot_func_less");
-    #endif
-
-    for( i=0; i<argc; ++i ){
-        arg = args[i];
-        if( ! arg ){
-            #if DEBUG
-            puts("arg was NULL");
-            #endif
-            return 0; /* FIXME error */
+    tmp = car(args);
+    for( cur = cdr(args); cur->type == plot_type_pair; cur = cdr(cur) ){
+        if( car(cur)->type != plot_type_number ){
+            return plot_runtime_error(plot_error_bad_args, "argument was not of type plot_type_number", "plot_func_less");
         }
 
-        if( arg->type != plot_type_number ){
-            #if DEBUG
-            puts("evaled expr did not yield number");
-            #endif
-            return 0; /* FIXME error */
+        if( ! (tmp->u.number.val < car(cur)->u.number.val) ){
+            return plot_new_boolean(false);
         }
-
-        if( i == 0 ){
-            tmp.u.number.val = arg->u.number.val;
-        } else {
-            if( ! (tmp.u.number.val < arg->u.number.val) ){
-                #if DEBUG
-                printf("not 'less than' for i '%d'\n", i);
-                #endif
-                return plot_new_boolean(false);
-            }
-            tmp.u.number.val = arg->u.number.val;
-        }
+        tmp = car(cur);
     }
 
     return plot_new_boolean(true);
@@ -283,44 +244,24 @@ struct plot_value * plot_func_less(struct plot_env *env, struct plot_value **arg
 
 /* (> number1 number2 ...)
  */
-struct plot_value * plot_func_greater(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value tmp;
-    plot_value *arg;
-    int i;
+struct plot_value * plot_func_greater(struct plot_env *env, struct plot_value *args){
+    plot_value *tmp;
+    plot_value *cur;
 
-    tmp.type = plot_type_number;
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_func_greater");
+    }
 
-    #if DEBUG
-    puts("inside plot_func_greater");
-    #endif
-
-    for( i=0; i<argc; ++i ){
-        arg = args[i];
-        if( ! arg ){
-            #if DEBUG
-            puts("arg was NULL");
-            #endif
-            return 0; /* FIXME error */
+    tmp = car(args);
+    for( cur = cdr(args); cur->type == plot_type_pair; cur = cdr(cur) ){
+        if( car(cur)->type != plot_type_number ){
+            return plot_runtime_error(plot_error_bad_args, "argument was not of type plot_type_number", "plot_func_greater");
         }
 
-        if( arg->type != plot_type_number ){
-            #if DEBUG
-            puts("evaled expr did not yield number");
-            #endif
-            return 0; /* FIXME error */
+        if( ! (tmp->u.number.val > car(cur)->u.number.val) ){
+            return plot_new_boolean(false);
         }
-
-        if( i == 0 ){
-            tmp.u.number.val = arg->u.number.val;
-        } else {
-            if( ! (tmp.u.number.val > arg->u.number.val) ){
-                #if DEBUG
-                printf("not 'greater than' for i '%d'\n", i);
-                #endif
-                return plot_new_boolean(false);
-            }
-            tmp.u.number.val = arg->u.number.val;
-        }
+        tmp = car(cur);
     }
 
     return plot_new_boolean(true);
@@ -328,44 +269,24 @@ struct plot_value * plot_func_greater(struct plot_env *env, struct plot_value **
 
 /* (<= number1 number2 ...)
  */
-struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value tmp;
-    plot_value *arg;
-    int i;
+struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_value *args){
+    plot_value *tmp;
+    plot_value *cur;
 
-    tmp.type = plot_type_number;
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_func_less_equal");
+    }
 
-    #if DEBUG
-    puts("inside plot_func_less_equal");
-    #endif
-
-    for( i=0; i<argc; ++i ){
-        arg = args[i];
-        if( ! arg ){
-            #if DEBUG
-            puts("arg was NULL");
-            #endif
-            return 0; /* FIXME error */
+    tmp = car(args);
+    for( cur = cdr(args); cur->type == plot_type_pair; cur = cdr(cur) ){
+        if( car(cur)->type != plot_type_number ){
+            return plot_runtime_error(plot_error_bad_args, "argument was not of type plot_type_number", "plot_func_less_equal");
         }
 
-        if( arg->type != plot_type_number ){
-            #if DEBUG
-            puts("evaled expr did not yield number");
-            #endif
-            return 0; /* FIXME error */
+        if( ! (tmp->u.number.val <= car(cur)->u.number.val) ){
+            return plot_new_boolean(false);
         }
-
-        if( i == 0 ){
-            tmp.u.number.val = arg->u.number.val;
-        } else {
-            if( ! (tmp.u.number.val <= arg->u.number.val) ){
-                #if DEBUG
-                printf("not 'less than or equal' for i '%d'\n", i);
-                #endif
-                return plot_new_boolean(false);
-            }
-            tmp.u.number.val = arg->u.number.val;
-        }
+        tmp = car(cur);
     }
 
     return plot_new_boolean(true);
@@ -373,44 +294,24 @@ struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_value
 
 /* (>= number1 number2 ...)
  */
-struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_value **args, int argc){
-    plot_value tmp;
-    int i;
-    plot_value *arg;
+struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_value *args){
+    plot_value *tmp;
+    plot_value *cur;
 
-    tmp.type = plot_type_number;
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_func_greater_equal");
+    }
 
-    #if DEBUG
-    puts("inside plot_func_greater_equal");
-    #endif
-
-    for( i=0; i<argc; ++i ){
-        arg = args[i];
-        if( ! arg ){
-            #if DEBUG
-            puts("arg was NULL");
-            #endif
-            return 0; /* FIXME error */
+    tmp = car(args);
+    for( cur = cdr(args); cur->type == plot_type_pair; cur = cdr(cur) ){
+        if( car(cur)->type != plot_type_number ){
+            return plot_runtime_error(plot_error_bad_args, "argument was not of type plot_type_number", "plot_func_greater_equal");
         }
 
-        if( arg->type != plot_type_number ){
-            #if DEBUG
-            puts("evaled expr did not yield number");
-            #endif
-            return 0; /* FIXME error */
+        if( ! (tmp->u.number.val >= car(cur)->u.number.val) ){
+            return plot_new_boolean(false);
         }
-
-        if( i == 0 ){
-            tmp.u.number.val = arg->u.number.val;
-        } else {
-            if( ! (tmp.u.number.val >= arg->u.number.val) ){
-                #if DEBUG
-                printf("not 'less than or equal' for i '%d'\n", i);
-                #endif
-                return plot_new_boolean(false);
-            }
-            tmp.u.number.val = arg->u.number.val;
-        }
+        tmp = car(cur);
     }
 
     return plot_new_boolean(true);

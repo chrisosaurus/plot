@@ -50,23 +50,23 @@ struct plot_value * plot_func_remainder(struct plot_env *env, struct plot_value 
 /* (= number1 number2 ...)
  * mathmatical =
  */
-struct plot_value * plot_func_math_equal(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_math_equal(struct plot_env *env, struct plot_value *args);
 
 /* (< number1 number2 ...)
  */
-struct plot_value * plot_func_less(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_less(struct plot_env *env, struct plot_value *args);
 
 /* (> number1 number2 ...)
  */
-struct plot_value * plot_func_greater(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_greater(struct plot_env *env, struct plot_value *args);
 
 /* (<= number1 number2 ...)
  */
-struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_less_equal(struct plot_env *env, struct plot_value *args);
 
 /* (>= number1 number2 ...)
  */
-struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_value **args, int argc);
+struct plot_value * plot_func_greater_equal(struct plot_env *env, struct plot_value *args);
 
 
 #endif
