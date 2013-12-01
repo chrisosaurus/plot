@@ -51,6 +51,8 @@ run_tests: compile_tests plot
 	./plot t/integration/quote.scm
 	@echo "\nrunning control.scm"
 	./plot t/integration/control.scm
+	@echo "\nrunning define.scm"
+	./plot t/integration/define.scm
 	@make -s cleanobj
 
 test: run_tests cleanobj

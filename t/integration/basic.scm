@@ -292,7 +292,7 @@
   (fail "twenty six case 1"))
 
 ;; tests completed, print results
-(println "basic test results")
+(println "define test results")
 (display tests-passed)
 (display " / ")
 (display test-count)

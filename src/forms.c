@@ -82,7 +82,7 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_value *se
      */
 
     name = car(sexpr);
-    body = car(cdr(sexpr));
+    body = cdr(sexpr);
 
     #if DEBUG
     puts("define with name:");
@@ -103,7 +103,7 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_value *se
          */
 
         /* FIXME bit of a hack, should tidy up */
-        value = plot_new_lambda(env, plot_new_pair( args, plot_new_pair(body, plot_new_null())));
+        value = plot_new_lambda(env, plot_new_pair( args, body ));
         plot_env_define(env, &(name->u.symbol), value);
         plot_value_decr(value);
 
@@ -119,8 +119,11 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_value *se
         puts("\tDEFINE: getting value to store");
         #endif
 
+        if( cdr(body)->type != plot_type_null ){
+            return plot_runtime_error(plot_error_bad_args, "trailing argument to define", "plot_form_define");
+        }
         /* 2nd subform isnt known to be a value ! */
-        value = plot_eval_expr(env, body);
+        value = plot_eval_expr(env, car(body));
         if( ! value ){
             return plot_runtime_error(plot_error_internal, "call to eval expr returned null", "plot_form_define");
         }
