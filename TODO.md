@@ -84,4 +84,5 @@ bugs:
 * parsing feedback is terrible
 * plot_runtime_errors should probably use scheme name (rather than c implementation name)
 * look very carefully at gc around force (incr when generated vs incr when returned)
+* escape characters not behaving, e.g. (display "\t") => segfault
 

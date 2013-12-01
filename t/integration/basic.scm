@@ -24,6 +24,20 @@
     (set! test-count (+ test-count 1))
     (set! tests-failed (+ tests-failed 1))))
 
+(define (results)
+  (display tests-passed)
+  (display " / ")
+  (display test-count)
+  (println " tests passed")
+
+  (display tests-failed)
+  (println " tests failed")
+  (newline)
+  ;; indicate failure
+  (if (> tests-failed 0)
+    (exit 1)))
+
+
 ;; test define, if and simple comparison functions
 (define one
   (if (< 4 5)
@@ -292,16 +306,6 @@
   (fail "twenty six case 1"))
 
 ;; tests completed, print results
-(println "define test results")
-(display tests-passed)
-(display " / ")
-(display test-count)
-(println " tests passed")
-
-(display tests-failed)
-(println " tests failed")
-
-;; indicate failure
-(if (> tests-failed 0)
-  (exit 1))
+(println ">>> basic test results")
+(results)
 

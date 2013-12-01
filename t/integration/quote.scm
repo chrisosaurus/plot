@@ -21,6 +21,20 @@
     (set! test-count (+ test-count 1))
     (set! tests-failed (+ tests-failed 1))))
 
+(define (results)
+  (display tests-passed)
+  (display " / ")
+  (display test-count)
+  (println " tests passed")
+
+  (display tests-failed)
+  (println " tests failed")
+  (newline)
+  ;; indicate failure
+  (if (> tests-failed 0)
+    (exit 1)))
+
+
 (if (equal? 5 '5)
   (pass "one")
   (fail "one"))
@@ -51,16 +65,6 @@
 
 
 ;; tests completed, print results
-(println "string test results")
-(display tests-passed)
-(display " / ")
-(display test-count)
-(println " tests passed")
-
-(display tests-failed)
-(println " tests failed")
-
-;; indicate failure
-(if (> tests-failed 0)
-  (exit 1))
+(println ">>> quote test results")
+(results)
 
