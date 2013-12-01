@@ -74,8 +74,6 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_value *se
     plot_value *body;
     plot_value *args;
 
-    /* FIXME need to check args */
-
     /* define has 2 forms:
      * (define a <value>)
      * (define (b args) <function body>)
@@ -93,23 +91,16 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_value *se
 
     if( name->type == plot_type_pair ){
         /* function form */
-        /* FIXME need to verify form */
 
         args = cdr(name);
         name = car(name);
-        /* remove declared function name
-         *
-         * move down the subforms array in order to remove function name
-         */
 
-        /* FIXME bit of a hack, should tidy up */
         value = plot_new_lambda(env, plot_new_pair( args, body ));
         plot_env_define(env, &(name->u.symbol), value);
         plot_value_decr(value);
 
     } else {
         /* value form */
-        /* FIXME need to verify form */
 
         if( name->type != plot_type_symbol ){
             return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_symbol", "plot_form_define");
@@ -155,9 +146,7 @@ struct plot_value * plot_form_lambda(struct plot_env *env, struct plot_value *se
     plot_value *args, *arg;
     plot_value *body;
 
-    /* FIXME need to check sexpr */
-
-    /* (lambda args body... )
+    /* our sexpr will be of the form (args body... )
      */
 
     args = car(sexpr);
@@ -186,11 +175,14 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr)
     plot_value *if_expr;
     plot_value *else_expr = 0;
 
-    /* FIXME check sexpr form */
-
     /* scheme if's can have 2 forms
      * (if cond if-expr) ; 'guard'
      * (if cond if-expr else-expr) ; 'branching'
+     *
+     * when we receive it will be either of
+     *  (cond if-expr)
+     *  (cond if-expr else-expr)
+     *
      */
 
     cond = car(sexpr);
