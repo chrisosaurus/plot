@@ -20,21 +20,16 @@ forms:
 garbage collection:
 -------------------
 * implement arena growth
-* need to work out how to deal with constants - for now we will not gc anything allocated at parse time
 * merge arenas
+* need to work out how to deal with constants - for now we will not gc anything allocated at parse time
 
 performance:
 ------------
-* recursion is currently very expensive (both in terms of stack and memory) -> need tail call optimisation
 * more performant env structure
 * consider caching of booleans (similar to null and unspecified)
 
 misc:
 -----
-* 'Testing parse error handling TODO' error
-* write stack (for runtime and internal stacks)
-* too much repeated handling for stack unwinding in eval
-* want to also print context for errors (e.g. expr being evalled when error occured, expr at each stage of stack unwinding)
 
 parse:
 ------
@@ -45,12 +40,11 @@ parse:
 
 eval:
 -----
-* eval documentation
 * tidy up eval_form variables
 
 read:
 -----
-* write...
+* general tidyup
 
 testing:
 --------
@@ -62,7 +56,6 @@ features:
 * write repl front-end
 * macro system
 * variable arguments
-* want a way of printing literal syntax (without attempting to eval)
 * begin work on library system
 * play around with `display_error_expr` as it is proving very useful, should probably give it a more general name
 
@@ -79,7 +72,6 @@ bugs:
 * escaping in strings will copy over the escape character and include it in size/len
 * plot runtime errors may leak previously allocated values, need to decr before throwing error.
 * plot_new_string and plot_alloc_string are not really related, as the latter allocates an array and the former a value
-* need to update number.c to use plot_runtime_error system
 * plot_eval_form should only return 0 on error, otherwise it is a runtime error
 * parsing feedback is terrible
 * plot_runtime_errors should probably use scheme name (rather than c implementation name)
