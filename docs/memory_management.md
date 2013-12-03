@@ -12,19 +12,23 @@ new objects are allocated manually (by the runtime sysytem) via calls to plot_al
     * plot_alloc_value(void)
     * plot_alloc_env(plot_env *parent)
     * plot_alloc_hash_entry(void)
+    * plot_alloc_constant(void) /* mostly-deprecated in favour of plot_value_constantify */
 
 However you most likely want to be using the typed value creation functions to do a lot of the heavy lifting
 (they internally call plot_alloc_value for you):
 
-    * plot_value * plot_new_number(int value);
-    * plot_value * plot_new_boolean(int value);
-    * plot_value * plot_new_character(char value);
-    * plot_value * plot_new_symbol(char *val, int len);
-    * plot_value * plot_new_string(char * val, int len);
-    * plot_value * plot_new_pair(struct plot_value *car, struct plot_value *cdr);
-    * plot_value * plot_new_error(plot_error_type type, const char *msg, const char *location);
-    * plot_value * plot_new_lambda(struct plot_env *env, struct plot_sexpr *body);
-    * plot_value * plot_new_builtin( struct plot_value * (*func)(struct plot_env *env, struct plot_value **args, int argc) );
+    plot_value * plot_new_unspecified(void);
+    plot_value * plot_new_number(int value);
+    plot_value * plot_new_boolean(int value);
+    plot_value * plot_new_character(char value);
+    plot_value * plot_new_symbol(char *val, int len);
+    plot_value * plot_new_string(char * val, int len);
+    plot_value * plot_new_pair(struct plot_value *car, struct plot_value *cdr);
+    plot_value * plot_new_null(void);
+    plot_value * plot_new_error(plot_error_type type, const char *msg, const char *location);
+    plot_value * plot_new_promise(struct plot_env *env, struct plot_value *expr);
+    plot_value * plot_new_lambda(struct plot_env *env, struct plot_value *body);
+    plot_value * plot_new_form( struct plot_value * (*func)(struct plot_env *env, struct plot_value *sexpr), int syntactic);
 
 whenever an object pointer is copied it must be incremented:
 
@@ -39,5 +43,10 @@ trigger garbage collection of it (and anything it holds a reference to):
     * plot_env_decr(plot_env *)
     * plot_he_decr(plot_hash_entry *)
 
+plot's gc has a concept of constants, currently these are just objects with a 
+refcount of -1; you can turn an object into a constant via a call to
 
+    void plot_value_constantify(plot_value *val);
+
+there is also a mostly-deprecated `plot_alloc_constant`, this has mostly been superseded by `plot_value_constantify`.
 

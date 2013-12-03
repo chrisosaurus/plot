@@ -78,6 +78,8 @@ struct plot_value * plot_alloc_value(void);
 /* allocate new NON-ref counted value
  * this is needed for constants until
  * a better solution comes along
+ *
+ * this has been mostly-deprecated in favour of plot_value_constantify
  */
 struct plot_value * plot_alloc_constant(void);
 
