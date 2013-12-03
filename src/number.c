@@ -24,6 +24,24 @@ struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_valu
     return plot_new_boolean( val->type == plot_type_number );
 }
 
+/* (exact? obj)
+ */
+struct plot_value * plot_func_exact_test(struct plot_env *env, struct plot_value *args){
+    plot_value *val;
+
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_exact_test");
+    }
+
+    val = car(args);
+
+    if( ! val ){
+        return plot_runtime_error(plot_error_internal, "arg was null", "plot_func_exact_test");
+    }
+
+    return plot_new_boolean( val->type == plot_type_number );
+}
+
 /* (+ number1 number2 ...)
  * takes a list of expressions
  * evals each and then adds the expression's value if it is a number

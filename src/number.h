@@ -10,6 +10,10 @@ struct plot_value;
  */
 struct plot_value * plot_func_number_test(struct plot_env *env, struct plot_value *args);
 
+/* (exact? obj)
+ */
+struct plot_value * plot_func_exact_test(struct plot_env *env, struct plot_value *args);
+
 /* (+ number1 number2 ...)
  * takes a list of expressions
  * evals each and then adds the expression's value if it is a number

@@ -100,7 +100,7 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     so you must use `(- 0 1)` in lieu of `-1`.
 
     currently in plot `integer` is synonymous with `number`
-    `number?` is implemented, all other number-type-testing
+    `number?` and `exact?` are implemented, all other number-type-testing
     procedures are not currently implemented.
 
     complex, real and rational are not currently implemented.
