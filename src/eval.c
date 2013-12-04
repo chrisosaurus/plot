@@ -139,10 +139,10 @@ plot_value * plot_eval_sexpr(plot_env *env, plot_value * sexpr){
     puts("inside plot_eval_sexpr");
     #endif
 
-    /* if first child is an s_expr then it must be a function call
-     * if first child is a symbol we have 2 cases:
-     *      is_form? -> eval_form
-     *      else     -> eval func_call
+    /* an sexpr is either a function call of a use of a form
+     *
+     * both forms and function calls have now been unified under the same interface
+     * plot_eval_form will properly deal with either
      */
 
     res = plot_eval_form(env, sexpr);
