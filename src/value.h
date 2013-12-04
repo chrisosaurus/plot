@@ -2,6 +2,7 @@
 #define PLOT_VALUE_H
 
 #include <stdbool.h>
+#include <stdio.h> /* FILE* */
 
 typedef enum plot_value_type{
     plot_type_number,
@@ -18,6 +19,7 @@ typedef enum plot_value_type{
     plot_type_promise,
     /* null does NOT have a matching union member */
     plot_type_null,
+    plot_type_textual_port,
     /* this type represents expressions that do not yield a value
      * '(if #f "hello")' => unspecified
      * '(define a "world")' => unspecified
@@ -28,8 +30,8 @@ typedef enum plot_value_type{
     plot_type_unspecified,
     plot_type_reclaimed /* FIXME useful for testing garbage collection */
 #if 0
+    plot_type_binary_port
     plot_type_vector
-    plot_type_port
 #endif
 } plot_value_type;
 
@@ -87,6 +89,25 @@ typedef struct plot_string {
     int size;
 } plot_string;
 
+/* r7rs 6.13.1, page 55
+ * ports represent input and output devices
+ *   input port is a scheme object that can deliver data upon command
+ *   output port is a scheme object that can accept data
+ * whether the input and output port types are disjoint is implementation-dependant
+ * scheme implementations are required to support `textual` and `binary` ports
+ *   textual ports support reading and writing in terms of characters
+ *   binary ports support reading and writing in terms of bytes
+ * whether the textual and binary port types are disjoint is implementation-dependant
+ */
+typedef struct plot_textual_port {
+    /* 0 for input, 1 for output */
+    int direction;
+    /* 0 for closed, 1 for open */
+    int open;
+    /* backing full or NULL */
+    FILE *file;
+} plot_textual_port;
+
 typedef struct plot_boolean {
     bool val;
 } plot_boolean;
@@ -105,11 +126,11 @@ typedef struct plot_pair {
 
 #if 0
 
+typedef struct plot_binary_port {
+} plot_binary_port;
+
 typedef struct plot_vector {
 } plot_vector;
-
-typedef struct plot_port {
-} plot_port;
 
 #endif
 
@@ -151,19 +172,20 @@ typedef struct plot_value {
     struct plot_gc gc;
     plot_value_type type;
     union {
-        plot_number    number;
-        plot_symbol    symbol;
-        plot_promise   promise;
-        plot_lambda    lambda;
-        plot_form      form;
-        plot_error     error;
-        plot_string    string;
-        plot_boolean   boolean;
-        plot_character character;
-        plot_pair      pair;
+        plot_number        number;
+        plot_symbol        symbol;
+        plot_promise       promise;
+        plot_lambda        lambda;
+        plot_form          form;
+        plot_error         error;
+        plot_string        string;
+        plot_boolean       boolean;
+        plot_character     character;
+        plot_pair          pair;
+        plot_textual_port  textport;
 #if 0
-        plot_vector    vector;
-        plot_plot      port;
+        plot_vector        vector;
+        plot_binary_port   binaryport;
 #endif
     } u;
 } plot_value;
@@ -187,6 +209,11 @@ plot_value * plot_new_error(plot_error_type type, const char *msg, const char *l
 plot_value * plot_new_promise(struct plot_env *env, struct plot_value *expr);
 plot_value * plot_new_lambda(struct plot_env *env, struct plot_value *body);
 plot_value * plot_new_form( struct plot_value * (*func)(struct plot_env *env, struct plot_value *sexpr), int syntactic);
+/* direction is 0 for input or 1 for output
+ * *file is an already opened file
+ * file is assumed to be open
+ */
+plot_value * plot_new_textual_port(int direction, FILE *file);
 
 /* turn an existing plot_value into a constant
  */
