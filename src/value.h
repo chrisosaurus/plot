@@ -17,9 +17,12 @@ typedef enum plot_value_type{
     plot_type_character,
     plot_type_pair,
     plot_type_promise,
+    plot_type_textual_port,
+
     /* null does NOT have a matching union member */
     plot_type_null,
-    plot_type_textual_port,
+    /* eof does NOT have a matching union member */
+    plot_type_eof,
     /* this type represents expressions that do not yield a value
      * '(if #f "hello")' => unspecified
      * '(define a "world")' => unspecified
@@ -28,6 +31,7 @@ typedef enum plot_value_type{
      * union member
      */
     plot_type_unspecified,
+    /* reclaimed does NOT have a matching union member */
     plot_type_reclaimed /* FIXME useful for testing garbage collection */
 #if 0
     plot_type_binary_port
@@ -214,6 +218,7 @@ plot_value * plot_new_form( struct plot_value * (*func)(struct plot_env *env, st
  * file is assumed to be open
  */
 plot_value * plot_new_textual_port(int direction, FILE *file);
+plot_value * plot_new_eof(void);
 
 /* turn an existing plot_value into a constant
  */

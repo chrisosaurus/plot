@@ -260,7 +260,9 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     Ports are not currently implemented.
 
 6.13.2 Input
-    Plot does not yet have any input procedures.
+    the following input procedures are implemented:
+        `eof-object`
+        `eof-object?`
 
 6.13.3 Output
     the following output procedures are implemented:

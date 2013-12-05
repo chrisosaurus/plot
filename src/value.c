@@ -41,6 +41,10 @@ plot_value * plot_new_textual_port(int direction, FILE *file){
     return res;
 }
 
+plot_value * plot_new_eof(void){
+    return plot_get_eof_constant();
+}
+
 plot_value * plot_new_unspecified(void){
     return plot_get_unspecified_constant();
 }

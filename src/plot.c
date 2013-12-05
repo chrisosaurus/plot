@@ -48,6 +48,7 @@ typedef struct plot {
      */
     struct plot_value unspecified_constant;
     struct plot_value null_constant;
+    struct plot_value eof_constant;
 
 #if GC_STATS
     /**** garbage stats ****/
@@ -100,6 +101,9 @@ int plot_init(void){
 
     plot_instance->null_constant.type = plot_type_null;
     plot_instance->null_constant.gc.refcount = -1;
+
+    plot_instance->eof_constant.type = plot_type_eof;
+    plot_instance->eof_constant.gc.refcount = -1;
 
     plot_gc_value_init();
     plot_gc_he_init();
@@ -683,6 +687,11 @@ struct plot_value * plot_get_unspecified_constant(void){
 struct plot_value * plot_get_null_constant(void){
     if( ! plot_instance) return 0;
     return &plot_instance->null_constant;
+}
+
+struct plot_value * plot_get_eof_constant(void){
+    if( ! plot_instance) return 0;
+    return &plot_instance->eof_constant;
 }
 
 #if HASH_STATS

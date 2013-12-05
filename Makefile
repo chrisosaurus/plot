@@ -2,7 +2,7 @@
 
 include config.mk
 
-SRC = src/read.c src/parse.c src/eval.c src/hash.c src/env.c src/funcs.c src/plot.c src/character.c src/string.c src/number.c src/pair.c src/value.c src/forms.c src/control.c
+SRC = src/read.c src/parse.c src/eval.c src/hash.c src/env.c src/funcs.c src/plot.c src/character.c src/string.c src/number.c src/pair.c src/value.c src/forms.c src/control.c src/input.c
 OBJ = ${SRC:.c=.o}
 
 EXTRAFLAGS =
@@ -53,6 +53,8 @@ run_tests: compile_tests plot
 	./plot t/integration/control.scm
 	@echo "\nrunning define.scm"
 	./plot t/integration/define.scm
+	@echo "\nrunning input.scm"
+	./plot t/integration/input.scm
 	@make -s cleanobj
 
 test: run_tests cleanobj
