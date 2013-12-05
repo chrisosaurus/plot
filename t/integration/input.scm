@@ -39,7 +39,9 @@
 
 (if (eof-object? (eof-object))
   (if (not (eof-object? #\a))
-    (pass "one")
+    (if (equal? (eof-object) (eof-object))
+      (pass "one")
+      (fail "one case 3"))
     (fail "one case 2"))
   (fail "one case 1"))
 

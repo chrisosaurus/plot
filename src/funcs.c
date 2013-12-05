@@ -60,8 +60,11 @@ static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
         case plot_type_textual_port:
             return plot_runtime_error(plot_error_internal, "trying to print a textual port", "plot_func_display_value");
             break;
+        case plot_type_eof:
+            fputs("<eof>", stdout);
+            break;
         case plot_type_unspecified:
-            puts("<unspecified>");
+            fputs("<unspecified>", stdout);
             break;
         case plot_type_reclaimed:
             puts("ERROR: you are trying to display a garbage collected value, most likely an error in the GC");
@@ -148,6 +151,9 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
     }
 
     switch( o1->type ){
+        case plot_type_eof:
+            return plot_new_boolean(1);
+            break;
         case plot_type_textual_port:
             /* FIXME */
             return plot_runtime_error(plot_error_unimplemented, "textual port equality is not yet implemented", "plot_func_equal_test");
