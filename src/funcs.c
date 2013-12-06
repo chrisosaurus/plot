@@ -114,15 +114,31 @@ plot_value * plot_func_display(plot_env *env, plot_value *args){
 }
 
 /* (newline)
- * print a newline to stdout
+ * (newline port)
+ * print a newline to provided port or to stdout if no port is provided
  */
 plot_value * plot_func_newline(plot_env *env, plot_value *args){
-    /* do not allow any arguments */
-    if( args->type != plot_type_null ){
-        return plot_runtime_error(plot_error_bad_args, "expected exactly 0 arguments", "plot_func_newline");
+    FILE *file = stdout;
+    plot_value *arg;
+
+    if( args->type == plot_type_pair && cdr(args)->type == plot_type_null ){
+        arg = car(args);
+        if( arg->type != plot_type_textual_port ){
+            return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_textual_port", "plot_func_newline");
+        }
+        if( arg->u.textport.status != plot_port_open ){
+            return plot_runtime_error(plot_error_bad_args, "supplied port was not open", "plot_func_display");
+        }
+        if( arg->u.textport.direction != plot_port_out ){
+            return plot_runtime_error(plot_error_bad_args, "supplied port was not an output port", "plot_func_display");
+        }
+        file = arg->u.textport.file;
+    } else if( args->type == plot_type_null ){
+    } else {
+        return plot_runtime_error(plot_error_bad_args, "expected either 0 or 1 arguments", "plot_func_newline");
     }
 
-    puts("");
+    fputs("\n", file);
 
     return plot_new_unspecified();
 }

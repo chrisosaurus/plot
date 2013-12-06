@@ -55,6 +55,13 @@ run_tests: compile_tests plot
 	./plot t/integration/define.scm
 	@echo "\nrunning input.scm"
 	./plot t/integration/input.scm
+
+	@rm -f test
+	@echo "\nrunning output.scm"
+	./plot t/integration/output.scm
+	cat test
+
+	@echo ""
 	@make -s cleanobj
 
 test: run_tests cleanobj
@@ -71,7 +78,7 @@ integration: plot
 
 cleanobj:
 	@echo cleaning objects
-	@rm -f src/*.o src/*.to t/*.o src/*.su
+	@rm -f src/*.o src/*.to t/*.o src/*.su test
 
 foo: cleanobj
 

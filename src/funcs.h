@@ -17,7 +17,8 @@ struct plot_expr;
 struct plot_value * plot_func_display(struct plot_env *env, struct plot_value *args);
 
 /* (newline)
- * print a newline to stdout
+ * (newline port)
+ * print a newline to provided port or to stdout if no port is provided
  */
 struct plot_value * plot_func_newline(struct plot_env *env, struct plot_value *args);
 
