@@ -257,7 +257,11 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     Plot's current support for I/O is rather lousy.
 
 6.13.1 Ports
-    Ports are not currently implemented.
+    Textual ports are currently being implemented.
+
+    The following procedures are implemented:
+        `open-output-port`
+        `close-port`
 
 6.13.2 Input
     the following input procedures are implemented:
