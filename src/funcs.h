@@ -11,8 +11,8 @@ struct plot_expr;
 #include "pair.h"
 
 /* (display obj)
- * print value to stdout
- * FIXME should generalise if spec allows
+ * (display obj port)
+ * print value to provided port or to stdout if no port is provided
  */
 struct plot_value * plot_func_display(struct plot_env *env, struct plot_value *args);
 

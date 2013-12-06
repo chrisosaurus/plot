@@ -79,7 +79,8 @@ static plot_value * plot_func_display_value(FILE *file, plot_env *env, plot_valu
 }
 
 /* (display obj)
- * print value to stdout
+ * (display obj port)
+ * print value to provided port or to stdout if no port is provided
  */
 plot_value * plot_func_display(plot_env *env, plot_value *args){
     plot_value *arg;
