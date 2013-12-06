@@ -17,35 +17,35 @@
 /* internal routine for displaying a value
  * returns 0 on failure, 1 on success
  */
-static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
+static plot_value * plot_func_display_value(FILE *file, plot_env *env, plot_value *val){
     if( ! val )
         return 0;
 
     switch(val->type){
         case plot_type_boolean:
-            printf("#%c", val->u.boolean.val ? 't' : 'f' );
+            fprintf(file, "#%c", val->u.boolean.val ? 't' : 'f' );
             break;
         case plot_type_number:
-            printf("%d", val->u.number.val);
+            fprintf(file, "%d", val->u.number.val);
             break;
         case plot_type_string:
-            printf("%s", val->u.string.val);
+            fprintf(file, "%s", val->u.string.val);
             break;
         case plot_type_symbol:
-            printf("%s", val->u.symbol.val);
+            fprintf(file, "%s", val->u.symbol.val);
             break;
         case plot_type_character:
-            printf("%c", val->u.character.val);
+            fprintf(file, "%c", val->u.character.val);
             break;
         case plot_type_null:
-            fputs("()", stdout);
+            fputs("()", file);
             break;
         case plot_type_pair:
-            fputs("(", stdout);
-            plot_func_display_value(env, val->u.pair.car);
-            fputs(" ", stdout);
-            plot_func_display_value(env, val->u.pair.cdr);
-            fputs(")", stdout);
+            fputs("(", file);
+            plot_func_display_value(file, env, val->u.pair.car);
+            fputs(" ", file);
+            plot_func_display_value(file, env, val->u.pair.cdr);
+            fputs(")", file);
             break;
             break;
         case plot_type_form:
@@ -61,10 +61,10 @@ static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
             return plot_runtime_error(plot_error_internal, "trying to print a textual port", "plot_func_display_value");
             break;
         case plot_type_eof:
-            fputs("<eof>", stdout);
+            fputs("<eof>", file);
             break;
         case plot_type_unspecified:
-            fputs("<unspecified>", stdout);
+            fputs("<unspecified>", file);
             break;
         case plot_type_reclaimed:
             puts("ERROR: you are trying to display a garbage collected value, most likely an error in the GC");
@@ -83,9 +83,24 @@ static plot_value * plot_func_display_value(plot_env *env, plot_value *val){
  */
 plot_value * plot_func_display(plot_env *env, plot_value *args){
     plot_value *arg;
+    FILE *file = stdout;
 
-    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
-        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_display");
+    if( args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected either 1 or 2 args", "plot_func_display");
+    }
+
+    arg = cdr(args);
+    if( arg->type == plot_type_pair && car(arg)->type == plot_type_textual_port ){
+        arg = car(arg);
+        if( arg->u.textport.status != plot_port_open ){
+            return plot_runtime_error(plot_error_bad_args, "supplied port was not open", "plot_func_display");
+        }
+        if( arg->u.textport.direction != plot_port_out ){
+            return plot_runtime_error(plot_error_bad_args, "supplied port was not an output port", "plot_func_display");
+        }
+        file = arg->u.textport.file;
+    } else if( arg->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "second arg was of unexpected type", "plot_func_display");
     }
 
     arg = car(args);
@@ -94,7 +109,7 @@ plot_value * plot_func_display(plot_env *env, plot_value *args){
         return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_display");
     }
 
-    return plot_func_display_value(env, arg);
+    return plot_func_display_value(file, env, arg);
 }
 
 /* (newline)
