@@ -93,6 +93,16 @@ typedef struct plot_string {
     int size;
 } plot_string;
 
+typedef enum plot_port_dir {
+    plot_port_out,
+    plot_port_in
+} plot_port_dir;
+
+typedef enum plot_port_status {
+    plot_port_open,
+    plot_port_closed
+} plot_port_status;
+
 /* r7rs 6.13.1, page 55
  * ports represent input and output devices
  *   input port is a scheme object that can deliver data upon command
@@ -104,10 +114,8 @@ typedef struct plot_string {
  * whether the textual and binary port types are disjoint is implementation-dependant
  */
 typedef struct plot_textual_port {
-    /* 0 for input, 1 for output */
-    int direction;
-    /* 0 for closed, 1 for open */
-    int open;
+    plot_port_dir direction;
+    plot_port_status status;
     /* backing full or NULL */
     FILE *file;
 } plot_textual_port;
@@ -213,11 +221,8 @@ plot_value * plot_new_error(plot_error_type type, const char *msg, const char *l
 plot_value * plot_new_promise(struct plot_env *env, struct plot_value *expr);
 plot_value * plot_new_lambda(struct plot_env *env, struct plot_value *body);
 plot_value * plot_new_form( struct plot_value * (*func)(struct plot_env *env, struct plot_value *sexpr), int syntactic);
-/* direction is 0 for input or 1 for output
- * *file is an already opened file
- * file is assumed to be open
- */
-plot_value * plot_new_textual_port(int direction, FILE *file);
+/* `*file` is an already opened file */
+plot_value * plot_new_textual_port(plot_port_dir direction, FILE *file);
 plot_value * plot_new_eof(void);
 
 /* turn an existing plot_value into a constant

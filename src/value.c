@@ -25,18 +25,15 @@ void plot_value_decons(plot_value *value){
     }
 }
 
-/* direction is 0 for input or 1 for output
- * *file is an already opened file
- * file is assumed to be open
- */
-plot_value * plot_new_textual_port(int direction, FILE *file){
+/* `*file` is an already opened file */
+plot_value * plot_new_textual_port(plot_port_dir direction, FILE *file){
     plot_value *res;
     res = plot_alloc_value();
     res->type = plot_type_textual_port;
 
     res->u.textport.file = file;
     res->u.textport.direction = direction;
-    res->u.textport.open = 1;
+    res->u.textport.status = plot_port_open;
 
     return res;
 }
