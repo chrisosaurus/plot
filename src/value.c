@@ -20,6 +20,13 @@ void plot_value_decons(plot_value *value){
             plot_value_decr(value->u.pair.car);
             plot_value_decr(value->u.pair.cdr);
             break;
+        case plot_type_textual_port:
+            if( value->u.textport.status == plot_port_open ){
+                value->u.textport.status = plot_port_closed;
+                fclose(value->u.textport.file);
+                value->u.textport.file = 0;
+            }
+            break;
         default:
             break;
     }
