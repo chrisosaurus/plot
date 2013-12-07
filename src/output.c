@@ -81,6 +81,7 @@ static plot_value * plot_func_display_value(FILE *file, plot_env *env, plot_valu
  */
 plot_value * plot_func_display(plot_env *env, plot_value *args){
     plot_value *arg;
+    /* FIXME need to use current output rather than just stdout */
     FILE *file = stdout;
 
     if( args->type != plot_type_pair ){
@@ -115,6 +116,7 @@ plot_value * plot_func_display(plot_env *env, plot_value *args){
  * print a newline to provided port or to stdout if no port is provided
  */
 plot_value * plot_func_newline(plot_env *env, plot_value *args){
+    /* FIXME need to use current output rather than just stdout */
     FILE *file = stdout;
     plot_value *arg;
 
@@ -137,6 +139,37 @@ plot_value * plot_func_newline(plot_env *env, plot_value *args){
 
     fputs("\n", file);
 
+    return plot_new_unspecified();
+}
+
+/* (write-char char)
+ * (write-char char port)
+ * writes the character char (not an external representation of the char) to the given textual output port
+ * returns an unspecified value
+ */
+struct plot_value * plot_func_output_write_char(struct plot_env *env, struct plot_value *args){
+    /* FIXME need to use current output rather than just stdout */
+    FILE *file = stdout;
+
+    if( args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected either 1 or 2 args", "plot_func_output_write_char");
+    }
+
+    if( car(args)->type != plot_type_character ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_character", "plot_func_output_write_char");
+    }
+
+    if( cdr(args)->type == plot_type_pair ){
+        if( cdr(cdr(args))->type != plot_type_null ){
+            return plot_runtime_error(plot_error_bad_args, "too many args, expected either 1 or 2", "plot_func_output_write_char");
+        }
+        if( car(cdr(args))->type != plot_type_textual_port ){
+            return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_textual_port", "plot_func_output_write_char");
+        }
+        file = car(cdr(args))->u.textport.file;
+    }
+
+    fprintf(file, "%c", car(args)->u.character.val);
     return plot_new_unspecified();
 }
 

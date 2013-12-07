@@ -272,6 +272,7 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     the following output procedures are implemented:
         `display`
         `newline`
+        `write-char`
 
 6.14 System interface
     plot has both `exit` and `emergency-exit`, but as plot currently
