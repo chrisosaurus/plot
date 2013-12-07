@@ -6,7 +6,7 @@
 #include "hash.h"
 #include "env.h"
 #include "eval.h"
-#include "funcs.h"
+#include "output.h"
 #include "plot.h"
 
 #define DEBUG 0

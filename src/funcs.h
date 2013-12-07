@@ -5,23 +5,6 @@ struct plot_env;
 struct plot_value;
 struct plot_expr;
 
-#include "character.h"
-#include "string.h"
-#include "number.h"
-#include "pair.h"
-
-/* (display obj)
- * (display obj port)
- * print value to provided port or to stdout if no port is provided
- */
-struct plot_value * plot_func_display(struct plot_env *env, struct plot_value *args);
-
-/* (newline)
- * (newline port)
- * print a newline to provided port or to stdout if no port is provided
- */
-struct plot_value * plot_func_newline(struct plot_env *env, struct plot_value *args);
-
 /********* equivalent predicates *********/
 /* (equal? obj1 obj2)
  * in plot equal?, eqv? and eq? are equivalent.

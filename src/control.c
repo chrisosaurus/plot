@@ -1,7 +1,7 @@
 #include "control.h"
 #include "value.h"
 #include "plot.h"
-#include "funcs.h"
+#include "pair.h"
 #include "eval.h"
 #include "hash.h"
 #include "env.h"

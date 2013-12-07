@@ -2,6 +2,7 @@
 
 #include "value.h"
 #include "funcs.h"
+#include "character.h"
 
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"

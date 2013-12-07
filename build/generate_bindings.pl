@@ -33,7 +33,7 @@ use File::Slurp;
 # using this information we are able to generate the list of bound functions pre-runtime
 
 # headers to interrogate
-my @headers = qw{funcs.h number.h string.h pair.h character.h forms.h control.h input.h ports.h};
+my @headers = qw{funcs.h number.h string.h pair.h character.h forms.h control.h input.h ports.h output.h};
 # header file to generate
 my $binding_header = "src/bindings.h";
 

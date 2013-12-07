@@ -2,7 +2,7 @@
 #include <string.h> /* strlen */
 
 #include "value.h"
-#include "funcs.h"
+#include "output.h"
 #include "plot.h"
 
 /* plot_value deconstructor

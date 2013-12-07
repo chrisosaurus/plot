@@ -1,0 +1,143 @@
+#include <stdlib.h> /* exit */
+
+#include "value.h"
+#include "hash.h"
+#include "env.h"
+#include "output.h"
+#include "plot.h"
+
+#define DEBUG 0
+
+/* ignore unused parameter warnings */
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
+/* internal routine for displaying a value
+ * returns 0 on failure, 1 on success
+ */
+static plot_value * plot_func_display_value(FILE *file, plot_env *env, plot_value *val){
+    if( ! val )
+        return 0;
+
+    switch(val->type){
+        case plot_type_boolean:
+            fprintf(file, "#%c", val->u.boolean.val ? 't' : 'f' );
+            break;
+        case plot_type_number:
+            fprintf(file, "%d", val->u.number.val);
+            break;
+        case plot_type_string:
+            fprintf(file, "%s", val->u.string.val);
+            break;
+        case plot_type_symbol:
+            fprintf(file, "%s", val->u.symbol.val);
+            break;
+        case plot_type_character:
+            fprintf(file, "%c", val->u.character.val);
+            break;
+        case plot_type_null:
+            fputs("()", file);
+            break;
+        case plot_type_pair:
+            fputs("(", file);
+            plot_func_display_value(file, env, val->u.pair.car);
+            fputs(" ", file);
+            plot_func_display_value(file, env, val->u.pair.cdr);
+            fputs(")", file);
+            break;
+            break;
+        case plot_type_form:
+            puts("Unable to print a form at this point in time");
+            break;
+        case plot_type_error:
+            return plot_runtime_error(plot_error_internal, "trying to print an error value", "plot_func_display_value");
+            break;
+        case plot_type_lambda:
+            puts("Unable to print a lambda value at this point in time");
+            break;
+        case plot_type_textual_port:
+            return plot_runtime_error(plot_error_internal, "trying to print a textual port", "plot_func_display_value");
+            break;
+        case plot_type_eof:
+            fputs("<eof>", file);
+            break;
+        case plot_type_unspecified:
+            fputs("<unspecified>", file);
+            break;
+        case plot_type_reclaimed:
+            puts("ERROR: you are trying to display a garbage collected value, most likely an error in the GC");
+            exit(1);
+            break;
+        default:
+            return plot_runtime_error(plot_error_internal, "impossible type for val->type", "plot_func_display_value");
+            break;
+    }
+
+    return plot_new_unspecified();
+}
+
+/* (display obj)
+ * (display obj port)
+ * print value to provided port or to stdout if no port is provided
+ */
+plot_value * plot_func_display(plot_env *env, plot_value *args){
+    plot_value *arg;
+    FILE *file = stdout;
+
+    if( args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected either 1 or 2 args", "plot_func_display");
+    }
+
+    arg = cdr(args);
+    if( arg->type == plot_type_pair && car(arg)->type == plot_type_textual_port ){
+        arg = car(arg);
+        if( arg->u.textport.status != plot_port_open ){
+            return plot_runtime_error(plot_error_bad_args, "supplied port was not open", "plot_func_display");
+        }
+        if( arg->u.textport.direction != plot_port_out ){
+            return plot_runtime_error(plot_error_bad_args, "supplied port was not an output port", "plot_func_display");
+        }
+        file = arg->u.textport.file;
+    } else if( arg->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "second arg was of unexpected type", "plot_func_display");
+    }
+
+    arg = car(args);
+
+    if( ! arg ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_display");
+    }
+
+    return plot_func_display_value(file, env, arg);
+}
+
+/* (newline)
+ * (newline port)
+ * print a newline to provided port or to stdout if no port is provided
+ */
+plot_value * plot_func_newline(plot_env *env, plot_value *args){
+    FILE *file = stdout;
+    plot_value *arg;
+
+    if( args->type == plot_type_pair && cdr(args)->type == plot_type_null ){
+        arg = car(args);
+        if( arg->type != plot_type_textual_port ){
+            return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_textual_port", "plot_func_newline");
+        }
+        if( arg->u.textport.status != plot_port_open ){
+            return plot_runtime_error(plot_error_bad_args, "supplied port was not open", "plot_func_display");
+        }
+        if( arg->u.textport.direction != plot_port_out ){
+            return plot_runtime_error(plot_error_bad_args, "supplied port was not an output port", "plot_func_display");
+        }
+        file = arg->u.textport.file;
+    } else if( args->type == plot_type_null ){
+    } else {
+        return plot_runtime_error(plot_error_bad_args, "expected either 0 or 1 arguments", "plot_func_newline");
+    }
+
+    fputs("\n", file);
+
+    return plot_new_unspecified();
+}
+
+
