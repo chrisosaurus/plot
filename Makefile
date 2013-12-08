@@ -77,7 +77,7 @@ integration: plot
 	./plot t/integration.scm
 
 cleanobj:
-	@echo cleaning objects
+	@echo cleaning objects and temporary files
 	@rm -f src/*.o src/*.to t/*.o src/*.su test
 
 foo: cleanobj
