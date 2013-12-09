@@ -231,6 +231,14 @@ struct plot_value * plot_func_output_write_string(struct plot_env *env, struct p
         }
     }
 
+    if( start < 0 ){
+        return plot_runtime_error(plot_error_bad_args, "start must be positive", "plot_func_output_write_string");
+    }
+
+    if( end < 0 || end >= car(args)->u.string.len ){
+        return plot_runtime_error(plot_error_bad_args, "end is not a valid index into string", "plot_func_output_write_string");
+    }
+
     for( ; start < end; ++start ){
         fprintf( file, "%c", str[start] );
     }
