@@ -273,8 +273,6 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `display`
         `newline`
         `write-char`
-
-    the following output procedures are pending implementation:
         `write-string`
 
 6.14 System interface

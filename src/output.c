@@ -182,6 +182,59 @@ struct plot_value * plot_func_output_write_char(struct plot_env *env, struct plo
  * if start of end are not provided then 0 and string-length are used
  */
 struct plot_value * plot_func_output_write_string(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_output_write_string");
+    char *str;
+    FILE *file = stdout;
+    int start = 0;
+    int end = 0;
+    plot_value *arg;
+
+    if( args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected at least 1 argument, received none", "plot_func_output_write_string");
+    }
+
+    if( car(args)->type != plot_type_string ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_output_write_string");
+    }
+
+    str = car(args)->u.string.val;
+    end = car(args)->u.string.len - 1; /* \0 terminator */
+
+    arg = cdr(args);
+    if( arg->type != plot_type_null ){
+        if( car(arg)->type != plot_type_textual_port ){
+            return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_textual_port", "plot_func_output_write_string");
+        }
+        /* grab port */
+        file = car(arg)->u.textport.file;
+        arg = cdr(arg);
+
+        if( arg->type != plot_type_null ){
+            if( car(arg)->type != plot_type_number ){
+                return plot_runtime_error(plot_error_bad_args, "third arg was not of type plot_type_number", "plot_func_output_write_string");
+            }
+            /* grab start */
+            start = car(arg)->u.number.val;
+            arg = cdr(arg);
+
+            if( arg->type != plot_type_null ){
+                if( car(arg)->type != plot_type_number ){
+                    return plot_runtime_error(plot_error_bad_args, "fourth arg was not of type plot_type_number", "plot_func_output_write_string");
+                }
+                /* grab end */
+                end = car(arg)->u.number.val;
+                arg = cdr(arg);
+
+                if( arg->type != plot_type_null ){
+                    return plot_runtime_error(plot_error_bad_args, "expected 1 to 4 argument, received more", "plot_func_output_write_string");
+                }
+            }
+        }
+    }
+
+    for( ; start < end; ++start ){
+        fprintf( file, "%c", str[start] );
+    }
+
+    return plot_new_unspecified();
 }
 
