@@ -173,4 +173,15 @@ struct plot_value * plot_func_output_write_char(struct plot_env *env, struct plo
     return plot_new_unspecified();
 }
 
+/* (write-string string)
+ * (write-string string port)
+ * (write-string string port start)
+ * (write-string string port start end)
+ * writes the characters of string from start to end in left-to-right order to the textual
+ * output port provided (or current-output-port)
+ * if start of end are not provided then 0 and string-length are used
+ */
+struct plot_value * plot_func_output_write_string(struct plot_env *env, struct plot_value *args){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_output_write_string");
+}
 
