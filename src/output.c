@@ -183,6 +183,7 @@ struct plot_value * plot_func_output_write_char(struct plot_env *env, struct plo
  */
 struct plot_value * plot_func_output_write_string(struct plot_env *env, struct plot_value *args){
     char *str;
+    /* FIXME need to use current output rather than just stdout */
     FILE *file = stdout;
     int start = 0;
     int end = 0;
