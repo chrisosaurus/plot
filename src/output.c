@@ -166,6 +166,14 @@ struct plot_value * plot_func_output_write_char(struct plot_env *env, struct plo
         if( car(cdr(args))->type != plot_type_textual_port ){
             return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_type_textual_port", "plot_func_output_write_char");
         }
+
+        if( car(cdr(args))->u.textport.status != plot_port_open ){
+            return plot_runtime_error(plot_error_bad_args, "provided port was not open", "plot_func_output_write_char");
+        }
+        if( car(cdr(args))->u.textport.direction != plot_port_out ){
+            return plot_runtime_error(plot_error_bad_args, "provided port was not an output port", "plot_func_output_write_char");
+        }
+
         file = car(cdr(args))->u.textport.file;
     }
 
@@ -205,6 +213,17 @@ struct plot_value * plot_func_output_write_string(struct plot_env *env, struct p
         if( car(arg)->type != plot_type_textual_port ){
             return plot_runtime_error(plot_error_bad_args, "second arg was not of type plot_textual_port", "plot_func_output_write_string");
         }
+
+        /* check port is output */
+        if( car(arg)->u.textport.direction != plot_port_out ){
+            return plot_runtime_error(plot_error_bad_args, "provided port was not an output port", "plot_func_output_write_string");
+        }
+
+        /* check port is open */
+        if( car(arg)->u.textport.status != plot_port_open ){
+            return plot_runtime_error(plot_error_bad_args, "provided port was not open", "plot_func_output_write_string");
+        }
+
         /* grab port */
         file = car(arg)->u.textport.file;
         arg = cdr(arg);
