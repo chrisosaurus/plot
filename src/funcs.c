@@ -37,7 +37,7 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
     }
 
     if( cdr(args)->type != plot_type_pair ){
-        return plot_runtime_error(plot_error_bad_args, "first arg was null", "plot_func_equal_test");
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_pair", "plot_func_equal_test");
     }
 
     o2 = car(cdr(args));
