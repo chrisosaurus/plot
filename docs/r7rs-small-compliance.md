@@ -275,6 +275,8 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `textual-port?`
         `binary-port?`
         `port?`
+        `input-port-open?`
+        `output-port-open?`
 
 6.13.3 Output
     the following output procedures are implemented:

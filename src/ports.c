@@ -106,4 +106,20 @@ struct plot_value * plot_func_ports_port_test(struct plot_env *env, struct plot_
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_ports_port_test");
 }
 
+/* (input-port-open? port)
+ * return #t iff port is still open and capable of performing input
+ * otherwise #f
+ */
+struct plot_value * plot_func_ports_input_port_open_test(struct plot_env *env, struct plot_value *args){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_ports_input_port_open_test");
+}
+
+/* (output-port-open? port)
+ * return #t iff port is still open and capable of performing output
+ * otherwise #f
+ */
+struct plot_value * plot_func_ports_output_port_open_test(struct plot_env *env, struct plot_value *args){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_ports_output_port_open_test");
+}
+
 
