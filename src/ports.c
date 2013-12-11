@@ -66,4 +66,44 @@ struct plot_value * plot_func_ports_close_port(struct plot_env *env, struct plot
     return plot_new_unspecified();
 }
 
+/* (input-port? obj)
+ * returns #t iff obj is an input port
+ * otherwise returns #f
+ */
+struct plot_value * plot_func_ports_input_port_test(struct plot_env *env, struct plot_value *args){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_ports_input_port_test");
+}
+
+/* (output-port? obj)
+ * returns #t iff obj is an output port
+ * otherwise returns #f
+ */
+struct plot_value * plot_func_ports_output_port_test(struct plot_env *env, struct plot_value *args){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_ports_outpot_port_test");
+}
+
+/* (textual-port? obj)
+ * returns #t iff obj is a textual port
+ * otherwise returns #f
+ */
+struct plot_value * plot_func_ports_textual_port_test(struct plot_env *env, struct plot_value *args){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_ports_textual_port_test");
+}
+
+/* (binary-port? obj)
+ * returns #t iff obj is a binary port
+ * otherwise returns #f
+ */
+struct plot_value * plot_func_ports_binary_port_test(struct plot_env *env, struct plot_value *args){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_ports_binary_port_test");
+}
+
+/* (port? obj)
+ * returns #t iff obj is a port
+ * otherwise returns #f
+ */
+struct plot_value * plot_func_ports_port_test(struct plot_env *env, struct plot_value *args){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_ports_port_test");
+}
+
 

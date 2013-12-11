@@ -268,6 +268,14 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `eof-object`
         `eof-object?`
 
+    the following procedures are pending implementation:
+        `open-input-file`
+        `input-port?`
+        `output-port?`
+        `textual-port?`
+        `binary-port?`
+        `port?`
+
 6.13.3 Output
     the following output procedures are implemented:
         `display`

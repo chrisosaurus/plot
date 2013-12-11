@@ -16,4 +16,34 @@ struct plot_value * plot_func_ports_open_output_file(struct plot_env *env, struc
  */
 struct plot_value * plot_func_ports_close_port(struct plot_env *env, struct plot_value *args);
 
+/* (input-port? obj)
+ * returns #t iff obj is an input port
+ * otherwise returns #f
+ */
+struct plot_value * plot_func_ports_input_port_test(struct plot_env *env, struct plot_value *args);
+
+/* (output-port? obj)
+ * returns #t iff obj is an output port
+ * otherwise returns #f
+ */
+struct plot_value * plot_func_ports_output_port_test(struct plot_env *env, struct plot_value *args);
+
+/* (textual-port? obj)
+ * returns #t iff obj is a textual port
+ * otherwise returns #f
+ */
+struct plot_value * plot_func_ports_textual_port_test(struct plot_env *env, struct plot_value *args);
+
+/* (binary-port? obj)
+ * returns #t iff obj is a binary port
+ * otherwise returns #f
+ */
+struct plot_value * plot_func_ports_binary_port_test(struct plot_env *env, struct plot_value *args);
+
+/* (port? obj)
+ * returns #t iff obj is a port
+ * otherwise returns #f
+ */
+struct plot_value * plot_func_ports_port_test(struct plot_env *env, struct plot_value *args);
+
 #endif
