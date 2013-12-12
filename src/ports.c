@@ -71,7 +71,18 @@ struct plot_value * plot_func_ports_close_port(struct plot_env *env, struct plot
  * otherwise returns #f
  */
 struct plot_value * plot_func_ports_input_port_test(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_ports_input_port_test");
+    plot_value *port;
+
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_ports_input_port_test");
+    }
+
+    port = car(args);
+    if( port->type != plot_type_textual_port ){
+        return plot_new_boolean( 0 );
+    }
+
+    return plot_new_boolean( port->u.textport.direction == plot_port_in );
 }
 
 /* (output-port? obj)
@@ -79,7 +90,18 @@ struct plot_value * plot_func_ports_input_port_test(struct plot_env *env, struct
  * otherwise returns #f
  */
 struct plot_value * plot_func_ports_output_port_test(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_ports_outpot_port_test");
+    plot_value *port;
+
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_ports_output_port_test");
+    }
+
+    port = car(args);
+    if( port->type != plot_type_textual_port ){
+        return plot_new_boolean( 0 );
+    }
+
+    return plot_new_boolean( port->u.textport.direction == plot_port_out );
 }
 
 /* (textual-port? obj)

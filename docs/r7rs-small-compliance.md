@@ -262,21 +262,21 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     The following procedures are implemented:
         `open-output-port`
         `close-port`
-
-6.13.2 Input
-    the following input procedures are implemented:
-        `eof-object`
-        `eof-object?`
+        `input-port?`
+        `output-port?`
 
     the following procedures are pending implementation:
         `open-input-file`
-        `input-port?`
-        `output-port?`
         `textual-port?`
         `binary-port?`
         `port?`
         `input-port-open?`
         `output-port-open?`
+
+6.13.2 Input
+    the following input procedures are implemented:
+        `eof-object`
+        `eof-object?`
 
 6.13.3 Output
     the following output procedures are implemented:
