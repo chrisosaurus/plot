@@ -278,6 +278,13 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `eof-object`
         `eof-object?`
 
+    the following procedures are pending implementation:
+        `read-string`
+        `read-line`
+        `read-char`
+        `peek-char`
+        `char-ready?`
+
 6.13.3 Output
     the following output procedures are implemented:
         `display`

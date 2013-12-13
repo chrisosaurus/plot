@@ -37,3 +37,59 @@ struct plot_value * plot_func_input_open_input_file(struct plot_env *env, struct
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_input_open_input_file");
 }
 
+/* (read-string k)
+ * (reading-string k port)
+ * reads in the next k characters, or as manu are available before eof,
+ * from the textual input port into the newly allocated string in left-to-right order
+ * and returns the string.
+ *
+ * if no characters are available before the eof, and eof object is returned
+ */
+struct plot_value * plot_func_input_read_string(struct plot_env *env, struct plot_value *args){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_input_");
+}
+
+/* (read-line)
+ * (read-line port)
+ * returns the next line of text available from the textual input port
+ * will either return string or eof, string may not contain an end-of-line char if
+ * eof was encountered before end-of-line
+ */
+struct plot_value * plot_func_input_read_line(struct plot_env *env, struct plot_value *args){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_input_read_line");
+}
+
+/* (read-char)
+ * (read-char port)
+ * returns the next character available from the textual input port
+ * returns eof object if no more characters are available
+ */
+struct plot_value * plot_func_input_read_char(struct plot_env *env, struct plot_value *args){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_input_read_char");
+}
+
+/* (peek-char)
+ * (peek-char port)
+ * returns the next character available from the textual input port without
+ * updating the file pointer
+ * returns eof if no more characters are available
+ */
+struct plot_value * plot_func_input_peek_char(struct plot_env *env, struct plot_value *args){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_input_peek_char");
+}
+
+/* (char-ready?)
+ * (char-ready? port)
+ * return #t if a character is ready on the textual input port
+ * otherwise returns #f
+ *
+ * if char-ready? returns #t then the next read-char operation on the given port is
+ * guranteed not to hang.
+ *
+ * if port is at eof then char-ready? returns #t
+ */
+struct plot_value * plot_func_input_char_ready_test(struct plot_env *env, struct plot_value *args){
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_input_char_ready_test");
+}
+
+
