@@ -21,6 +21,11 @@ operations:
 * port?
 * input-port-open?
 * output-port-open?
+* read-string
+* read-line
+* read-char
+* peek-char
+* char-ready?
 
 forms:
 ------
