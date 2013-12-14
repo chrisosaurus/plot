@@ -264,10 +264,10 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `close-port`
         `input-port?`
         `output-port?`
+        `textual-port?`
 
     the following procedures are pending implementation:
         `open-input-file`
-        `textual-port?`
         `binary-port?`
         `port?`
         `input-port-open?`
