@@ -16,9 +16,7 @@ operations:
 * open-input-file
 * input-port?
 * output-port?
-* textual-port?
 * binary-port?
-* port?
 * input-port-open?
 * output-port-open?
 * read-string
