@@ -14,9 +14,6 @@ operations:
 * for-each
 * string-for-each
 * open-input-file
-* input-port?
-* output-port?
-* binary-port?
 * input-port-open?
 * output-port-open?
 * read-string
@@ -62,6 +59,7 @@ read:
 testing:
 --------
 * error testing suite should test generation of runtime errors
+* need more complete testing of input/output/ports
 
 features:
 ---------

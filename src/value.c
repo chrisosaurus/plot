@@ -45,6 +45,19 @@ plot_value * plot_new_textual_port(plot_port_dir direction, FILE *file){
     return res;
 }
 
+/* `*file` is an already opened file */
+plot_value * plot_new_binary_port(plot_port_dir direction, FILE *file){
+    plot_value *res;
+    res = plot_alloc_value();
+    res->type = plot_type_binary_port;
+
+    res->u.binport.file = file;
+    res->u.binport.direction = direction;
+    res->u.binport.status = plot_port_open;
+
+    return res;
+}
+
 plot_value * plot_new_eof(void){
     return plot_get_eof_constant();
 }

@@ -78,11 +78,17 @@ struct plot_value * plot_func_ports_input_port_test(struct plot_env *env, struct
     }
 
     port = car(args);
-    if( port->type != plot_type_textual_port ){
-        return plot_new_boolean( 0 );
+    switch( port->type ){
+        case plot_type_textual_port:
+            return plot_new_boolean( port->u.textport.direction == plot_port_in );
+            break;
+        case plot_type_binary_port:
+            return plot_new_boolean( port->u.binport.direction == plot_port_in );
+            break;
+        default:
+            return plot_new_boolean( 0 );
+            break;
     }
-
-    return plot_new_boolean( port->u.textport.direction == plot_port_in );
 }
 
 /* (output-port? obj)
@@ -97,11 +103,17 @@ struct plot_value * plot_func_ports_output_port_test(struct plot_env *env, struc
     }
 
     port = car(args);
-    if( port->type != plot_type_textual_port ){
-        return plot_new_boolean( 0 );
+    switch( port->type ){
+        case plot_type_textual_port:
+            return plot_new_boolean( port->u.textport.direction == plot_port_out );
+            break;
+        case plot_type_binary_port:
+            return plot_new_boolean( port->u.binport.direction == plot_port_out );
+            break;
+        default:
+            return plot_new_boolean( 0 );
+            break;
     }
-
-    return plot_new_boolean( port->u.textport.direction == plot_port_out );
 }
 
 /* (textual-port? obj)
@@ -121,7 +133,11 @@ struct plot_value * plot_func_ports_textual_port_test(struct plot_env *env, stru
  * otherwise returns #f
  */
 struct plot_value * plot_func_ports_binary_port_test(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_ports_binary_port_test");
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_ports_binary_port_test");
+    }
+
+    return plot_new_boolean( car(args)->type == plot_type_binary_port );
 }
 
 /* (port? obj)
@@ -133,7 +149,7 @@ struct plot_value * plot_func_ports_port_test(struct plot_env *env, struct plot_
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_ports_port_test");
     }
 
-    return plot_new_boolean( car(args)->type == plot_type_textual_port );
+    return plot_new_boolean( car(args)->type == plot_type_textual_port || car(args)->type == plot_type_binary_port );
 }
 
 /* (input-port-open? port)
