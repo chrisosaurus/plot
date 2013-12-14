@@ -129,7 +129,11 @@ struct plot_value * plot_func_ports_binary_port_test(struct plot_env *env, struc
  * otherwise returns #f
  */
 struct plot_value * plot_func_ports_port_test(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_ports_port_test");
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_ports_port_test");
+    }
+
+    return plot_new_boolean( car(args)->type == plot_type_textual_port );
 }
 
 /* (input-port-open? port)
