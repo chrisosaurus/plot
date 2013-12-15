@@ -1,6 +1,14 @@
 #ifndef PLOT_PORTS_H
 #define PLOT_PORTS_H
 
+/* (open-input-file string)
+ * takes a string for an existing file and returs a textual input port
+ * that is apable of delivering data from the file.
+ * if the file does not exist or cannot be opened, an error
+ * that satisfies `file-error?` is signaled
+ */
+struct plot_value * plot_func_ports_open_input_file(struct plot_env *env, struct plot_value *args);
+
 /* (open-output-file string)
  * takes a string naming an output file to be created
  * returns a textual output port that is capable of writing data to the new file

@@ -7,6 +7,34 @@
 /* ignore unused parameter warnings */
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
+/* (open-input-file string)
+ * takes a string for an existing file and returs a textual input port
+ * that is apable of delivering data from the file.
+ * if the file does not exist or cannot be opened, an error
+ * that satisfies `file-error?` is signaled
+ */
+struct plot_value * plot_func_ports_open_input_file(struct plot_env *env, struct plot_value *args){
+    FILE *file;
+
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_ports_open_input_file");
+    }
+
+    if( car(args)->type != plot_type_string ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_string", "plot_func_ports_open_input_file");
+    }
+
+    file = fopen(car(args)->u.string.val, "r");
+
+    if( ! file ){
+        /* FIXME need to decode error */
+        /* FIXME current error will not satisfy `file-error?` */
+        return plot_runtime_error(plot_error_internal, "failed to open file", "plot_func_ports_open_input_file");
+    }
+
+    return plot_new_textual_port(plot_port_in, file);
+}
+
 /* (open-output-file string)
  * takes a string naming an output file to be created
  * returns a textual output port that is capable of writing data to the new file
@@ -15,7 +43,6 @@
  * if the file cannot be opened an error satifying `file-error?` is returned
  */
 struct plot_value * plot_func_ports_open_output_file(struct plot_env *env, struct plot_value *args){
-    plot_value *res;
     FILE *file;
 
     if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
@@ -34,9 +61,7 @@ struct plot_value * plot_func_ports_open_output_file(struct plot_env *env, struc
         return plot_runtime_error(plot_error_internal, "failed to open file", "plot_func_ports_open_output_file");
     }
 
-    res = plot_new_textual_port(plot_port_out, file);
-
-    return res;
+    return plot_new_textual_port(plot_port_out, file);
 }
 /* (close-port port)
  * closes the resource assosiated with port, rendering the port incapable of delivering or accepting data

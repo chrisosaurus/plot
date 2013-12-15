@@ -261,6 +261,7 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
 
     The following procedures are implemented:
         `open-output-port`
+        `open-input-file`
         `close-port`
         `input-port?`
         `output-port?`
@@ -269,7 +270,6 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `binary-port?`
 
     the following procedures are pending implementation:
-        `open-input-file`
         `input-port-open?`
         `output-port-open?`
 
