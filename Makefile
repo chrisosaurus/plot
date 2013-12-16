@@ -92,4 +92,8 @@ clean: cleanobj
 src/bindings.h:
 	./build/generate_bindings.pl
 
-.PHONY: all clean cleanobj test tests example integration clang test_soft tests_soft debug
+# generate compliance report
+compliance: src/bindings.h
+	./build/compliance.pl
+
+.PHONY: all clean cleanobj test tests example integration clang test_soft tests_soft debug compliance

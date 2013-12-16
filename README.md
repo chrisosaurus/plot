@@ -14,30 +14,28 @@ plot - Noun; A plan made in secret by a group of people to do something illegal 
 
 current state
 -------------
-Plot currently implements 76 of the 120 forms in `(scheme base)`.
-
 For an up-to-date summary or plot's implementation status see `docs/r7rs-small-compliance.md`
 
-a brief summary:
-* define form
-* if forms
-* cond form
-* lambda form
-* set! form
-* begin form
-* string literals
-* quote form (lists implemented, improper lists not yet implemented)
-* positive integer literals
-* boolean literals
-* char literals
-* pair and list datatypes (currently lack literals for pairs)
-* basic integer procedures
-* printing of values (`display`)
-* printing of newline (`newline`)
-* comments (`;`)
-* type testing functions: `boolean?`, `string?`, `number?`, `symbol?`, `procedure?`, and `char?`
-* garbage collection of runtime values (`value`, `env` and `hash_entry`)
-* `delay` and `force` for lazyness
+brief summary of r7rs library implementation status:
+
+        ./build/compliance.pl
+        eval: 0 / 2
+        file: 2 / 10
+        base: 98 / 237
+        char: 17 / 22
+        load: 0 / 1
+        cxr: 0 / 24
+        complex: 0 / 6
+        lazy: 2 / 5
+        r5rs: 106 / 217
+        case-lambda: 0 / 1
+        repl: 0 / 1
+        inexact: 0 / 12
+        read: 0 / 1
+        time: 0 / 3
+        write: 1 / 4
+
+        total: 226 / 546
 
 example: (see `make example`)
 
