@@ -16,26 +16,25 @@ current state
 -------------
 For an up-to-date summary or plot's implementation status see `docs/r7rs-small-compliance.md`
 
-brief summary of r7rs library implementation status:
+brief summary of r7rs library implementation status (see `make compliance`):
 
-        ./build/compliance.pl
-        base: 98 / 237
-        case-lambda: 0 / 1
-        char: 17 / 22
-        complex: 0 / 6
-        cxr: 0 / 24
-        eval: 0 / 2
-        file: 2 / 10
-        inexact: 0 / 12
-        lazy: 2 / 5
-        load: 0 / 1
-        r5rs: 106 / 217
-        read: 0 / 1
-        repl: 0 / 1
-        time: 0 / 3
-        write: 1 / 4
+        base: 98 / 237 (41%)
+        case-lambda: 0 / 1 (0%)
+        char: 17 / 22 (77%)
+        complex: 0 / 6 (0%)
+        cxr: 0 / 24 (0%)
+        eval: 0 / 2 (0%)
+        file: 2 / 10 (20%)
+        inexact: 0 / 12 (0%)
+        lazy: 2 / 5 (40%)
+        load: 0 / 1 (0%)
+        r5rs: 106 / 217 (48%)
+        read: 0 / 1 (0%)
+        repl: 0 / 1 (0%)
+        time: 0 / 3 (0%)
+        write: 1 / 4 (25%)
 
-        total: 226 / 546
+        total: 226 / 546 (41%)
 
 example: (see `make example`)
 

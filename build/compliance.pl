@@ -54,17 +54,20 @@ my ($total, $implemented);
 
 # output stats
 for my $file ( sort keys %stats ){
+    my ($impl, $tot) = @{$stats{$file}}{"implemented", "total"};
     print basename $file ;
     print ": ";
 
-    $implemented += $stats{$file}->{"implemented"};
-    print $stats{$file}->{"implemented"};
+    $implemented += $impl;
+    print $impl;
 
     print " / ";
 
-    $total += $stats{$file}->{"total"};
-    print $stats{$file}->{"total"};
+    $total += $tot;
+    print $tot;
+
+    print " (" . sprintf("%d", ($impl/$tot * 100)) . "%)";
     print "\n";
 }
 
-print "\ntotal: $implemented / $total\n";
+print "\ntotal: $implemented / $total (" . sprintf("%d",($implemented/$total*100)) . "%)\n";
