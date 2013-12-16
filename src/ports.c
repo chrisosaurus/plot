@@ -75,17 +75,30 @@ struct plot_value * plot_func_ports_close_port(struct plot_env *env, struct plot
     }
 
     port = car(args);
-    if( port->type != plot_type_textual_port ){
-        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_textual_port", "plot_func_ports_close_port");
-    }
-
-    /* make sure to only call fclose if file is open
-     * as it's behavior is unspecified otherwise
-     */
-    if( port->u.textport.status == plot_port_open ){
-        port->u.textport.status = plot_port_closed;
-        fclose( port->u.textport.file );
-        port->u.textport.file = 0;
+    switch( port->type ){
+        case plot_type_textual_port:
+            /* make sure to only call fclose if file is open
+             * as it's behavior is unspecified otherwise
+             */
+            if( port->u.textport.status == plot_port_open ){
+                port->u.textport.status = plot_port_closed;
+                fclose( port->u.textport.file );
+                port->u.textport.file = 0;
+            }
+            break;
+        case plot_type_binary_port:
+            /* make sure to only call fclose if file is open
+             * as it's behavior is unspecified otherwise
+             */
+            if( port->u.binport.status == plot_port_open ){
+                port->u.binport.status = plot_port_closed;
+                fclose( port->u.binport.file );
+                port->u.binport.file = 0;
+            }
+            break;
+        default:
+            return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_textual_port", "plot_func_ports_close_port");
+            break;
     }
 
     return plot_new_unspecified();
