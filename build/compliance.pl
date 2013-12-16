@@ -53,7 +53,7 @@ for my $file ( keys %symbols ){
 my ($total, $implemented);
 
 # output stats
-for my $file ( keys %stats ){
+for my $file ( sort keys %stats ){
     print basename $file ;
     print ": ";
 
