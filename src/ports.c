@@ -195,20 +195,24 @@ struct plot_value * plot_func_ports_port_test(struct plot_env *env, struct plot_
  * otherwise #f
  */
 struct plot_value * plot_func_ports_input_port_open_test(struct plot_env *env, struct plot_value *args){
-    plot_value *val;
+    plot_value *port;
 
     if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_ports_input_port_open_test");
     }
 
-    val = car(args);
+    port = car(args);
 
-    if( val->type == plot_type_textual_port ){
-        return plot_new_boolean( val->u.textport.status == plot_port_open && val->u.textport.direction == plot_port_in );
-    } else if( val->type == plot_type_binary_port ){
-        return plot_new_boolean( val->u.binport.status == plot_port_open && val->u.binport.direction == plot_port_in );
-    } else {
-        return plot_new_boolean( 0 );
+    switch( port->type ){
+        case plot_type_textual_port:
+            return plot_new_boolean( port->u.textport.status == plot_port_open && port->u.textport.direction == plot_port_in );
+            break;
+        case plot_type_binary_port:
+            return plot_new_boolean( port->u.binport.status == plot_port_open && port->u.binport.direction == plot_port_in );
+            break;
+        default:
+            return plot_new_boolean( 0 );
+            break;
     }
 }
 
@@ -217,20 +221,24 @@ struct plot_value * plot_func_ports_input_port_open_test(struct plot_env *env, s
  * otherwise #f
  */
 struct plot_value * plot_func_ports_output_port_open_test(struct plot_env *env, struct plot_value *args){
-    plot_value *val;
+    plot_value *port;
 
     if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_ports_output_port_open_test");
     }
 
-    val = car(args);
+    port = car(args);
 
-    if( val->type == plot_type_textual_port ){
-        return plot_new_boolean( val->u.textport.status == plot_port_open && val->u.textport.direction == plot_port_out );
-    } else if( val->type == plot_type_binary_port ){
-        return plot_new_boolean( val->u.binport.status == plot_port_open && val->u.binport.direction == plot_port_out );
-    } else {
-        return plot_new_boolean( 0 );
+    switch( port->type ){
+        case plot_type_textual_port:
+            return plot_new_boolean( port->u.textport.status == plot_port_open && port->u.textport.direction == plot_port_out );
+            break;
+        case plot_type_binary_port:
+            return plot_new_boolean( port->u.binport.status == plot_port_open && port->u.binport.direction == plot_port_out );
+            break;
+        default:
+            return plot_new_boolean( 0 );
+            break;
     }
 }
 
