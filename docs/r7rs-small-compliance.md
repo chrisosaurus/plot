@@ -268,10 +268,28 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `port?`
         `textual-port?`
         `binary-port?`
-
-    the following procedures are pending implementation:
         `input-port-open?`
         `output-port-open?`
+
+    the following procedures are not yet implemented:
+        `call-with-port`
+        `call-with-input-file`
+        `call-with-output-file`
+        `current-input-port`
+        `current-output-port`
+        `current-error-port`
+        `with-input-from-file`
+        `with-output-to-file`
+        `open-binary-input-file`
+        `open-binary-output-file`
+        `close-input-port`
+        `close-output-port`
+        `open-input-string`
+        `open-output-string`
+        `get-output-string`
+        `open-input-bytevector`
+        `open-output-bytevector`
+        `get-output-bytevector`
 
 6.13.2 Input
     the following input procedures are implemented:
@@ -285,6 +303,14 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `peek-char`
         `char-ready?`
 
+    the following procedures are not yet implemented:
+        `read`
+        `read-u8`
+        `peek-u8`
+        `u8-ready?`
+        `read-bytevector`
+        `read-bytevector!`
+
 6.13.3 Output
     the following output procedures are implemented:
         `display`
@@ -292,11 +318,31 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `write-char`
         `write-string`
 
+    the following procedures are not yet implemented:
+        `write`
+        `write-shared`
+        `write-simple`
+        `write-u8`
+        `write-bytevector`
+        `flush-output-port`
+
 6.14 System interface
     plot has both `exit` and `emergency-exit`, but as plot currently
     lacks dynamic-wind they are both the same.
 
     `(exit)`,`(exit #t)` and `(exit 0)` will exit 0 (success)
     any other value will exit 1 (failure)
+
+    the following procedures are not yet implemented:
+        `load`
+        `file-exists?`
+        `delete-file`
+        `command-line`
+        `get-environmental-variable`
+        `get-environmental-variables`
+        `current-second`
+        `current-jiffy`
+        `jiffies-per-second`
+        `features`
 
 
