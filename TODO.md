@@ -13,8 +13,6 @@ operations:
 * string-map
 * for-each
 * string-for-each
-* input-port-open?
-* output-port-open?
 * read-string
 * read-line
 * read-char
