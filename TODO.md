@@ -75,14 +75,14 @@ runtime:
 
 bugs:
 -----
-* parsing of # is silly
-* string do not currently support escaping
+* string do not correctly support escaping
 * escaping in strings will copy over the escape character and include it in size/len
-* plot runtime errors may leak previously allocated values, need to decr before throwing error.
-* plot_new_string and plot_alloc_string are not really related, as the latter allocates an array and the former a value
-* plot_eval_form should only return 0 on error, otherwise it is a runtime error
-* parsing feedback is terrible
-* plot_runtime_errors should probably use scheme name (rather than c implementation name)
-* look very carefully at gc around force (incr when generated vs incr when returned)
 * escape characters not behaving, e.g. (display "\t") => segfault
+* parsing of # is silly
+* plot runtime errors may leak previously allocated values, need to decr before throwing error.
+* plot_runtime_errors should probably use scheme name (rather than c implementation name)
+* plot_eval_form should only return 0 on error, otherwise it is a runtime error
+* plot_new_string and plot_alloc_string are not really related, as the latter allocates an array and the former a value
+* parsing feedback is terrible
+* look very carefully at gc around force (incr when generated vs incr when returned)
 
