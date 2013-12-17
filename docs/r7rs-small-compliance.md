@@ -240,9 +240,9 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     The following procedures are implemented:
         `procedure?`
         `apply`
+        `map
 
     the following are pending implementation:
-        `map
         `for-each`
 
 6.11 Exceptions

@@ -32,7 +32,8 @@ struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_va
  *
  * it is an error for proc to mutate any of the lists
  *
- * (map cadr '((a b) (d e) (g h)) ; => (b e h)
+ * (map cadr '((a b) (d e) (g h))) ; => (b e h)
+ * (map (lambda (x y) (* x y)) '(1 2) '(3 4)) ; => (3 8)
  */
 struct plot_value * plot_func_control_map(struct plot_env *env, struct plot_value *args);
 

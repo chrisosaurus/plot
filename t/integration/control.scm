@@ -44,6 +44,22 @@
   (pass "two")
   (fail "two"))
 
+(define three (map car '((a b) (c d) (e f))))
+;; should generate list (a c f)
+(if (equal? three '(a c e))
+  (if (equal? '() (map car '()))
+    (pass "three")
+    (fail "three case 2"))
+  (fail "three case 1"))
+
+;(define four (map (lambda (x y) (* x y))
+;                   '(1 2 3)
+;                   '(4 5 6)))
+;; should generate list (* 1 4) (* 2 5) (* 3 6)
+;(if (equal? four '(4 10 18))
+;  (pass "four")
+;  (fail "four"))
+
 ;; tests completed, print results
 (println ">>> control test results")
 (results)

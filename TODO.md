@@ -9,7 +9,6 @@ operations:
 * string-ci>?
 * string-ci<=?
 * string-ci>=?
-* map
 * string-map
 * for-each
 * string-for-each
