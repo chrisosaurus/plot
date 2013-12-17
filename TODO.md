@@ -86,4 +86,5 @@ bugs:
 * look very carefully at gc around force (incr when generated vs incr when returned)
 * apply not yet implemented for lambda
 * apply gc of temporary values
+* map not yet implemented for lambda
 
