@@ -64,6 +64,14 @@
   (fail "five"))
 
 
+(if (equal? '(1 2 3) '(1 2 3))
+  (if (not (equal? '(1 2 3) '(1 2)))
+    (if (not (equal? '(1 2 3) 1))
+      (pass "six")
+      (fail "six case 3"))
+    (fail "six case 2"))
+  (fail "six case 1"))
+
 ;; tests completed, print results
 (println ">>> quote test results")
 (results)

@@ -225,6 +225,9 @@ plot_value * plot_new_boolean(int value);
 plot_value * plot_new_character(char value);
 plot_value * plot_new_symbol(char *val, int len);
 plot_value * plot_new_string(char * val, int len);
+/* allocate and construct a new pair with the supplied car and cdr
+ * plot_new_pair will NOT incr supplied car or cdr
+ */
 plot_value * plot_new_pair(struct plot_value *car, struct plot_value *cdr);
 plot_value * plot_new_null(void);
 plot_value * plot_new_error(plot_error_type type, const char *msg, const char *location);

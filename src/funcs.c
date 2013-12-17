@@ -22,6 +22,8 @@
  */
 struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value *args){
     plot_value *o1, *o2;
+    plot_value *t;
+    int r;
 
     #if DEBUG
     puts("inside plot_func_equal");
@@ -82,7 +84,26 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
             return plot_new_boolean(true);
             break;
         case plot_type_pair:
-            return plot_runtime_error(plot_error_unimplemented, "pair and list equality is not yet implemented", "plot_func_equal_test");
+            /* check the cars of o1 and o2 are equal */
+            t = cons( car(o1), cons( car(o2), null ) );
+            r = plot_truthy(plot_func_equal_test(env, t));
+
+            /* if they are, also check the cdrs are equal */
+            if( r ){
+                car(t) = cdr(o1);
+                car(cdr(t)) = cdr(o2);
+                r = plot_truthy(plot_func_equal_test(env, t));
+            }
+
+            /* make sure to clean up
+             * NB: cons doesn't incr (wrapper for plot_new_pair, which doesn't incr)
+             *     so we have to 0 car and cdr to prevent accidental decr of our stored values
+             */
+            car(t) = 0;
+            car(cdr(t)) = 0;
+            plot_value_decr(t);
+
+            return plot_new_boolean(r);
             break;
         case plot_type_error:
             plot_fatal_error("plot_func_equal: saw plot_type_error");
