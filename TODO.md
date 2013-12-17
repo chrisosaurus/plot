@@ -85,4 +85,6 @@ bugs:
 * plot_new_string and plot_alloc_string are not really related, as the latter allocates an array and the former a value
 * parsing feedback is terrible
 * look very carefully at gc around force (incr when generated vs incr when returned)
+* apply not yet implemented for lambda
+* apply gc of temporary values
 
