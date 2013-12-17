@@ -17,6 +17,7 @@ operations:
 * read-char
 * peek-char
 * char-ready?
+* make-promise
 
 forms:
 ------
