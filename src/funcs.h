@@ -98,5 +98,10 @@ struct plot_value * plot_func_emergency_exit(struct plot_env *env, struct plot_v
  */
 struct plot_value * plot_func_force(struct plot_env *env, struct plot_value *args);
 
+/* (promise? obj)
+ * returns #t iff obj is of type promise
+ * otherwise returns #f
+ */
+struct plot_value * plot_func_promise_test(struct plot_env *env, struct plot_value *args);
 
 #endif

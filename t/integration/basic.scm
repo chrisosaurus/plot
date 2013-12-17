@@ -271,17 +271,21 @@
 (define twenty-four-promise (delay (set! twenty-four (+ twenty-four 1))))
 (if (not (= twenty-four 0))
   (fail "twenty four case 1")
-  (begin
-    ;; should produce side effect of incrementing twenty-four
-    (force twenty-four-promise)
-    (if (not (= twenty-four 1))
-      (fail "twenty four case 2")
+  (if (not (promise? twenty-four-promise))
+    (fail "twenty four case 2")
+    (if (promise? #t)
+      (fail "twenty four case 3")
       (begin
-        ;; should NOT produce any side effect
+        ;; should produce side effect of incrementing twenty-four
         (force twenty-four-promise)
         (if (not (= twenty-four 1))
-          (fail "twenty four case 3")
-          (pass "twenty four"))))))
+          (fail "twenty four case 4")
+          (begin
+            ;; should NOT produce any side effect
+            (force twenty-four-promise)
+            (if (not (= twenty-four 1))
+              (fail "twenty four case 5")
+              (pass "twenty four"))))))))
 
 ;; basic cond testing
 (define twenty-six #t)

@@ -353,4 +353,16 @@ struct plot_value * plot_func_force(struct plot_env *env, struct plot_value *arg
     return val->u.promise.value;
 }
 
+/* (promise? obj)
+ * returns #t iff obj is of type promise
+ * otherwise returns #f
+ */
+struct plot_value * plot_func_promise_test(struct plot_env *env, struct plot_value *args){
+    if( !args || args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_promise test");
+    }
+
+    return plot_new_boolean( car(args)->type == plot_type_promise );
+}
+
 

@@ -54,10 +54,14 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `(begin <expression or definition> ... )`
 
 4.2.5 Delayed evaluation
-    Both `delay` and `force` are implemented.
+    The following forms and procedures are implemented:
+        `delay`
+        `force`
+        `promise?`
 
-    The following is currently unimplemented
+    The following are currently unimplemented
         `delay-force`
+        `make-promise`
 
 4.2.9 Case-lambda
     `case-lambda` support should be implemented soon.
