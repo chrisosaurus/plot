@@ -26,7 +26,7 @@ brief summary of r7rs library implementation status (see `make compliance`):
         eval: 0 / 2 (0%)
         file: 2 / 10 (20%)
         inexact: 0 / 12 (0%)
-        lazy: 3 / 5 (60%)
+        lazy: 4 / 5 (80%)
         load: 0 / 1 (0%)
         r5rs: 106 / 217 (48%)
         read: 0 / 1 (0%)
@@ -34,7 +34,7 @@ brief summary of r7rs library implementation status (see `make compliance`):
         time: 0 / 3 (0%)
         write: 1 / 4 (25%)
 
-        total: 227 / 546 (41%)
+        total: 228 / 546 (41%)
 
 example: (see `make example`)
 

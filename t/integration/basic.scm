@@ -287,6 +287,20 @@
               (fail "twenty four case 5")
               (pass "twenty four"))))))))
 
+(define twenty-five 0)
+(define twenty-five-promise (make-promise (begin (set! twenty-five (+ twenty-five 1)) (+ 2 4))))
+(if (not (= twenty-five 1))
+  (fail "twenty five case 1")
+  (if (promise? twenty-five)
+    (fail "twenty five case 2")
+    (if (not (promise? twenty-five-promise))
+      (fail "twenty five case 3")
+      (if (not (= 6 (force twenty-five-promise)))
+        (fail "twenty five case 4")
+        (if (not (= twenty-five 1))
+          (fail "twenty five case 5")
+          (pass "twenty five"))))))
+
 ;; basic cond testing
 (define twenty-six #t)
 (if (equal? 'greater
@@ -299,15 +313,15 @@
                          (set! twenty-six #f)
                          'equal))))
   (if twenty-six
-    (pass "twenty five")
-    (fail "twenty five case 2"))
-  (fail "twenty five case 1"))
-
-(if (symbol=? 'hello 'hello)
-  (if (not (symbol=? 'hello 'world))
     (pass "twenty six")
     (fail "twenty six case 2"))
   (fail "twenty six case 1"))
+
+(if (symbol=? 'hello 'hello)
+  (if (not (symbol=? 'hello 'world))
+    (pass "twenty seven")
+    (fail "twenty seven case 2"))
+  (fail "twenty seven case 1"))
 
 ;; tests completed, print results
 (println ">>> basic test results")

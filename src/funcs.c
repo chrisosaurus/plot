@@ -359,10 +359,36 @@ struct plot_value * plot_func_force(struct plot_env *env, struct plot_value *arg
  */
 struct plot_value * plot_func_promise_test(struct plot_env *env, struct plot_value *args){
     if( !args || args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
-        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_promise test");
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_promise_test");
     }
 
     return plot_new_boolean( car(args)->type == plot_type_promise );
+}
+
+/* (make-promise obj)
+ * returns a new promise that will yield obj when forced
+ * if force is already a promise then it is returned
+ */
+struct plot_value * plot_func_make_promise(struct plot_env *env, struct plot_value *args){
+    plot_value *val;
+
+    if( !args || args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_make_promise");
+    }
+
+    if( car(args)->type == plot_type_promise ){
+        return car(args);
+    }
+
+    val = plot_new_promise(env, car(args));
+
+    /* this obj has already been forced
+     * so we also set value to prevent re-evaluation
+     */
+    val->u.promise.value = car(args);
+    plot_value_incr(val->u.promise.value);
+
+    return val;
 }
 
 

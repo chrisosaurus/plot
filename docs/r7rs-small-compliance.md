@@ -58,10 +58,10 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `delay`
         `force`
         `promise?`
+        `make-promise`
 
     The following are currently unimplemented
         `delay-force`
-        `make-promise`
 
 4.2.9 Case-lambda
     `case-lambda` support should be implemented soon.
