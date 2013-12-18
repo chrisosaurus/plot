@@ -12,13 +12,21 @@ void plot_value_decons(plot_value *value){
     switch( value->type ){
         case plot_type_promise:
             plot_env_decr(value->u.promise.env);
+            plot_value_decr(value->u.promise.expr);
+            value->u.promise.expr = 0;
+            plot_value_decr(value->u.promise.value);
+            value->u.promise.value = 0;
             break;
         case plot_type_lambda:
             plot_env_decr(value->u.lambda.env);
+            plot_value_decr(value->u.lambda.body);
+            value->u.lambda.body = 0;
             break;
         case plot_type_pair:
             plot_value_decr(value->u.pair.car);
+            value->u.pair.car = 0;
             plot_value_decr(value->u.pair.cdr);
+            value->u.pair.cdr = 0;
             break;
         case plot_type_binary_port:
             if( value->u.binport.status == plot_port_open ){
@@ -184,6 +192,7 @@ plot_value * plot_new_promise(struct plot_env *env, struct plot_value *expr){
     res->u.promise.value = 0;
 
     plot_env_incr(env);
+    plot_value_incr(expr);
 
     return res;
 }
@@ -197,6 +206,7 @@ plot_value * plot_new_lambda(struct plot_env *env, struct plot_value *body){
     res->u.lambda.body = body;
 
     plot_env_incr(env);
+    plot_value_incr(body);
 
     return res;
 }
