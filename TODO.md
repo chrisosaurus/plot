@@ -10,7 +10,6 @@ operations:
 * string-ci<=?
 * string-ci>=?
 * string-map
-* for-each
 * string-for-each
 * read-string
 * read-line
