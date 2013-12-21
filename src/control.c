@@ -231,7 +231,7 @@ ARGFIN:
         car(*rescur) = plot_func_control_apply(env, proc);
 
         if( ! car(*rescur) || car(*rescur)->type == plot_type_error ){
-            puts("ERROR");
+            puts("plot_func_control_map");
             return car(*rescur);
         }
 
@@ -401,7 +401,7 @@ ARGFIN:
         tmp = plot_func_control_apply(env, proc);
 
         if( ! tmp || tmp->type == plot_type_error ){
-            puts("ERROR");
+            puts("plot_func_control_for_each");
             return tmp;
         }
 
