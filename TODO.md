@@ -89,5 +89,4 @@ bugs:
 * apply not yet implemented for lambda
 * apply gc of temporary values
 * map not yet implemented for lambda
-* display args are now more strict, display_error_expr is no longer as useful (it causes display errors)
 

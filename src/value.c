@@ -359,7 +359,15 @@ void display_expr(plot_value * sexpr){
         }
         fputs(")", stdout);
     } else {
-        plot_func_display(0, sexpr);
+        val = cons(sexpr, null);
+        plot_func_display(0, val);
+
+        /* set car of val to 0 before gc
+         * as cons does not incr and we don't want
+         * to accidentally decr sexpr
+         */
+        car(val) = 0;
+        plot_value_decr(val);
     }
 }
 
