@@ -46,7 +46,7 @@ struct plot_value * plot_func_input_open_input_file(struct plot_env *env, struct
  * if no characters are available before the eof, and eof object is returned
  */
 struct plot_value * plot_func_input_read_string(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_input_");
+    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_func_input_read_string");
 }
 
 /* (read-line)
