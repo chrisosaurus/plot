@@ -36,6 +36,9 @@ brief summary of r7rs library implementation status (see `make compliance`):
 
         total: 228 / 546 (41%)
 
+NB: the above conformance report is measuring functions that are exposed to plot programs,
+many of those functions may still be lacking complete implementation.
+
 example: (see `make example`)
 
     (define (println v)
