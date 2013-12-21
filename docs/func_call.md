@@ -12,3 +12,12 @@ all 3 of these will shortly be handled by `(apply proc args)` which will not per
 further evaluation on it's `args`, therefore for either `lambda` or `form` the caller
 must first evaluate the args before calling `apply`.
 
+currently internal callers of apply have to cons up the arguments twice
+
+    cons( proc, cons( args, null ) )
+
+it may be worthwhile to create an internal apply (that the user land apply is a wrapper of)
+
+    internal_apply(env, proc, args)
+
+as this saves at least the outer cons
