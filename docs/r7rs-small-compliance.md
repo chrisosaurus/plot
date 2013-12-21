@@ -243,10 +243,10 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
 6.10 Control features
     The following procedures are implemented:
         `procedure?`
-        `apply` - not yet implemented for lambdas
 
     The following procedures are partially implemented:
-        `map` - not yet implemented for lambdas
+        `apply`
+        `map`
         `for-each`
 
 6.11 Exceptions

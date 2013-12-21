@@ -46,6 +46,8 @@ parse:
 eval:
 -----
 * tidy up eval_form variables
+* eval form should also use apply (possibly evaluating args before call)
+* apply must also handle lambdas
 
 read:
 -----
