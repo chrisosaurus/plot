@@ -186,6 +186,9 @@ ARGFIN:
         return plot_runtime_error(plot_error_bad_args, "expected at least 1 list", "plot_func_control_map");
     }
 
+    /* last arg of apply must be a list of arguments
+     * so we must wrap targs in another cons
+     */
     car(cdr(proc)) = targs;
 
     /* main loop */
@@ -276,6 +279,7 @@ LISTFIN:
  *
  */
 struct plot_value * plot_func_control_for_each(struct plot_env *env, struct plot_value *args){
+    /* pair containing our proc as the car and targs as it's cdr */
     plot_value *proc;
 
     /* cursor through various plot lists */
@@ -316,6 +320,12 @@ struct plot_value * plot_func_control_for_each(struct plot_env *env, struct plot
         return plot_runtime_error(plot_error_bad_args, "first arg was not a procedure", "plot_func_control_for_each");
     }
 
+    /* we want proc to be passable to apply
+     * the last argument of apply must be a list so we have to have
+     * an extra cons as our cd
+     */
+    proc = cons( proc, cons(null, null) );
+
 
     /* copy over initial lists into step
      * this also allocates our pairs that we later use for each 'step'
@@ -350,6 +360,10 @@ ARGFIN:
         return plot_runtime_error(plot_error_bad_args, "expected at least 1 list", "plot_func_control_for_each");
     }
 
+    /* last arg of apply must be a list of arguments
+     * so we must wrap targs in another cons
+     */
+    car(cdr(proc)) = targs;
 
     /* main loop */
     while( 1 ){
@@ -381,34 +395,34 @@ ARGFIN:
             stepcur = &cdr(*stepcur);
         }
 
-        /* call our function */
-        switch( proc->type ){
-            case plot_type_lambda:
-                return plot_runtime_error(plot_error_bad_args, "map is not yet implemented for lambda functions", "plot_func_control_for_each");
-                break;
-            case plot_type_form:
-                /* capture and decr as for-each doesn't care
-                 * about return values
-                 */
-                tmp = proc->u.form.func(env, targs);
-                plot_value_decr(tmp);
-                break;
-            default:
-                return plot_runtime_error(plot_error_bad_args, "first argument was not a procedure", "plot_func_control_for_each");
-                break;
+        /* call our function
+         * here `proc` is a pair of (proc, args)
+         */
+        tmp = plot_func_control_apply(env, proc);
+
+        if( ! tmp || tmp->type == plot_type_error ){
+            puts("ERROR");
+            return tmp;
         }
+
+        plot_value_decr(tmp);
     }
 
     /* exit point for main loop */
 LISTFIN:
 
-    /* gc targs
+    /* zero-out targs
      * NB: cons does not incr, so we have to 0 out to avoid decr on the copied values
      */
     for( cur = targs; cur->type == plot_type_pair; cur = cdr(cur) ){
         car(cur) = 0;
     }
-    plot_value_decr(targs);
+
+    /* zero-out car of proc to prevent gc of procedure */
+    car(proc) = 0;
+
+    /* gc conses used in proc and targs */
+    plot_value_decr(proc);
 
     return plot_new_unspecified();
 }
