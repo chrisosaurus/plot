@@ -102,6 +102,7 @@ struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_va
  * (map (lambda (x y) (* x y)) '(1 2) '(3 4)) ; => (3 8)
  */
 struct plot_value * plot_func_control_map(struct plot_env *env, struct plot_value *args){
+    /* pair containing our proc as the car and targs as it's cdr */
     plot_value *proc;
 
     /* cursor through various plot lists */
@@ -145,6 +146,12 @@ struct plot_value * plot_func_control_map(struct plot_env *env, struct plot_valu
         return plot_runtime_error(plot_error_bad_args, "first arg was not a procedure", "plot_func_control_map");
     }
 
+    /* we want proc to be passable to apply
+     * the last argument of apply must be a list so we have to have
+     * an extra cons as our cd
+     */
+    proc = cons( proc, cons(null, null) );
+
 
     /* copy over initial lists into step
      * this also allocates our pairs that we later use for each 'step'
@@ -179,6 +186,7 @@ ARGFIN:
         return plot_runtime_error(plot_error_bad_args, "expected at least 1 list", "plot_func_control_map");
     }
 
+    car(cdr(proc)) = targs;
 
     /* main loop */
     while( 1 ){
@@ -214,21 +222,15 @@ ARGFIN:
         /* allocate space for our result */
         *rescur = cons( null, null );
 
-        /* call our function */
-        switch( proc->type ){
-            case plot_type_lambda:
-                return plot_runtime_error(plot_error_bad_args, "map is not yet implemented for lambda functions", "plot_func_control_map");
-                break;
-            case plot_type_form:
-                /* don't need to incr as it will already have a value of 1
-                 */
-                car(*rescur) = proc->u.form.func(env, targs);
-                break;
-            default:
-                return plot_runtime_error(plot_error_bad_args, "first argument was not a procedure", "plot_func_control_map");
-                break;
-        }
+        /* call our function
+         * here `proc` is a pair of (proc, args)
+         */
+        car(*rescur) = plot_func_control_apply(env, proc);
 
+        if( ! car(*rescur) || car(*rescur)->type == plot_type_error ){
+            puts("ERROR");
+            return car(*rescur);
+        }
 
         rescur = &cdr(*rescur);
     }
@@ -236,14 +238,18 @@ ARGFIN:
     /* exit point for main loop */
 LISTFIN:
 
-    /* gc targs
+    /* zero-out targs
      * NB: cons does not incr, so we have to 0 out to avoid decr on the copied values
      */
     for( cur = targs; cur->type == plot_type_pair; cur = cdr(cur) ){
         car(cur) = 0;
     }
-    plot_value_decr(targs);
 
+    /* zero-out car of proc to prevent gc of procedure */
+    car(proc) = 0;
+
+    /* gc conses used in proc and targs */
+    plot_value_decr(proc);
 
     if( res == 0 ){
         /* no results, return empty list */
