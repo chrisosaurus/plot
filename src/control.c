@@ -39,8 +39,20 @@ struct plot_value * plot_func_control_procedure_test(struct plot_env *env, struc
  *  (apply + 3 '(1 3)) ; => 7
  */
 struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_value *args){
+    /* function to apply */
     plot_value *func;
-    plot_value *newargs, **curna, *arg;
+    /* newargs is our argument list (append (list arg1 ...) args) */
+    plot_value *newargs;
+    /* curna is a cursor into new args */
+    plot_value **curna;
+    /* arg is a cursor into args */
+    plot_value *arg;
+
+    /* new env for our lambda */
+    plot_env *new_env;
+
+    /* return value */
+    plot_value *ret;
 
     /* r7rs spec says the argument should be
      * (append (list arg1...) args)
@@ -68,24 +80,92 @@ struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_va
         curna = &cdr(*curna);
     }
 
-    /* FIXME need to gc temporary values */
     newargs = plot_func_pair_append(env, cons(plot_func_pair_list(env, newargs), arg));
 
     func = car(args);
 
     switch(func->type){
         case plot_type_lambda:
-            return plot_runtime_error(plot_error_bad_args, "apply is not yet implemented for lambda functions", "plot_func_control_apply");
+            /* create new env for our lambda */
+            new_env = plot_alloc_env(func->u.lambda.env);
+            if( ! new_env ){
+                plot_fatal_error("failed to allocate new env in apply");
+            }
+
+            /* bind arguments
+             * for each parameter:
+             *  grab an argument and bind
+             * if no argument then error
+             * if left over arguments then error
+             */
+
+            /* use arg as cursor into params (car of lambda body)
+             * use curna as cursor into newargs
+             */
+            curna = &newargs;
+            for( arg = car(func->u.lambda.body); arg->type != plot_type_null; arg = cdr(arg) ){
+
+                /* too few args for lambda */
+                if( (*curna)->type == plot_type_null ){
+                    return plot_runtime_error(plot_error_runtime, "too few args supplied for lambda", "plot_func_control_apply");
+                }
+
+                if( car(arg)->type == plot_type_null ){
+                    plot_fatal_error("apply: encountered null parameter");
+                }
+
+                if( ! plot_env_define(new_env, &(car(arg)->u.symbol), car(*curna)) ){
+                    plot_fatal_error("apply: failed to define argument");
+                }
+
+                *curna = cdr(*curna);
+            }
+
+            /* too many args for lambda */
+            if( (*curna)->type != plot_type_null ){
+                return plot_runtime_error(plot_error_runtime, "too many args supplied for lambda", "plot_func_control_apply");
+            }
+
+            /* eval each part of body in new_env
+             * return value of final expr
+             * gc all intermediary exprs
+             * check for intermediary errors
+             */
+            ret = 0;
+            for( arg = cdr(func->u.lambda.body); arg->type != plot_type_null; arg = cdr(arg) ){
+                if( ret ){
+                    /* gc intermedary value */
+                    plot_value_decr(ret);
+                }
+                ret = plot_eval_expr(new_env, car(arg));
+                if( ret && ret->type == plot_type_error ){
+                    puts("apply (lambda body)");
+                    return ret;
+                }
+            }
+
+            /* tidy up env */
+            plot_env_decr(new_env);
+
             break;
         case plot_type_form:
-            return func->u.form.func(env, newargs);
+            ret = func->u.form.func(env, newargs);
             break;
         default:
             return plot_runtime_error(plot_error_bad_args, "first argument is not a function", "plot_func_control_apply");
             break;
     }
 
-    return 0;
+    /* gc temporary resources
+     * first 0 out cars as the cons does not incr
+     * (and we dont want to accidentally decr
+     */
+    for( arg = newargs; arg->type != plot_type_null; arg = cdr(arg) ){
+        car(arg) = 0;
+    }
+    plot_value_decr(newargs);
+
+    return ret;
 }
 
 /* (map proc list1 list2...)

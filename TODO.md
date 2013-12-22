@@ -47,7 +47,6 @@ eval:
 -----
 * tidy up eval_form variables
 * eval form should also use apply (possibly evaluating args before call)
-* apply must also handle lambdas
 
 read:
 -----
@@ -86,7 +85,4 @@ bugs:
 * parsing feedback is terrible
 * look very carefully at gc around force (incr when generated vs incr when returned)
 * look very carefully at ref counting around various values and storage
-* apply not yet implemented for lambda
-* apply gc of temporary values
-* map not yet implemented for lambda
 

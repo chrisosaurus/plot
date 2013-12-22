@@ -243,8 +243,6 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
 6.10 Control features
     The following procedures are implemented:
         `procedure?`
-
-    The following procedures are partially implemented:
         `apply`
         `map`
         `for-each`
