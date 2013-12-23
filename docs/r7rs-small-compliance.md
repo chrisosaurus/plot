@@ -70,7 +70,7 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     plot does not yet have a macro system.
 
 5.2 Import declarations
-    plot has short-term plans to include an import form.
+    library support is currently pending implementation.
 
 5.3 Variable definitions
     `define` form is implemented.
@@ -87,7 +87,7 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     plot does not yet have syntax definitions.
 
 5.6 Libraries
-    plot has short-term plans to include library support.
+    library support is currently pending implementation.
 
 6.1 Equivalence predicates
     `eq?`, `eqv?` and `equal?` are implemented.
