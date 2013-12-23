@@ -37,7 +37,15 @@ struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_va
  */
 struct plot_value * plot_func_control_map(struct plot_env *env, struct plot_value *args);
 
-/* (for-each proc list1 list2... )
+/* (string-map proc string1 string2 ...)
+ * it is an error if proc does not take as many arguments as there are strings and return a single character
+ *
+ * string-map applies proc element-wise to the elements of the strings and returns a string of the results, in order.
+ * (string-map char-foldcase "AbdEgH") ;; => "abdegh"
+ */
+struct plot_value * plot_func_control_string_map(struct plot_env *env, struct plot_value *args);
+
+/* (for-each proc list1 list2 ... )
  * error if proc does not accept as many args as there are lists
  *
  * similar to map except that for-each is run for it's side effects rather
@@ -53,5 +61,14 @@ struct plot_value * plot_func_control_map(struct plot_env *env, struct plot_valu
  *
  */
 struct plot_value * plot_func_control_for_each(struct plot_env *env, struct plot_value *args);
+
+/* (string-for-each proc string1 string2 ...)
+ * it is an error if proc does not take as may argumnets as there are string and return a single character
+ *
+ * string-for-each applies proc element wise to the elements of the strings and returns a string of the results in order.
+ *
+ * return value is unspecified
+ */
+struct plot_value * plot_func_control_string_for_each(struct plot_env *env, struct plot_value *args);
 
 #endif
