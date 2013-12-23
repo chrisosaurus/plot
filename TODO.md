@@ -3,6 +3,13 @@ TODO(s):
 
 Update code comments to reference r7rs.
 
+priorities:
+-----------
+* library support
+* plot unit testing library
+* plot introspection library
+* better I/O facilities
+
 operations:
 -----------
 * string-ci<?
@@ -40,7 +47,7 @@ parse:
 ------
 * parse should record line numbers in AST, all errors should reference these
 * allow parsing of negative numbers
-* needs to be able to ask for 'more' input (if current input does not properly end a token)
+* needs to be able to ask for 'more' input (if current input does not properly end a token) - should only require counting `(`, `)`, `"`, `"` and `\` (for escaping of other symbols)
 * needs to be able to communicate 'failure', e.g. miss matching of brackets in `(define a 5]`
 
 eval:
