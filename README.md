@@ -18,7 +18,9 @@ For an up-to-date summary or plot's implementation status see `docs/r7rs-small-c
 
 brief summary of r7rs library implementation status (see `make compliance`):
 
-        base: 98 / 237 (41%)
+
+        ./build/compliance.pl
+        base: 100 / 237 (42%)
         case-lambda: 0 / 1 (0%)
         char: 17 / 22 (77%)
         complex: 0 / 6 (0%)
@@ -34,7 +36,7 @@ brief summary of r7rs library implementation status (see `make compliance`):
         time: 0 / 3 (0%)
         write: 1 / 4 (25%)
 
-        total: 228 / 546 (41%)
+        total: 230 / 546 (42%)
 
 NB: the above conformance report is measuring functions that are exposed to plot programs,
 many of those functions may still be lacking complete implementation.
