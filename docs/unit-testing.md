@@ -17,6 +17,6 @@ could instead be moved to plot
     (import (only (plot introspection) plot-refcount))
 
     (test "fourty three"
-        (define foo 5)
+        (define foo (+ 1 1))
         (assert 1 (plot-refcount foo)))
 
