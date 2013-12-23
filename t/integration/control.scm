@@ -79,11 +79,11 @@
   (pass "eight")
   (fail "eight"))
 
-;;(define nine 0)
-;;(string-for-each (lambda (c) (set! nine (+ nine (char->integer c)))) "abc")
-;;(display "nine is ")
-;;(display nine)
-;;(display newline)
+(define nine "")
+(string-for-each (lambda (x y z) (set! nine (string-append nine (string y)))) "abc" "def" "ghi")
+(if (equal? nine "def")
+  (pass "nine")
+  (fail "nine"))
 
 ;; tests completed, print results
 (println ">>> control test results")

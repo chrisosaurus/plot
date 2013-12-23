@@ -260,10 +260,10 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `map`
         `string-map`
         `for-each`
+        `string-for-each`
 
     the following procedures are not yet implemented:
         `vector-map`
-        `string-for-each`
         `vector-for-each`
         `call-with-current-continuation`
         `call/cc`
