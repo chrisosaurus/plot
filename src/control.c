@@ -349,7 +349,172 @@ LISTFIN:
  * (string-map char-foldcase "AbdEgH") ;; => "abdegh"
  */
 struct plot_value * plot_func_control_string_map(struct plot_env *env, struct plot_value *args){
-    return plot_runtime_error(plot_error_unimplemented, "unimplimented", "plot_func_control_string_map");
+    /* pair containing our proc as the car and targs as it's cdr */
+    plot_value *proc;
+
+    /* cursor through various plot lists */
+    plot_value *cur;
+
+    /* temporary arguments we build and call the supplied procedure with
+     * and cursor into it
+     *
+     * targscur is ** as we need to write through it
+     */
+    plot_value *targs = 0;
+    plot_value **targscur = &targs;
+
+    /* result list and cursor into it
+     * rescur is ** as we need to write through it
+     */
+    plot_value *res = 0;
+    plot_value **rescur = &res;
+
+    /* return value from a call to proc */
+    plot_value *tmp;
+
+    /* index into strings */
+    int i = 0;
+
+    /* number of result chars, also size of final string (excl. null) */
+    int len = 0;
+
+
+    /* check procedure argument */
+    if( !args || args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "did not receive any arguments", "plot_func_control_string_map");
+    }
+
+    proc = car(args);
+    if( proc->type != plot_type_lambda && proc->type != plot_type_form ){
+        return plot_runtime_error(plot_error_bad_args, "first arg was not a procedure", "plot_func_control_string_map");
+    }
+
+    /* we want proc to be passable to apply
+     * the last argument of apply must be a list so we have to have
+     * an extra cons as our cd
+     */
+    proc = cons( proc, cons(null, null) );
+
+
+    /* copy over initial lists into step
+     * this also allocates our pairs that we later use for each 'step'
+     */
+    for( cur = cdr(args); ; cur = cdr(cur) ){
+        switch( cur->type ){
+            case plot_type_pair:
+                /* allocate temporary arguments to ensure sufficient length */
+                *targscur = cons( null, null );
+                car(*targscur) = plot_new_character(0);
+                targscur = &cdr(*targscur);
+
+                break;
+            case plot_type_null:
+                /* null means end of args */
+                goto ARGFIN;
+                break;
+            default:
+                return plot_runtime_error(plot_error_bad_args, "arg was not of correct type (expected either pair or null)", "plot_func_control_string_map");
+                break;
+        }
+    }
+
+    /* exit point for arg copying list */
+ARGFIN:
+
+    /* no args found, error */
+    if( targs == 0 ){
+        return plot_runtime_error(plot_error_bad_args, "expected at least 1 list", "plot_func_control_map");
+    }
+
+    /* last arg of apply must be a list of arguments
+     * so we must wrap targs in another cons
+     */
+    car(cdr(proc)) = targs;
+
+    /* main loop */
+    while( 1 ){
+        targscur = &targs;
+
+        for( cur = cdr(args); cur->type == plot_type_pair; cur = cdr(cur) ){
+            if( car(cur)->type != plot_type_string ){
+                return plot_runtime_error(plot_error_bad_args, "found unexpected type, expected string", "plot_func_control_string_map");
+            }
+
+            /* check i is inside string */
+            if( i >= car(cur)->u.string.len - 1 ){
+                /* end of one string reached, abort */
+                goto LISTFIN; /* FIXME off by 1? */
+            }
+
+            /* copy over into temporary args */
+            car(*targscur)->u.character.val = car(cur)->u.string.val[i];
+            //car(*targscur) = car(car(cur));
+            targscur = &cdr(*targscur);
+        }
+
+        /* advance step */
+        ++ i;
+
+        /* increment len */
+        ++ len;
+
+        /* allocate space for our result */
+        *rescur = cons( plot_new_character(0), null );
+
+        /* call our function
+         * here `proc` is a pair of (proc, args)
+         */
+        tmp = plot_func_control_apply(env, proc);
+
+        if( ! tmp || tmp->type == plot_type_error ){
+            puts("plot_func_control_map");
+            return tmp;
+        }
+
+        if( tmp->type != plot_type_character ){
+            return plot_runtime_error(plot_error_bad_args, "function returned unexpected type, expected character", "plot_func_control_string_map");
+        }
+
+        car(*rescur)->u.character.val = tmp->u.character.val;
+        plot_value_decr(tmp);
+
+        rescur = &cdr(*rescur);
+    }
+
+    /* exit point for main loop */
+LISTFIN:
+
+    /* do not zero out args as we also want to collect the characters
+     * that are stored in the cars
+     */
+
+    /* zero-out car of proc to prevent gc of procedure */
+    car(proc) = 0;
+
+    /* gc conses used in proc and targs */
+    plot_value_decr(proc);
+
+    if( res == 0 ){
+        /* no results, return empty string */
+        tmp = plot_new_string("", 1); /* FIXME is this a valid empty string? */
+    } else {
+        /* squash characters into string */
+
+        /* + 1 for null terminator */
+        tmp = plot_new_string( plot_alloc_string(len + 1), len + 1 );
+
+        /* copy over characters */
+        i = 0;
+        for( rescur = &res; (*rescur)->type == plot_type_pair; rescur = &cdr(*rescur) ){
+            tmp->u.string.val[i++] = (car(*rescur))->u.character.val;
+        }
+        tmp->u.string.val[i] = '\0';
+    }
+
+    /* gc res */
+    plot_value_decr(res);
+
+    return tmp;
 }
 
 /* (for-each proc list1 list2... )

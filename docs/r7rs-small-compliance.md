@@ -258,7 +258,18 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `procedure?`
         `apply`
         `map`
+        `string-map`
         `for-each`
+
+    the following procedures are not yet implemented:
+        `vector-map`
+        `string-for-each`
+        `vector-for-each`
+        `call-with-current-continuation`
+        `call/cc`
+        `values`
+        `call-with-values`
+        `dynamic-wind`
 
 6.11 Exceptions
     Plot has the beginnings of an exception system, however it is not

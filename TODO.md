@@ -16,7 +16,6 @@ operations:
 * string-ci>?
 * string-ci<=?
 * string-ci>=?
-* string-map
 * string-for-each
 * read-string
 * read-line

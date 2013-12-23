@@ -71,6 +71,20 @@
   (pass "six")
   (fail "six"))
 
+(if (equal? "abcdefgh" (string-map char-downcase "ABcDefgH"))
+  (pass "seven")
+  (fail "seven"))
+
+(if (equal? "abcd" (string-map (lambda (x y) (char-downcase y)) "zzzz" "aBCd"))
+  (pass "eight")
+  (fail "eight"))
+
+;;(define nine 0)
+;;(string-for-each (lambda (c) (set! nine (+ nine (char->integer c)))) "abc")
+;;(display "nine is ")
+;;(display nine)
+;;(display newline)
+
 ;; tests completed, print results
 (println ">>> control test results")
 (results)
