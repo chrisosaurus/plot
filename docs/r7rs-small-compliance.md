@@ -166,10 +166,8 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     `symbol=?` is implemented.
 
 6.6 Characters
-    The subset of this section that is in r5rs is implemented.
-
     Plot deviates mildly from the standard as 'special' literals `#\space` and
-    `#\newline` are case sensitive, whereas 6.3.4 defines them to be case insensitive;
+    `#\newline` are case sensitive, whereas 6.6 defines them to be case insensitive;
     this means that plow will not behave correctly for `#\NEWLINE`.
 
     character literals are implemented
@@ -178,6 +176,17 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         symbols such as `#\(`
         'special' literals `#\space` and `#\newline`
         space can also be written as `#\ `
+
+    hex characters are not yet implemented.
+
+    missing named characters:
+        `#\alarm`
+        `#\backspace`
+        `#\delete`
+        `#\escape`
+        `#\null`
+        `#\return`
+        `#\tab`
 
     the following character procedures are implemented:
         `char?`
@@ -200,6 +209,10 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `integer->char`
         `char-upcase`
         `char-downcase`
+
+    the following procedures are not yet implemented:
+        `digit-value`
+        `char-foldcase`
 
 6.7 Strings
     string literals are implemented
