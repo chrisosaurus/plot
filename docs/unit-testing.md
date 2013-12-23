@@ -4,7 +4,7 @@ plot should move it's unit testing code into libraries:
 
     (test-begin "foo")
 
-    (test "five")
+    (test "five"
         (assert 5 5)
         (assert 4 3)) ;; will fail with message 'fail five case 2: expected 4 got 3'
 
@@ -16,7 +16,7 @@ could instead be moved to plot
     (import (only (plot test) test assert))
     (import (only (plot introspection) plot-refcount))
 
-    (test "fourty three")
+    (test "fourty three"
         (define foo 5)
         (assert 1 (plot-refcount foo)))
 
