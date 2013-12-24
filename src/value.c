@@ -222,6 +222,16 @@ plot_value * plot_new_form( struct plot_value * (*func)(struct plot_env *env, st
     return res;
 }
 
+plot_value * plot_new_library(struct plot_env *internal, struct plot_env *exported){
+    plot_value *res;
+    res = plot_alloc_value();
+
+    res->type = plot_type_library;
+    res->u.library.internal = internal;
+    res->u.library.exported = exported;
+
+    return res;
+}
 
 /* raise l to power i
  */

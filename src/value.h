@@ -19,6 +19,7 @@ typedef enum plot_value_type{
     plot_type_promise,
     plot_type_textual_port,
     plot_type_binary_port,
+    plot_type_library,
 
     /* null does NOT have a matching union member */
     plot_type_null,
@@ -138,6 +139,11 @@ typedef struct plot_pair {
     struct plot_value *cdr;
 } plot_pair;
 
+typedef struct plot_library {
+    struct plot_env *internal;
+    struct plot_env *exported;
+} plot_library;
+
 /* FIXME may want to move to functions that check types
  */
 #define cons(l,r) (plot_new_pair(l,r))
@@ -205,6 +211,7 @@ typedef struct plot_value {
         plot_pair          pair;
         plot_textual_port  textport;
         plot_binary_port   binport;
+        plot_library       library;
 #if 0
         plot_vector        vector;
         plot_binary_port   binaryport;
@@ -239,6 +246,7 @@ plot_value * plot_new_textual_port(plot_port_dir direction, FILE *file);
 /* `*file` is an already opened file */
 plot_value * plot_new_binary_port(plot_port_dir direction, FILE *file);
 plot_value * plot_new_eof(void);
+plot_value * plot_new_library(struct plot_env *internal, struct plot_env *exported);
 
 /* turn an existing plot_value into a constant
  */
