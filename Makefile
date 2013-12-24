@@ -55,6 +55,8 @@ run_tests: compile_tests plot
 	./plot t/integration/define.scm
 	@echo "\nrunning input.scm"
 	./plot t/integration/input.scm
+	@echo "\nrunning library.scm"
+	./plot t/integration/library.scm
 
 	@rm -f test
 	@echo "\nrunning output.scm"
