@@ -42,13 +42,6 @@ struct plot_value * plot_form_import(struct plot_env *env, struct plot_value *se
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_import");
 }
 
-/* (export identifier ... ) -core -syntax
- * export some identifiers
- */
-struct plot_value * plot_form_export(struct plot_env *env, struct plot_value *sexpr){
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_export");
-}
-
 /* (plot-bind identifier ... ) -syntax
  * looks through plot's internal bindings and binds
  * identifiers to current scope

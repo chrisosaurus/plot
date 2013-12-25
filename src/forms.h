@@ -27,11 +27,6 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
  */
 struct plot_value * plot_form_import(struct plot_env *env, struct plot_value *sexpr);
 
-/* (export identifier ... ) -core -syntax
- * export some identifiers
- */
-struct plot_value * plot_form_export(struct plot_env *env, struct plot_value *sexpr);
-
 /* (plot-bind identifier ... ) -syntax
  * looks through plot's internal bindings and binds
  * identifiers to current scope
