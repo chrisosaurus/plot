@@ -38,8 +38,9 @@
 (define-library (foo)
     (import (scheme base))
     (export bar)
-    (define (bar x)
-      (+ x 15)))
+    (begin
+      (define (bar x)
+        (+ x 15))))
 
 (import (foo))
 (if (= 17 (bar 2))
