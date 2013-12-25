@@ -68,13 +68,13 @@ example: (see `make example`)
 
 planned work
 ------------
-Plot is aiming for r7rs-small (WG1) compliance.
+Plot is aiming for full r7rs-small (WG1) compliance.
 
 dependencies
 ------------
 * libc
-* lib check is used for unit testing, in debian derived system this is simply 'check'
-* perl is used as part of the build process to generate bindings between exported scheme functions and their c implementations
+* lib check is used for unit testing, in debian derived systems this is simply 'check' (`sudo apt-get install check`)
+* perl is used as part of the build process to generate bindings between scheme functions and their c implementations
 
 running
 ----------
@@ -82,7 +82,8 @@ Plot is still in it's infancy so does not yet offer an automatic installation me
 
 You are able to compile and run plot manually though:
 
-    cd /devel/plot # or wherever you cloned to
+    git clone git@github.com:mkfifo/plot.git
+    cd plot
     make
     ./plot t/example.scm
 
