@@ -32,6 +32,29 @@
  */
 struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_value *sexpr){
 
+    /* (export <export spec> ...)
+     * add symbols to u.library.exported
+     * symbols may have been defined or may later be defined
+     */
+
+    /* (import <import set> ...)
+     * should be able to re-use normal import and just specificy
+     * u.library.internal as the env to eval in
+     */
+
+    /* (begin <command or defintion> ...)
+     * normal eval with env specified as u.library.internal
+     */
+
+    /* (include <filename1> <filename2> ...)
+     * (include-ci <filename1> <filename2> ...)
+     * (include-library-declaration <filename1> <filename2> ...)
+     * various include forms
+     */
+
+    /* (cond-expand <ce-clause1> <ce-clause2> ...)
+     */
+
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_define_library");
 }
 
