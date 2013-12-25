@@ -16,6 +16,19 @@
 
 /* (define-library (library name) body...) -core -syntax
  * define a library
+ *
+ * library definitions are of the form
+ * (define-library <library-name>
+ *      <library-declaration> ...)
+ *
+ * where a <library-declaration> is any of:
+ *      (export <export spec> ...)
+ *      (import <import set> ...)
+ *      (begin <command or defintion> ...)
+ *      (include <filename1> <filename2> ...)
+ *      (include-ci <filename1> <filename2> ...)
+ *      (include-library-declaration <filename1> <filename2> ...)
+ *      (cond-expand <ce-clause1> <ce-clause2> ...)
  */
 struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_value *sexpr){
 
