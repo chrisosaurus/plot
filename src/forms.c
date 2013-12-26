@@ -31,29 +31,52 @@
  *      (cond-expand <ce-clause1> <ce-clause2> ...)
  */
 struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_value *sexpr){
+    plot_value *name;
+    plot_value *body;
+    plot_value *cur;
 
-    /* (export <export spec> ...)
-     * add symbols to u.library.exported
-     * symbols may have been defined or may later be defined
-     */
+    if( !sexpr || sexpr->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_form_define_library");
+    }
 
-    /* (import <import set> ...)
-     * should be able to re-use normal import and just specificy
-     * u.library.internal as the env to eval in
-     */
+    name = car(sexpr);
+    body = cdr(sexpr);
 
-    /* (begin <command or defintion> ...)
-     * normal eval with env specified as u.library.internal
-     */
+    switch( name->type ){
+        case plot_type_pair:
+            break;
+        case plot_type_symbol:
+            break;
+        default:
+            return plot_runtime_error(plot_error_bad_args, "library name was of incorrect type", "plot_form_define_library");
+    }
 
-    /* (include <filename1> <filename2> ...)
-     * (include-ci <filename1> <filename2> ...)
-     * (include-library-declaration <filename1> <filename2> ...)
-     * various include forms
-     */
+    /* go through body */
+    for( cur = body; cur->type == plot_type_pair; cur = cdr(cur) ){
+        /* FIXME */
+        /* (export <export spec> ...)
+         * add symbols to u.library.exported
+         * symbols may have been defined or may later be defined
+         */
 
-    /* (cond-expand <ce-clause1> <ce-clause2> ...)
-     */
+        /* (import <import set> ...)
+         * should be able to re-use normal import and just specificy
+         * u.library.internal as the env to eval in
+         */
+
+        /* (begin <command or defintion> ...)
+         * normal eval with env specified as u.library.internal
+         */
+
+        /* (include <filename1> <filename2> ...)
+         * (include-ci <filename1> <filename2> ...)
+         * (include-library-declaration <filename1> <filename2> ...)
+         * various include forms
+         */
+
+        /* (cond-expand <ce-clause1> <ce-clause2> ...)
+         */
+    }
 
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_define_library");
 }
