@@ -31,9 +31,14 @@
  *      (cond-expand <ce-clause1> <ce-clause2> ...)
  */
 struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_value *sexpr){
+    /* library name */
     plot_value *name;
+    /* body to iterate through */
     plot_value *body;
+    /* current cursor for iteration*/
     plot_value *cur;
+    /* current item we are processing in iteration */
+    plot_value *item;
 
     if( !sexpr || sexpr->type != plot_type_pair ){
         return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_form_define_library");
@@ -53,7 +58,14 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
 
     /* go through body */
     for( cur = body; cur->type == plot_type_pair; cur = cdr(cur) ){
+        item = car(cur);
+
+        if( item->type != plot_type_pair ){
+            return plot_runtime_error(plot_error_bad_args, "library body was malformed, expected sub-sexpr but found expr", "plot_form_define_library");
+        }
+
         /* FIXME */
+
         /* (export <export spec> ...)
          * add symbols to u.library.exported
          * symbols may have been defined or may later be defined
@@ -76,6 +88,10 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
 
         /* (cond-expand <ce-clause1> <ce-clause2> ...)
          */
+    }
+
+    if( cur->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "library body was malformed, expected pair or null but found neither", "plot_form_define_library");
     }
 
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_define_library");
