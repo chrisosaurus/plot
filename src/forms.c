@@ -39,6 +39,11 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
     plot_value *cur;
     /* current item we are processing in iteration */
     plot_value *item;
+    /* library we generate */
+    plot_value *lib;
+
+    /* two new envs, internal and external/external */
+    plot_env *ex, *in;
 
     if( !sexpr || sexpr->type != plot_type_pair ){
         return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_form_define_library");
@@ -46,6 +51,11 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
 
     name = car(sexpr);
     body = cdr(sexpr);
+
+    /* no parents to either as they are both 'clean' (or emtpy) envs */
+    ex = plot_alloc_env(0);
+    in = plot_alloc_env(0);
+    lib = plot_new_library(in, ex);
 
     switch( name->type ){
         case plot_type_pair:
@@ -94,7 +104,7 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
         return plot_runtime_error(plot_error_bad_args, "library body was malformed, expected pair or null but found neither", "plot_form_define_library");
     }
 
-    return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_define_library");
+    return lib;
 }
 
 /* (import (library name) ...) -core -syntax

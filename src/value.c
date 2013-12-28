@@ -10,6 +10,12 @@
  */
 void plot_value_decons(plot_value *value){
     switch( value->type ){
+        case plot_type_library:
+            plot_env_decr(value->u.library.internal);
+            value->u.library.internal = 0;
+            plot_env_decr(value->u.library.exported);
+            value->u.library.exported = 0;
+            break;
         case plot_type_promise:
             plot_env_decr(value->u.promise.env);
             plot_value_decr(value->u.promise.expr);
