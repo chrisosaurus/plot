@@ -42,6 +42,17 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
     /* library we generate */
     plot_value *lib;
 
+    /* FIXME ignore unused variable warnigns */
+    #pragma GCC diagnostic ignored "-Wunused-variable"
+
+    /* a library has 3 'parts' */
+    /* imports */
+    plot_value *imports = null;
+    /* definitions (inside begin exprs) */
+    plot_value *definitions = null;
+    /* exports */
+    plot_value *exports = null;
+
     /* two new envs, internal and external/external */
     plot_env *ex, *in;
 
@@ -74,7 +85,9 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
             return plot_runtime_error(plot_error_bad_args, "library body was malformed, expected sub-sexpr but found expr", "plot_form_define_library");
         }
 
-        /* FIXME */
+        /* FIXME
+         * examine each part and append to either 'imports', 'definitions' or 'exports'
+         */
 
         /* (export <export spec> ...)
          * add symbols to u.library.exported
