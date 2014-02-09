@@ -79,6 +79,7 @@ runtime:
 
 bugs:
 -----
+* plot pair cons and decons are not symmetrical, cons will not incr but decons does decr
 * string do not correctly support escaping
 * escaping in strings will copy over the escape character and include it in size/len
 * escape characters not behaving, e.g. (display "\t") => segfault
