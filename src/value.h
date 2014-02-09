@@ -36,7 +36,6 @@ typedef enum plot_value_type{
     /* reclaimed does NOT have a matching union member */
     plot_type_reclaimed /* FIXME useful for testing garbage collection */
 #if 0
-    plot_type_binary_port
     plot_type_vector
 #endif
 } plot_value_type;
