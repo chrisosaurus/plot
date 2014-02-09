@@ -309,6 +309,7 @@ void plot_hash_symbol(plot_symbol *s){
 }
 
 /* turn an existing plot_value into a constant
+ * a constant is a plot_value that is not managed by the GC
  */
 void plot_value_constantify(plot_value *val){
     val->gc.refcount = -1;
