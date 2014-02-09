@@ -53,8 +53,8 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
     /* exports */
     plot_value *exports = null;
 
-    /* two new envs, internal and external/external */
-    plot_env *ex, *in;
+    /* two new envs, internal and external/exported */
+    plot_env *in, *ex;
 
     if( !sexpr || sexpr->type != plot_type_pair ){
         return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_form_define_library");
@@ -66,6 +66,7 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
     /* no parents to either as they are both 'clean' (or emtpy) envs */
     ex = plot_alloc_env(0);
     in = plot_alloc_env(0);
+    /* construct out library object */
     lib = plot_new_library(in, ex);
 
     switch( name->type ){

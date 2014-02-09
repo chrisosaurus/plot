@@ -118,14 +118,14 @@ typedef enum plot_port_status {
 typedef struct plot_textual_port {
     plot_port_dir direction;
     plot_port_status status;
-    /* backing full or NULL */
+    /* backing file or NULL */
     FILE *file;
 } plot_textual_port;
 
 typedef struct plot_binary_port {
     plot_port_dir direction;
     plot_port_status status;
-    /* backing full or NULL */
+    /* backing file or NULL */
     FILE *file;
 } plot_binary_port;
 
@@ -171,12 +171,15 @@ typedef struct plot_lambda {
 } plot_lambda;
 
 typedef struct plot_form {
-    /* env to evaluate within
-     * args is a plot list
-     * argc is the number of them
+    /* when called env will be the env called in
+     *      most forms will not use the caller's env, but certain forms
+     *      such as `define` will modify it
+     * and args will be a scheme list of the arguments given to
+     *      the form at call-time
      */
-    struct plot_value * (*func)(struct plot_env *env, struct plot_value *sexpr);
-    /* flag is 1 is this form is syntactic, otherwise 0
+    struct plot_value * (*func)(struct plot_env *env, struct plot_value *args);
+    /* syntatic is a flag set to either 1 or 0
+     * iff this form is syntactic, otherwise 0
      * a syntactic form receives it's argument un-evaluated
      */
     int syntactic;
@@ -249,6 +252,7 @@ plot_value * plot_new_eof(void);
 plot_value * plot_new_library(struct plot_env *internal, struct plot_env *exported);
 
 /* turn an existing plot_value into a constant
+ * a constant is a plot_value that is not managed by the GC
  */
 void plot_value_constantify(plot_value *val);
 
