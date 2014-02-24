@@ -21,3 +21,21 @@ export adds an entry to the libraries export scope.
 
 also need a way of internally binding a symbol to a c function: `(plot-bind +)`.
 
+
+limitations
+-----------
+
+The current implementation I am pursuing for library support means that library names have to be unique within any running plot program,
+this is due to the fact that importing a library (or defining one) binds the library-name to that library object, this is so:
+
+    (import (only foo a))
+    (import (only foo b))
+
+and
+
+    (import (only foo a b))
+
+are equivalent (section 5.2 "import declarations", page 25), as `(import (only foo b))` does not require re-parsing a `define-library` nor
+a file-system search.
+
+
