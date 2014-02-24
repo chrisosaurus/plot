@@ -85,8 +85,8 @@ cleanobj:
 foo: cleanobj
 
 clean: cleanobj
-	@echo cleaning executable
-	@rm -f plot run_tests
+	@echo cleaning executables
+	@rm -f plot run_tests hasher
 	@echo cleaning auto-generated files
 	@rm -f src/bindings.h
 
@@ -98,4 +98,9 @@ src/bindings.h:
 compliance: src/bindings.h
 	./build/compliance.pl
 
-.PHONY: all clean cleanobj test tests example integration clang test_soft tests_soft debug compliance
+# helper program to generate hashes
+hasher: src/bindings.h ${OBJ}
+	@echo compiling hasher helper script
+	@${CC} scripts/hasher.c -o hasher ${LDFLAGS} -DPLOT_DEBUG ${OBJ}
+
+.PHONY: all clean cleanobj test tests example integration clang test_soft tests_soft debug compliance hasher
