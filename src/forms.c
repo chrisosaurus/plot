@@ -204,6 +204,20 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
  * import some libraries
  */
 struct plot_value * plot_form_import(struct plot_env *env, struct plot_value *sexpr){
+
+    /* 5.2 Import Declarations, page 25
+     * an import declaration takes the following form:
+     * (import <import-set> ...)
+     *
+     * <import-set> takes one of the following forms:
+     *      <library-name>
+     *      (only <import-set> <identifier> ...)
+     *      (except <import-set> <identifier> ...)
+     *      (prefix <import-set> <identifier> ...)
+     *      (rename <import-set> (<identifier1> <identifier2>) ...)
+     *
+     */
+
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_import");
 }
 
