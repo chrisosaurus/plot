@@ -93,24 +93,29 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
         /* (export <export spec> ...)
          * add symbols to u.library.exported
          * symbols may have been defined or may later be defined
+         * FIXME TODO
          */
 
         /* (import <import set> ...)
-         * should be able to re-use normal import and just specificy
+         * should be able to re-use normal import and just specify
          * u.library.internal as the env to eval in
+         * FIXME TODO
          */
 
         /* (begin <command or defintion> ...)
          * normal eval with env specified as u.library.internal
+         * FIXME TODO
          */
 
         /* (include <filename1> <filename2> ...)
          * (include-ci <filename1> <filename2> ...)
          * (include-library-declaration <filename1> <filename2> ...)
          * various include forms
+         * FIXME TODO
          */
 
         /* (cond-expand <ce-clause1> <ce-clause2> ...)
+         * FIXME TODO
          */
     }
 

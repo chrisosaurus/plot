@@ -54,7 +54,7 @@ typedef enum plot_error_type{
 
     /* function not implemented yet */
     plot_error_unimplemented,
-    /* symbol failed to resolved */
+    /* symbol failed to resolve */
     plot_error_undefined
 } plot_error_type;
 
