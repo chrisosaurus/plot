@@ -42,19 +42,41 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
     /* library we generate */
     plot_value *lib;
 
+    /* temporary returned when using other functions
+     * to assist
+     */
+    plot_value *ret;
+
+    /* temporary hash value of symbol being inspected
+     * comparing against symbol hash is UGLY
+     * FIXME TODO
+     */
+    unsigned long long hash = 0;
+
     /* FIXME ignore unused variable warnigns */
     #pragma GCC diagnostic ignored "-Wunused-variable"
 
-    /* a library has 3 'parts' */
-    /* imports */
-    plot_value *imports = null;
-    /* definitions (inside begin exprs) */
-    plot_value *definitions = null;
-    /* exports */
-    plot_value *exports = null;
-
     /* two new envs, internal and external/exported */
     plot_env *in, *ex;
+
+
+    /* A library has 3 'parts': */
+
+    /* IMPORTS
+     * are processed immediately and modify the internal env.
+     */
+
+    /* DEFINITIONS
+     * (inside begin exprs)
+     * are processed after all imports are performed.
+     */
+    plot_value *definitions = null;
+
+    /* EXPORTS
+     * are processed after all DEFINITIONS have been processed.
+     */
+    plot_value *exports = null;
+
 
     if( !sexpr || sexpr->type != plot_type_pair ){
         return plot_runtime_error(plot_error_bad_args, "expected at least 2 args", "plot_form_define_library");
@@ -78,7 +100,12 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
             return plot_runtime_error(plot_error_bad_args, "library name was of incorrect type", "plot_form_define_library");
     }
 
-    /* go through body */
+    /* go through body
+     * examine each part
+     *  if import -> process immediately
+     *  if definition -> add to `defintions`
+     *  if export -> add to `exports
+     */
     for( cur = body; cur->type == plot_type_pair; cur = cdr(cur) ){
         item = car(cur);
 
@@ -86,26 +113,43 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
             return plot_runtime_error(plot_error_bad_args, "library body was malformed, expected sub-sexpr but found expr", "plot_form_define_library");
         }
 
-        /* FIXME
-         * examine each part and append to either 'imports', 'definitions' or 'exports'
-         */
+        if( car(item)->type != plot_type_symbol ){
+            return plot_runtime_error(plot_error_bad_args, "library body was malformed, expected symbol", "plot_form_define_library");
+        }
+
+
+        hash = car(item)->u.symbol.hash; /* FIXME checking on hash is ugly */
 
         /* (export <export spec> ...)
          * add symbols to u.library.exported
          * symbols may have been defined or may later be defined
          * FIXME TODO
          */
+        if( hash == 656723401804llu){ /* make hasher && ./hasher export */
+            return plot_runtime_error(plot_error_unimplemented, "define-library : export unimplemented", "plot_form_define_library");
+        }
 
         /* (import <import set> ...)
          * should be able to re-use normal import and just specify
          * u.library.internal as the env to eval in
          * FIXME TODO
          */
+        else if( hash == 656723400763llu){ /* make hasher && ./hasher import */
+            ret = plot_form_import(in, item);
+            if( !ret || ret->type == plot_type_error ){
+                puts("plot_form_define_library (import)");
+                display_error_expr(item);
+                return ret;
+            }
+        }
 
         /* (begin <command or defintion> ...)
          * normal eval with env specified as u.library.internal
          * FIXME TODO
          */
+        else if( hash == 6416384521llu){ /* make hasher && ./hasher begin */
+            return plot_runtime_error(plot_error_unimplemented, "define-library : begin unimplemented", "plot_form_define_library");
+        }
 
         /* (include <filename1> <filename2> ...)
          * (include-ci <filename1> <filename2> ...)
@@ -113,15 +157,45 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
          * various include forms
          * FIXME TODO
          */
+        else if( hash == 51254500566408llu ){ /* make hasher && ./hasher include */
+            return plot_runtime_error(plot_error_unimplemented, "define-library : include unimplemented", "plot_form_define_library");
+        }
+
+        else if( hash == 9560169544426541301llu ){ /* make hasher && ./hasher include-ci */
+            return plot_runtime_error(plot_error_unimplemented, "define-library : include-ci unimplemented", "plot_form_define_library");
+        }
+
+        else if( hash == 2548278337831442659llu ){ /* make hasher && ./hasher include-library-declaration */
+            return plot_runtime_error(plot_error_unimplemented, "define-library : include-library-declaration unimplemented", "plot_form_define_library");
+        }
 
         /* (cond-expand <ce-clause1> <ce-clause2> ...)
          * FIXME TODO
          */
+        else if( hash == 7383587544085817029llu){ /* make hasher && ./hasher cond-expand */
+            return plot_runtime_error(plot_error_unimplemented, "define-library : cond-expand unimplemented", "plot_form_define_library");
+        }
+
+        /* ERROR: unknown subform */
+        else {
+            printf("hash of offender was '%llu'\n", car(item)->u.symbol.hash );
+            puts("error found when processing `define-library` : unknown subform");
+            display_error_expr(item);
+            return plot_runtime_error(plot_error_runtime, "library body was malformed, found unknown subform", "plot_form_define_library");
+        }
     }
 
     if( cur->type != plot_type_null ){
-        return plot_runtime_error(plot_error_bad_args, "library body was malformed, expected pair or null but found neither", "plot_form_define_library");
+        return plot_runtime_error(plot_error_runtime, "library body was malformed, expected pair or null but found neither", "plot_form_define_library");
     }
+
+    /* process DEFINITIONS
+     * FIXME TODO
+     */
+
+    /* process EXPORTS
+     * FIXME TODO
+     */
 
     return lib;
 }
