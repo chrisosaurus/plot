@@ -137,6 +137,19 @@ int plot_init(void){
     }
 
     /* library form bindings
+     * these are forms that are exported by libraries but are implemented in c
+     * libraries must `bind` these forms and then export them
+     * the bindings will then only be visible when a library is imported that exports such a binding
+     *
+     * this is plot specific, example (unimplemented) syntax:
+     *
+     *  (define-library (foo bar)
+     *      (import (plot internal))
+     *      (plot-bind or)
+     *      (export or))
+     *
+     *  (import (foo bar)) ;; exports or
+     *  (display (or #f #t))
      */
     for( i=0; i<LENGTH(library_forms); ++i ){
         if( ! plot_env_define( plot_instance->library_forms, &(library_forms[i].sym), &(library_forms[i].func) ) ){
