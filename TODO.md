@@ -32,11 +32,12 @@ garbage collection:
 * implement arena growth
 * merge arenas
 * need to work out how to deal with constants - for now we will not gc anything allocated at parse time
+* strings should also be inside gc (currently malloc-ed)
 
 performance:
 ------------
 * more performant env structure
-* consider caching of booleans (similar to null and unspecified)
+* consider caching of booleans (similar to null and unspecified) - more generally we should extend caching for arbitrary objects (rather than just shoving them on the plot_instance value)
 
 misc:
 -----
@@ -79,16 +80,17 @@ runtime:
 
 bugs:
 -----
-* plot pair cons and decons are not symmetrical, cons will not incr but decons does decr
-* string do not correctly support escaping
+* string size/len is silly, too many magic numbers (+1 to store, -1 to use... ugly)
+* plot pair cons and decons are not symmetrical, cons will NOT incr but decons does decr
+* strings do not correctly support escaping
 * escaping in strings will copy over the escape character and include it in size/len
 * escape characters not behaving, e.g. (display "\t") => segfault
 * parsing of # is silly
-* plot runtime errors may leak previously allocated values, need to decr before throwing error.
-* plot_runtime_errors should probably use scheme name (rather than c implementation name)
+* plot runtime errors may leak previously allocated values, need to decr before throwing error (sadly must be done at each call site).
+* plot_runtime_errors should generally use scheme name (rather than c implementation name)
 * plot_eval_form should only return 0 on error, otherwise it is a runtime error
-* plot_new_string and plot_alloc_string are not really related, as the latter allocates an array and the former a value
-* parsing feedback is terrible
+* plot_new_string and plot_alloc_string are not really related, as the latter allocates an array and the former a value - more generally we need to be able to distinguish between internal and external (i.e. routines that deal with c objects, routines that deal with plot objects, and routines that are exposed at runtime)
+* parsing feedback is terrible - need to track source line and even text (in case of transformations, e.g. 'a -> (quote a))
 * look very carefully at gc around force (incr when generated vs incr when returned)
-* look very carefully at ref counting around various values and storage
+* look very carefully at ref counting around various values and storage - current system is very brittle
 
