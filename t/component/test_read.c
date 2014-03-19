@@ -8,7 +8,7 @@
 #include "test.h"
 #endif
 
-#include "../src/read.h"
+#include "../../src/read.h"
 
 static const char * const test_read_filename = "Makefile";
 

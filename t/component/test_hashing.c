@@ -7,7 +7,7 @@
 #include "test.h"
 #endif
 
-#include "../src/value.h"
+#include "../../src/value.h"
 
 START_TEST (test_hashing){
     plot_symbol s;

@@ -30,7 +30,7 @@ clang: src/bindings.h
 compile_tests: clean src/bindings.h ${OBJ}
 	@echo test_parse CC -o tests/test_llist.c
 	@# pthread, rt and m are all needed by certain versions of libcheck 
-	@${CC} -g -o run_tests t/test_main.c ${OBJ} ${TEST_CFLAGS} -lpthread -lrt -lm -lcheck
+	@${CC} -g -o run_tests t/component/test_main.c ${OBJ} ${TEST_CFLAGS} -lpthread -lrt -lm -lcheck
 
 # run tests
 run_tests: compile_tests plot
@@ -38,7 +38,7 @@ run_tests: compile_tests plot
 	@echo running c unit tests
 	./run_tests
 	@echo "\nrunning example.scm"
-	./plot t/example.scm
+	./plot t/examples/example.scm
 	@echo "\nrunning basic.scm"
 	./plot t/integration/basic.scm
 	@echo "\nrunning character.scm"
@@ -69,9 +69,9 @@ run_tests: compile_tests plot
 test: run_tests cleanobj
 
 example: plot
-	cat t/example.scm
+	cat t/examples/example.scm
 	@echo "\n"
-	./plot t/example.scm
+	./plot t/examples/example.scm
 
 integration: plot
 	cat t/integration.scm
@@ -80,7 +80,7 @@ integration: plot
 
 cleanobj:
 	@echo cleaning objects and temporary files
-	@rm -f src/*.o src/*.to t/*.o src/*.su test
+	@rm -f src/*.o src/*.to t/*.o t/component/*.o src/*.su test
 
 foo: cleanobj
 

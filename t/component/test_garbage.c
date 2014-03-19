@@ -8,12 +8,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../src/value.h"
-#include "../src/env.h"
-#include "../src/parse.h"
-#include "../src/eval.h"
-#include "../src/funcs.h"
-#include "../src/plot.h"
+#include "../../src/value.h"
+#include "../../src/env.h"
+#include "../../src/parse.h"
+#include "../../src/eval.h"
+#include "../../src/funcs.h"
+#include "../../src/plot.h"
 
 /* plot test value symbol */
 #define PT_VS(s, l) &(plot_symbol){s, l, l, 0}

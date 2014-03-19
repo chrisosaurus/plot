@@ -8,8 +8,8 @@
 #include "test.h"
 #endif
 
-#include "../src/value.h"
-#include "../src/hash.h"
+#include "../../src/value.h"
+#include "../../src/hash.h"
 
 START_TEST (test_hash){
     plot_symbol a = (plot_symbol){"a", 2, 2, 0};
