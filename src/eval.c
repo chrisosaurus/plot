@@ -263,16 +263,14 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
                 val = plot_eval_expr(env, car(curarg));
                 curarg = cdr(curarg);
                 if( ! val ){
-                    puts("\tLAMBDA: evaluating argument returned NULL");
-                    return 0; /* FIXME error */
+                    return plot_runtime_error(plot_error_runtime, "evaluating argument returned NULL", "plot_eval_form LAMBDA");
                 }
                 if( val->type == plot_type_error ){
                     puts("plot_eval_form (lambda arg)");
                     return val;
                 }
                 if( ! plot_env_define(new_env, &(car(cur)->u.symbol), val) ){
-                    puts("\tLAMBDA: failed to define argument");
-                    return 0; /* FIXME error */
+                    return plot_runtime_error(plot_error_runtime, "failed to define argument", "plot_eval_form LAMBDA");
                 }
                 /* we are no longer holding a reference so decr */
                 plot_value_decr(val);
@@ -282,7 +280,7 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
              * if we have any left over here then throw an error
              */
             if( curarg->type != plot_type_null ){
-                return plot_runtime_error(plot_error_runtime, "too many args supplied to lambda", "LAMBDA");
+                return plot_runtime_error(plot_error_runtime, "too many args supplied to lambda", "plot_eval_form LAMBDA");
             }
 
             /* eval each part of the body in new_env
