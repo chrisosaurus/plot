@@ -278,6 +278,13 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
                 plot_value_decr(val);
             }
 
+            /* check for too may args
+             * if we have any left over here then throw an error
+             */
+            if( curarg->type != plot_type_null ){
+                return plot_runtime_error(plot_error_runtime, "too many args supplied to lambda", "LAMBDA");
+            }
+
             /* eval each part of the body in new_env
              * return value of final expr
              */

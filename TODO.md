@@ -80,7 +80,6 @@ runtime:
 
 bugs:
 -----
-* lambda does not check for too many args, `((lambda (x) (+ x 5)) 11 12)` will return 16 (should raise error).
 * string size/len is silly, too many magic numbers (+1 to store, -1 to use... ugly)
 * plot pair cons and decons are not symmetrical, cons will NOT incr but decons does decr
 * strings do not correctly support escaping
