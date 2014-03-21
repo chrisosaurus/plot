@@ -263,9 +263,6 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
              */
             curarg = cdr(sexpr);
             for( cur = car(func->u.lambda.body); cur->type != plot_type_null; cur = cdr(cur) ){
-                if( car(curarg)->type == plot_type_null ){
-                    /* FIXME NO ARG */
-                }
 
                 #if DEBUG || DEBUG_FORM
                 puts("cur");
@@ -273,6 +270,14 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
                 puts("curarg");
                 display_error_expr(curarg);
                 #endif
+
+                /* if curarg is not a pair then we have ran out of arguments
+                 * as we are still going through our expected parameter list
+                 * this means we have been ripped off
+                 */
+                if( curarg->type != plot_type_pair ){
+                    return plot_runtime_error(plot_error_runtime, "too few arguments supplied", "plot_eval_form LAMBDA");
+                }
 
                 val = plot_eval_expr(env, car(curarg));
                 curarg = cdr(curarg);
@@ -291,6 +296,7 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
             }
 
             /* check for too may args
+             * curarg should have been depleted when we iterated over our expected parameters
              * if we have any left over here then throw an error
              */
             if( curarg->type != plot_type_null ){
