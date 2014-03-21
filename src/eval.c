@@ -217,6 +217,20 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
                     /* eval and shove into list */
                     *vals = cons(0, null);
                     car(*vals) = plot_eval_expr(env, car(curarg));
+
+                    /* check for error from evaluating argument */
+                    if( car(*vals)->type == plot_type_error ){
+                        puts("\nSaw error when processing arguments for function call:");
+                        puts("  argument:");
+                        display_error_expr(car(curarg));
+                        puts("  function:");
+                        display_error_expr(car(sexpr));
+                        puts("  function call:");
+                        display_error_expr(sexpr);
+                        puts("");
+                        return car(*vals);
+                    }
+
                     vals = &cdr(*vals);
                 }
                 /* reusing cur, poorly named */

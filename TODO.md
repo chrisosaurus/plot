@@ -80,7 +80,7 @@ runtime:
 
 bugs:
 -----
-* tidy up stack trace for (display ((lambda (x) (+ x 5)) 11 12 13)) and (display ((lambda (x) (+ x 5))))
+* error for too few arguments to lambda is 'evaluating argument returned null'
 * string size/len is silly, too many magic numbers (+1 to store, -1 to use... ugly)
 * plot pair cons and decons are not symmetrical, cons will NOT incr but decons does decr
 * strings do not correctly support escaping
