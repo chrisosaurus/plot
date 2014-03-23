@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h> /* strlen */
+#include <stdlib.h> /* free */
 
 #include "value.h"
 #include "output.h"
@@ -10,6 +11,19 @@
  */
 void plot_value_decons(plot_value *value){
     switch( value->type ){
+        case plot_type_string:
+            /* currently plot strings are allocated via malloc/calloc
+             * so must be freed
+             * eventually we need to move strings under direct GC control
+             */
+            value->u.string.len = 0;
+            value->u.string.size = 0;
+            /* we should only get into decons for non-constant strings
+             * so free-ing here is safe
+             */
+            free(value->u.string.val);
+            value->u.string.val = 0;
+            break;
         case plot_type_library:
             plot_env_decr(value->u.library.internal);
             value->u.library.internal = 0;
