@@ -143,7 +143,7 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
             }
         }
 
-        /* (begin <command or defintion> ...)
+        /* (begin <command or definition> ...)
          * normal eval with env specified as u.library.internal
          * FIXME TODO
          */
