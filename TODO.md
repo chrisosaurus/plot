@@ -97,4 +97,5 @@ bugs:
 limitations:
 ------------
 * garbage collection of an object may trigger further garbage collection of other objects (see value.c:plot_value_decons), this could quickly exhaust the C stack height, consider switching to a work list model.
+* refcount could overflow (currently an int, as we use < 1 for not-managed)
 
