@@ -71,11 +71,15 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
      * are processed after all imports are performed.
      */
     plot_value *definitions = null;
+    /* cursor into definitions */
+    plot_value **defcur = &definitions;
 
     /* EXPORTS
      * are processed after all DEFINITIONS have been processed.
      */
     plot_value *exports = null;
+    /* cursor into exports */
+    plot_value **expcur = &exports;
 
 
     if( !sexpr || sexpr->type != plot_type_pair ){
