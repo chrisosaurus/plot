@@ -94,3 +94,7 @@ bugs:
 * look very carefully at gc around force (incr when generated vs incr when returned)
 * look very carefully at ref counting around various values and storage - current system is very brittle
 
+limitations:
+------------
+* garbage collection of an object may trigger further garbage collection of other objects (see value.c:plot_value_decons), this could quickly exhaust the C stack height, consider switching to a work list model.
+
