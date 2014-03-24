@@ -127,16 +127,18 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
         /* (export <export spec> ...)
          * add symbols to u.library.exported
          * symbols may have been defined or may later be defined
-         * FIXME TODO
          */
         if( hash == 656723401804llu){ /* make hasher && ./hasher export */
-            return plot_runtime_error(plot_error_unimplemented, "define-library : export unimplemented", "plot_form_define_library");
+            /* FIXME consider if incr on temporaries is needed
+               plot_value_incr(cur);
+            */
+            *expcur = cons(cur, null);
+            expcur = &cdr(*expcur);
         }
 
         /* (import <import set> ...)
          * should be able to re-use normal import and just specify
          * u.library.internal as the env to eval in
-         * FIXME TODO
          */
         else if( hash == 656723400763llu){ /* make hasher && ./hasher import */
             ret = plot_form_import(in, item);
@@ -149,10 +151,13 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
 
         /* (begin <command or definition> ...)
          * normal eval with env specified as u.library.internal
-         * FIXME TODO
          */
         else if( hash == 6416384521llu){ /* make hasher && ./hasher begin */
-            return plot_runtime_error(plot_error_unimplemented, "define-library : begin unimplemented", "plot_form_define_library");
+            /* FIXME consider if incr on temporaries is needed
+               plot_value_incr(cur);
+            */
+            *defcur = cons(cur, null);
+            defcur = &cdr(*defcur);
         }
 
         /* (include <filename1> <filename2> ...)
@@ -194,12 +199,33 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
     }
 
     /* process DEFINITIONS
-     * FIXME TODO
+     *  NB: (*defcur)->type is safe as we initialise to null (valid object, constant)
      */
+    for( *defcur = definitions; (*defcur)->type == plot_type_pair; defcur = &cdr(*defcur) ){
+        /* (begin <command or definition> ...)
+         * normal eval with env specified as u.library.internal
+         */
+        ret = plot_eval_sexpr(in, cur);
+        if( ret ){
+            if( ret->type == plot_type_error ){
+                puts("plot_form_define_library (definition), processing:");
+                display_error_expr(cur);
+                return ret;
+            } else {
+                /* throw away temporary, value is ignored */
+                plot_value_decr(ret);
+                ret = 0;
+            }
+        }
+    }
 
     /* process EXPORTS
-     * FIXME TODO
+     *  NB: (*expcur)->type is safe as we initialise to null (valid object, constant)
      */
+    for( *expcur = exports; (*expcur)->type == plot_type_pair; expcur = &cdr(*expcur) ){
+         /* FIXME TODO */
+        return plot_runtime_error(plot_error_unimplemented, "define-library : export unimplemented", "plot_form_define_library");
+    }
 
     return lib;
 }

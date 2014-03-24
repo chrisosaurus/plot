@@ -10,6 +10,11 @@ priorities:
 * plot introspection library
 * better I/O facilities
 
+library support:
+----------------
+* import functionality
+* export functionality
+
 operations:
 -----------
 * string-ci<?
@@ -69,7 +74,6 @@ features:
 * write repl front-end
 * macro system
 * variable arguments
-* begin work on library system
 * play around with `display_error_expr` as it is proving very useful, should probably give it a more general name
 
 runtime:
@@ -80,6 +84,7 @@ runtime:
 
 bugs:
 -----
+* need to better document return values of eval functions
 * string size/len is silly, too many magic numbers (+1 to store, -1 to use... ugly)
 * plot pair cons and decons are not symmetrical, cons will NOT incr but decons does decr
 * strings do not correctly support escaping
@@ -98,4 +103,5 @@ limitations:
 ------------
 * garbage collection of an object may trigger further garbage collection of other objects (see value.c:plot_value_decons), this could quickly exhaust the C stack height, consider switching to a work list model.
 * refcount could overflow (currently an int, as we use < 1 for not-managed)
+* many temporaries do not increase refcounts (e.g. forms.c:plot_form_define_library), this is generally okay in a single-threaded env but does not scale.
 
