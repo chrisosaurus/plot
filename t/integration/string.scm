@@ -40,16 +40,16 @@
   (if (string=? "hello world" (string-copy "hello world"))
     (if (string-ci=? "yes" "YES")
       (pass "one")
-      (fail "one case three"))
-    (fail "one case two"))
-  (fail "one case one"))
+      (fail "one case 3"))
+    (fail "one case 2"))
+  (fail "one case 1"))
 
 (if (= (string-length "hello") 100)
-  (fail "two case one")
+  (fail "two case 1")
   (if (string=? "yes" "nope")
-    (fail "two case two")
+    (fail "two case 2")
     (if (string-ci=? "yes" "nope")
-      (fail "two case three")
+      (fail "two case 3")
       (pass "two"))))
 
 ((lambda (str)
@@ -61,12 +61,12 @@
   (string-append "hello" " " "world"))
 
 ;; testing 6.3.5 string creation and manipulation procedures
-(define thirty-test-str (make-string 5 #\a))
-(string-set! thirty-test-str 2 #\X)
+(define four-test-str (make-string 5 #\a))
+(string-set! four-test-str 2 #\X)
 (if (string=? "ccccc" (make-string 5 #\c))
   (if (= 7 (string-length (make-string 7)))
     (if (char=? (string-ref (string #\a #\a #\a #\Q #\a) 3) #\Q)
-      (if (char=? (string-ref thirty-test-str 2) #\X)
+      (if (char=? (string-ref four-test-str 2) #\X)
         (if (string=? "abc" (substring "qqqabcqqq" 3 6))
           (pass "four")
           (fail "four case 5"))
@@ -75,22 +75,36 @@
     (fail "four case 2"))
   (fail "four case 1"))
 
+;; testing mutability and aliasing of strings
+(define five-test-str-1 "hello")
+(define five-test-str-2 five-test-str-1)
+; five-test-str-1 and  five-test-str-2 now refer to the same storage location
+; so modifications to either will be reflected in the other.
+(string-set! five-test-str-1 4 #\c)
+(if (char=? #\c (string-ref five-test-str-2 4))
+  (begin
+    (string-set! five-test-str-2 3 #\b)
+    (if (char=? #\b (string-ref five-test-str-1 3))
+      (pass "five")
+      (fail "five case 2")))
+  (fail "five case 1"))
+
 ;; testing 6.3.5 string procedures
 (if (string-ci=? "hello" (list->string (string->list "HeLlO")))
   (if (char=? (string-ref "hello" 1) #\e)
     (if (string=? (make-string 4 #\q) "qqqq")
-      (pass "five")
-      (fail "five case 3"))
-    (fail "five case 2"))
-  (fail "five case 1"))
+      (pass "six")
+      (fail "six case 3"))
+    (fail "six case 2"))
+  (fail "six case 1"))
 
 ;; A < z, a > z (ascii)
 (if #f
 (if (string-ci>? "A" "z")
   (if (string-ci=? "hello" (string #\H #\E #\L #\L #\O))
-    (pass "six")
-    (fail "six case 2"))
-  (fail "six case 2"))
+    (pass "seven")
+    (fail "seven case 2"))
+  (fail "seven case 1"))
 )
 
 
