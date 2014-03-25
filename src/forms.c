@@ -235,8 +235,50 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
      *  NB: (*expcur)->type is safe as we initialise to null (valid object, constant)
      */
     for( *expcur = exports; (*expcur)->type == plot_type_pair; expcur = &cdr(*expcur) ){
-         /* FIXME TODO */
-        return plot_runtime_error(plot_error_unimplemented, "define-library : export unimplemented", "plot_form_define_library");
+        /* section 5.6.1 p. 28
+         * an export is of the form:
+         *      (export <export spec> ...)
+         *
+         * where <export spec> can take either of the forms:
+         *      <identifier>
+         *      (rename <identifier1> <identifier2>)
+         *
+         * example taken from 5.6.2 p. 29
+         *      (export make rows cols ref each (rename put! set!))
+         *
+         */
+
+        /* at this point cur is (export ...) */
+        cur = car(*expcur);
+        /* must be a form */
+        if( cur->type != plot_type_pair ){
+            puts("plot_form_define_library (export processing)");
+            display_error_expr(cur);
+            return plot_runtime_error(plot_error_runtime, "define-library : export processing error, expected pair", "plot_form_define_library");
+        }
+
+        /* check car(cur) is really 'export' */
+        /* FIXME TODO */
+        //hash = car(item)->u.symbol.hash; /* FIXME checking on hash is ugly */
+        //if( hash == 656723401804llu){ /* make hasher && ./hasher export */
+
+        /* step through each later item and deal with the two cases */
+        for( cur=cdr(cur); cur->type == plot_type_pair; cur=cdr(cur) ){
+            if( car(cur)->type == plot_type_pair ){
+                /* (rename identifier identifier) */
+                // 540236984962 /* make hasher && ./hasher rename */
+                /* FIXME TODO */
+                return plot_runtime_error(plot_error_unimplemented, "define-library : (export (rename ...)) unimplemented", "plot_form_define_library");
+            } else if( car(cur)->type == plot_type_symbol ){
+                /* identifier */
+                /* FIXME TODO */
+                return plot_runtime_error(plot_error_unimplemented, "define-library : (export identifier...) unimplemented", "plot_form_define_library");
+            } else {
+                puts("plot_form_define_library (export processing)");
+                display_error_expr(cur);
+                return plot_runtime_error(plot_error_runtime, "define-library : export processing error, unexpected type", "plot_form_define_library");
+            }
+        }
     }
 
     /* will cause garbage collection of exports list
