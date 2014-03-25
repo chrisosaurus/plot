@@ -68,7 +68,9 @@ example: (see `make example`)
 
 planned work
 ------------
-Plot is aiming for full r7rs-small (WG1) compliance.
+Plot is aiming for (mostly) r7rs-small (WG1) compliance.
+
+The current planned exception is to omit continuations.
 
 dependencies
 ------------

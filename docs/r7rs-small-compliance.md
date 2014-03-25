@@ -265,11 +265,13 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
     the following procedures are not yet implemented:
         `vector-map`
         `vector-for-each`
-        `call-with-current-continuation`
-        `call/cc`
         `values`
         `call-with-values`
         `dynamic-wind`
+
+    the following procedures are planned for exclusion as plot has no plans to support continuations:
+        `call-with-current-continuation`
+        `call/cc`
 
 6.11 Exceptions
     Plot has the beginnings of an exception system, however it is not
