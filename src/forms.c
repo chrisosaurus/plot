@@ -111,6 +111,32 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
      *  if export -> add to `exports
      */
     for( cur = body; cur->type == plot_type_pair; cur = cdr(cur) ){
+        /* `cur` records our progress through the list (`body`)
+         * `item` is the current element we are inspecting inside the list (`body`)
+         *
+         *      here our `body` is a list
+         *          (foo bar)
+         *          (fooo barr)
+         *          (baz barf)
+         *          null
+         *
+         *      at each step `cur` is pointing to our position through `body` (the list)
+         *          first step: cur = (foo bar) (fooo barr) (baz barf) null
+         *          second step: cur = (fooo barr) (baz barf) null
+         *          third step: cur = (baz barf) null
+         *          fourth step: cur = null, null->type != plot_type_pair so for loop terminates
+         *
+         *      at each step we then set `item` to point to the actual element in the `body` (the list)
+         *          first step: item = (foo bar)
+         *          second step: cur = (fooo barr)
+         *          third step: cur = (baz barf)
+         *
+         *      we then inspect the car(item) which should be a symbol
+         *          first step: car(item) = foo
+         *          second step: car(item) = fooo
+         *          third step: car(item) = baz
+         *
+         */
         item = car(cur);
 
         if( item->type != plot_type_pair ){
