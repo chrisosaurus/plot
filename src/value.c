@@ -390,8 +390,16 @@ void display_expr(plot_value * sexpr){
         }
         fputs(")", stdout);
     } else {
+        if( sexpr->type == plot_type_string ){
+            fputs("\"", stdout);
+        }
+
         val = cons(sexpr, null);
         plot_func_display(0, val);
+
+        if( sexpr->type == plot_type_string ){
+            fputs("\"", stdout);
+        }
 
         /* set car of val to 0 before gc
          * as cons does not incr and we don't want
