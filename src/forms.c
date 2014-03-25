@@ -130,10 +130,10 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
          */
         if( hash == 656723401804llu){ /* make hasher && ./hasher export */
             /* here we incr so that we can garbage collect the temporary list
-             * without risking collecting object at cur
+             * without risking collecting object at item
              */
-            plot_value_incr(cur);
-            *expcur = cons(cur, null);
+            plot_value_incr(item);
+            *expcur = cons(item, null);
             expcur = &cdr(*expcur);
         }
 
@@ -155,10 +155,10 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
          */
         else if( hash == 6416384521llu){ /* make hasher && ./hasher begin */
             /* here we incr so that we can garbage collect the temporary list
-             * without risking collecting object at cur
+             * without risking collecting object at item
              */
-            plot_value_incr(cur);
-            *defcur = cons(cur, null);
+            plot_value_incr(item);
+            *defcur = cons(item, null);
             defcur = &cdr(*defcur);
         }
 
@@ -200,10 +200,14 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
         return plot_runtime_error(plot_error_runtime, "library body was malformed, expected pair or null but found neither", "plot_form_define_library");
     }
 
+    item = 0;
+    cur = 0;
+
     /* process DEFINITIONS
      *  NB: (*defcur)->type is safe as we initialise to null (valid object, constant)
      */
     for( *defcur = definitions; (*defcur)->type == plot_type_pair; defcur = &cdr(*defcur) ){
+        cur = car(*defcur);
         /* (begin <command or definition> ...)
          * normal eval with env specified as u.library.internal
          */
