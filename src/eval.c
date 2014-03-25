@@ -178,6 +178,8 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
     }
 
     if( sexpr->type != plot_type_pair ){
+        puts("plot_eval_form: Unexpected type");
+        display_error_expr(sexpr);
         plot_fatal_error("plot_eval_form: boom");
     }
 
