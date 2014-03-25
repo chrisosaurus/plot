@@ -129,9 +129,10 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
          * symbols may have been defined or may later be defined
          */
         if( hash == 656723401804llu){ /* make hasher && ./hasher export */
-            /* FIXME consider if incr on temporaries is needed
-               plot_value_incr(cur);
-            */
+            /* here we incr so that we can garbage collect the temporary list
+             * without risking collecting object at cur
+             */
+            plot_value_incr(cur);
             *expcur = cons(cur, null);
             expcur = &cdr(*expcur);
         }
@@ -153,9 +154,10 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
          * normal eval with env specified as u.library.internal
          */
         else if( hash == 6416384521llu){ /* make hasher && ./hasher begin */
-            /* FIXME consider if incr on temporaries is needed
-               plot_value_incr(cur);
-            */
+            /* here we incr so that we can garbage collect the temporary list
+             * without risking collecting object at cur
+             */
+            plot_value_incr(cur);
             *defcur = cons(cur, null);
             defcur = &cdr(*defcur);
         }
@@ -219,6 +221,12 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
         }
     }
 
+    /* will cause garbage collection of definitions list
+     * however the values in the list should still have sufficient counts
+     * to prevent collection (they were incr-d when placed into list
+     */
+    plot_value_decr(definitions);
+
     /* process EXPORTS
      *  NB: (*expcur)->type is safe as we initialise to null (valid object, constant)
      */
@@ -226,6 +234,12 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
          /* FIXME TODO */
         return plot_runtime_error(plot_error_unimplemented, "define-library : export unimplemented", "plot_form_define_library");
     }
+
+    /* will cause garbage collection of exports list
+     * however the values in the list should still have sufficient counts
+     * to prevent collection (they were incr-d when placed into list
+     */
+    plot_value_decr(exports);
 
     return lib;
 }
