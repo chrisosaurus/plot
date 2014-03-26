@@ -1,5 +1,8 @@
 library implementation plan
-----------------------------
+============================
+
+library example and discussion
+------------------------------
 
     (define-library (foo bar)
         (import (scheme base))
@@ -10,9 +13,9 @@ library implementation plan
     (import foo bar)
     (display (baz 12))
 
-internally we need a mapping of 'foo bar' -> env of export symbols.
+internally we need a mapping of '(foo bar') -> env of export symbols.
 
-when we encounter a `define-library` we create 2 new envs, one for internal scope, and the other for the exported symbols,
+when we encounter a `define-library` we create 2 new envs; one for internal scope, and the other for the exported symbols.
 we then evaluate each component of the body.
 
 importing adds things to the internal scope (from other libraries export scope).
@@ -37,5 +40,22 @@ and
 
 are equivalent (section 5.2 "import declarations", page 25), as `(import (only foo b))` does not require re-parsing a `define-library` nor
 a file-system search.
+
+
+Current picture
+---------------
+currently we have:
+
+* library type
+* eval of library body
+* simple exports `(export identifier1 ...)`
+
+
+what we are missing:
+
+* imports
+* file-system search
+* rename exports `(export (rename id1 id2) ...)`
+* structure to store defined libraries
 
 
