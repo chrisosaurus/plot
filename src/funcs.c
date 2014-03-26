@@ -222,7 +222,7 @@ struct plot_value * plot_func_symbol_equal_test(struct plot_env *env, struct plo
 /* returns 1 if value is considered truthy
  * returns 0 if falsy
  *
- * will decr supplied val
+ * does not modify value nor value's refcount
  */
 int plot_truthy(plot_value *val){
     int ret = 1;
@@ -367,7 +367,19 @@ struct plot_value * plot_func_promise_test(struct plot_env *env, struct plot_val
 
 /* (make-promise obj)
  * returns a new promise that will yield obj when forced
- * if force is already a promise then it is returned
+ * if obj is already a promise then it is returned
+ *
+ * make-promise is a procedure rather than syntax so it WILL evaluated it's argument
+ * make-promise is like delay but does not delay it's argument
+ *
+ *  (make-promise obj)
+ *
+ * is equivalent to
+ *
+ *  (begin
+ *      (define tmp (delay obj))
+ *      (force tmp)
+ *      tmp)
  */
 struct plot_value * plot_func_make_promise(struct plot_env *env, struct plot_value *args){
     plot_value *val;
@@ -376,14 +388,17 @@ struct plot_value * plot_func_make_promise(struct plot_env *env, struct plot_val
         return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_make_promise");
     }
 
+    /* do not modify if already a promise */
     if( car(args)->type == plot_type_promise ){
         return car(args);
     }
 
     val = plot_new_promise(env, car(args));
 
-    /* this obj has already been forced
-     * so we also set value to prevent re-evaluation
+    /* as we are a procedure (rather than syntax)
+     * the provided arg has already been eval'd
+     *
+     * set value to prevent re-evaluation
      */
     val->u.promise.value = car(args);
     plot_value_incr(val->u.promise.value);

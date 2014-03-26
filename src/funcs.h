@@ -106,7 +106,19 @@ struct plot_value * plot_func_promise_test(struct plot_env *env, struct plot_val
 
 /* (make-promise obj)
  * returns a new promise that will yield obj when forced
- * if force is already a promise then it is returned
+ * if obj is already a promise then it is returned
+ *
+ * make-promise is a procedure rather than syntax so it WILL evaluated it's argument
+ * make-promise is like delay but does not delay it's argument
+ *
+ *  (make-promise obj)
+ *
+ * is equivalent to
+ *
+ *  (begin
+ *      (define tmp (delay obj))
+ *      (force tmp)
+ *      tmp)
  */
 struct plot_value * plot_func_make_promise(struct plot_env *env, struct plot_value *args);
 
