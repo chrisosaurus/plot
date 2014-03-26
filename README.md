@@ -1,6 +1,8 @@
 plot
 ====
-Plot is a toy interpreter aiming for r7rs-small (WG1) compliance.
+Plot is a toy scheme interpreter written in C.
+
+Plot is aiming for r7rs-small (WG1) compliance.
 
 Plot is only ever intended to be a toy language and a purely academic pursuit, I hope to eventually play around
 with writing simple applications in plot.
@@ -71,6 +73,8 @@ planned work
 Plot is aiming for (mostly) r7rs-small (WG1) compliance.
 
 The current planned exception is to omit continuations.
+
+For a more accurate picture please see `docs/r7rs-small-compliance.md`.
 
 dependencies
 ------------
