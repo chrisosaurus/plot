@@ -39,3 +39,57 @@ this idea is also often expressed as:
 these two forms are effectively equivalent.
 
 
+Consuming a list in-order
+--------------------------
+For usage see forms.c:plot_form_define_library (`body`, `cur` and `item`).
+
+Say we have a list `body`
+
+    '((foo bar)
+      (fooo barr)
+      (baz barf))
+
+and we wan't to iterate through it
+
+    for( cur = body; cur->type == plot_type_pair; cur = cdr(cur) ){
+        item = car(cur);
+        ...
+    }
+
+at each step `cur` refers to the remaining unprocessed section of the list,
+and `item` refers to the current item to process
+
+step 1:
+
+    cur = body
+    '((foo bar)
+      ((fooo barr)
+       ((baz barf))))
+
+    item = car(cur)
+    '(foo bar)
+
+step 2:
+
+    cur = cdr(body)
+    '((fooo barr)
+     ((baz barf)))
+
+    item = car(cur)
+    '(fooo barr)
+
+step 3:
+
+    cur = cdr(cdr(body))
+
+    '((baz barf))
+
+    item = car(cur)
+    '(baz barf)
+
+step 4:
+
+    cur = cdr(cdr(cdr(body)))
+    '() ;; termination as cur->type == plot_type_null (violated for condition)
+
+
