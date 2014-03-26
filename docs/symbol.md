@@ -1,7 +1,7 @@
-symbols
+Symbols
 =======
 
-literals
+Literals
 --------
 A plot symbol can be made up from the following characters:
     a-z (97 - 122)
@@ -39,7 +39,7 @@ Some examples of valid identifiers (subset of those presented in r7rs section 2.
     V17a
 
 
-hashing
+Hashing
 -------
 Internally plot hashes symbols at various times and stores it in the plot_symbol (.hash).
 

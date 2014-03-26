@@ -1,3 +1,6 @@
+Unit testing musings
+============
+
 plot should move it's unit testing code into libraries:
 
     (import (only (plot test) test-begin test assert test-results))

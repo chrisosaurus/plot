@@ -1,7 +1,7 @@
-library implementation plan
+Library implementation plan
 ============================
 
-library example and discussion
+Library example and discussion
 ------------------------------
 
     (define-library (foo bar)
@@ -25,7 +25,7 @@ export adds an entry to the libraries export scope.
 also need a way of internally binding a symbol to a c function: `(plot-bind +)`.
 
 
-limitations
+Limitations
 -----------
 
 The current implementation I am pursuing for library support means that library names have to be unique within any running plot program,

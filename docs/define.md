@@ -1,4 +1,4 @@
-define
+Define
 ======
 
 define is used to bind a `plot_symbol` to a `plot_value` in an env.

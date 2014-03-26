@@ -1,7 +1,7 @@
 Coding guidelines
 =================
 
-procedure naming
+Procedure naming
 ----------------
 
 Scheme procedures that have hyphens will instead have underscores in their c function names:
@@ -26,7 +26,7 @@ Procedures that us arrow in their scheme name should use `_to_` in their c funct
 `(char->integer ...)` => `plot_func_char_to_integer`
 
 
-binding
+Binding
 -------
 
 every c function that should be exposed to the scheme runtime must be preceded by a function

@@ -1,4 +1,4 @@
-bindings
+Bindings
 ========
 
 build/generate_bindings.h is run during the build process in order to generate `src/bindings.h`
@@ -28,7 +28,7 @@ You can combine `-syntax` with either of the other two arguments, e.g `-core -sy
 
 If no argument is found the default is `library`.
 
-argument interface
+Argument interface
 ------------------
 
 a function is given it's arguments as a plot list (chain of pairs where the final cdr is a null, cars contain data)

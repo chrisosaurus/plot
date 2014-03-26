@@ -1,4 +1,4 @@
-memory management
+Memory management
 =================
 
 the implementation of the GC is still in progress, thus this document is a work in progress.

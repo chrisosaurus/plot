@@ -1,4 +1,4 @@
-patterns
+Patterns
 ==================
 
 there are a few patters used throughout plot that may seem dangerous at first glance,
