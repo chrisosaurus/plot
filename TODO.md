@@ -9,11 +9,13 @@ priorities:
 * plot unit testing library
 * plot introspection library
 * better I/O facilities
+* repl
 
 library support:
 ----------------
 * import functionality
-* export functionality
+* export rename functionality
+* adding defined library to list
 
 operations:
 -----------
