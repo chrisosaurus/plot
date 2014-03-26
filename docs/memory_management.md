@@ -4,7 +4,7 @@ memory management
 the implementation of the GC is still in progress, thus this document is a work in progress.
 
 
-interface
+Basics
 ----------
 
 new objects are allocated manually (by the runtime sysytem) via calls to plot_alloc_foo:
@@ -49,4 +49,40 @@ refcount of -1; you can turn an object into a constant via a call to
     void plot_value_constantify(plot_value *val);
 
 there is also a mostly-deprecated `plot_alloc_constant`, this has mostly been superseded by `plot_value_constantify`.
+
+
+Auto incr/decr functions
+---------------------------
+Some functions modify the refcounts of their supplied arguments or returned values
+
+non-authoritative list of some functions that modify refcounts and how they modify it:
+
+    plot_new_promise - incrs supplied env and expr
+    plot_new_lambda - incrs supplied env and bidy
+    plot_hash_get - incrs fetched value
+    plot_hash_set - incrs stored value
+    plot_func_force - incrs returns value (from evaluating promise body)
+    plot_func_make_promise - incrs generated value before storing
+    plot_env_init - incrs parent env
+    plot_func_pair_cons - incrs both car and cdr before storing
+    plot_func_pair_car - incrs result before returning
+    plot_func_pair_cdr - incrs result before returning
+    plot_func_pair_set_car - incrs new value
+    plot_func_pair_set_cdr - incrs new value
+    plot_func_pair_list - incrs each supplied value before storing
+    plot_func_pair_append - incrs each supplied value before storing
+    plot_func_pair_reverse - incrs each supplied value as it stores them in a new (reversed) list
+    plot_func_pair_make_list - incrs fill for each new item
+    plot_func_pair_list_tail - incrs returned (sub) list
+    plot_func_pair_list_ref - incrs returned value
+    plot_func_pair_list_set - incrs new value
+    plot_func_pair_list_copy - incrs values before copying to new list
+
+    plot_value_decons - decrements objected referenced by collected object
+    plot_hash_cleanup - decrs stored objects and hash elements on cleanup
+    plot_hash_set - decrs overwritten value
+    plot_func_pair_set_car - decrs old value
+    plot_func_pair_set_cdr - decrs old value
+    plot_func_pair_list_set - decrs old value
+
 
