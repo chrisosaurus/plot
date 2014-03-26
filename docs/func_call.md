@@ -1,3 +1,14 @@
+Function call interface
+=======================
+
+Internal routines for calling procedures are still in flux, currently there is both `plot_func_control_apply` and `plot_eval_form`.
+
+This document is more a work-in-progress.
+
+
+Musings
+-------------
+
 a call to a function looks like
 
     (func arg1 args ...)
