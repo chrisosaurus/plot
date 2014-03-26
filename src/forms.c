@@ -259,6 +259,7 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
 
     /* process EXPORTS
      *  NB: (*expcur)->type is safe as we initialise to null (valid object, constant)
+     *  expcur is '((export ...) ...)
      */
     for( *expcur = exports; (*expcur)->type == plot_type_pair; expcur = &cdr(*expcur) ){
         /* section 5.6.1 p. 28
@@ -291,14 +292,42 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
         /* step through each later item and deal with the two cases */
         for( cur=cdr(cur); cur->type == plot_type_pair; cur=cdr(cur) ){
             if( car(cur)->type == plot_type_pair ){
+                /* it is a pair and therefore must be a rename */
                 /* (rename identifier identifier) */
                 // 540236984962 /* make hasher && ./hasher rename */
                 /* FIXME TODO */
                 return plot_runtime_error(plot_error_unimplemented, "define-library : (export (rename ...)) unimplemented", "plot_form_define_library");
+
             } else if( car(cur)->type == plot_type_symbol ){
-                /* identifier */
-                /* FIXME TODO */
-                return plot_runtime_error(plot_error_unimplemented, "define-library : (export identifier...) unimplemented", "plot_form_define_library");
+                /* it is an identifier so is a simple export
+                 *  tmp = get internal idn
+                 *  set external idn tmp
+                 *  decr tmp ;; as both get and set will incr, set is fine as it holds a ref, but we need to decr for the get (as we arent holding a ref)
+                 */
+
+                /* item is now current identifier */
+                item = car(cur);
+
+                ret = plot_env_get(in, &item->u.symbol);
+                /* check ret */
+                if( ! ret ){
+                    return plot_runtime_error(plot_error_runtime, "define-library : (export identifier...) call to plot_env_get(in, item) yielded null", "plot_form_define_library");
+                }
+                if( ret->type == plot_type_error ){
+                    puts("define-library (export identifier ...)");
+                    return ret;
+                }
+
+                /* save to external env */
+                plot_env_set(ex, &item->u.symbol, ret);
+
+                /* both get and set incr
+                 * as set is holding a ref that is correct
+                 * but we do not hold the ref that get expects, so must decr
+                 */
+                plot_value_decr(ret);
+                ret = 0;
+
             } else {
                 puts("plot_form_define_library (export processing)");
                 display_error_expr(cur);
@@ -313,6 +342,9 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
      */
     plot_value_decr(exports);
 
+    /* FIXME TODO
+     * we shouldn't return lib here, we should add to our 'eval-d lib list'
+     */
     return lib;
 }
 
