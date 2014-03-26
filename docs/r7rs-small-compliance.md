@@ -1,4 +1,9 @@
+R7rs compliance report
+======================
 List of r7rs-small (WG1) sections and notes on implementation progress and any deviations from standard.
+
+Support
+-------
 
 2.2 comments
     `;` comments are implemented
@@ -372,4 +377,11 @@ List of r7rs-small (WG1) sections and notes on implementation progress and any d
         `jiffies-per-second`
         `features`
 
+
+Known deviations
+-----------------
+As plot is still in development there are many deviations from the standard, many of which will be fixed eventually,
+here I try to document intentional or significant deviations from the standard:
+
+* Plot has no plans to support continuations
 
