@@ -203,6 +203,11 @@ struct plot_value * plot_func_pair_length(struct plot_env *env, struct plot_valu
  * throw errors
  *
  * FIXME consider throwing errors on non-lists as non-last arguments.
+ *
+ * (define (flatten list)
+ *      (apply append list))
+ * (flatten '((1 2 3) (4 5 6))) ; => '(1 2 3 4 5 6)
+ *
  */
 struct plot_value * plot_func_pair_append(struct plot_env *env, struct plot_value *args){
     plot_value *head, **outcur, *arg, *elem;
