@@ -233,8 +233,17 @@ void plot_cleanup(){
     printf("\tenv_loop '%d'\n", plot_instance->num_env_loop);
     printf("\n");
 #endif
-    plot_env_cleanup(plot_instance->env);
-    free(plot_instance);
+
+    /* FIXME
+     * we need to make this a better mirror of init()
+     * we currently rely too much on cleanup on exit
+     */
+    if( plot_instance ){
+        plot_value_decr(plot_instance->libraries);
+        plot_env_cleanup(plot_instance->library_forms);
+        plot_env_cleanup(plot_instance->env);
+        free(plot_instance);
+    }
 }
 
 /* generates an appropriate error value, prints it, and then returns it
