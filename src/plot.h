@@ -28,6 +28,10 @@ struct plot_env * plot_get_global_env(void);
  */
 struct plot_env * plot_get_library_forms(void);
 
+/* return alist (assocation list) for defined libraies
+ */
+struct plot_value * plot_get_libraries(void);
+
 /* plot_cleanup cleans up internal state
  * must be last method called
  */

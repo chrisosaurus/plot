@@ -23,6 +23,7 @@ importing adds things to the internal scope (from other libraries export scope).
 export adds an entry to the libraries export scope.
 
 also need a way of internally binding a symbol to a c function: `(plot-bind +)`.
+we may want to expose this via source code comments above the c functions.
 
 
 Limitations
@@ -49,6 +50,7 @@ currently we have:
 * library type
 * eval of library body
 * simple exports `(export identifier1 ...)`
+* structure to store defined libraries
 
 
 what we are missing:
@@ -56,6 +58,6 @@ what we are missing:
 * imports
 * file-system search
 * rename exports `(export (rename id1 id2) ...)`
-* structure to store defined libraries
+* storing define libraries
 
 

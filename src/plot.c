@@ -18,11 +18,19 @@ typedef struct plot {
     struct plot_value error;
     /* default global env */
     struct plot_env *env;
+
     /* known internal definitions
      * possibly exposed to userland
      * via plot-bind
      */
     struct plot_env *library_forms;
+
+    /* libraries we have seen defined
+     * alist (assosiation list)
+     * key is list of symbols e.g. `(scheme base`)
+     * value is a plot_library
+     */
+    struct plot_value *libraries;
 
     /**** GC arena ****/
     /* array of malloc'd values */
@@ -116,6 +124,8 @@ int plot_init(void){
         return 0;
     }
 
+    plot_instance->libraries = plot_new_null();
+
     plot_instance->library_forms = plot_alloc_env(0);
     if( ! plot_instance->env ){
         puts("call to plot_env_init for internal bindings failed");
@@ -172,6 +182,15 @@ struct plot_env * plot_get_library_forms(void){
         return 0;
 
     return plot_instance->library_forms;
+}
+
+/* return alist (assoc list) for defined libraies
+ */
+struct plot_value * plot_get_libraries(void){
+    if( ! plot_instance )
+        return 0;
+
+    return plot_instance->libraries;
 }
 
 void plot_cleanup(){
