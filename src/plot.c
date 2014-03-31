@@ -97,8 +97,8 @@ int plot_init(void){
 
     plot_instance = calloc(1, sizeof *plot_instance);
     if( ! plot_instance ){
-        puts("alloc failed in plot_init");
-        return 0;
+        plot_fatal_error("alloc failed in plot_init");
+        return 0; /* keep the compiler happy */
     }
 
     plot_instance->error.gc.refcount = -1;
@@ -121,7 +121,8 @@ int plot_init(void){
     if( ! plot_instance->env ){
         puts("call to plot_env_init failed");
         plot_cleanup();
-        return 0;
+        plot_fatal_error("call to plot_env_init failed");
+        return 0; /* keep the compiler happy */
     }
 
     plot_instance->libraries = plot_new_null();
@@ -130,7 +131,8 @@ int plot_init(void){
     if( ! plot_instance->env ){
         puts("call to plot_env_init for internal bindings failed");
         plot_cleanup();
-        return 0;
+        plot_fatal_error("call to plot_env_init for internal bindings failed");
+        return 0; /* keep the compiler happy */
     }
 
     /* core form bindings
@@ -171,15 +173,19 @@ int plot_init(void){
 }
 
 struct plot_env * plot_get_global_env(void){
-    if( ! plot_instance )
-        return 0;
+    if( ! plot_instance ){
+        plot_fatal_error("plot_get_global_env called before plot_instance setup");
+        return 0; /* keep the compiler happy */
+    }
 
     return plot_instance->env;
 }
 
 struct plot_env * plot_get_library_forms(void){
-    if( ! plot_instance )
-        return 0;
+    if( ! plot_instance ){
+        plot_fatal_error("plot_get_library_forms called before plot_instance setup");
+        return 0; /* keep the compiler happy */
+    }
 
     return plot_instance->library_forms;
 }
@@ -187,8 +193,10 @@ struct plot_env * plot_get_library_forms(void){
 /* return alist (assoc list) for defined libraies
  */
 struct plot_value * plot_get_libraries(void){
-    if( ! plot_instance )
-        return 0;
+    if( ! plot_instance ){
+        plot_fatal_error("plot_get_libraries called before plot_instance setup");
+        return 0; /* keep the compiler happy */
+    }
 
     return plot_instance->libraries;
 }
@@ -256,8 +264,10 @@ struct plot_value * plot_runtime_error(plot_error_type type, const char *msg, co
     plot_value *err;
     const char *error_type_str;
 
-    if( ! plot_instance )
+    if( ! plot_instance ){
         plot_fatal_error("plot_runtime_error called without plot_instance being initialised");
+        return 0; /* keep the compiler happy */
+    }
 
     err = &plot_instance->error;
     err->type = plot_type_error;
@@ -409,8 +419,8 @@ void plot_gc_value_init(void){
     plot_instance->num_value_allocated = 2000;
     plot_instance->value_arena = calloc( plot_instance->num_value_allocated, sizeof (struct plot_value) );
     if( ! plot_instance->value_arena ){
-        puts("plot_gc_value_init ERROR: failed to calloc value arena");
-        exit(1);
+        plot_fatal_error("plot_gc_value_init ERROR: failed to calloc value arena");
+        return; /* keep the compiler happy */
     }
 }
 
@@ -467,8 +477,8 @@ void plot_env_decr(struct plot_env *e){
         }
     } else {
         /* this object already has a refcount of 0, ERROR */
-        puts("plot_env_decr: This object already has a refcount of 0, ERROR has occurred, terminating");
-        exit(1);
+        plot_fatal_error("plot_env_decr: This object already has a refcount of 0, ERROR has occurred, terminating");
+        return; /* keep the compiler happy */
     }
 
     #if DEBUG
@@ -483,8 +493,8 @@ void plot_env_decr(struct plot_env *e){
  */
 void plot_gc_env_init(void){
     if( ! plot_instance ){
-        puts("plot_gc_env_init called without plot_instance being initialised");
-        exit(1);
+        plot_fatal_error("plot_gc_env_init called without plot_instance being initialised");
+        return; /* keep the compiler happy */
     }
 
     plot_instance->num_env_used = 0;
@@ -494,8 +504,8 @@ void plot_gc_env_init(void){
     plot_instance->num_env_allocated = 2000;
     plot_instance->env_arena = calloc( plot_instance->num_env_allocated, sizeof (struct plot_env) );
     if( ! plot_instance->env_arena ){
-        puts("plot_gc_env_init ERROR: failed to calloc env arena");
-        exit(1);
+        plot_fatal_error("plot_gc_env_init ERROR: failed to calloc env arena");
+        return; /* keep the compiler happy */
     }
 }
 
@@ -549,8 +559,8 @@ void plot_he_decr(struct plot_hash_entry *he){
         }
     } else {
         /* this object already has a refcount of 0, ERROR */
-        puts("plot_he_decr: This object already has a refcount of 0, ERROR has occurred, terminating");
-        exit(1);
+        plot_fatal_error("plot_he_decr: This object already has a refcount of 0, ERROR has occurred, terminating");
+        return; /* keep the compiler happy */
     }
 
     #if DEBUG
@@ -566,8 +576,8 @@ void plot_he_decr(struct plot_hash_entry *he){
  */
 void plot_gc_he_init(void){
     if( ! plot_instance ){
-        puts("plot_gc_he_init called without plot_instance being initialised");
-        exit(1);
+        plot_fatal_error("plot_gc_he_init called without plot_instance being initialised");
+        return; /* keep the compiler happy */
     }
 
     plot_instance->num_he_used = 0;
@@ -577,8 +587,8 @@ void plot_gc_he_init(void){
     plot_instance->num_he_allocated = 2000;
     plot_instance->he_arena = calloc( plot_instance->num_he_allocated, sizeof (struct plot_hash_entry) );
     if( ! plot_instance->he_arena ){
-        puts("plot_gc_he_init ERROR: failed to calloc hv arena");
-        exit(1);
+        plot_fatal_error("plot_gc_he_init ERROR: failed to calloc hv arena");
+        return; /* keep the compiler happy */
     }
 }
 
@@ -586,8 +596,8 @@ void plot_gc_he_init(void){
 struct plot_value * plot_alloc_value(void){
     struct plot_value *p;
     if( ! plot_instance ){
-        puts("plot_alloc_value called without plot_instance being initialised");
-        exit(1);
+        plot_fatal_error("plot_alloc_value called without plot_instance being initialised");
+        return 0; /* keep the compiler happy */
     }
 
     if( plot_instance->value_reclaimed ){
@@ -605,7 +615,8 @@ struct plot_value * plot_alloc_value(void){
     if( plot_instance->num_value_used >= plot_instance->num_value_allocated ){
         /* FIXME realloc */
         printf("THE BANK IS EMPTY; allocated all '%d' plot_value(s)\n", plot_instance->num_value_used);
-        exit(1);
+        plot_fatal_error("The bank is empty");
+        return 0; /* keep the compiler happy */
     } else {
         /* hand out resources */
         p = &(plot_instance->value_arena[ plot_instance->num_value_used ++]);
@@ -635,8 +646,8 @@ struct plot_value * plot_alloc_constant(void){
 struct plot_env * plot_alloc_env(struct plot_env *parent){
     struct plot_env *e;
     if( ! plot_instance ){
-        puts("plot_alloc_env called without plot_instance being initialised");
-        exit(1);
+        plot_fatal_error("plot_alloc_env called without plot_instance being initialised");
+        return 0; /* keep the compiler happy */
     }
 
     if( plot_instance->env_reclaimed ){
@@ -651,15 +662,16 @@ struct plot_env * plot_alloc_env(struct plot_env *parent){
         e->gc.next = 0;
         //printf("\tRECLAIMED: trying to set parent for '%p', parent is '%p'\n", (void*)e, (void*)parent);
         if( ! plot_env_init(e, parent) ){
-            puts("plot_value_new: call to plot_env_init failed");
-            exit(1);
+            plot_fatal_error("plot_value_new: call to plot_env_init failed");
+            return 0; /* keep the compiler happy */
         }
         return e;
     }
     if( plot_instance->num_env_used >= plot_instance->num_env_allocated ){
         /* FIXME realloc */
         printf("THE BANK IS EMPTY; allocated all '%d' plot_env(s)\n", plot_instance->num_env_used);
-        exit(1);
+        plot_fatal_error("plot_alloc_env: the bank is empty");
+        return 0; /* keep the compiler happy */
     } else {
         /* hand out resources */
         e = &(plot_instance->env_arena[ plot_instance->num_env_used ++]);
@@ -667,8 +679,8 @@ struct plot_env * plot_alloc_env(struct plot_env *parent){
         e->gc.next = 0;
         //printf("\tNEW: trying to set parent for '%p', parent is '%p'\n", (void*)e, (void*)parent);
         if( ! plot_env_init(e, parent) ){
-            puts("plot_value_new: call to plot_env_init failed");
-            exit(1);
+            plot_fatal_error("plot_value_new: call to plot_env_init failed");
+            return 0; /* keep the compiler happy */
         }
         return e;
     }
@@ -679,8 +691,8 @@ struct plot_env * plot_alloc_env(struct plot_env *parent){
 struct plot_hash_entry * plot_alloc_hash_entry(void){
     struct plot_hash_entry *he;
     if( ! plot_instance ){
-        puts("plot_alloc_hash_entry called without plot_instance being initialised");
-        exit(1);
+        plot_fatal_error("plot_alloc_hash_entry called without plot_instance being initialised");
+        return 0; /* keep the compiler happy */
     }
 
     if( plot_instance->he_reclaimed ){
@@ -697,7 +709,8 @@ struct plot_hash_entry * plot_alloc_hash_entry(void){
     if( plot_instance->num_he_used >= plot_instance->num_he_allocated ){
         /* FIXME realloc */
         printf("THE BANK IS EMPTY; allocated all '%d' plot_he(s)\n", plot_instance->num_he_used);
-        exit(1);
+        plot_fatal_error("plot_alloc_hash_entry: the bank is empty");
+        return 0; /* keep the compiler happy */
     } else {
         /* hand out resources */
         he = &(plot_instance->he_arena[ plot_instance->num_he_used ++]);
@@ -714,45 +727,66 @@ char * plot_alloc_string(int len){
     c = calloc(len, sizeof *c);
     if( ! c ){
         /* TODO FIXME use plot error handling */
-        puts("plot_alloc_string: calloc failed, dying");
-        exit(1);
+        plot_fatal_error("plot_alloc_string: calloc failed, dying");
+        return 0; /* keep the compiler happy */
     }
     return c;
 }
 
 struct plot_value * plot_get_unspecified_constant(void){
-    if( ! plot_instance) return 0;
+    if( ! plot_instance){
+        plot_fatal_error("plot_get_unspecified_constant called without plot_instance initialisation");
+        return 0; /* keep the compiler happy */
+    }
     return &plot_instance->unspecified_constant;
 }
 
 struct plot_value * plot_get_null_constant(void){
-    if( ! plot_instance) return 0;
+    if( ! plot_instance){
+        plot_fatal_error("plot_get_null_constant called without plot_instance initialisation");
+        return 0; /* keep the compiler happy */
+    }
     return &plot_instance->null_constant;
 }
 
 struct plot_value * plot_get_eof_constant(void){
-    if( ! plot_instance) return 0;
+    if( ! plot_instance){
+        plot_fatal_error("plot_get_eof_constant called without plot_instance initialisation");
+        return 0; /* keep the compiler happy */
+    }
     return &plot_instance->eof_constant;
 }
 
 #if HASH_STATS
 void plot_stats_hash_get(void){
-    if( ! plot_instance ) return;
+    if( ! plot_instance ){
+        plot_fatal_error("plot_stats_hash_get called without plot_instance initialisation");
+        return 0; /* keep the compiler happy */
+    }
     ++plot_instance->num_hash_get;
 }
 
 void plot_stats_hash_comp(void){
-    if( ! plot_instance ) return;
+    if( ! plot_instance ){
+        plot_fatal_error("plot_stats_hash_comp called without plot_instance initialisation");
+        return 0; /* keep the compiler happy */
+    }
     ++plot_instance->num_hash_comp;
 }
 
 void plot_stats_env_get(void){
-    if( ! plot_instance ) return;
+    if( ! plot_instance ){
+        plot_fatal_error("plot_stats_env_get called without plot_instance initialisation");
+        return 0; /* keep the compiler happy */
+    }
     ++plot_instance->num_env_get;
 }
 
 void plot_stats_env_loop(void){
-    if( ! plot_instance ) return;
+    if( ! plot_instance ){
+        plot_fatal_error("plot_stats_env_loop called without plot_instance initialisation");
+        return 0; /* keep the compiler happy */
+    }
     ++plot_instance->num_env_loop;
 }
 
