@@ -217,7 +217,7 @@ void plot_set_libraries(struct plot_value * libs){
 
 /* add a defined library
  * method calls `cons` on supplied lib and supplied name
- * which WILL incr it
+ * which WILL incr them
  * no other refcounts are modified
  */
 void plot_add_library(struct plot_value *name, struct plot_value *lib){
