@@ -172,6 +172,23 @@
     (fail "fourteen case 2"))
   (fail "fourteen case 1"))
 
+(define (fifteen-filter pred lst)
+  (define new-lst '())
+  (for-each (lambda (l)
+    (if (pred l)
+      (set! new-lst (cons l new-lst)))) lst)
+  (reverse new-lst))
+
+(define (fifteen-odd x)
+  (= (remainder x 2) 1))
+
+(if (equal?
+      '(1 3 5)
+      (fifteen-filter fifteen-odd '(0 1 2 3 4 5 6)))
+  (pass "fifteen")
+  (fail "fifteen"))
+
+
 ;; tests completed, print results
 (println ">>> pair test results")
 (results)
