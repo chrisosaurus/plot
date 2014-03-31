@@ -13,9 +13,13 @@ priorities:
 
 library support:
 ----------------
-* import functionality
-* export rename functionality
 * adding defined library to list
+* basic import functionality
+* ability to bind to `(scheme base)`, `(srfi 1)`, etc.
+* export rename functionality
+* cond-expand
+* more complex import (only, except, prefix, rename)
+* includes (ci, library-declaration, normal)
 
 operations:
 -----------
