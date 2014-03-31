@@ -422,12 +422,15 @@ struct plot_value * plot_func_pair_list_set(struct plot_env *env, struct plot_va
 }
 
 /* (memq obj list)
- * (memq obj list compare)
  *
  * returns sublist of list whose car is obj
  * otherwise returns #f
  *
  * compares using `eq?`
+ *
+ * (memq 'a '(a b c)) ; => (a b c)
+ * (memq 'b '(a b c)) ; => (b c)
+ * (memq 'a '(b c d)) ; => #f
  */
 struct plot_value * plot_func_pair_memq(struct plot_env *env, struct plot_value *args){
     plot_value *func;
@@ -457,12 +460,15 @@ struct plot_value * plot_func_pair_memq(struct plot_env *env, struct plot_value 
 }
 
 /* (memv obj list)
- * (memv obj list compare)
  *
  * returns sublist of list whose car is obj
  * otherwise returns #f
  *
  * compares using `eqv?`
+ *
+ * (memv 'a '(a b c)) ; => (a b c)
+ * (memv 'b '(a b c)) ; => (b c)
+ * (memv 'a '(b c d)) ; => #f
  */
 struct plot_value * plot_func_pair_memv(struct plot_env *env, struct plot_value *args){
     plot_value *func;
@@ -577,6 +583,7 @@ struct plot_value * plot_func_pair_member(struct plot_env *env, struct plot_valu
 }
 
 /* (assq obj alist)
+ *
  * alist is an association list (list of pairs)
  *
  * assq finds the first set of pairs of car is obj and returns that pair
@@ -612,6 +619,7 @@ struct plot_value * plot_func_pair_assq(struct plot_env *env, struct plot_value 
 }
 
 /* (assv obj alist)
+ *
  * alist is an association list (list of pairs)
  *
  * assv finds the first set of pairs of car is obj and returns that pair
@@ -648,6 +656,7 @@ struct plot_value * plot_func_pair_assv(struct plot_env *env, struct plot_value 
 
 /* (assoc obj alist)
  * (assoc obj alist compare)
+ *
  * alist is an association list (list of pairs)
  *
  * assoc finds the first set of pairs of car is obj and returns that pair
