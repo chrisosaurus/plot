@@ -795,7 +795,7 @@ struct plot_value * plot_get_eof_constant(void){
 void plot_stats_hash_get(void){
     if( ! plot_instance ){
         plot_fatal_error("plot_stats_hash_get called without plot_instance initialisation");
-        return 0; /* keep the compiler happy */
+        return; /* keep the compiler happy */
     }
     ++plot_instance->num_hash_get;
 }
@@ -803,7 +803,7 @@ void plot_stats_hash_get(void){
 void plot_stats_hash_comp(void){
     if( ! plot_instance ){
         plot_fatal_error("plot_stats_hash_comp called without plot_instance initialisation");
-        return 0; /* keep the compiler happy */
+        return; /* keep the compiler happy */
     }
     ++plot_instance->num_hash_comp;
 }
@@ -811,7 +811,7 @@ void plot_stats_hash_comp(void){
 void plot_stats_env_get(void){
     if( ! plot_instance ){
         plot_fatal_error("plot_stats_env_get called without plot_instance initialisation");
-        return 0; /* keep the compiler happy */
+        return; /* keep the compiler happy */
     }
     ++plot_instance->num_env_get;
 }
@@ -819,7 +819,7 @@ void plot_stats_env_get(void){
 void plot_stats_env_loop(void){
     if( ! plot_instance ){
         plot_fatal_error("plot_stats_env_loop called without plot_instance initialisation");
-        return 0; /* keep the compiler happy */
+        return; /* keep the compiler happy */
     }
     ++plot_instance->num_env_loop;
 }
