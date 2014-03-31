@@ -239,7 +239,7 @@ struct plot_value * plot_func_pair_append(struct plot_env *env, struct plot_valu
 }
 
 /* (reverse list)
- * return new allocated list containing all the values form list in reverse order
+ * return new allocated list containing all the values from list in reverse order
  */
 struct plot_value * plot_func_pair_reverse(struct plot_env *env, struct plot_value *args){
     plot_value *val, *tmp;
@@ -427,7 +427,7 @@ struct plot_value * plot_func_pair_list_set(struct plot_env *env, struct plot_va
  * returns sublist of list whose car is obj
  * otherwise returns #f
  *
- * compares using `eqq?`
+ * compares using `eq?`
  */
 struct plot_value * plot_func_pair_memq(struct plot_env *env, struct plot_value *args){
     plot_value *func;
