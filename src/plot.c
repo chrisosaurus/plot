@@ -201,6 +201,40 @@ struct plot_value * plot_get_libraries(void){
     return plot_instance->libraries;
 }
 
+/* set libraries list
+ * method does NOT incr or decr any values
+ * caller is expected to manage all such things
+ * even on currently stored library value (plot_instance->libraries)
+ */
+void plot_set_libraries(struct plot_value * libs){
+    if( ! plot_instance ){
+        plot_fatal_error("plot_set_libraries called before plot_instance setup");
+        return; /* keep the compiler happy */
+    }
+
+    plot_instance->libraries = libs;
+}
+
+/* add a defined library
+ * method calls `cons` on supplied lib and supplied name
+ * which WILL incr it
+ * no other refcounts are modified
+ */
+void plot_add_library(struct plot_value *name, struct plot_value *lib){
+    if( ! plot_instance ){
+        plot_fatal_error("plot_add_library called before plot_instance setup");
+        return; /* keep the compiler happy */
+    }
+
+    /* FIXME check for pre-existing library
+     */
+
+    /* libraries is an association list
+     * key is `name` and value is `lib`
+     */
+    plot_instance->libraries = cons(cons(name, lib), plot_instance->libraries);
+}
+
 void plot_cleanup(){
 #if GC_STATS
 

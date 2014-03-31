@@ -13,9 +13,9 @@ priorities:
 
 library support:
 ----------------
-* adding defined library to list
 * basic import functionality
 * ability to bind to `(scheme base)`, `(srfi 1)`, etc.
+* check for existing library on `define-library`
 * export rename functionality
 * cond-expand
 * more complex import (only, except, prefix, rename)

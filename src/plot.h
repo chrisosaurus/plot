@@ -32,6 +32,20 @@ struct plot_env * plot_get_library_forms(void);
  */
 struct plot_value * plot_get_libraries(void);
 
+/* set libraries list
+ * method does NOT incr or decr any values
+ * caller is expected to manage all such things
+ * even on currently stored library value (plot_instance->libraries)
+ */
+void plot_set_libraries(struct plot_value *libs);
+
+/* add a defined library
+ * method calls `cons` on supplied lib and supplied name
+ * which WILL incr it
+ * no other refcounts are modified
+ */
+void plot_add_library(struct plot_value *name, struct plot_value *lib);
+
 /* plot_cleanup cleans up internal state
  * must be last method called
  */

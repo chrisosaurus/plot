@@ -104,6 +104,9 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
             return plot_runtime_error(plot_error_bad_args, "library name was of incorrect type", "plot_form_define_library");
     }
 
+    /* FIXME TODO check library is not already defined
+     */
+
     /* go through body
      * examine each part
      *  if import -> process immediately
@@ -342,10 +345,17 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
      */
     plot_value_decr(exports);
 
-    /* FIXME TODO
-     * we shouldn't return lib here, we should add to our 'eval-d lib list'
+    /* add our lib to list of defined-libraries
      */
-    return lib;
+    plot_add_library(name, lib);
+
+    /* plot_add_library calls cons which will incr our lib
+     * our lib is also incr-ed by creation (new library) so the refcount
+     * has to be decr-ed to be correct (only reference is now in library list
+     */
+    plot_value_decr(lib);
+
+    return 0;
 }
 
 /* (import (library name) ...) -core -syntax
