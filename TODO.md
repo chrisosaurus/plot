@@ -64,6 +64,7 @@ eval:
 -----
 * tidy up eval_form variables
 * eval form should also use apply (possibly evaluating args before call)
+* userspace functions calling eval on non-syntactic forms is dangerous, see bugs/assoc.scm
 
 read:
 -----
@@ -90,7 +91,9 @@ runtime:
 
 bugs:
 -----
+* userspace functions generally should not pass their arguments to non-syntactic forms via eval, as this would cause their args to be re-evaled (bugs/assoc.scm)
 * also see bugs/ for test cases producing bugs
+* stack trace showing > Unable to print a form at this point in time
 * need to better document return values of eval functions
 * string size/len is silly, too many magic numbers (+1 to store, -1 to use... ugly)
 * plot pair cons and decons are not symmetrical, cons will NOT incr but decons does decr
@@ -110,5 +113,5 @@ limitations:
 ------------
 * garbage collection of an object may trigger further garbage collection of other objects (see value.c:plot_value_decons), this could quickly exhaust the C stack height, consider switching to a work list model.
 * refcount could overflow (currently an int, as we use < 1 for not-managed)
-* many temporaries do not increase refcounts (e.g. forms.c:plot_form_define_library), this is generally okay in a single-threaded env but does not scale.
+* many temporaries do not increase refcounts (e.g. forms.c:plot_form_define_library), this is generally okay in a single-threaded env but may not scale.
 
