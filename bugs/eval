@@ -1,0 +1,30 @@
+
+the problem is non-syntactic forms calling eval on non-syntactic forms
+as this causes args to be re-evaled
+
+    chris@Ox1b src(master)-> grep -Rni 'plot_eval' [^e]*.c
+    control.c:140:                ret = plot_eval_expr(new_env, car(arg));
+    forms.c:243:        ret = plot_eval_sexpr(in, cur);
+    forms.c:402:        value = plot_eval_expr(env, car(cur));
+    forms.c:461:        value = plot_eval_expr(env, car(body));
+    forms.c:467:            puts("plot_eval_form (define)");
+    forms.c:543:    value = plot_eval_expr(env, cond);
+    forms.c:551:        puts("plot_eval_form (if cond)");
+    forms.c:556:        value = plot_eval_expr(env, if_expr);
+    forms.c:564:            puts("plot_eval_form (if if-expr)");
+    forms.c:569:        value = plot_eval_expr(env, else_expr);
+    forms.c:577:            puts("plot_eval_form (if else-expr)");
+    forms.c:654:            /* NB: plot_eval_truthy will handle our decr for us */
+    forms.c:658:            /* NB: plot_eval_truthy will handle our decr for us */
+    forms.c:659:            res = plot_eval_expr(env, tmp);
+    forms.c:663:         * plot_eval_truthy will handle our decr for us
+    forms.c:681:            res = plot_eval_expr(env, tmp);
+    forms.c:713:    value = plot_eval_expr(env, expr);
+    forms.c:721:        puts("plot_eval_form (set!");
+    funcs.c:349:        val->u.promise.value = plot_eval_expr(env, val->u.promise.expr);
+    main.c:54:    if( ! plot_eval(plot_get_global_env(), prog) ){
+    main.c:56:        puts("error occurred in plot_eval");
+    pair.c:4:#include "eval.h" /* plot_eval_form */
+    pair.c:567:        res = plot_eval_form(env, arg);
+    pair.c:729:        res = plot_eval_form(env, arg);
+
