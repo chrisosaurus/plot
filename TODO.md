@@ -90,6 +90,7 @@ runtime:
 
 bugs:
 -----
+* also see bugs/ for test cases producing bugs
 * need to better document return values of eval functions
 * string size/len is silly, too many magic numbers (+1 to store, -1 to use... ugly)
 * plot pair cons and decons are not symmetrical, cons will NOT incr but decons does decr
