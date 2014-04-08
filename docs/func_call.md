@@ -3,7 +3,16 @@ Function call interface
 
 Internal routines for calling procedures are still in flux, currently there is both `plot_func_control_apply` and `plot_eval_form`.
 
+There is `plot_eval_apply` which is currently used by `plot_func_control_apply` and will eventually be used by `plot_eval_form`.
+
 This document is more a work-in-progress.
+
+Which should you use?
+---------------------
+
+* Calling function from within plot/scheme `(apply func args...)` (`plot_func_control_apply`)
+* Calling form from within c userspace `plot_eval_apply(env, func, args)` (prevent re-evaluation of arguments)
+* Calling form from within c implementation-land, either `plot_eval_form(env, form)` or `plot_eval_apply(env, func, args)`, former will evaluate args and latter will not.
 
 Musings
 -------------
@@ -27,9 +36,9 @@ for `(apply + '(1 2))` the arg given to apply is currently:
 this is fine from userland, but from implementation-land it is a PITA
 
 
-instead we should move logic out of both `plot_func_control_apply` and `plot_eval_form` into a new `plot_apply_internal` which has a signature
+instead we should move logic out of both `plot_func_control_apply` and `plot_eval_form` into a new `plot_eval_apply` which has a signature
 
-    plot_apply_internal(env, func, args)
+    plot_eval_apply(env, func, args)
 
 this saves 2 cons and is much easier to work with in c, compare:
 
@@ -37,10 +46,10 @@ this saves 2 cons and is much easier to work with in c, compare:
 
 becomes
 
-    apply( env, func, '(1 2) )
+    eval_apply( env, func, '(1 2) )
 
 
-plot_apply_internal will NOT perform further evaluation on it's argument so it safe to call from userspace,
+plot_eval_apply will NOT perform further evaluation on it's argument so it safe to call from userspace,
 this solves our current 'assoc eval bug' (see bugs/assoc.scm and bugs/eval)
 
 
