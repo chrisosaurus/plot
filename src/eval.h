@@ -35,14 +35,6 @@ struct plot_value * plot_eval_sexpr(struct plot_env *env, struct plot_value * se
  */
 struct plot_value * plot_eval_form(struct plot_env *env, struct plot_value * sexpr);
 
-/* eval a function call in an environment
- *
- * takes a plot list as argument
- *
- * TODO FIXME
- */
-struct plot_value * plot_eval_func_call(struct plot_env * env, struct plot_value * sexpr);
-
 /* evals an expr in an environment
  *
  * takes a plot list as argument
