@@ -1,7 +1,7 @@
 #include "pair.h"
 #include "value.h"
 #include "funcs.h" /* equal?, plot_truthy */
-#include "eval.h" /* plot_eval_form */
+#include "eval.h" /* plot_eval_apply */
 #include <stdio.h>
 
 /* ignore unused parameter warnings */
@@ -555,16 +555,16 @@ struct plot_value * plot_func_pair_member(struct plot_env *env, struct plot_valu
     }
 
     ret = plot_new_boolean(0);
-    arg = cons(func, cons(0, cons(0, null)));
-    /* supplied obj to compare to */
-    car(cdr(cdr(arg))) = car(args);
+    arg = cons(0, cons(0, null));
+    /* supplied obj to compare to, inserting into later position to make for loop cheaper */
+    car(cdr(arg)) = car(args);
 
     for( cur = car(cdr(args)); cur->type == plot_type_pair; cur = cdr(cur) ){
         /* object in list to compare */
-        car(cdr(arg)) = car(cur);
+        car(arg) = car(cur);
 
         /* decr of res is handled by truthy */
-        res = plot_eval_form(env, arg);
+        res = plot_eval_apply(env, func, arg);
         if( plot_truthy(res) ){
             plot_value_decr(ret);
             ret = cur;
@@ -714,19 +714,19 @@ struct plot_value * plot_func_pair_assoc(struct plot_env *env, struct plot_value
     }
 
     ret = plot_new_boolean(0);
-    arg = cons(func, cons(0, cons(0, null)));
-    /* supplied obj to compare to */
-    car(cdr(cdr(arg))) = car(args);
+    arg = cons(0, cons(0, null));
+    /* supplied obj to compare to, inserting into later position to make for loop cheaper */
+    car(cdr(arg)) = car(args);
 
     for( cur = car(cdr(args)); cur->type == plot_type_pair; cur = cdr(cur) ){
         /* object in list to compare
          * as this is an associative list we want
          * to compare against the 'key' (car)
          */
-        car(cdr(arg)) = car(car(cur));
+        car(arg) = car(car(cur));
 
         /* decr of res is handled by truthy */
-        res = plot_eval_form(env, arg);
+        res = plot_eval_apply(env, func, arg);
         if( plot_truthy(res) ){
             plot_value_decr(ret);
             ret = car(cur);

@@ -48,9 +48,6 @@ struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_va
     /* arg is a cursor into args */
     plot_value *arg;
 
-    /* new env for our lambda */
-    plot_env *new_env;
-
     /* return value */
     plot_value *ret;
 
@@ -84,76 +81,12 @@ struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_va
 
     func = car(args);
 
-    switch(func->type){
-        case plot_type_lambda:
-            /* create new env for our lambda */
-            new_env = plot_alloc_env(func->u.lambda.env);
-            if( ! new_env ){
-                plot_fatal_error("failed to allocate new env in apply");
-            }
+    /* farm off to plot_eval_apply to handle the heavy lifting */
+    ret = plot_eval_apply(env, func, newargs);
 
-            /* bind arguments
-             * for each parameter:
-             *  grab an argument and bind
-             * if no argument then error
-             * if left over arguments then error
-             */
-
-            /* use arg as cursor into params (car of lambda body)
-             * use curna as cursor into newargs
-             */
-            curna = &newargs;
-            for( arg = car(func->u.lambda.body); arg->type != plot_type_null; arg = cdr(arg) ){
-
-                /* too few args for lambda */
-                if( (*curna)->type == plot_type_null ){
-                    return plot_runtime_error(plot_error_runtime, "too few args supplied for lambda", "plot_func_control_apply");
-                }
-
-                if( car(arg)->type == plot_type_null ){
-                    plot_fatal_error("apply: encountered null parameter");
-                }
-
-                if( ! plot_env_define(new_env, &(car(arg)->u.symbol), car(*curna)) ){
-                    plot_fatal_error("apply: failed to define argument");
-                }
-
-                *curna = cdr(*curna);
-            }
-
-            /* too many args for lambda */
-            if( (*curna)->type != plot_type_null ){
-                return plot_runtime_error(plot_error_runtime, "too many args supplied for lambda", "plot_func_control_apply");
-            }
-
-            /* eval each part of body in new_env
-             * return value of final expr
-             * gc all intermediary exprs
-             * check for intermediary errors
-             */
-            ret = 0;
-            for( arg = cdr(func->u.lambda.body); arg->type != plot_type_null; arg = cdr(arg) ){
-                if( ret ){
-                    /* gc intermedary value */
-                    plot_value_decr(ret);
-                }
-                ret = plot_eval_expr(new_env, car(arg));
-                if( ret && ret->type == plot_type_error ){
-                    puts("apply (lambda body)");
-                    return ret;
-                }
-            }
-
-            /* tidy up env */
-            plot_env_decr(new_env);
-
-            break;
-        case plot_type_form:
-            ret = func->u.form.func(env, newargs);
-            break;
-        default:
-            return plot_runtime_error(plot_error_bad_args, "first argument is not a function", "plot_func_control_apply");
-            break;
+    if( ret && ret->type == plot_type_error ){
+        puts("plot_func_control_apply (call to plot_eval_apply)");
+        return ret;
     }
 
     /* gc temporary resources

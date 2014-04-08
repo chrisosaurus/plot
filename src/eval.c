@@ -158,6 +158,8 @@ plot_value * plot_eval_sexpr(plot_env *env, plot_value * sexpr){
  * or it could be a function call
  *
  * may modify the env (e.g. `define`)
+ *
+ * FIXME migrate to plot_eval_apply
  */
 plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
     plot_value *val = 0;
@@ -349,5 +351,139 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
             break;
     }
     return 0;
+}
+
+/* performs a call to a function
+ * can modify the environment
+ * will not evaluate arguments in anyway, passes them directly to the func
+ *
+ * plot_eval_apply(env, func, args)
+ *      func must be one of:
+ *          plot_type_lambda
+ *          plot_type_form
+ *          plot_type_symbol - that resolves to either of the above in env
+ *      args is a plot_type_pair which is the first item in a plot list of arguments
+ *          arguments are NOT evaluated, so plot_eval_apply IS SAFE to call from userspace c
+ *
+ * both `plot_eval_form` and `plot_func_control_apply` are wrappers for this
+ * safe to call from userspace c
+ * plot programs instead call `plot_func_control_apply` via `(apply ...)`
+ *
+ * TODO FIXME
+ */
+struct plot_value * plot_eval_apply(struct plot_env *env, struct plot_value *func, struct plot_value *args){
+    /* return value */
+    struct plot_value *ret = 0;
+
+    /*** temporaries used used in lambda evaluation ***/
+    /* new environment used for lambdas */
+    struct plot_env *new_env = 0;
+    /* iterator used for lambda body */
+    struct plot_value *bod;
+    /* iterator used for lambda params */
+    struct plot_value *param;
+    /* iterator used for arguments */
+    struct plot_value *arg;
+
+
+    if( ! env || ! func || ! args ){
+        return plot_runtime_error(plot_error_internal, "provided argument was null", "plot_eval_apply");
+    }
+
+    if( func->type == plot_type_symbol ){
+        /* FIXME resolve symbol */
+        return plot_runtime_error(plot_error_unimplemented, "provided 'func' was a sybmol, auto resolution not yet implemented", "plot_eval_apply");
+    }
+
+    switch( func->type ){
+        case plot_type_lambda:
+            /* create new env for our lambda */
+            new_env = plot_alloc_env(func->u.lambda.env);
+            if( ! new_env ){
+                plot_fatal_error("call to plot_alloc_env failed");
+                return 0; /* keep compiler happy */
+            }
+
+            /* binding arguments:
+             * for each parameter:
+             *      grab an argument and bind in the env
+             * if no argument is found then error
+             * if left over arguments then error
+             */
+
+            /* iterator over params and args
+             * NB: first element (car) of lambda body is arg list
+             */
+            for( param = car(func->u.lambda.body), arg=args;
+                 param->type != plot_type_null && arg->type != plot_type_null;
+                 param = cdr(param), arg = cdr(arg) ){
+
+                if( param->type != plot_type_pair ){
+                    return plot_runtime_error(plot_error_internal, "iterating over params, expected pair but found non-pair and non-null param->type", "plot_eval_apply");
+                }
+
+                if( arg->type != plot_type_pair ){
+                    return plot_runtime_error(plot_error_internal, "iterating over args, expected pair but found non-pair and non-null arg->type", "plot_eval_apply");
+                }
+
+                if( car(param)->type != plot_type_symbol ){
+                    return plot_runtime_error(plot_error_internal, "lambda param error, expected symbol", "plot_eval_apply");
+                }
+
+                /* (define param arg)
+                 * preconditions:
+                 *      param must be a symbol
+                 *      arg must already have been resolved to a value
+                 */
+                if( ! plot_env_define(new_env, &(car(param)->u.symbol), car(arg)) ){
+                    return plot_runtime_error(plot_error_internal, "failed to define param", "plot_eval_apply");
+                }
+            }
+
+            /* check arg to catch 'too many supplied args' */
+            if( arg->type != plot_type_null ){
+                return plot_runtime_error(plot_error_runtime, "too many args supplied to lambda", "plot_eval_apply");
+            }
+
+            /* check params to catch 'too few supplied args' */
+            if( param->type != plot_type_null ){
+                return plot_runtime_error(plot_error_runtime, "too few args supplied to lambda", "plot_eval_apply");
+            }
+
+
+            /* eval each part of body in new_env
+             * return vaue of final expr
+             *      (gc all intermediary values)
+             *      check for intermediary errors
+             *
+             * NB: second element (cdr) of lambda body is actual body (list of exprs)
+             */
+            ret = 0;
+            for( bod = cdr(func->u.lambda.body); bod->type != plot_type_null; bod=cdr(bod) ){
+                if( ret ){
+                    /* gc intermediary value (generated from last step through body */
+                    plot_value_decr(ret);
+                }
+                ret = plot_eval_expr(new_env, car(bod));
+                if( ret && ret->type == plot_type_error ){
+                    puts("plot_eval_apply (lambda body)");
+                    return ret;
+                }
+            }
+
+            /* tidy up new_env */
+            plot_env_decr(new_env);
+            break;
+
+        case plot_type_form:
+            ret = func->u.form.func(env, args);
+            break;
+
+        default:
+            return plot_runtime_error(plot_error_internal, "provided 'func' was not a function", "plot_eval_apply");
+            break;
+    }
+
+    return ret;
 }
 
