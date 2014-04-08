@@ -5,11 +5,13 @@ Update code comments to reference r7rs.
 
 priorities:
 -----------
+* eval/assoc bug -> apply/eval refactor (see docs/func_call.md)
 * library support
 * plot unit testing library
 * plot introspection library
 * better I/O facilities
 * repl
+* break src/ up, possibly into src/userspace and src/internal
 
 library support:
 ----------------
