@@ -63,8 +63,7 @@ parse:
 eval:
 -----
 * tidy up eval_form variables
-* eval form should also use apply (possibly evaluating args before call)
-* userspace non-syntactic functions calling eval on non-syntactic forms is dangerous, see bugs/assoc.scm and bugs/eval
+* see docs/func_call.md
 
 read:
 -----

@@ -28,3 +28,5 @@ as this causes args to be re-evaled
     pair.c:567:        res = plot_eval_form(env, arg);
     pair.c:729:        res = plot_eval_form(env, arg);
 
+see docs/func_call.md for a resolution
+
