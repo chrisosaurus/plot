@@ -172,21 +172,48 @@
     (fail "fourteen case 2"))
   (fail "fourteen case 1"))
 
-(define (fifteen-filter pred lst)
+;; more thorough testing of assoc family now that we have quoting
+(define fifteen
+  '((a 0)
+    (b 1)
+    (c 2)))
+
+(if (equal? '(b 1) (assq 'b fifteen))
+  (if (equal? #f (assv 'z fifteen))
+    (if (equal? '(c 2) (assoc 'c fifteen))
+      (pass "fifteen")
+      (fail "fifteen case 3"))
+    (fail "fifteen case 2"))
+  (fail "fifteen case 1"))
+
+
+;; more thorough testing of member family now that we have quoting
+(define sixteen '(a b #f))
+
+(if (equal? '(a b #f) (member 'a sixteen))
+  (if (equal? #f (memv 'z sixteen))
+    (if (equal? '(#f) (memq #f sixteen))
+      (pass "sixteen")
+      (fail "sixteen case 3"))
+    (fail "sixteen case 2"))
+  (fail "sixteen case 1"))
+
+
+(define (seventeen-filter pred lst)
   (define new-lst '())
   (for-each (lambda (l)
     (if (pred l)
       (set! new-lst (cons l new-lst)))) lst)
   (reverse new-lst))
 
-(define (fifteen-odd x)
+(define (seventeen-odd x)
   (= (remainder x 2) 1))
 
 (if (equal?
       '(1 3 5)
-      (fifteen-filter fifteen-odd '(0 1 2 3 4 5 6)))
-  (pass "fifteen")
-  (fail "fifteen"))
+      (seventeen-filter seventeen-odd '(0 1 2 3 4 5 6)))
+  (pass "seventeen")
+  (fail "seventeen"))
 
 
 ;; tests completed, print results
