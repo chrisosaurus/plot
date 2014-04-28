@@ -92,6 +92,7 @@ runtime:
 
 bugs:
 -----
+* `or` and `and` should return the value or the last expression evaluated, rather than returning #t, see bugs/or.scm (section 4.2.1 page 15)
 * also see bugs/ for test cases producing bugs
 * stack trace showing > Unable to print a form at this point in time
 * need to better document return values of eval functions
