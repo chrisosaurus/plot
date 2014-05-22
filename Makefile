@@ -41,6 +41,8 @@ run_tests: compile_tests plot
 	./plot t/examples/example.scm
 	@echo "\nrunning basic.scm"
 	./plot t/integration/basic.scm
+	@echo "\nrunning boolean.scm"
+	./plot t/integration/boolean.scm
 	@echo "\nrunning character.scm"
 	./plot t/integration/character.scm
 	@echo "\nrunning string.scm"

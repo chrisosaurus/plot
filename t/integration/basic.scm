@@ -224,34 +224,21 @@
   (pass "seventeen")
   (fail "seventeen"))
 
-;; test logical operations
-(if (and #t #t)
+;; testing define function form
+(define (eighteen x y z)
+  (+ x y z))
+
+(if (equal? (eighteen 1 2 3) (eighteen 3 2 1))
   (pass "eighteen")
   (fail "eighteen"))
 
-(if (or #f #t)
+;; testing begin form
+(define nineteen #f)
+(if (begin
+      (set! nineteen #t)
+      nineteen)
   (pass "nineteen")
   (fail "nineteen"))
-
-(if (or (and (not #f) (not #t)) (not (not #t)))
-  (pass "twenty")
-  (fail "twenty"))
-
-;; testing define function form
-(define (twenty-one x y z)
-  (+ x y z))
-
-(if (equal? (twenty-one 1 2 3) (twenty-one 3 2 1))
-  (pass "twenty one")
-  (fail "twenty once"))
-
-;; testing begin form
-(define twenty-two #f)
-(if (begin
-      (set! twenty-two #t)
-      twenty-two)
-  (pass "twenty two")
-  (fail "twenty two"))
 
 ;; testing new cases for equality predicates
 (if (eq? (list) (list))
@@ -259,69 +246,69 @@
     (if (eqv? define define)
       (if (not (eq? define lambda))
         (if (not (eqv? define set!))
-          (pass "twenty three")
-          (fail "twenty three case 5"))
-        (fail "twenty three case 4"))
-      (fail "twenty three case 3"))
-    (fail "twenty three case 2"))
-  (fail "twenty three case 1"))
+          (pass "twenty")
+          (fail "twenty case 5"))
+        (fail "twenty case 4"))
+      (fail "twenty case 3"))
+    (fail "twenty case 2"))
+  (fail "twenty case 1"))
 
 ;; delay and force
-(define twenty-four 0)
-(define twenty-four-promise (delay (set! twenty-four (+ twenty-four 1))))
-(if (not (= twenty-four 0))
-  (fail "twenty four case 1")
-  (if (not (promise? twenty-four-promise))
-    (fail "twenty four case 2")
+(define twenty-one 0)
+(define twenty-one-promise (delay (set! twenty-one (+ twenty-one 1))))
+(if (not (= twenty-one 0))
+  (fail "twenty one case 1")
+  (if (not (promise? twenty-one-promise))
+    (fail "twenty one case 2")
     (if (promise? #t)
-      (fail "twenty four case 3")
+      (fail "twenty one case 3")
       (begin
-        ;; should produce side effect of incrementing twenty-four
-        (force twenty-four-promise)
-        (if (not (= twenty-four 1))
-          (fail "twenty four case 4")
+        ;; should produce side effect of incrementing twenty-one
+        (force twenty-one-promise)
+        (if (not (= twenty-one 1))
+          (fail "twenty one case 4")
           (begin
             ;; should NOT produce any side effect
-            (force twenty-four-promise)
-            (if (not (= twenty-four 1))
-              (fail "twenty four case 5")
-              (pass "twenty four"))))))))
+            (force twenty-one-promise)
+            (if (not (= twenty-one 1))
+              (fail "twenty one case 5")
+              (pass "twenty one"))))))))
 
-(define twenty-five 0)
-(define twenty-five-promise (make-promise (begin (set! twenty-five (+ twenty-five 1)) (+ 2 4))))
-(if (not (= twenty-five 1))
-  (fail "twenty five case 1")
-  (if (promise? twenty-five)
-    (fail "twenty five case 2")
-    (if (not (promise? twenty-five-promise))
-      (fail "twenty five case 3")
-      (if (not (= 6 (force twenty-five-promise)))
-        (fail "twenty five case 4")
-        (if (not (= twenty-five 1))
-          (fail "twenty five case 5")
-          (pass "twenty five"))))))
+(define twenty-two 0)
+(define twenty-two-promise (make-promise (begin (set! twenty-two (+ twenty-two 1)) (+ 2 4))))
+(if (not (= twenty-two 1))
+  (fail "twenty two case 1")
+  (if (promise? twenty-two)
+    (fail "twenty two case 2")
+    (if (not (promise? twenty-two-promise))
+      (fail "twenty two case 3")
+      (if (not (= 6 (force twenty-two-promise)))
+        (fail "twenty two case 4")
+        (if (not (= twenty-two 1))
+          (fail "twenty two case 5")
+          (pass "twenty two"))))))
 
 ;; basic cond testing
-(define twenty-six #t)
+(define twenty-three #t)
 (if (equal? 'greater
             (cond
               ((< 3 2) => (begin
-                            (set! twenty-six #f)
+                            (set! twenty-three #f)
                             'less))
               ((> 3 2) 'greater)
               (else    (begin
-                         (set! twenty-six #f)
+                         (set! twenty-three #f)
                          'equal))))
-  (if twenty-six
-    (pass "twenty six")
-    (fail "twenty six case 2"))
-  (fail "twenty six case 1"))
+  (if twenty-three
+    (pass "twenty three")
+    (fail "twenty three case 2"))
+  (fail "twenty three case 1"))
 
 (if (symbol=? 'hello 'hello)
   (if (not (symbol=? 'hello 'world))
-    (pass "twenty seven")
-    (fail "twenty seven case 2"))
-  (fail "twenty seven case 1"))
+    (pass "twenty four")
+    (fail "twenty four case 2"))
+  (fail "twenty four case 1"))
 
 ;; tests completed, print results
 (println ">>> basic test results")

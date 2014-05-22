@@ -54,11 +54,23 @@ int plot_truthy(plot_value *val);
 
 /* (and obj1 obj2 ...)
  * logical and of all arguments
+ *
+ * returns #f if any expressions evaluated to #f
+ *
+ * otherwise the value of the last truthy expression is returned.
+ *
+ * FIXME should not evaluated any expressions after the first falsy one.
  */
 struct plot_value * plot_func_and(struct plot_env *env, struct plot_value *args);
 
 /* (or obj1 obj2 ...)
  * logical or of all arguments
+ *
+ * if all expressions evaluate to #f or if there are no expressions then #f is returned
+ *
+ * otherwise the value of the first truthy expression is returned.
+ *
+ * FIXME should not evaluate any remaining expressions after first truhty expression.
  */
 struct plot_value * plot_func_or(struct plot_env *env, struct plot_value *args);
 
