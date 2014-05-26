@@ -95,7 +95,7 @@ for my $header (@headers){
 
 # print initial bound set ('library forms')
 print $output "struct plot_binding core_forms[] = {\n";
-# FIXME temprarily moving all bindings into library_forms (until we can actually bind libraries)
+# FIXME temporarily moving all bindings into library_forms (until we can actually bind libraries)
 print $output join ",\n", (@core_forms, @library_forms);
 # close library_forms[]
 print $output "\n};\n\n";
