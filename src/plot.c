@@ -361,8 +361,7 @@ void plot_gc_incr(struct plot_gc *g){
         ++g->refcount;
     } else {
         /* this object already has a refcount of 0, this should be impossible, ERROR */
-        puts("plot_value_incr: This object already has a refcount of 0, ERROR has occurred, terminating");
-        exit(1);
+        plot_fatal_error("plot_gc_incr: This object already has a refcount of 0, ERROR has occurred, terminating");
     }
 }
 
