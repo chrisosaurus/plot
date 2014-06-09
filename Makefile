@@ -34,7 +34,6 @@ compile_tests: clean src/bindings.h ${OBJ}
 
 # run tests
 run_tests: compile_tests plot
-	# FIXME temporarily disabled
 	@echo running c unit tests
 	./run_tests
 	@echo "\nrunning example.scm"
@@ -57,7 +56,17 @@ run_tests: compile_tests plot
 	./plot t/integration/define.scm
 	@echo "\nrunning input.scm"
 	./plot t/integration/input.scm
-	@echo "\nrunning library.scm"
+
+	@rm -f test
+	@echo "\nrunning output.scm"
+	./plot t/integration/output.scm
+	cat test
+
+	@echo ""
+	@make -s cleanobj
+
+run_library_tests: compile_tests plot
+	@echo "\nrunning library.scm (failure expected as implementation is incomplete)"
 	./plot t/integration/library.scm
 
 	@rm -f test
@@ -69,6 +78,8 @@ run_tests: compile_tests plot
 	@make -s cleanobj
 
 test: run_tests cleanobj
+
+test_libs: run_library_tests cleanobj
 
 example: plot
 	cat t/examples/example.scm
@@ -105,4 +116,5 @@ hasher: src/bindings.h ${OBJ}
 	@echo compiling hasher helper script
 	@${CC} scripts/hasher.c -o hasher ${LDFLAGS} -DPLOT_DEBUG ${OBJ}
 
-.PHONY: all clean cleanobj test tests example integration clang test_soft tests_soft debug compliance hasher
+.PHONY: all clean cleanobj test tests example integration clang test_soft tests_soft debug compliance hasher run_library_tests test_libs
+
