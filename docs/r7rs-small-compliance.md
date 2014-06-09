@@ -173,7 +173,7 @@ Support
 6.6 Characters
     Plot deviates mildly from the standard as 'special' literals `#\space` and
     `#\newline` are case sensitive, whereas 6.6 defines them to be case insensitive;
-    this means that plow will not behave correctly for `#\NEWLINE`.
+    this means that plot will not behave correctly for `#\NEWLINE`.
 
     character literals are implemented
         `#\a` through to `#\Z`
