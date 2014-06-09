@@ -93,6 +93,11 @@ You are able to compile and run plot manually though:
     make
     ./plot t/example.scm
 
+You are also able to test the plot build via
+
+    make test
+
+
 license
 ---------
 Plot is released under the terms of the MIT License
