@@ -1,17 +1,21 @@
 R7rs compliance report
 ======================
+
 List of r7rs-small (WG1) sections and notes on implementation progress and any deviations from standard.
 
 Support
 -------
 
 2.2 comments
+
     `;` comments are implemented
 
 3.5 Proper tail recursion
+
     tail recursion is not implemented but is planned.
 
 4.1.2 Literal expressions
+
     quoting is implemented, both (quote datum) and 'datum
 
     literals are implemented for the following types:
@@ -27,17 +31,21 @@ Support
         pairs (improper lists)
 
 4.1.4 Procedures
+
     `lambda` form is implemented
 
 4.1.5 Conditionals
+
     both forms of `if` are implemented
     `(if cond if-expr)`
     `(if cond if-expr else-expr)`
 
 4.1.6 Assignments
+
     `set!` form is implemented.
 
 4.2.1 Derived conditionals
+
     the following procedures are implemented:
         `and`
         `or`
@@ -49,9 +57,11 @@ Support
         `unless`
 
 4.2.2 Binding constructs
+
     no derived binding construct are currently implemented.
 
 4.2.3 Sequencing
+
     plot supports the second form of begin
         `(begin <expr1> <expr2> ... )`
 
@@ -59,6 +69,7 @@ Support
         `(begin <expression or definition> ... )`
 
 4.2.5 Delayed evaluation
+
     The following forms and procedures are implemented:
         `delay`
         `force`
@@ -69,15 +80,19 @@ Support
         `delay-force`
 
 4.2.9 Case-lambda
+
     `case-lambda` support should be implemented soon.
 
 4.3 Macros
+
     plot does not yet have a macro system.
 
 5.2 Import declarations
+
     library support is currently pending implementation.
 
 5.3 Variable definitions
+
     `define` form is implemented.
 
     `define` has 2 different forms:
@@ -89,12 +104,15 @@ Support
             (+ x 1))
 
 5.4 Syntax definitions
+
     plot does not yet have syntax definitions.
 
 5.6 Libraries
+
     library support is currently pending implementation.
 
 6.1 Equivalence predicates
+
     `eq?`, `eqv?` and `equal?` are implemented.
     All 3 are currently the same function and all test for 'deep equality' (`equal?`).
     This may be changed later to be more inline with the spec, but in it's current form
@@ -103,6 +121,7 @@ Support
     All 3 forms should work for all currently implemented types.
 
 6.2 Numbers
+
     exact integers are implemented although
     there is not yet support for literal negative integers
     so you must use `(- 0 1)` in lieu of `-1`.
@@ -128,6 +147,7 @@ Support
         `remainder`
 
 6.3 Booleans
+
     this section is fully implemented.
 
     booleans are implemented, literals `#t` and `#f`.
@@ -135,6 +155,7 @@ Support
     `not` is implemented.
 
 6.4 Pairs and lists
+
     pairs and lists are implemented,
     lists literals are implemented.
     pair (improper list) literals are pending implementation.
@@ -166,11 +187,13 @@ Support
         `assoc`
 
 6.5 Symbols
+
     symbols are implemented along with the testing procedures `symbol?`,
     literal symbols are supported via quoting `'symbol`.
     `symbol=?` is implemented.
 
 6.6 Characters
+
     Plot deviates mildly from the standard as 'special' literals `#\space` and
     `#\newline` are case sensitive, whereas 6.6 defines them to be case insensitive;
     this means that plot will not behave correctly for `#\NEWLINE`.
@@ -220,6 +243,7 @@ Support
         `char-foldcase`
 
 6.7 Strings
+
     string literals are implemented
         `"the word recursion has many meanings"`
 
@@ -253,12 +277,15 @@ Support
         `string-ci>=?`
 
 6.8 Vectors
+
     Vectors are not currently implemented.
 
 6.9 Bytevectors
+
     Bytevectors are not currently implemented.
 
 6.10 Control features
+
     The following procedures are implemented:
         `procedure?`
         `apply`
@@ -279,16 +306,20 @@ Support
         `call/cc`
 
 6.11 Exceptions
+
     Plot has the beginnings of an exception system, however it is not
     currently exposed to plot programs.
 
 6.12 Environment and evaluation
+
     `eval` is not currently exposed to plot programs.
 
 6.13 Input and output
+
     Plot's current support for I/O is rather lousy.
 
 6.13.1 Ports
+
     Textual ports are currently being implemented.
 
     The following procedures are implemented:
@@ -324,6 +355,7 @@ Support
         `get-output-bytevector`
 
 6.13.2 Input
+
     the following input procedures are implemented:
         `eof-object`
         `eof-object?`
@@ -344,6 +376,7 @@ Support
         `read-bytevector!`
 
 6.13.3 Output
+
     the following output procedures are implemented:
         `display`
         `newline`
@@ -359,6 +392,7 @@ Support
         `flush-output-port`
 
 6.14 System interface
+
     plot has both `exit` and `emergency-exit`, but as plot currently
     lacks dynamic-wind they are both the same.
 
