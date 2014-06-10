@@ -49,6 +49,21 @@ struct plot_value * plot_form_lambda(struct plot_env *env, struct plot_value *se
 
 /* (if cond if-expr else-expr) -syntax
  * (if cond if-expr)
+ *
+ * evaluates cond and then picks the branch to evaluated based on truthy-ness (see `plot_truthy`) of cond
+ *  if cond is truthy then evaluate if-expr and return result
+ *  if cond is not truthy then evaluate else-expr and return result,
+ *      if no else-expr is provided then the result is unspecified
+ *
+ * (if #f 'hello)        ;; => unspecified
+ * (if #t 'hello)        ;; => 'hello
+ * (if #f 'hello 'world) ;; => 'world
+ *
+ *  the branch not taken is not evaluated
+ *
+ * (if #f (function-that-doesnt-exist) 0) ;; => 0
+ *  if if-expr branch was taken this would trigger a runtime error
+ *
  */
 struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr);
 
