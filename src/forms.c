@@ -532,6 +532,7 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr)
     cond = car(sexpr);
     if_expr = car(cdr(sexpr));
     else_expr = cdr(cdr(sexpr));
+
     if( else_expr->type == plot_type_pair ) {
         else_expr = car(else_expr);
     } else {
@@ -539,46 +540,60 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr)
         else_expr = 0;
     }
 
-    /* decr is handled in plot_truthy */
+    /* must remember to decr in all branches that
+     * do not return value
+     */
     value = plot_eval_expr(env, cond);
+
     if( ! value ){
         #if DEBUG_FORM || DEBUG
         puts("\teval of if condition returned NULL");
         #endif
         return 0; /* FIXME ERROR */
     }
+
     if( value->type == plot_type_error ){
         puts("plot_eval_form (if cond)");
         return value;
     }
+
     if( plot_truthy(value) ){
         plot_value_decr(value);
+
         value = plot_eval_expr(env, if_expr);
+
         if( ! value ){
             #if DEBUG_FORM || DEBUG
             puts("\teval of if true branch returned NULL");
             #endif
             return 0; /* FIXME ERROR */
         }
+
         if( value->type == plot_type_error ){
             puts("plot_eval_form (if if-expr)");
             return value;
         }
+
     } else if( else_expr ){ /* (if cond if-expr else-expr) */
         plot_value_decr(value);
+
         value = plot_eval_expr(env, else_expr);
+
         if( ! value ){
             #if DEBUG_FORM || DEBUG
             puts("\teval of if false branch returned NULL");
             #endif
             return 0; /* FIXME ERROR */
         }
+
         if( value->type == plot_type_error ){
             puts("plot_eval_form (if else-expr)");
             return value;
         }
+
     } else {
         plot_value_decr(value);
+
         /* (display (if #f "hello")) ;; => unspecified
          * in csi this is 'unspecified'
          * in racket (lang scheme) there is no output
@@ -597,10 +612,14 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr)
          *  "if the <test> yields a false value and no <alternative>
          *  if specified, then the result of teh expression is
          *  unspecified"
+         *
+         * plot takes this far too literally and has a literal value
+         * specifically for 'unspecified'
          */
         return plot_new_unspecified(); /* success */
     }
 
+    /* returns value set in either branch of if evaluation */
     return value;
 }
 
