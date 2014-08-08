@@ -39,6 +39,8 @@ forms:
 ------
 * case
 * case-lambda
+* lambda rest args forms `(lambda args body ...)` and `(lambda (arg1 . args) body ...)`
+* define rest args form `(define (foo . args) body ...)`
 
 garbage collection:
 -------------------
@@ -92,6 +94,10 @@ runtime:
 
 bugs:
 -----
+* all plot errors that feature 'not of type ...' should also mention the type that it was
+* parsing of empty lists to null is invalid, `(null? ())` should fail to parse (currently it returns true...) see bugs/empty-list.scm
+* should detect lambda rest args form `(lambda (arg1 . args) body ...)` and trigger a plot_error_unimplemented bugs/args.scm
+* should detect define rest args form `(define (foo . args) body ...)` and trigger a plot_error_unimplemented bugs/args.scm
 * or/and should not evaluate any remaining expressions (after their first truthy/falsey expressions resp.), see section 4.2.1 page 15 and bugs/or.scm
 * also see bugs/ for test cases producing bugs
 * stack trace showing > Unable to print a form at this point in time

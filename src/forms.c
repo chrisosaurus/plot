@@ -485,6 +485,19 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_value *se
 }
 
 /* (lambda args body...) -syntax
+ *
+ * a lambda can have a few different forms
+ *
+ * Currently only the following form is supported (fixed number of args)
+ * (lambda (arg1 arg2 ...) body ...)
+ *
+ * The following variable argument forms are not currently supported
+ * (lambda args body ...)
+ * (lambda (arg1 arg2 . rest) body ...)
+ *
+ * TODO:
+ *  the first of the variable args forms are caught and trigger a plot_error_unimplemented
+ *  however the latter form is not yet caught.
  */
 struct plot_value * plot_form_lambda(struct plot_env *env, struct plot_value *sexpr){
     plot_value *args, *arg;
@@ -500,11 +513,35 @@ struct plot_value * plot_form_lambda(struct plot_env *env, struct plot_value *se
         return plot_runtime_error(plot_error_bad_args, "no body found", "plot_form_lambda");
     }
 
-    /* check all subforms are symbols */
-    for( arg=args; arg->type != plot_type_null; arg = cdr(arg) ){
-        if( car(arg)->type != plot_type_symbol ){
-            return plot_runtime_error(plot_error_internal, "invalid parameter, not of type plot_type_symbol", "plot_form_define");
-        }
+    switch( args->type ){
+        case plot_type_null:
+            /* FIXME
+             * no arguments, currently a bug in parsing of null
+             * (lambda () ...)
+             * will consider the () to be a null rather than an empty pair
+             * see TODO and bugs/empty-list.scm
+             */
+            break;
+
+        case plot_type_pair:
+            /* list of arguments */
+            /* check all subforms are symbols */
+            for( arg=args; arg->type != plot_type_null; arg = cdr(arg) ){
+                /* expected list, got improper pair */
+                if( arg->type != plot_type_pair ){
+                    return plot_runtime_error(plot_error_runtime, "invalid arg list, improper pairs not allowed", "plot_form_lambda");
+                }
+
+                if( car(arg)->type != plot_type_symbol ){
+                    return plot_runtime_error(plot_error_runtime, "invalid parameter type, not of type plot_type_symbol", "plot_form_lambda");
+                }
+            }
+            break;
+
+        default:
+            /* catch unimplemented form (lambda args body ...) */
+            return plot_runtime_error(plot_error_unimplemented, "lambda non-list arguments (rest form) not yet supported", "plot_form_lambda");
+            break;
     }
 
     return plot_new_lambda(env, sexpr);

@@ -44,6 +44,19 @@ struct plot_value * plot_form_begin(struct plot_env *env, struct plot_value *sex
 struct plot_value * plot_form_define(struct plot_env *env, struct plot_value *sexpr);
 
 /* (lambda args body...) -syntax
+ *
+ * a lambda can have a few different forms
+ *
+ * Currently only the following form is supported (fixed number of args)
+ * (lambda (arg1 arg2 ...) body ...)
+ *
+ * The following variable argument forms are not currently supported
+ * (lambda args body ...)
+ * (lambda (arg1 arg2 . rest) body ...)
+ *
+ * TODO:
+ *  the first of the variable args forms are caught and trigger a plot_error_unimplemented
+ *  however the latter form is not yet caught.
  */
 struct plot_value * plot_form_lambda(struct plot_env *env, struct plot_value *sexpr);
 
