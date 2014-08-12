@@ -4,7 +4,9 @@ PREFIX = /usr
 MANPREFIX = ${PREFIX}/share/man
 
 INCS =
-LIBS =
+# pthread, rt and m are all needed by certain versions of libcheck 
+LIBS = -lpthread -lrt -lm -lcheck
+
 
 # removing -Wwrite-strings as it is causing issues with symbols
 #CFLAGS = -O3 -std=c99 -pedantic -Werror -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wshadow -Wdeclaration-after-statement -Wunused-function ${INCS}

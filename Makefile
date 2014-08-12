@@ -24,13 +24,15 @@ debug:
 	@make -s EXTRAFLAGS="-DPLOT_DEBUG" plot
 
 # make with clang to produce different errors, includes testing code
-clang: src/bindings.h
-	clang ${SRC} t/test_main.c -lcheck -Wall -Wextra
+clang: clean src/bindings.h
+	@echo building component tests with clang
+	clang ${SRC} t/component/test_main.c ${LIBS} -Wall -Wextra -o run_tests
+	@echo building plot with clang
+	clang ${SRC} src/main.c ${LIBS} -Wall -Wextra -o plot
 
 compile_tests: clean src/bindings.h ${OBJ}
 	@echo test_parse CC -o tests/test_llist.c
-	@# pthread, rt and m are all needed by certain versions of libcheck 
-	@${CC} -g -o run_tests t/component/test_main.c ${OBJ} ${TEST_CFLAGS} -lpthread -lrt -lm -lcheck
+	@${CC} -g -o run_tests t/component/test_main.c ${OBJ} ${TEST_CFLAGS} ${LIBS}
 
 # run tests
 run_tests: compile_tests plot
