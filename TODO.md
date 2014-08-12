@@ -42,6 +42,11 @@ forms:
 * lambda rest args forms `(lambda args body ...)` and `(lambda (arg1 . args) body ...)`
 * define rest args form `(define (foo . args) body ...)`
 
+design:
+-------
+* should all forms be in forms.[ch] ?
+* funcs.[ch] seems to specific, consider breaking down
+
 garbage collection:
 -------------------
 * implement arena growth
