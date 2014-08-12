@@ -122,20 +122,20 @@ struct plot_value * plot_form_delay(struct plot_env *env, struct plot_value *sex
  *
  * otherwise the value of the last truthy expression is returned.
  *
- * FIXME should not evaluated any expressions after the first falsy one.
+ * FIXME: only evaluated arguments until the first falsey expression is encountered.
  */
 struct plot_value * plot_func_and(struct plot_env *env, struct plot_value *args);
 
-/* (or obj1 obj2 ...)
+/* (or obj1 obj2 ...) -syntax
  * logical or of all arguments
  *
  * if all expressions evaluate to #f or if there are no expressions then #f is returned
  *
  * otherwise the value of the first truthy expression is returned.
  *
- * FIXME should not evaluate any remaining expressions after first truhty expression.
+ * only evaluates arguments until the first truthy expression is encountered.
  */
-struct plot_value * plot_func_or(struct plot_env *env, struct plot_value *args);
+struct plot_value * plot_form_or(struct plot_env *env, struct plot_value *args);
 
 
 

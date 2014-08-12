@@ -863,7 +863,7 @@ struct plot_value * plot_form_delay(struct plot_env *env, struct plot_value *sex
  *
  * otherwise the value of the last truthy expression is returned.
  *
- * FIXME should not evaluated any expressions after the first falsy one.
+ * FIXME: only evaluated arguments until the first falsey expression is encountered.
  */
 struct plot_value * plot_func_and(struct plot_env *env, struct plot_value *args){
     /* current iterator through args list */
@@ -888,25 +888,33 @@ struct plot_value * plot_func_and(struct plot_env *env, struct plot_value *args)
     return last;
 }
 
-/* (or obj1 obj2 ...)
+/* (or obj1 obj2 ...) -syntax
  * logical or of all arguments
  *
  * if all expressions evaluate to #f or if there are no expressions then #f is returned
  *
  * otherwise the value of the first truthy expression is returned.
  *
- * FIXME should not evaluate any remaining expressions after first truhty expression.
-
+ * only evaluates arguments until the first truthy expression is encountered.
  */
-struct plot_value * plot_func_or(struct plot_env *env, struct plot_value *args){
+struct plot_value * plot_form_or(struct plot_env *env, struct plot_value *args){
     /* current iterator through args list */
     plot_value *cur;
+    plot_value *value;
 
     for( cur = args; cur->type == plot_type_pair; cur = cdr(cur) ){
-        if( plot_truthy(car(cur)) ){
-            plot_value_incr(car(cur));
-            return car(cur);
+        value = plot_eval_expr(env, car(cur));
+        if( plot_truthy(value) ){
+            /* do not need to incr value as eval creates it with count of 1
+             * would usually decr after testing, but since we are returning we are keeping a copy around
+             * - value is created with count 1 (+1)
+             * - returning it so need to increase count (+1)
+             * - losing local copy (value) so need to decrease count (-1)
+             * net: +1, no change needed
+             */
+            return value;
         }
+        plot_value_decr(value);
     }
 
     return plot_new_boolean(false);

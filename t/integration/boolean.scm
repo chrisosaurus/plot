@@ -77,6 +77,11 @@
   (pass "seven")
   (fail "seven"))
 
+;; or should only continue evaluating it's arguments until the FIRST truthy expression
+;; if the second arg is evaluated then plot should blow up as foo is (probably) not a valid function
+(if (or #t (foo bar baz))
+  (pass "eight")
+  (fail "eight"))
 
 ;; tests completed, print results
 (println ">>> boolean test results")
