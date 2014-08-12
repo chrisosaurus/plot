@@ -758,7 +758,7 @@ struct plot_value * plot_form_cond(struct plot_env *env, struct plot_value *sexp
 }
 
 
-/* (set! variable value) -syntax(set! variable value)
+/* (set! variable value) -syntax
  */
 struct plot_value * plot_form_set(struct plot_env *env, struct plot_value *sexpr){
     plot_value *value;
