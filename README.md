@@ -91,7 +91,7 @@ You are able to compile and run plot manually though:
     git clone git@github.com:mkfifo/plot.git
     cd plot
     make
-    ./plot t/example.scm
+    ./plot t/examples/example.scm
 
 You are also able to test the plot build via
 
