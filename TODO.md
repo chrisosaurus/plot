@@ -103,7 +103,6 @@ bugs:
 * parsing of empty lists to null is invalid, `(null? ())` should fail to execute as `()` is not a valid expression (currently it returns true...) see bugs/empty-list.scm
 * should detect lambda rest args form `(lambda (arg1 . args) body ...)` and trigger a plot_error_unimplemented bugs/args.scm
 * should detect define rest args form `(define (foo . args) body ...)` and trigger a plot_error_unimplemented bugs/args.scm
-* and should not evaluate any remaining expressions (after their first truthy/falsey expressions resp.), see section 4.2.1 page 15 and bugs/and.scm
 * also see bugs/ for test cases producing bugs
 * stack trace showing > Unable to print a form at this point in time
 * need to better document return values of eval functions

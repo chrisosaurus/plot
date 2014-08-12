@@ -115,16 +115,16 @@ struct plot_value * plot_form_quote(struct plot_env *env, struct plot_value *sex
  */
 struct plot_value * plot_form_delay(struct plot_env *env, struct plot_value *sexpr);
 
-/* (and obj1 obj2 ...)
+/* (and obj1 obj2 ...) -syntax
  * logical and of all arguments
  *
  * returns #f if any expressions evaluated to #f
  *
  * otherwise the value of the last truthy expression is returned.
  *
- * FIXME: only evaluated arguments until the first falsey expression is encountered.
+ * only evaluates arguments until the first falsey expression is encountered.
  */
-struct plot_value * plot_func_and(struct plot_env *env, struct plot_value *args);
+struct plot_value * plot_form_and(struct plot_env *env, struct plot_value *args);
 
 /* (or obj1 obj2 ...) -syntax
  * logical or of all arguments

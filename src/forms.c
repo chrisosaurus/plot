@@ -856,36 +856,50 @@ struct plot_value * plot_form_delay(struct plot_env *env, struct plot_value *sex
     return val;
 }
 
-/* (and obj1 obj2 ...)
+/* (and obj1 obj2 ...) -synax
  * logical and of all arguments
  *
  * returns #f if any expressions evaluated to #f
  *
  * otherwise the value of the last truthy expression is returned.
  *
- * FIXME: only evaluated arguments until the first falsey expression is encountered.
+ * only evaluates arguments until the first falsey expression is encountered.
  */
-struct plot_value * plot_func_and(struct plot_env *env, struct plot_value *args){
+struct plot_value * plot_form_and(struct plot_env *env, struct plot_value *args){
     /* current iterator through args list */
     plot_value *cur;
-    /* record last value looked at */
-    plot_value *last;
+    /* temporary value for result of evaluating arguments */
+    plot_value *value = 0;
 
     if( args->type != plot_type_pair || cdr(args)->type != plot_type_pair ){
         return plot_new_boolean(true);
     }
 
     for( cur = args; cur->type == plot_type_pair; cur = cdr(cur) ){
-        /* and should return the value of the last expression */
-        last = car(cur);
+        /* `and` must return the value of the last truthy expression,
+         * so the iterator pattern is a little odd
+         * we only decr the value before overwriting it
+         */
+        if( value )
+            plot_value_decr(value);
 
-        if( ! plot_truthy(last) ){
+        value = plot_eval_expr(env, car(cur));
+
+        if( ! plot_truthy(value) ){
+            /* we must decr here as we are about to lose the local variable value */
+            plot_value_decr(value);
             return plot_new_boolean(false);
         }
     }
 
-    plot_value_incr(last);
-    return last;
+    /* do not need to incr value as eval creates it with count of 1
+     * would usually decr after testing, but since we are returning we are keeping a copy around
+     * - value is created with count 1 (+1)
+     * - returning it so need to increase count (+1)
+     * - losing local copy (value) so need to decrease count (-1)
+     * net: +1, no change needed
+     */
+    return value;
 }
 
 /* (or obj1 obj2 ...) -syntax
@@ -900,6 +914,7 @@ struct plot_value * plot_func_and(struct plot_env *env, struct plot_value *args)
 struct plot_value * plot_form_or(struct plot_env *env, struct plot_value *args){
     /* current iterator through args list */
     plot_value *cur;
+    /* temporary value for result of evaluating arguments */
     plot_value *value;
 
     for( cur = args; cur->type == plot_type_pair; cur = cdr(cur) ){

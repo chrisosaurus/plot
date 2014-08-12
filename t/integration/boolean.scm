@@ -77,11 +77,17 @@
   (pass "seven")
   (fail "seven"))
 
-;; or should only continue evaluating it's arguments until the FIRST truthy expression
+;; `or` should only continue evaluating it's arguments until the FIRST truthy expression
 ;; if the second arg is evaluated then plot should blow up as foo is (probably) not a valid function
 (if (or #t (foo bar baz))
   (pass "eight")
   (fail "eight"))
+
+;; `and` should only continue evaluating it's arguments until the FIRST falsey expression
+;; if the second arg is evaluated then plot should blow up as foo is (probably) not a valid function
+(if (not (and #f (foo bar baz)))
+  (pass "nine")
+  (fail "nine"))
 
 ;; tests completed, print results
 (println ">>> boolean test results")
