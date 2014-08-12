@@ -225,14 +225,13 @@ struct plot_value * plot_func_symbol_equal_test(struct plot_env *env, struct plo
  * does not modify value nor value's refcount
  */
 int plot_truthy(plot_value *val){
-    int ret = 1;
     if( ! val )
         return 0;
 
     if( val->type == plot_type_boolean && val->u.boolean.val == false )
-        ret =  0;
+        return 0;
 
-    return ret;
+    return 1;
 }
 
 /* (not obj)
