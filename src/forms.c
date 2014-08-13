@@ -801,6 +801,8 @@ struct plot_value * plot_form_set(struct plot_env *env, struct plot_value *sexpr
     return plot_new_unspecified();
 }
 
+/* (quote expr) -syntax
+ */
 struct plot_value * plot_form_quote(struct plot_env *env, struct plot_value *sexpr){
     /* current position in input */
     plot_value *in;

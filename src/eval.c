@@ -115,6 +115,15 @@ plot_value * plot_eval_value(plot_env *env, plot_value * val){
             }
             return res;
             break;
+        case plot_type_null:
+            /* a null should never be evaluated
+             * it must be quoted to be a literal empty list
+             * this most likely means there is an empty function call somewhere `()`
+             */
+            #if DEBUG_VALUE || DEBUG
+            puts("ERROR TRYING TO EVALUATE A NULL");
+            #endif
+            return plot_runtime_error(plot_error_runtime, "trying to evaluate a null", "plot_eval_value");
         default:
             #if DEBUG_VALUE || DEBUG
             puts("\tvalue found, keeping");
