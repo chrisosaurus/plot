@@ -323,7 +323,7 @@ Support
     Textual ports are currently being implemented.
 
     The following procedures are implemented:
-        `open-output-port`
+        `open-output-file`
         `open-input-file`
         `close-port`
         `input-port?`
