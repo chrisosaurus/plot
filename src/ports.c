@@ -64,8 +64,8 @@ struct plot_value * plot_func_ports_open_output_file(struct plot_env *env, struc
     return plot_new_textual_port(plot_port_out, file);
 }
 /* (close-port port)
- * closes the resource assosiated with port, rendering the port incapable of delivering or accepting data
- * routine has no effect is port is already closed
+ * closes the resource associated with port, rendering the port incapable of delivering or accepting data
+ * routine has no effect if port is already closed
  */
 struct plot_value * plot_func_ports_close_port(struct plot_env *env, struct plot_value *args){
     plot_value *port;
@@ -102,6 +102,84 @@ struct plot_value * plot_func_ports_close_port(struct plot_env *env, struct plot
     }
 
     return plot_new_unspecified();
+}
+
+/* (close-output-port port)
+ * closes the resource associated with port, rendering the port incapable of delivering or accepting data
+ * routine has no effect if port is already closed
+ *
+ * throws a runtime exception if the port is not an output port
+ */
+struct plot_value * plot_func_ports_close_output_port(struct plot_env *env, struct plot_value *args){
+    plot_value *test = 0;
+
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_ports_close_output_port");
+    }
+
+    // returns a plot boolean
+    test = plot_func_ports_output_port_test(env, args);
+
+    if( ! test ){
+        return plot_runtime_error(plot_error_internal, "call to plot_func_ports_output_port_test returned null", "plot_func_ports_close_output_port");
+    }
+
+    if( test->type == plot_type_error ){
+        puts("plot_func_ports_close_output_port");
+        return test;
+    }
+
+    if( ! test->type == plot_type_boolean){
+        return plot_runtime_error(plot_error_internal, "call to plot_func_ports_output_port_test returned non-boolean result", "plot_func_ports_close_output_port");
+    }
+
+    if( ! test->u.boolean.val ){
+        /* if false then the provided port was not an output port */
+        return plot_runtime_error(plot_error_bad_args, "provided port was not an output port", "plot_func_ports_close_output_port");
+    }
+
+    plot_value_decr(test);
+
+    return plot_func_ports_close_port(env, args);
+}
+
+/* (close-input-port port)
+ * closes the resource associated with port, rendering the port incapable of delivering or accepting data
+ * routine has no effect if port is already closed
+ *
+ * throws a runtime exception if the port is not an input port
+ */
+struct plot_value * plot_func_ports_close_input_port(struct plot_env *env, struct plot_value *args){
+    plot_value *test = 0;
+
+    if( args->type != plot_type_pair || cdr(args)->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "expected exactly 1 arg", "plot_func_ports_close_input_port");
+    }
+
+    // returns a plot boolean
+    test = plot_func_ports_input_port_test(env, args);
+
+    if( ! test ){
+        return plot_runtime_error(plot_error_internal, "call to plot_func_ports_input_port_test returned null", "plot_func_ports_close_input_port");
+    }
+
+    if( test->type == plot_type_error ){
+        puts("plot_func_ports_close_input_port");
+        return test;
+    }
+
+    if( ! test->type == plot_type_boolean){
+        return plot_runtime_error(plot_error_internal, "call to plot_func_ports_input_port_test returned non-boolean result", "plot_func_ports_close_input_port");
+    }
+
+    if( ! test->u.boolean.val ){
+        /* if false then the provided port was not an input port */
+        return plot_runtime_error(plot_error_bad_args, "provided port was not an input port", "plot_func_ports_close_input_port");
+    }
+
+    plot_value_decr(test);
+
+    return plot_func_ports_close_port(env, args);
 }
 
 /* (input-port? obj)

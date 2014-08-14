@@ -19,10 +19,26 @@ struct plot_value * plot_func_ports_open_input_file(struct plot_env *env, struct
 struct plot_value * plot_func_ports_open_output_file(struct plot_env *env, struct plot_value *args);
 
 /* (close-port port)
- * closes the resource assosiated with port, rendering the port incapable of delivering or accepting data
- * routine has no effect is port is already closed
+ * closes the resource associated with port, rendering the port incapable of delivering or accepting data
+ * routine has no effect if port is already closed
  */
 struct plot_value * plot_func_ports_close_port(struct plot_env *env, struct plot_value *args);
+
+/* (close-output-port port)
+ * closes the resource associated with port, rendering the port incapable of delivering or accepting data
+ * routine has no effect if port is already closed
+ *
+ * throws a runtime exception if the port is not an output port
+ */
+struct plot_value * plot_func_ports_close_output_port(struct plot_env *env, struct plot_value *args);
+
+/* (close-input-port port)
+ * closes the resource associated with port, rendering the port incapable of delivering or accepting data
+ * routine has no effect if port is already closed
+ *
+ * throws a runtime exception if the port is not an input port
+ */
+struct plot_value * plot_func_ports_close_input_port(struct plot_env *env, struct plot_value *args);
 
 /* (input-port? obj)
  * returns #t iff obj is an input port

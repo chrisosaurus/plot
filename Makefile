@@ -110,7 +110,7 @@ src/bindings.h:
 	./build/generate_bindings.pl
 
 # generate compliance report
-compliance: src/bindings.h
+compliance: clean src/bindings.h
 	./build/compliance.pl
 
 # helper program to generate hashes

@@ -45,6 +45,15 @@
     (fail "one case 2"))
   (fail "one case 1"))
 
+(define makefile (open-input-file "Makefile"))
+(if (input-port? makefile)
+  (if (not (output-port? makefile))
+    (pass "two")
+    (fail "two case 2"))
+  (fail "two case 1"))
+
+(close-input-port makefile)
+
 ;; tests completed, print results
 (println ">>> input test results")
 (results)

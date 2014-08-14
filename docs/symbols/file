@@ -1,4 +1,4 @@
-th-input-file
+call-with-input-file
 delete-file
 open-binary-input-file
 open-input-file

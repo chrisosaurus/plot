@@ -326,6 +326,8 @@ Support
         `open-output-file`
         `open-input-file`
         `close-port`
+        `close-input-port`
+        `close-output-port`
         `input-port?`
         `output-port?`
         `port?`
@@ -345,8 +347,6 @@ Support
         `with-output-to-file`
         `open-binary-input-file`
         `open-binary-output-file`
-        `close-input-port`
-        `close-output-port`
         `open-input-string`
         `open-output-string`
         `get-output-string`

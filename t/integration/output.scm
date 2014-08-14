@@ -16,4 +16,4 @@
 (write-string "ldAAA" port 0 2)
 (newline port)
 
-(close-port port)
+(close-output-port port)
