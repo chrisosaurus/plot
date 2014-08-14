@@ -292,6 +292,7 @@ struct plot_value * plot_func_emergency_exit(struct plot_env *env, struct plot_v
 }
 
 /* (force promise)
+ * returns a non-promise unmodified
  */
 struct plot_value * plot_func_force(struct plot_env *env, struct plot_value *args){
     plot_value *val;
@@ -303,7 +304,7 @@ struct plot_value * plot_func_force(struct plot_env *env, struct plot_value *arg
     val = car(args);
 
     if( val->type != plot_type_promise ){
-        return plot_runtime_error(plot_error_bad_args, "first arg was not of type plot_type_promise", "plot_func_force");
+        return val;
     }
 
     if( ! val->u.promise.value ){

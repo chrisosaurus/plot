@@ -288,27 +288,32 @@
           (fail "twenty two case 5")
           (pass "twenty two"))))))
 
+;; force should safely return non-promise values unmodified
+(if (eq? (force 3) 3)
+  (pass "twenty three")
+  (fail "twenty three"))
+
 ;; basic cond testing
-(define twenty-three #t)
+(define twenty-four #t)
 (if (equal? 'greater
             (cond
               ((< 3 2) => (begin
-                            (set! twenty-three #f)
+                            (set! twenty-four #f)
                             'less))
               ((> 3 2) 'greater)
               (else    (begin
-                         (set! twenty-three #f)
+                         (set! twenty-four #f)
                          'equal))))
-  (if twenty-three
-    (pass "twenty three")
-    (fail "twenty three case 2"))
-  (fail "twenty three case 1"))
-
-(if (symbol=? 'hello 'hello)
-  (if (not (symbol=? 'hello 'world))
+  (if twenty-four
     (pass "twenty four")
     (fail "twenty four case 2"))
   (fail "twenty four case 1"))
+
+(if (symbol=? 'hello 'hello)
+  (if (not (symbol=? 'hello 'world))
+    (pass "twenty five")
+    (fail "twenty five case 2"))
+  (fail "twenty five case 1"))
 
 ;; tests completed, print results
 (println ">>> basic test results")

@@ -85,6 +85,7 @@ struct plot_value * plot_func_exit(struct plot_env *env, struct plot_value *args
 struct plot_value * plot_func_emergency_exit(struct plot_env *env, struct plot_value *args);
 
 /* (force promise)
+ * returns a non-promise unmodified
  */
 struct plot_value * plot_func_force(struct plot_env *env, struct plot_value *args);
 
