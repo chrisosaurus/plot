@@ -99,17 +99,20 @@ runtime:
 
 bugs:
 -----
-* all plot errors that feature 'not of type ...' should also mention the type that it was
-* should detect lambda rest args form `(lambda (arg1 . args) body ...)` and trigger a plot_error_unimplemented bugs/args.scm
-* should detect define rest args form `(define (foo . args) body ...)` and trigger a plot_error_unimplemented bugs/args.scm
-* also see bugs/ for test cases producing bugs
+* see bugs/ for test cases producing bugs
 * stack trace showing > Unable to print a form at this point in time
-* need to better document return values of eval functions
-* string size/len is silly, too many magic numbers (+1 to store, -1 to use... ugly)
-* plot pair cons and decons are not symmetrical, cons will NOT incr but decons does decr
 * strings do not correctly support escaping
 * escaping in strings will copy over the escape character and include it in size/len
 * escape characters not behaving, e.g. (display "\t") => segfault
+
+hints:
+-----
+* all plot errors that feature 'not of type ...' should also mention the type that it was
+* should detect lambda rest args form `(lambda (arg1 . args) body ...)` and trigger a plot_error_unimplemented bugs/args.scm
+* should detect define rest args form `(define (foo . args) body ...)` and trigger a plot_error_unimplemented bugs/args.scm
+* need to better document return values of eval functions
+* string size/len is silly, too many magic numbers (+1 to store, -1 to use... ugly)
+* plot pair cons and decons are not symmetrical, cons will NOT incr but decons does decr
 * parsing of # is silly
 * plot runtime errors may leak previously allocated values, need to decr before throwing error (sadly must be done at each call site).
 * plot_runtime_errors should generally use scheme name (rather than c implementation name)
