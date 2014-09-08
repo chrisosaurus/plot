@@ -159,9 +159,10 @@
 
 
 ; sicp-derived 'bank account'
-; purely-functional as we lack a set! operation
-; we also lack a cons, error and quoted symbols
-; so this makes it a little more awkward
+; purely-functional as we lacked a set! operation
+; we also lacked a cons, error and quoted symbols
+; so this made it a little more awkward
+; leaving in for historical amusement
 (define mk-bank-acc
   (lambda (balance)
     (lambda (op)
