@@ -89,6 +89,15 @@ struct plot_value * plot_func_pair_cdr(struct plot_env *env, struct plot_value *
  */
 struct plot_value * plot_func_pair_set_car(struct plot_env *env, struct plot_value *args){
     plot_value *new;
+
+    /* FIXME arg checking
+     * not checking if args is a pair
+     * not checking for more than 2 args
+     */
+
+    /* args should be
+     * ( pair ( obj null ) )
+     */
     if( cdr(args)->type == plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_set_cdr");
     }
@@ -96,10 +105,13 @@ struct plot_value * plot_func_pair_set_car(struct plot_env *env, struct plot_val
     if( car(args)->type != plot_type_pair ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not a pair", "plot_func_pair_set_cdr");
     }
-
+    /* grab our new value */
     new = car(cdr(args));
 
+    /* decr our old value */
     plot_value_decr(car(car(args)));
+
+    /* store and incr our new value */
     car(car(args)) = new;
     plot_value_incr(new);
 
@@ -110,6 +122,15 @@ struct plot_value * plot_func_pair_set_car(struct plot_env *env, struct plot_val
  */
 struct plot_value * plot_func_pair_set_cdr(struct plot_env *env, struct plot_value *args){
     plot_value *new;
+
+    /* FIXME arg checking
+     * not checking if args is a pair
+     * not checking for more than 2 args
+     */
+
+    /* args should be
+     * ( pair ( obj null ) )
+     */
     if( cdr(args)->type == plot_type_null ){
         return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_set_cdr");
     }
@@ -118,9 +139,13 @@ struct plot_value * plot_func_pair_set_cdr(struct plot_env *env, struct plot_val
         return plot_runtime_error(plot_error_bad_args, "first arg was not a pair", "plot_func_pair_set_cdr");
     }
 
+    /* grab our new value */
     new = car(cdr(args));
 
+    /* decr our old value */
     plot_value_decr(cdr(car(args)));
+
+    /* store and incr our new value */
     cdr(car(args)) = new;
     plot_value_incr(new);
 
