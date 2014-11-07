@@ -726,7 +726,6 @@ struct plot_value * plot_func_pair_assoc(struct plot_env *env, struct plot_value
          */
         car(arg) = car(car(cur));
 
-        /* decr of res is handled by truthy */
         res = plot_eval_apply(env, func, arg);
         if( plot_truthy(res) ){
             plot_value_decr(ret);
@@ -734,6 +733,8 @@ struct plot_value * plot_func_pair_assoc(struct plot_env *env, struct plot_value
             plot_value_incr(ret);
             break;
         }
+        /* plot_truthy no longer decrs */
+        plot_value_decr(res);
     }
 
     /* avoid collecting any of the elements in the list */
