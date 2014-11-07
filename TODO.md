@@ -121,6 +121,7 @@ hints:
 * parsing feedback is terrible - need to track source line and even text (in case of transformations, e.g. 'a -> (quote a))
 * look very carefully at gc around force (incr when generated vs incr when returned)
 * look very carefully at ref counting around various values and storage - current system is very brittle
+* plot_eval_truthy -> plot_truthy removed implicit decr, found some leaks that were caused by reliance on this removed functionality, check all calls to plot_truthy correctly decr the value (if no longer needed)
 
 limitations:
 ------------
