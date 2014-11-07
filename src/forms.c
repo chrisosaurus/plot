@@ -722,16 +722,20 @@ struct plot_value * plot_form_cond(struct plot_env *env, struct plot_value *sexp
 
         /* if tmp is 'else' then it is considered true */
         if( tmp->type == plot_type_symbol && !strcmp("else", tmp->u.symbol.val) ){
-            /* NB: plot_eval_truthy will handle our decr for us */
+            /* NB: plot_truthy no longer handles decr for us
+             * make sure to decr for both branches below
+             */
             res = plot_new_boolean(1);
         } else {
             /* otherwise we eval */
-            /* NB: plot_eval_truthy will handle our decr for us */
+            /* NB: plot_truthy no longer handles decr for us
+             * make sure to decr for both branches below
+             */
             res = plot_eval_expr(env, tmp);
         }
 
         /* test for truthyness
-         * plot_eval_truthy will handle our decr for us
+         * plot_truthy no longer handles our decr
          */
         if( plot_truthy(res) ){
             if( cdr(car(cur))->type != plot_type_pair ){
@@ -749,8 +753,14 @@ struct plot_value * plot_form_cond(struct plot_env *env, struct plot_value *sexp
                 tmp = car(cdr(cdr(car(cur))));
             }
 
+            /* decr existing res */
+            plot_value_decr(res);
+
             res = plot_eval_expr(env, tmp);
             return res;
+        } else {
+            /* decr res */
+            plot_value_decr(res);
         }
     }
 
