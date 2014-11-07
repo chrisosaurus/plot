@@ -16,7 +16,7 @@ all: debug
 
 plot: src/bindings.h ${OBJ}
 	@echo more compiling CC -o $@
-	@${CC} src/main.c -o $@ ${LDFLAGS} -DPLOT_DEBUG ${OBJ}
+	@${CC} src/main.c -o $@ ${LDFLAGS} ${OBJ}
 	@make -s cleanobj
 
 # build plot with debug output
