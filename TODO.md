@@ -105,6 +105,7 @@ bugs:
 * escaping in strings will copy over the escape character and include it in size/len
 * escape characters not behaving, e.g. (display "\t") => segfault
 * set-car! and set-cdr! arg checking, see bugs/set_car_cdr_args.scm
+* lack of key incr in plot_hash_set
 
 hints:
 -----

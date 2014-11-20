@@ -175,6 +175,8 @@ int plot_hash_set(plot_hash *hash, plot_symbol * key, plot_value *value){
     }
     #endif
 
+    /* FIXME should we not also incr key ? */
+
     plot_value_incr(value); /* we are holding a reference to value */
     n->next = *e;
     *e = n;
