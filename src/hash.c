@@ -109,7 +109,10 @@ plot_value * plot_hash_get(const plot_hash *hash, plot_symbol * key){
     puts("\tno matching key found");
     #endif
 
-    /* null was encountered
+    /* null(end of list) was encountered
+     * OR
+     * we found a higher key (as keys are sorted)
+     *
      * element not found
      */
     return 0;
@@ -151,6 +154,16 @@ int plot_hash_set(plot_hash *hash, plot_symbol * key, plot_value *value){
         if(  key->hash < (*e)->key->hash ) /* TRUE IFF key < (*e)->key */
             break;
         if( key->hash == (*e)->key->hash ){ /* TRUE IFF key == (*e)->key */
+            /* FIXME this logic is stupid
+             * regardless below we then alloc a new entry and set
+             * *e as our next
+             * this would lead to duplicate keys
+             * 'luckily' the later will never be used
+             * need to fix this
+             *
+             * this also means our hash->n_elems is off.
+             */
+
             new = 0; /* not new, don't increment counter */
             /* overriding, need to decr value here */
             plot_value_decr((*e)->value);

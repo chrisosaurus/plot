@@ -106,6 +106,7 @@ bugs:
 * escape characters not behaving, e.g. (display "\t") => segfault
 * set-car! and set-cdr! arg checking, see bugs/set_car_cdr_args.scm
 * lack of key incr in plot_hash_set
+* plot_hash_set is stupid, hash_entry reuse value is plain wrong
 
 hints:
 -----
