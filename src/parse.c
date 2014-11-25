@@ -40,13 +40,13 @@ plot_value * plot_parse(const char *source){
                     plot_value_decr(*cur);
                 }
                 *cur = plot_new_pair(0, plot_new_null());
-                car(*cur) = plot_parse_expr(source, &i);
+                lcar(*cur) = plot_parse_expr(source, &i);
                 if( ! car(*cur) ){
                     puts("\t\t error in plot_parse calling plot_parse_expr, returning");
                     return 0;
                     break;
                 }
-                cur = &cdr(*cur);
+                cur = &lcdr(*cur);
                 break;
             case ' ':
             case '\r':
@@ -357,9 +357,9 @@ static plot_value * plot_parse_expr_quote(const char *source, size_t *upto){
      */
 
     val = plot_new_pair(0, plot_new_pair(0, plot_new_null()));
-    car(val) = plot_new_symbol("quote", 6);
+    lcar(val) = plot_new_symbol("quote", 6);
     plot_value_constantify(car(val));
-    car(cdr(val)) = plot_parse_expr(source, upto);
+    lcar(cdr(val)) = plot_parse_expr(source, upto);
 
     #if DEBUG
     puts("parsed quote:");
@@ -535,12 +535,12 @@ plot_value * plot_parse_sexpr(const char *source, size_t *upto){
                     plot_value_decr(*cur);
                 }
                 *cur = plot_new_pair(0, plot_new_null());
-                car(*cur) = plot_parse_expr(source, upto);
+                lcar(*cur) = plot_parse_expr(source, upto);
                 if( ! car(*cur) ){
                     puts("\t\tError in plot_parse_sexpr, called to plot_parse_expr failed\n");
                     return 0;
                 }
-                cur = &cdr(*cur);
+                cur = &lcdr(*cur);
                 break;
         }
     }

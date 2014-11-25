@@ -403,7 +403,7 @@ void display_expr(plot_value * sexpr){
          * as cons does not incr and we don't want
          * to accidentally decr sexpr
          */
-        car(val) = 0;
+        lcar(val) = 0;
         plot_value_decr(val);
     }
 }
@@ -412,6 +412,32 @@ void display_error_expr(plot_value *expr){
     fputs(">\t", stdout);
     display_expr(expr);
     fputs("\n", stdout);
+}
+
+struct plot_value * cons(struct plot_value *l, struct plot_value *r){
+    return plot_new_pair(l,r);
+}
+
+struct plot_value * car(struct plot_value *p){
+    if( p->type != plot_type_pair ){
+        plot_fatal_error("value.c:car argument was not of type pair");
+        return 0;
+    }
+    /* FIXME does not incr
+     * check usage
+     */
+    return (p)->u.pair.car;
+}
+
+struct plot_value * cdr(struct plot_value *p){
+    if( p->type != plot_type_pair ){
+        plot_fatal_error("value.c:cdr argument was not of type pair");
+        return 0;
+    }
+    /* FIXME does not incr
+     * check usage
+     */
+    return (p)->u.pair.cdr;
 }
 
 

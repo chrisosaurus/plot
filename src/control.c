@@ -72,9 +72,9 @@ struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_va
             return plot_runtime_error(plot_error_bad_args, "only the final arg to apply can be a list", "plot_func_control_apply");
         }
         *curna = cons(0, null);
-        car(*curna) = car(arg);
+        lcar(*curna) = car(arg);
         plot_value_incr(car(*curna));
-        curna = &cdr(*curna);
+        curna = &lcdr(*curna);
     }
 
     newargs = plot_func_pair_append(env, cons(plot_func_pair_list(env, newargs), arg));
@@ -94,7 +94,7 @@ struct plot_value * plot_func_control_apply(struct plot_env *env, struct plot_va
      * (and we dont want to accidentally decr
      */
     for( arg = newargs; arg->type != plot_type_null; arg = cdr(arg) ){
-        car(arg) = 0;
+        lcar(arg) = 0;
     }
     plot_value_decr(newargs);
 
@@ -174,11 +174,11 @@ struct plot_value * plot_func_control_map(struct plot_env *env, struct plot_valu
             case plot_type_pair:
                 /* allocate and copy over supplied lists */
                 *stepcur = cons( car(cur), null );
-                stepcur = &cdr(*stepcur);
+                stepcur = &lcdr(*stepcur);
 
                 /* allocate temporary arguments to ensure sufficient length */
                 *targscur = cons( null, null );
-                targscur = &cdr(*targscur);
+                targscur = &lcdr(*targscur);
 
                 break;
             case plot_type_null:
@@ -202,7 +202,7 @@ ARGFIN:
     /* last arg of apply must be a list of arguments
      * so we must wrap targs in another cons
      */
-    car(cdr(proc)) = targs;
+    lcar(cdr(proc)) = targs;
 
     /* main loop */
     while( 1 ){
@@ -226,12 +226,12 @@ ARGFIN:
             }
 
             /* copy over into temporary args */
-            car(*targscur) = car(car(cur));
-            targscur = &cdr(*targscur);
+            lcar(*targscur) = car(car(cur));
+            targscur = &lcdr(*targscur);
 
             /* advance step */
-            car(*stepcur) = cdr(car(cur));
-            stepcur = &cdr(*stepcur);
+            lcar(*stepcur) = cdr(car(cur));
+            stepcur = &lcdr(*stepcur);
         }
 
 
@@ -241,14 +241,14 @@ ARGFIN:
         /* call our function
          * here `proc` is a pair of (proc, args)
          */
-        car(*rescur) = plot_func_control_apply(env, proc);
+        lcar(*rescur) = plot_func_control_apply(env, proc);
 
         if( ! car(*rescur) || car(*rescur)->type == plot_type_error ){
             puts("plot_func_control_map");
             return car(*rescur);
         }
 
-        rescur = &cdr(*rescur);
+        rescur = &lcdr(*rescur);
     }
 
     /* exit point for main loop */
@@ -258,11 +258,11 @@ LISTFIN:
      * NB: cons does not incr, so we have to 0 out to avoid decr on the copied values
      */
     for( cur = targs; cur->type == plot_type_pair; cur = cdr(cur) ){
-        car(cur) = 0;
+        lcar(cur) = 0;
     }
 
     /* zero-out car of proc to prevent gc of procedure */
-    car(proc) = 0;
+    lcar(proc) = 0;
 
     /* gc conses used in proc and targs */
     plot_value_decr(proc);
@@ -337,8 +337,8 @@ struct plot_value * plot_func_control_string_map(struct plot_env *env, struct pl
             case plot_type_pair:
                 /* allocate temporary arguments to ensure sufficient length */
                 *targscur = cons( null, null );
-                car(*targscur) = plot_new_character(0);
-                targscur = &cdr(*targscur);
+                lcar(*targscur) = plot_new_character(0);
+                targscur = &lcdr(*targscur);
 
                 break;
             case plot_type_null:
@@ -362,7 +362,7 @@ ARGFIN:
     /* last arg of apply must be a list of arguments
      * so we must wrap targs in another cons
      */
-    car(cdr(proc)) = targs;
+    lcar(cdr(proc)) = targs;
 
     /* main loop */
     while( 1 ){
@@ -382,7 +382,7 @@ ARGFIN:
             /* copy over into temporary args */
             car(*targscur)->u.character.val = car(cur)->u.string.val[i];
             //car(*targscur) = car(car(cur));
-            targscur = &cdr(*targscur);
+            targscur = &lcdr(*targscur);
         }
 
         /* advance step */
@@ -411,7 +411,7 @@ ARGFIN:
         car(*rescur)->u.character.val = tmp->u.character.val;
         plot_value_decr(tmp);
 
-        rescur = &cdr(*rescur);
+        rescur = &lcdr(*rescur);
     }
 
     /* exit point for main loop */
@@ -422,7 +422,7 @@ LISTFIN:
      */
 
     /* zero-out car of proc to prevent gc of procedure */
-    car(proc) = 0;
+    lcar(proc) = 0;
 
     /* gc conses used in proc and targs */
     plot_value_decr(proc);
@@ -438,7 +438,7 @@ LISTFIN:
 
         /* copy over characters */
         i = 0;
-        for( rescur = &res; (*rescur)->type == plot_type_pair; rescur = &cdr(*rescur) ){
+        for( rescur = &res; (*rescur)->type == plot_type_pair; rescur = &lcdr(*rescur) ){
             tmp->u.string.val[i++] = (car(*rescur))->u.character.val;
         }
         tmp->u.string.val[i] = '\0';
@@ -522,11 +522,11 @@ struct plot_value * plot_func_control_for_each(struct plot_env *env, struct plot
             case plot_type_pair:
                 /* allocate and copy over supplied lists */
                 *stepcur = cons( car(cur), null );
-                stepcur = &cdr(*stepcur);
+                stepcur = &lcdr(*stepcur);
 
                 /* allocate temporary arguments to ensure sufficient length */
                 *targscur = cons( null, null );
-                targscur = &cdr(*targscur);
+                targscur = &lcdr(*targscur);
 
                 break;
             case plot_type_null:
@@ -550,7 +550,7 @@ ARGFIN:
     /* last arg of apply must be a list of arguments
      * so we must wrap targs in another cons
      */
-    car(cdr(proc)) = targs;
+    lcar(cdr(proc)) = targs;
 
     /* main loop */
     while( 1 ){
@@ -574,12 +574,12 @@ ARGFIN:
             }
 
             /* copy over into temporary args */
-            car(*targscur) = car(car(cur));
-            targscur = &cdr(*targscur);
+            lcar(*targscur) = car(car(cur));
+            targscur = &lcdr(*targscur);
 
             /* advance step */
-            car(*stepcur) = cdr(car(cur));
-            stepcur = &cdr(*stepcur);
+            lcar(*stepcur) = cdr(car(cur));
+            stepcur = &lcdr(*stepcur);
         }
 
         /* call our function
@@ -602,11 +602,11 @@ LISTFIN:
      * NB: cons does not incr, so we have to 0 out to avoid decr on the copied values
      */
     for( cur = targs; cur->type == plot_type_pair; cur = cdr(cur) ){
-        car(cur) = 0;
+        lcar(cur) = 0;
     }
 
     /* zero-out car of proc to prevent gc of procedure */
-    car(proc) = 0;
+    lcar(proc) = 0;
 
     /* gc conses used in proc and targs */
     plot_value_decr(proc);
@@ -671,8 +671,8 @@ struct plot_value * plot_func_control_string_for_each(struct plot_env *env, stru
             case plot_type_pair:
                 /* allocate temporary arguments to ensure sufficient length */
                 *targscur = cons( null, null );
-                car(*targscur) = plot_new_character(0);
-                targscur = &cdr(*targscur);
+                lcar(*targscur) = plot_new_character(0);
+                targscur = &lcdr(*targscur);
 
                 break;
             case plot_type_null:
@@ -696,7 +696,7 @@ ARGFIN:
     /* last arg of apply must be a list of arguments
      * so we must wrap targs in another cons
      */
-    car(cdr(proc)) = targs;
+    lcar(cdr(proc)) = targs;
 
     /* main loop */
     while( 1 ){
@@ -716,7 +716,7 @@ ARGFIN:
             /* copy over into temporary args */
             car(*targscur)->u.character.val = car(cur)->u.string.val[i];
             //car(*targscur) = car(car(cur));
-            targscur = &cdr(*targscur);
+            targscur = &lcdr(*targscur);
         }
 
         /* advance step */
@@ -747,7 +747,7 @@ LISTFIN:
      */
 
     /* zero-out car of proc to prevent gc of procedure */
-    car(proc) = 0;
+    lcar(proc) = 0;
 
     /* gc conses used in proc and targs */
     plot_value_decr(proc);

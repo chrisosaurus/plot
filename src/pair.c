@@ -112,7 +112,7 @@ struct plot_value * plot_func_pair_set_car(struct plot_env *env, struct plot_val
     plot_value_decr(car(car(args)));
 
     /* store and incr our new value */
-    car(car(args)) = new;
+    lcar(car(args)) = new;
     plot_value_incr(new);
 
     return plot_new_unspecified();
@@ -146,7 +146,7 @@ struct plot_value * plot_func_pair_set_cdr(struct plot_env *env, struct plot_val
     plot_value_decr(cdr(car(args)));
 
     /* store and incr our new value */
-    cdr(car(args)) = new;
+    lcdr(car(args)) = new;
     plot_value_incr(new);
 
     return plot_new_unspecified();
@@ -184,9 +184,9 @@ struct plot_value * plot_func_pair_list(struct plot_env *env, struct plot_value 
 
     for( in = args; in->type == plot_type_pair; in = cdr(in) ){
         *cur = cons(0, null);
-        car(*cur) = car(in);
+        lcar(*cur) = car(in);
         plot_value_incr(car(in));
-        cur = &cdr(*cur);
+        cur = &lcdr(*cur);
     }
 
     return head;
@@ -247,9 +247,9 @@ struct plot_value * plot_func_pair_append(struct plot_env *env, struct plot_valu
     for( arg = args; arg->type == plot_type_pair; arg = cdr(arg) ){
         for( elem = car(arg); elem->type == plot_type_pair; elem = cdr(elem) ){
             *outcur = cons(0, null);
-            car(*outcur) = car(elem);
+            lcar(*outcur) = car(elem);
             plot_value_incr(car(elem));
-            outcur = &cdr(*outcur);
+            outcur = &lcdr(*outcur);
         }
 
         /* need to deal with final element which may not be a list */
@@ -440,7 +440,7 @@ struct plot_value * plot_func_pair_list_set(struct plot_env *env, struct plot_va
      * args has to be a pair
      */
     plot_value_decr(car(cur));
-    car(cur) = car(cdr(cdr(args)));
+    lcar(cur) = car(cdr(cdr(args)));
     plot_value_incr(car(cur));
 
     return plot_new_unspecified();
@@ -474,12 +474,12 @@ struct plot_value * plot_func_pair_memq(struct plot_env *env, struct plot_value 
     }
 
     func = plot_new_form(plot_func_eq_test, 0);
-    cdr(cdr(args)) = cons(func, null);
+    lcdr(cdr(args)) = cons(func, null);
 
     res = plot_func_pair_member(env, args);
 
     plot_value_decr(cdr(cdr(args)));
-    cdr(cdr(args)) = null;
+    lcdr(cdr(args)) = null;
 
     return res;
 }
@@ -512,12 +512,12 @@ struct plot_value * plot_func_pair_memv(struct plot_env *env, struct plot_value 
     }
 
     func = plot_new_form(plot_func_eqv_test, 0);
-    cdr(cdr(args)) = cons(func, null);
+    lcdr(cdr(args)) = cons(func, null);
 
     res = plot_func_pair_member(env, args);
 
     plot_value_decr(cdr(cdr(args)));
-    cdr(cdr(args)) = null;
+    lcdr(cdr(args)) = null;
 
     return res;
 }
@@ -582,11 +582,11 @@ struct plot_value * plot_func_pair_member(struct plot_env *env, struct plot_valu
     ret = plot_new_boolean(0);
     arg = cons(0, cons(0, null));
     /* supplied obj to compare to, inserting into later position to make for loop cheaper */
-    car(cdr(arg)) = car(args);
+    lcar(cdr(arg)) = car(args);
 
     for( cur = car(cdr(args)); cur->type == plot_type_pair; cur = cdr(cur) ){
         /* object in list to compare */
-        car(arg) = car(cur);
+        lcar(arg) = car(cur);
 
         res = plot_eval_apply(env, func, arg);
         if( plot_truthy(res) ){
@@ -600,8 +600,8 @@ struct plot_value * plot_func_pair_member(struct plot_env *env, struct plot_valu
     }
 
     /* avoid collecting any of the elements in the list */
-    car(cdr(arg)) = 0;
-    car(cdr(cdr(arg))) = 0;
+    lcar(cdr(arg)) = 0;
+    lcar(cdr(cdr(arg))) = 0;
 
     /* func only has a ref count of 1 so it gced for us by decr or arg */
     plot_value_decr(arg);
@@ -634,12 +634,12 @@ struct plot_value * plot_func_pair_assq(struct plot_env *env, struct plot_value 
     }
 
     func = plot_new_form(plot_func_eq_test, 0);
-    cdr(cdr(args)) = cons(func, null);
+    lcdr(cdr(args)) = cons(func, null);
 
     res = plot_func_pair_assoc(env, args);
 
     plot_value_decr(cdr(cdr(args)));
-    cdr(cdr(args)) = null;
+    lcdr(cdr(args)) = null;
 
     return res;
 }
@@ -670,12 +670,12 @@ struct plot_value * plot_func_pair_assv(struct plot_env *env, struct plot_value 
     }
 
     func = plot_new_form(plot_func_eqv_test, 0);
-    cdr(cdr(args)) = cons(func, null);
+    lcdr(cdr(args)) = cons(func, null);
 
     res = plot_func_pair_assoc(env, args);
 
     plot_value_decr(cdr(cdr(args)));
-    cdr(cdr(args)) = null;
+    lcdr(cdr(args)) = null;
 
     return res;
 }
@@ -742,14 +742,14 @@ struct plot_value * plot_func_pair_assoc(struct plot_env *env, struct plot_value
     ret = plot_new_boolean(0);
     arg = cons(0, cons(0, null));
     /* supplied obj to compare to, inserting into later position to make for loop cheaper */
-    car(cdr(arg)) = car(args);
+    lcar(cdr(arg)) = car(args);
 
     for( cur = car(cdr(args)); cur->type == plot_type_pair; cur = cdr(cur) ){
         /* object in list to compare
          * as this is an associative list we want
          * to compare against the 'key' (car)
          */
-        car(arg) = car(car(cur));
+        lcar(arg) = car(car(cur));
 
         res = plot_eval_apply(env, func, arg);
         if( plot_truthy(res) ){
@@ -763,8 +763,8 @@ struct plot_value * plot_func_pair_assoc(struct plot_env *env, struct plot_value
     }
 
     /* avoid collecting any of the elements in the list */
-    car(cdr(arg)) = 0;
-    car(cdr(cdr(arg))) = 0;
+    lcar(cdr(arg)) = 0;
+    lcar(cdr(cdr(arg))) = 0;
 
     /* func only has a ref count of 1 so it gced for us by decr or arg */
     plot_value_decr(arg);
@@ -791,9 +791,9 @@ struct plot_value * plot_func_pair_list_copy(struct plot_env *env, struct plot_v
 
     for( old = car(args); old->type != plot_type_null; old = cdr(old) ){
         *cur = cons(0, null);
-        car(*cur) = car(old);
+        lcar(*cur) = car(old);
         plot_value_incr(car(old));
-        cur = &cdr(*cur);
+        cur = &lcdr(*cur);
     }
 
     return head;

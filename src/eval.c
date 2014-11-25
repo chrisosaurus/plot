@@ -171,11 +171,11 @@ plot_value * plot_eval_sexpr(plot_env *env, plot_value * sexpr){
  * FIXME migrate to plot_eval_apply
  */
 plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
-    plot_value *val = 0;
-    plot_value **vals;
-    plot_value *func;
-    plot_env *new_env;
-    plot_value *cur, *curarg;
+    struct plot_value *val = 0;
+    struct plot_value **vals;
+    struct plot_value *func;
+    struct plot_env *new_env;
+    struct plot_value *cur, *curarg;
 
     #if DEBUG_FUNC || DEBUG
     puts("inside plot_eval_form");
@@ -229,7 +229,7 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
                 for( curarg = cdr(sexpr); curarg->type == plot_type_pair; curarg = cdr(curarg) ){
                     /* eval and shove into list */
                     *vals = cons(0, null);
-                    car(*vals) = plot_eval_expr(env, car(curarg));
+                    lcar(*vals) = plot_eval_expr(env, car(curarg));
 
                     /* check for error from evaluating argument */
                     if( car(*vals)->type == plot_type_error ){
@@ -244,7 +244,7 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
                         return car(*vals);
                     }
 
-                    vals = &cdr(*vals);
+                    vals = &lcdr(*vals);
                 }
                 /* reusing cur, poorly named */
                 cur = func->u.form.func( env, val );

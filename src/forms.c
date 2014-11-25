@@ -160,7 +160,7 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
              */
             plot_value_incr(item);
             *expcur = cons(item, null);
-            expcur = &cdr(*expcur);
+            expcur = &lcdr(*expcur);
         }
 
         /* (import <import set> ...)
@@ -185,7 +185,7 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
              */
             plot_value_incr(item);
             *defcur = cons(item, null);
-            defcur = &cdr(*defcur);
+            defcur = &lcdr(*defcur);
         }
 
         /* (include <filename1> <filename2> ...)
@@ -232,7 +232,7 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
     /* process DEFINITIONS
      *  NB: (*defcur)->type is safe as we initialise to null (valid object, constant)
      */
-    for( *defcur = definitions; (*defcur)->type == plot_type_pair; defcur = &cdr(*defcur) ){
+    for( *defcur = definitions; (*defcur)->type == plot_type_pair; defcur = &lcdr(*defcur) ){
         cur = car(*defcur);
         /* (begin <command or definition> ...)
          * normal eval with env specified as u.library.internal
@@ -261,7 +261,7 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
      *  NB: (*expcur)->type is safe as we initialise to null (valid object, constant)
      *  expcur is '((export ...) ...)
      */
-    for( *expcur = exports; (*expcur)->type == plot_type_pair; expcur = &cdr(*expcur) ){
+    for( *expcur = exports; (*expcur)->type == plot_type_pair; expcur = &lcdr(*expcur) ){
         /* section 5.6.1 p. 28
          * an export is of the form:
          *      (export <export spec> ...)
@@ -832,8 +832,8 @@ struct plot_value * plot_form_quote(struct plot_env *env, struct plot_value *sex
              */
             for( in=car(sexpr); in->type == plot_type_pair; in = cdr(in) ){
                 *cur = plot_new_pair( 0, plot_new_null() );
-                car(*cur) = plot_form_quote( env,  plot_new_pair( car(in), plot_new_null() ) );
-                cur = &cdr(*cur);
+                lcar(*cur) = plot_form_quote( env,  plot_new_pair( car(in), plot_new_null() ) );
+                cur = &lcdr(*cur);
             }
             return out;
             break;

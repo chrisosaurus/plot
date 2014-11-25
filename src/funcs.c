@@ -90,8 +90,8 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
 
             /* if they are, also check the cdrs are equal */
             if( r ){
-                car(t) = cdr(o1);
-                car(cdr(t)) = cdr(o2);
+                lcar(t) = cdr(o1);
+                lcar(cdr(t)) = cdr(o2);
                 r = plot_truthy(plot_func_equal_test(env, t));
             }
 
@@ -99,8 +99,8 @@ struct plot_value * plot_func_equal_test(struct plot_env *env, struct plot_value
              * NB: cons doesn't incr (wrapper for plot_new_pair, which doesn't incr)
              *     so we have to 0 car and cdr to prevent accidental decr of our stored values
              */
-            car(t) = 0;
-            car(cdr(t)) = 0;
+            lcar(t) = 0;
+            lcar(cdr(t)) = 0;
             plot_value_decr(t);
 
             return plot_new_boolean(r);

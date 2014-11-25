@@ -143,12 +143,27 @@ typedef struct plot_library {
     struct plot_env *exported;
 } plot_library;
 
-/* FIXME may want to move to functions that check types
+/* cons/car/cdr/null used by plot runtime
+ * a little ugly having 2 definitions
+ * see equivs. in plot_func_pair_
  */
-#define cons(l,r) (plot_new_pair(l,r))
-#define car(v) ((v)->u.pair.car)
-#define cdr(v) ((v)->u.pair.cdr)
+struct plot_value * cons(struct plot_value *l, struct plot_value *r);
+struct plot_value * car(struct plot_value *p);
+struct plot_value * cdr(struct plot_value *p);
+
+/* car and cdr suitable for use as lvalue
+ * e.g.
+ * lcar(p) = foo
+ * lcdr(p)->bar
+ */
+#define lcar(v) ((v)->u.pair.car)
+#define lcdr(v) ((v)->u.pair.cdr)
+
+/* no need to functionify null as there are no args
+ * having this as a macro doesn't hinder type checking
+ */
 #define null (plot_new_null())
+
 
 #if 0
 
