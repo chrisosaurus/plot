@@ -47,11 +47,8 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
      */
     plot_value *ret;
 
-    /* temporary hash value of symbol being inspected
-     * comparing against symbol hash is UGLY
-     * FIXME TODO
-     */
-    unsigned long long hash = 0;
+    /* temporary pointer to string of symbol being inspected */
+    const char *str = 0;
 
     /* FIXME ignore unused variable warnigns */
     #pragma GCC diagnostic ignored "-Wunused-variable"
@@ -151,13 +148,13 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
         }
 
 
-        hash = car(item)->u.symbol.hash; /* FIXME checking on hash is ugly */
+        str = car(item)->u.symbol.val;
 
         /* (export <export spec> ...)
          * add symbols to u.library.exported
          * symbols may have been defined or may later be defined
          */
-        if( hash == 656723401804llu){ /* make hasher && ./hasher export */
+        if( ! strcmp(str, "export") ){
             /* here we incr so that we can garbage collect the temporary list
              * without risking collecting object at item
              */
@@ -170,7 +167,7 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
          * should be able to re-use normal import and just specify
          * u.library.internal as the env to eval in
          */
-        else if( hash == 656723400763llu){ /* make hasher && ./hasher import */
+        else if( ! strcmp(str, "import") ){
             ret = plot_form_import(in, item);
             if( !ret || ret->type == plot_type_error ){
                 puts("plot_form_define_library (import)");
@@ -182,7 +179,7 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
         /* (begin <command or definition> ...)
          * normal eval with env specified as u.library.internal
          */
-        else if( hash == 6416384521llu){ /* make hasher && ./hasher begin */
+        else if( ! strcmp(str, "begin") ){
             /* here we incr so that we can garbage collect the temporary list
              * without risking collecting object at item
              */
@@ -197,22 +194,22 @@ struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_v
          * various include forms
          * FIXME TODO
          */
-        else if( hash == 51254500566408llu ){ /* make hasher && ./hasher include */
+        else if( ! strcmp(str, "include") ){
             return plot_runtime_error(plot_error_unimplemented, "define-library : include unimplemented", "plot_form_define_library");
         }
 
-        else if( hash == 9560169544426541301llu ){ /* make hasher && ./hasher include-ci */
+        else if( ! strcmp(str, "include-ci") ){
             return plot_runtime_error(plot_error_unimplemented, "define-library : include-ci unimplemented", "plot_form_define_library");
         }
 
-        else if( hash == 2548278337831442659llu ){ /* make hasher && ./hasher include-library-declaration */
+        else if( ! strcmp(str, "include-library-declaration") ){
             return plot_runtime_error(plot_error_unimplemented, "define-library : include-library-declaration unimplemented", "plot_form_define_library");
         }
 
         /* (cond-expand <ce-clause1> <ce-clause2> ...)
          * FIXME TODO
          */
-        else if( hash == 7383587544085817029llu){ /* make hasher && ./hasher cond-expand */
+        else if( ! strcmp(str, "cond-expand") ){
             return plot_runtime_error(plot_error_unimplemented, "define-library : cond-expand unimplemented", "plot_form_define_library");
         }
 
