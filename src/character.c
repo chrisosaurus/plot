@@ -93,7 +93,7 @@ struct plot_value * plot_func_char_less_test(struct plot_env *env, struct plot_v
         return plot_new_boolean(0);
     }
 
-    return plot_new_boolean( o1->u.boolean.val < o2->u.boolean.val );
+    return plot_new_boolean( o1->u.character.val < o2->u.character.val );
 }
 
 /* (char>? char1 char2)
@@ -116,7 +116,7 @@ struct plot_value * plot_func_char_greater_test(struct plot_env *env, struct plo
         return plot_new_boolean(0);
     }
 
-    return plot_new_boolean( o1->u.boolean.val > o2->u.boolean.val );
+    return plot_new_boolean( o1->u.character.val > o2->u.character.val );
 }
 
 /* (char<=? char1 char2)
@@ -139,7 +139,7 @@ struct plot_value * plot_func_char_less_equal_test(struct plot_env *env, struct 
         return plot_new_boolean(0);
     }
 
-    return plot_new_boolean( o1->u.boolean.val <= o2->u.boolean.val );
+    return plot_new_boolean( o1->u.character.val <= o2->u.character.val );
 }
 
 /* (char>=? char1 char2)
@@ -162,7 +162,7 @@ struct plot_value * plot_func_char_greater_equal_test(struct plot_env *env, stru
         return plot_new_boolean(0);
     }
 
-    return plot_new_boolean( o1->u.boolean.val >= o2->u.boolean.val );
+    return plot_new_boolean( o1->u.character.val >= o2->u.character.val );
 }
 
 /* (char-ci<? char1 char2)
@@ -185,7 +185,7 @@ struct plot_value * plot_func_char_ci_less_test(struct plot_env *env, struct plo
         return plot_new_boolean(0);
     }
 
-    return plot_new_boolean( tolower(o1->u.boolean.val) < tolower(o2->u.boolean.val) );
+    return plot_new_boolean( tolower(o1->u.character.val) < tolower(o2->u.character.val) );
 }
 
 /* (char-ci>? char1 char2)
@@ -208,7 +208,7 @@ struct plot_value * plot_func_char_ci_greater_test(struct plot_env *env, struct 
         return plot_new_boolean(0);
     }
 
-    return plot_new_boolean( tolower(o1->u.boolean.val) > tolower(o2->u.boolean.val) );
+    return plot_new_boolean( tolower(o1->u.character.val) > tolower(o2->u.character.val) );
 }
 
 /* (char-ci<=? char1 char2)
@@ -231,7 +231,7 @@ struct plot_value * plot_func_char_ci_less_equal_test(struct plot_env *env, stru
         return plot_new_boolean(0);
     }
 
-    return plot_new_boolean( tolower(o1->u.boolean.val) <= tolower(o2->u.boolean.val) );
+    return plot_new_boolean( tolower(o1->u.character.val) <= tolower(o2->u.character.val) );
 }
 
 /* (char-ci>=? char1 char2)
@@ -254,7 +254,7 @@ struct plot_value * plot_func_char_ci_greater_equal_test(struct plot_env *env, s
         return plot_new_boolean(0);
     }
 
-    return plot_new_boolean( tolower(o1->u.boolean.val) >= tolower(o2->u.boolean.val) );
+    return plot_new_boolean( tolower(o1->u.character.val) >= tolower(o2->u.character.val) );
 }
 
 /* (char-alphabetic? char)
