@@ -57,7 +57,7 @@ garbage collection:
 performance:
 ------------
 * more performant env structure
-* consider caching of booleans (similar to null and unspecified) - more generally we should extend caching for arbitrary objects (rather than just shoving them on the plot_instance value)
+* more generally we should extend caching for arbitrary objects (rather than just shoving them on the plot_instance value)
 
 misc:
 -----

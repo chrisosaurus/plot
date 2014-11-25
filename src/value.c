@@ -112,13 +112,11 @@ plot_value * plot_new_number(int value){
 }
 
 plot_value * plot_new_boolean(int value){
-    plot_value *res;
-    res = plot_alloc_value();
-
-    res->type = plot_type_boolean;
-    res->u.boolean.val = value;
-
-    return res;
+    if( value ){
+        return plot_get_true_constant();
+    } else {
+        return plot_get_false_constant();
+    }
 }
 
 plot_value * plot_new_character(char value){

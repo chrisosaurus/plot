@@ -57,6 +57,8 @@ typedef struct plot {
     struct plot_value unspecified_constant;
     struct plot_value null_constant;
     struct plot_value eof_constant;
+    struct plot_value true_constant;
+    struct plot_value false_constant;
 
 #if GC_STATS
     /**** garbage stats ****/
@@ -112,6 +114,14 @@ int plot_init(void){
 
     plot_instance->eof_constant.type = plot_type_eof;
     plot_instance->eof_constant.gc.refcount = -1;
+
+    plot_instance->true_constant.type = plot_type_boolean;
+    plot_instance->true_constant.gc.refcount = -1;
+    plot_instance->true_constant.u.boolean.val = 1;
+
+    plot_instance->false_constant.type = plot_type_boolean;
+    plot_instance->false_constant.gc.refcount = -1;
+    plot_instance->false_constant.u.boolean.val = 0;
 
     plot_gc_value_init();
     plot_gc_he_init();
@@ -788,6 +798,22 @@ struct plot_value * plot_get_eof_constant(void){
         return 0; /* keep the compiler happy */
     }
     return &plot_instance->eof_constant;
+}
+
+struct plot_value * plot_get_true_constant(void){
+    if( ! plot_instance){
+        plot_fatal_error("plot_get_true_constant called without plot_instance initialisation");
+        return 0; /* keep the compiler happy */
+    }
+    return &plot_instance->true_constant;
+}
+
+struct plot_value * plot_get_false_constant(void){
+    if( ! plot_instance){
+        plot_fatal_error("plot_get_false_constant called without plot_instance initialisation");
+        return 0; /* keep the compiler happy */
+    }
+    return &plot_instance->false_constant;
 }
 
 #if HASH_STATS
