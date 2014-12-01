@@ -366,7 +366,7 @@ static plot_value * plot_parse_expr_quote(const char *source, size_t *upto){
     display_error_expr(val);
     #endif
 
-    if( ! cdr(car(val)) ){
+    if( ! car(cdr(val)) ){
         puts("\t\t Error in plot_parse_expr_quote when calling plot_parse_expr, returning\n");
         return 0;
     }
