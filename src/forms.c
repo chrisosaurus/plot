@@ -461,7 +461,7 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_value *se
         }
 
         if( value->type == plot_type_error ){
-            puts("plot_eval_form (define)");
+            puts("plot_form_define (define)");
             return value;
         }
 
@@ -602,7 +602,7 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr)
     }
 
     if( value->type == plot_type_error ){
-        puts("plot_eval_form (if cond)");
+        puts("plot_form_if (if cond)");
         return value;
     }
 
@@ -619,7 +619,7 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr)
         }
 
         if( value->type == plot_type_error ){
-            puts("plot_eval_form (if if-expr)");
+            puts("plot_form_if (if if-expr)");
             return value;
         }
 
@@ -636,7 +636,7 @@ struct plot_value * plot_form_if(struct plot_env *env, struct plot_value *sexpr)
         }
 
         if( value->type == plot_type_error ){
-            puts("plot_eval_form (if else-expr)");
+            puts("plot_form_if (if else-expr)");
             return value;
         }
 
@@ -796,7 +796,7 @@ struct plot_value * plot_form_set(struct plot_env *env, struct plot_value *sexpr
         return 0; /* FIXME ERROR */
     }
     if( value->type == plot_type_error ){
-        puts("plot_eval_form (set!");
+        puts("plot_form_set (set!");
         return value;
     }
 
