@@ -90,21 +90,26 @@ struct plot_value * plot_func_pair_cdr(struct plot_env *env, struct plot_value *
 struct plot_value * plot_func_pair_set_car(struct plot_env *env, struct plot_value *args){
     plot_value *new;
 
-    /* FIXME arg checking
-     * not checking if args is a pair
-     * not checking for more than 2 args
-     */
+    if( args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "args was not of type plot_type_pair", "plot_func_pair_set_car");
+    }
 
     /* args should be
      * ( pair ( obj null ) )
      */
-    if( cdr(args)->type == plot_type_null ){
-        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_set_cdr");
-    }
 
     if( car(args)->type != plot_type_pair ){
-        return plot_runtime_error(plot_error_bad_args, "first arg was not a pair", "plot_func_pair_set_cdr");
+        return plot_runtime_error(plot_error_bad_args, "first arg was not a pair", "plot_func_pair_set_car");
     }
+
+    if( cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "only got 1 argument, expected exactly 2 args", "plot_func_pair_set_car");
+    }
+
+    if( cdr(cdr(args))->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "got too many arguments, expected exactly 2 args", "plot_func_pair_set_car");
+    }
+
     /* grab our new value */
     new = car(cdr(args));
 
@@ -123,20 +128,23 @@ struct plot_value * plot_func_pair_set_car(struct plot_env *env, struct plot_val
 struct plot_value * plot_func_pair_set_cdr(struct plot_env *env, struct plot_value *args){
     plot_value *new;
 
-    /* FIXME arg checking
-     * not checking if args is a pair
-     * not checking for more than 2 args
-     */
+    if( args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "args was not of type plot_type_pair", "plot_func_pair_set_cdr");
+    }
 
     /* args should be
      * ( pair ( obj null ) )
      */
-    if( cdr(args)->type == plot_type_null ){
-        return plot_runtime_error(plot_error_bad_args, "expected exactly 2 args", "plot_func_pair_set_cdr");
-    }
-
     if( car(args)->type != plot_type_pair ){
         return plot_runtime_error(plot_error_bad_args, "first arg was not a pair", "plot_func_pair_set_cdr");
+    }
+
+    if( cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "only got 1 argument, expected exactly 2 args", "plot_func_pair_set_cdr");
+    }
+
+    if( cdr(cdr(args))->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "got too many arguments, expected exactly 2 args", "plot_func_pair_set_cdr");
     }
 
     /* grab our new value */
