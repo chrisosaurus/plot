@@ -449,10 +449,37 @@ struct plot_value * plot_func_pair_list_set(struct plot_env *env, struct plot_va
     int k;
     plot_value *cur;
 
-    if( args->type != plot_type_pair || car(args)->type != plot_type_pair || car(cdr(args))->type != plot_type_number ){
-        return plot_runtime_error(plot_error_bad_args, "expected 3 args of type list, number and any", "plot_func_pair_list_set");
+    /* args should be
+     * ( list number obj )
+     */
+    if( args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "internal error, arguments not provided as a list", "plot_func_pair_list_set");
     }
 
+    if( car(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "first argument was not a pair", "plot_func_pair_list_set");
+    }
+
+    if( cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "only 1 argument provided, expected exactly 3", "plot_func_pair_list_set");
+    }
+
+    if( car(cdr(args))->type != plot_type_number ){
+        return plot_runtime_error(plot_error_bad_args, "second argument was not of type number", "plot_func_pair_list_set");
+    }
+
+    if( cdr(cdr(args))->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "only 2 arguments provided, expected exactly 3", "plot_func_pair_list_set");
+    }
+
+    if( cdr(cdr(cdr(args)))->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "received more than 3 arguments", "plot_func_pair_list_set");
+    }
+
+
+    /* get 2nd arg as number
+     * this is our index into the list
+     * */
     k = car(cdr(args))->u.number.val;
 
     if( k < 0 ){
@@ -467,7 +494,8 @@ struct plot_value * plot_func_pair_list_set(struct plot_env *env, struct plot_va
     }
 
     /* k is now 0
-     * args has to be a pair
+     * cur has to be a pair due to test at end of for loop above
+     * args has to be a pair due to args checking above
      */
     plot_value_decr(car(cur));
     lcar(cur) = car(cdr(cdr(args)));
