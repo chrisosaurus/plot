@@ -394,10 +394,32 @@ struct plot_value * plot_func_pair_list_ref(struct plot_env *env, struct plot_va
     int k;
     plot_value *cur;
 
-    if( args->type != plot_type_pair || car(args)->type != plot_type_pair ){
-        return plot_runtime_error(plot_error_bad_args, "expected 2 args of type list and number", "plot_func_pair_list_ref");
+    /* args should be
+     * ( list number )
+     */
+    if( args->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "internal error, arguments not provided as a list", "plot_func_pair_list_ref");
     }
 
+    if( car(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "first argument was not a pair", "plot_func_pair_list_ref");
+    }
+
+    if( cdr(args)->type != plot_type_pair ){
+        return plot_runtime_error(plot_error_bad_args, "only 1 argument provided, expected exactly 2", "plot_func_pair_list_ref");
+    }
+
+    if( car(cdr(args))->type != plot_type_number ){
+        return plot_runtime_error(plot_error_bad_args, "second argument was not of type number", "plot_func_pair_list_ref");
+    }
+
+    if( cdr(cdr(args))->type != plot_type_null ){
+        return plot_runtime_error(plot_error_bad_args, "received more than 2 arguments", "plot_func_pair_list_ref");
+    }
+
+    /* get 2nd arg as number
+     * this is our index into the list
+     * */
     k = car(cdr(args))->u.number.val;
 
     if( k < 0 ){
@@ -412,7 +434,7 @@ struct plot_value * plot_func_pair_list_ref(struct plot_env *env, struct plot_va
     }
 
     /* k is now 0
-     * args has to be a pair
+     * cur has to be a pair due to the check at the end of the for loop above
      */
     plot_value_incr(car(cur));
     return car(cur);
