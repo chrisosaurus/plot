@@ -85,6 +85,15 @@ struct plot_value * plot_func_exit(struct plot_env *env, struct plot_value *args
 struct plot_value * plot_func_emergency_exit(struct plot_env *env, struct plot_value *args);
 
 /* (force promise)
+ * force a promise
+ *
+ * this will evaluate a promise and return the value
+ * if the promise has already been evaluated then the value from the previous evaluation
+ * will instead be returned
+ *
+ * this means it is safe to call force on a promise repeatedly and evaluation will only
+ * ever occur once
+ *
  * returns a non-promise unmodified
  */
 struct plot_value * plot_func_force(struct plot_env *env, struct plot_value *args);

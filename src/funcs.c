@@ -292,6 +292,15 @@ struct plot_value * plot_func_emergency_exit(struct plot_env *env, struct plot_v
 }
 
 /* (force promise)
+ * force a promise
+ *
+ * this will evaluate a promise and return the value
+ * if the promise has already been evaluated then the value from the previous evaluation
+ * will instead be returned
+ *
+ * this means it is safe to call force on a promise repeatedly and evaluation will only
+ * ever occur once
+ *
  * returns a non-promise unmodified
  */
 struct plot_value * plot_func_force(struct plot_env *env, struct plot_value *args){
@@ -303,14 +312,19 @@ struct plot_value * plot_func_force(struct plot_env *env, struct plot_value *arg
 
     val = car(args);
 
+    /* return non-promise unmodified */
     if( val->type != plot_type_promise ){
         return val;
     }
 
+    /* only eval if a value has not already been evaluated for this
+     * promise
+     */
     if( ! val->u.promise.value ){
         val->u.promise.value = plot_eval_expr(env, val->u.promise.expr);
     }
 
+    /* return value after incr as caller now holds copy */
     plot_value_incr(val->u.promise.value);
     return val->u.promise.value;
 }

@@ -88,6 +88,10 @@ remaining problem children:
 
     force funcs.c:311:        val->u.promise.value = plot_eval_expr(env, val->u.promise.expr);
 
+however this is also fine as it is only ever running eval_expr over a promise.expr
+which is only ever set by `delay` which itself is a syntactic form
+so this eval in force can never cause a double-eval
+
 
 see docs/func_call.md for a resolution
 
