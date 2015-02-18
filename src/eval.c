@@ -284,7 +284,7 @@ plot_value * plot_eval_form(plot_env *env, plot_value * sexpr){
                 display_error_expr(curarg);
                 #endif
 
-                /* if curarg is not a pair then we have ran out of arguments
+                /* if curarg is not a pair then we have run out of arguments
                  * as we are still going through our expected parameter list
                  * this means we have been ripped off
                  */
