@@ -53,6 +53,7 @@ garbage collection:
 * merge arenas
 * need to work out how to deal with constants - for now we will not gc anything allocated at parse time
 * strings should also be inside gc (currently malloc-ed)
+* see docs/leaks.md
 
 performance:
 ------------

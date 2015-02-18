@@ -441,14 +441,26 @@ struct plot_value * plot_form_define(struct plot_env *env, struct plot_value *se
     #endif
 
     if( name->type == plot_type_pair ){
-        /* function form */
+        /* function form
+         * see r7rs p25, section 5.3
+         * this is a simple wrapper around lambda
+         *
+         * (define (v f) b)
+         * =>
+         * (define v
+         *      (lambda f b))
+         */
 
-        args = cdr(name);
+        args = plot_new_pair( cdr(name), body );
         name = car(name);
 
-        value = plot_new_lambda(env, plot_new_pair( args, body ));
+        value = plot_new_lambda(env, args);
         plot_env_define(env, &(name->u.symbol), value);
         plot_value_decr(value);
+        /* NB: we do not zero out lcar and lcdr first
+         * as plot_new_lambda keeps a copy of body around
+         */
+        plot_value_decr(args);
 
     } else {
         /* value form */
