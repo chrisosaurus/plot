@@ -68,6 +68,17 @@
     (pass "define")
     (fail "define")))
 
+;; testing of begin scope
+;; a begin should evaluate it's body in the outer scope
+;; so the end result should be the same as if
+;; the begin were not present
+(begin
+  (define test-begin-scope 0))
+(if
+  (= test-begin-scope 0)
+  (pass "begin-scope")
+  (fail "begin-scope"))
+
 ;; tests completed, print results
 (println ">>> define test results")
 (results)
