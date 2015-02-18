@@ -86,6 +86,7 @@ testing:
 features:
 ---------
 * quoting of improper lists, pairs e.g. '(a.b)
+* lambda list args `((lambda x x) 3 4 5 6)` see bugs/lambda.md
 * write repl front-end
 * macro system
 * variable arguments
@@ -111,7 +112,6 @@ bugs:
 hints:
 -----
 * all plot errors that feature 'not of type ...' should also mention the type that it was
-* should detect lambda rest args form `(lambda (arg1 . args) body ...)` and trigger a plot_error_unimplemented bugs/args.scm
 * should detect define rest args form `(define (foo . args) body ...)` and trigger a plot_error_unimplemented bugs/args.scm
 * need to better document return values of eval functions
 * string size/len is silly, too many magic numbers (+1 to store, -1 to use... ugly)
