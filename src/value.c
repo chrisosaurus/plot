@@ -167,13 +167,13 @@ plot_value * plot_new_string(char * val, int len){
 /* allocate and construct a new pair with the supplied car and cdr
  * plot_new_pair will NOT incr supplied car or cdr
  */
-plot_value * plot_new_pair(struct plot_value *car, struct plot_value *cdr){
+plot_value * plot_new_pair(struct plot_value *left, struct plot_value *right){
     plot_value *res;
     res = plot_alloc_value();
 
     res->type = plot_type_pair;
-    res->u.pair.car = car;
-    res->u.pair.cdr = cdr;
+    res->u.pair.car = left;
+    res->u.pair.cdr = right;
 
     return res;
 }
