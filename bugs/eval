@@ -2,31 +2,55 @@
 the problem is non-syntactic forms calling eval on non-syntactic forms
 as this causes args to be re-evaled
 
-    chris@Ox1b src(master)-> grep -Rni 'plot_eval' [^e]*.c
+this is to say the error is called when a c function is called via an eval function,
+when this c function is non-syntactic that means its' arguments are first evaluated and
+then passed to it
+if this function then in turn uses another non-syntactic c function via eval
+passing the same arguments
+these arguments will further be evaluted again (by eval_) before being passed to the called
+function
+
+
+some fixed cases:
+
+in commit cc930111
+
     control.c:140:                ret = plot_eval_expr(new_env, car(arg));
-    forms.c:243:        ret = plot_eval_sexpr(in, cur);
-    forms.c:402:        value = plot_eval_expr(env, car(cur));
-    forms.c:461:        value = plot_eval_expr(env, car(body));
-    forms.c:467:            puts("plot_eval_form (define)");
-    forms.c:543:    value = plot_eval_expr(env, cond);
-    forms.c:551:        puts("plot_eval_form (if cond)");
-    forms.c:556:        value = plot_eval_expr(env, if_expr);
-    forms.c:564:            puts("plot_eval_form (if if-expr)");
-    forms.c:569:        value = plot_eval_expr(env, else_expr);
-    forms.c:577:            puts("plot_eval_form (if else-expr)");
-    forms.c:654:            /* NB: plot_eval_truthy will handle our decr for us */
-    forms.c:658:            /* NB: plot_eval_truthy will handle our decr for us */
-    forms.c:659:            res = plot_eval_expr(env, tmp);
-    forms.c:663:         * plot_eval_truthy will handle our decr for us
-    forms.c:681:            res = plot_eval_expr(env, tmp);
-    forms.c:713:    value = plot_eval_expr(env, expr);
-    forms.c:721:        puts("plot_eval_form (set!");
-    funcs.c:349:        val->u.promise.value = plot_eval_expr(env, val->u.promise.expr);
-    main.c:54:    if( ! plot_eval(plot_get_global_env(), prog) ){
-    main.c:56:        puts("error occurred in plot_eval");
-    pair.c:4:#include "eval.h" /* plot_eval_form */
+
+became
+
+    control.c:85:    ret = plot_eval_apply(env, func, newargs);
+
+
+in commit cc930111
+
     pair.c:567:        res = plot_eval_form(env, arg);
     pair.c:729:        res = plot_eval_form(env, arg);
 
+became
+
+    pair.c:649:        res = plot_eval_apply(env, func, arg);
+    pair.c:812:        res = plot_eval_apply(env, func, arg);
+
+
+some further broken cases:
+
+    chris@Ox1b src(master)-> grep -Rni 'plot_eval' [^e]*.c # output then manually picked apart
+    forms.c:240:        ret = plot_eval_sexpr(in, cur);
+    forms.c:399:        value = plot_eval_expr(env, car(cur));
+    forms.c:458:        value = plot_eval_expr(env, car(body));
+    forms.c:595:    value = plot_eval_expr(env, cond);
+    forms.c:612:        value = plot_eval_expr(env, if_expr);
+    forms.c:629:        value = plot_eval_expr(env, else_expr);
+    forms.c:731:            res = plot_eval_expr(env, tmp);
+    forms.c:756:            res = plot_eval_expr(env, tmp);
+    forms.c:791:    value = plot_eval_expr(env, expr);
+    forms.c:895:        value = plot_eval_expr(env, car(cur));
+    forms.c:930:        value = plot_eval_expr(env, car(cur));
+    funcs.c:311:        val->u.promise.value = plot_eval_expr(env, val->u.promise.expr);
+
+
 see docs/func_call.md for a resolution
+
+see commit cc930111
 

@@ -50,7 +50,10 @@ becomes
 
 
 plot_eval_apply will NOT perform further evaluation on it's argument so it safe to call from userspace,
-this solves our current 'assoc eval bug' (see bugs/assoc.scm and bugs/eval)
+
+using plot_eval_apply fixed our previous assoc bug (fixed in cc930111)
+
+see bugs/assoc.scm and bugs/eval
 
 
 Both `plot_eval_form` and `plot_func_control_apply` would become wrappers around this
