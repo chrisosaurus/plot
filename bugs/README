@@ -1,2 +1,3 @@
-directory containing .scm files which reproduce bugs
+any .scm files in here are for reproducing known bugs
+any text files are instead descriptions or helper text
 
