@@ -547,6 +547,9 @@ struct plot_value * plot_form_lambda(struct plot_env *env, struct plot_value *se
 
         default:
             /* catch unimplemented form (lambda args body ...) */
+            /* r7rs page 13 section 4.1.4 says:
+             * ((lambda x x) 3 4 5 6) => (3 4 5 6)
+             */
             return plot_runtime_error(plot_error_unimplemented, "lambda non-list arguments (rest form) not yet supported", "plot_form_lambda");
             break;
     }

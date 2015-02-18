@@ -1,7 +1,4 @@
 
-;; currently triggers unimplemented error
-(display ((lambda foo foo) 1 2 3))
-
 ;; should trigger unimplemented error
 (display ((lambda (foo . bar) bar) 1 2 3))
 
