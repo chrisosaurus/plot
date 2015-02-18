@@ -387,18 +387,28 @@ struct plot_value * plot_form_plot_bind(struct plot_env *env, struct plot_value 
 }
 
 /* (begin body...) -syntax
+ * evaluated each part of the body in order in the containing environment
+ * as if the `begin` were not present
+ *
+ * returns value of final expression OR unspecified
  */
 struct plot_value * plot_form_begin(struct plot_env *env, struct plot_value *sexpr){
     plot_value *value = 0;
     plot_value *cur;
 
+    /* step through each part of the body
+     * calling eval in our env
+     *  begin does not create a new environment
+     */
     for( cur=sexpr; cur->type != plot_type_null; cur = cdr(cur) ){
         if( value ){
             plot_value_decr(value);
         }
+        /* keep value around so we can return final value */
         value = plot_eval_expr(env, car(cur));
     }
 
+    /* if no value is set then return unspecified */
     if( ! value ){
         value = plot_new_unspecified();
     }

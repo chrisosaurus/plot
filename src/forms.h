@@ -36,6 +36,10 @@ struct plot_value * plot_form_import(struct plot_env *env, struct plot_value *se
 struct plot_value * plot_form_plot_bind(struct plot_env *env, struct plot_value *sexpr);
 
 /* (begin body...) -syntax
+ * evaluated each part of the body in order in the containing environment
+ * as if the `begin` were not present
+ *
+ * returns value of final expression OR unspecified
  */
 struct plot_value * plot_form_begin(struct plot_env *env, struct plot_value *sexpr);
 
