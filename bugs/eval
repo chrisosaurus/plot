@@ -33,24 +33,63 @@ became
     pair.c:812:        res = plot_eval_apply(env, func, arg);
 
 
-some further broken cases:
+finding some further broken cases:
 
-    chris@Ox1b src(master)-> grep -Rni 'plot_eval' [^e]*.c # output then manually picked apart
+start with
+
+    chris@Ox1b src(master)-> grep -Rni 'plot_eval' [^e]*.c
+
+removing any that are plot_eval_apply (now listed above as examples)
+
+we then further remove any where the function declaration features a comment declaring it a syntactic form
+
+for example
+
     forms.c:240:        ret = plot_eval_sexpr(in, cur);
-    forms.c:399:        value = plot_eval_expr(env, car(cur));
-    forms.c:458:        value = plot_eval_expr(env, car(body));
-    forms.c:595:    value = plot_eval_expr(env, cond);
-    forms.c:612:        value = plot_eval_expr(env, if_expr);
-    forms.c:629:        value = plot_eval_expr(env, else_expr);
-    forms.c:731:            res = plot_eval_expr(env, tmp);
-    forms.c:756:            res = plot_eval_expr(env, tmp);
-    forms.c:791:    value = plot_eval_expr(env, expr);
-    forms.c:895:        value = plot_eval_expr(env, car(cur));
-    forms.c:930:        value = plot_eval_expr(env, car(cur));
-    funcs.c:311:        val->u.promise.value = plot_eval_expr(env, val->u.promise.expr);
+
+is inside the function
+
+    /* (define-library (library name) body...) -core -syntax
+     * define a library
+     *
+     * library definitions are of the form
+     * (define-library <library-name>
+     *      <library-declaration> ...)
+     *
+     * where a <library-declaration> is any of:
+     *      (export <export spec> ...)
+     *      (import <import set> ...)
+     *      (begin <command or defintion> ...)
+     *      (include <filename1> <filename2> ...)
+     *      (include-ci <filename1> <filename2> ...)
+     *      (include-library-declaration <filename1> <filename2> ...)
+     *      (cond-expand <ce-clause1> <ce-clause2> ...)
+     */
+    struct plot_value * plot_form_define_library(struct plot_env *env, struct plot_value *sexpr);
+
+due to the -syntax we can safely ignore this (as they are syntactic functions and so their arguments
+are not pre-evaluated before call, this is used by build/bindings.pl to generate src/bindings.h,
+see `make src/bindings.h` and docs/bindings.md)
+
+further stripped out non problems (other syntactic functions)
+
+    define forms.c:458:        value = plot_eval_expr(env, car(body));
+    if forms.c:595:    value = plot_eval_expr(env, cond);
+    if forms.c:612:        value = plot_eval_expr(env, if_expr);
+    if forms.c:629:        value = plot_eval_expr(env, else_expr);
+    cond forms.c:731:            res = plot_eval_expr(env, tmp);
+    cond forms.c:756:            res = plot_eval_expr(env, tmp);
+    set forms.c:791:    value = plot_eval_expr(env, expr);
+    and forms.c:895:        value = plot_eval_expr(env, car(cur));
+    or forms.c:930:        value = plot_eval_expr(env, car(cur));
+
+remaining problem children:
+
+    begin forms.c:399:        value = plot_eval_expr(env, car(cur));
+    force funcs.c:311:        val->u.promise.value = plot_eval_expr(env, val->u.promise.expr);
 
 
 see docs/func_call.md for a resolution
 
-see commit cc930111
+see commit cc930111 for previous work to fix
 
