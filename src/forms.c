@@ -546,7 +546,7 @@ struct plot_value * plot_form_lambda(struct plot_env *env, struct plot_value *se
             break;
 
         default:
-            /* catch unimplemented form (lambda args body ...) */
+            /* catch unimplemented list args form (lambda args body ...) */
             /* r7rs page 13 section 4.1.4 says:
              * ((lambda x x) 3 4 5 6) => (3 4 5 6)
              */

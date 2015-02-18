@@ -39,7 +39,7 @@ forms:
 ------
 * case
 * case-lambda
-* lambda rest args forms `(lambda args body ...)` and `(lambda (arg1 . args) body ...)`
+* lambda list args form `(lambda args body ...)` and rest args form `(lambda (arg1 . args) body ...)`
 * define rest args form `(define (foo . args) body ...)`
 
 design:
@@ -86,7 +86,6 @@ testing:
 features:
 ---------
 * quoting of improper lists, pairs e.g. '(a.b)
-* lambda list args `((lambda x x) 3 4 5 6)` see bugs/lambda.md
 * write repl front-end
 * macro system
 * variable arguments
