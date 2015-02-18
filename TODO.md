@@ -80,7 +80,7 @@ read:
 
 testing:
 --------
-* error testing suite should test generation of runtime errors
+* error testing suite should test generation of runtime errors (negative testing suite, see `docs/negative_testing.md`)
 * need more complete testing of input/output/ports
 
 features:
