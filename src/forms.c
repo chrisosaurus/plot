@@ -386,7 +386,7 @@ struct plot_value * plot_form_plot_bind(struct plot_env *env, struct plot_value 
     return plot_runtime_error(plot_error_unimplemented, "not yet implemented", "plot_form_plot_bind");
 }
 
-/* (begin body...)
+/* (begin body...) -syntax
  */
 struct plot_value * plot_form_begin(struct plot_env *env, struct plot_value *sexpr){
     plot_value *value = 0;

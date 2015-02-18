@@ -73,6 +73,7 @@ see `make src/bindings.h` and docs/bindings.md)
 
 further stripped out non problems (other syntactic functions)
 
+    begin forms.c:399:        value = plot_eval_expr(env, car(cur));
     define forms.c:458:        value = plot_eval_expr(env, car(body));
     if forms.c:595:    value = plot_eval_expr(env, cond);
     if forms.c:612:        value = plot_eval_expr(env, if_expr);
@@ -85,7 +86,6 @@ further stripped out non problems (other syntactic functions)
 
 remaining problem children:
 
-    begin forms.c:399:        value = plot_eval_expr(env, car(cur));
     force funcs.c:311:        val->u.promise.value = plot_eval_expr(env, val->u.promise.expr);
 
 
