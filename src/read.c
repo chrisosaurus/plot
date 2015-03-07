@@ -53,10 +53,13 @@ char * plot_read(const char * const filename){
     /* allocate buffer */
     buffer = malloc(ufsize + 1);
     if( ! buffer ){
-        perror("ERROR: calloc failed:");
+        perror("ERROR: malloc failed:");
         fclose(f);
         return 0;
     }
+
+    /* make sure it looks like a string */
+    buffer[ufsize] = '\0';
 
     /* read file */
     read = fread(buffer, 1, ufsize, f);
