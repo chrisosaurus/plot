@@ -2,7 +2,7 @@
 
 include config.mk
 
-SRC = src/read.c src/parse.c src/eval.c src/hash.c src/env.c src/funcs.c src/plot.c src/character.c src/string.c src/number.c src/pair.c src/value.c src/forms.c src/control.c src/input.c src/ports.c src/output.c
+SRC = $(shell ls src/*.c | grep -v src/main.c)
 OBJ = ${SRC:.c=.o}
 
 EXTRAFLAGS =
