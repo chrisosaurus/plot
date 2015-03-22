@@ -235,7 +235,7 @@ struct plot_value * plot_func_pair_length(struct plot_env *env, struct plot_valu
  * you should not rely on this behavior as it is non-standard, in the future plot may
  * throw errors
  *
- * FIXME consider throwing errors on non-lists as non-last arguments.
+ * will throw an error on non-lists as non-last arguments.
  *
  * (define (flatten list)
  *      (apply append list))
@@ -253,6 +253,36 @@ struct plot_value * plot_func_pair_append(struct plot_env *env, struct plot_valu
      * through the sublist copying over the elements until we find the tail
      */
     for( arg = args; arg->type == plot_type_pair; arg = cdr(arg) ){
+        /* check the current argument is a list OR is the last argument:
+         *
+         *  - first we check if the cdr is null, if this is true
+         *      then this arg is the last and so a non-list argument is allowed
+         *  - if this arg is not the last argument then it must
+         *  - be either a list (so either a pair of a null)
+         */
+        if( cdr(arg)->type != plot_type_null && /* check this is not the last arg*/
+            car(arg)->type != plot_type_pair && /* check this arg is not a pair */
+            car(arg)->type != plot_type_null ){ /* check this arg is not a null */
+            /* if we are inside here it means that we found an argument
+             * that was not the last
+             * and is not a list (pair or null)
+             * this violates r7rs section 6.4 page 42
+             */
+
+            /* reusing head for error value */
+            head = plot_runtime_error(plot_error_bad_args, "TEMPORARY", "plot_func_pair_append");
+
+            /* be a bit more verbose about error */
+            puts("append called with args: ");
+            display_error_expr(args);
+            puts("found a non-last argument that was not a list: ");
+            display_error_expr(car(arg));
+
+            /* finally return the error object */
+            return head;
+        }
+
+        /* keep iterating through args until we see a non-pair */
         for( elem = car(arg); elem->type == plot_type_pair; elem = cdr(elem) ){
             *outcur = cons(0, null);
             lcar(*outcur) = car(elem);
@@ -260,7 +290,10 @@ struct plot_value * plot_func_pair_append(struct plot_env *env, struct plot_valu
             outcur = &lcdr(*outcur);
         }
 
-        /* need to deal with final element which may not be a list */
+        /* since we are here the above for has ended which means our arg is not a pair
+         * if our arg is a null we skip over it
+         * otherwise we want to keep it
+         */
         if( elem->type != plot_type_null ){
             /* neither pair nor null */
             *outcur = elem;

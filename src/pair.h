@@ -73,7 +73,7 @@ struct plot_value * plot_func_pair_length(struct plot_env *env, struct plot_valu
  * you should not rely on this behavior as it is non-standard, in the future plot may
  * throw errors
  *
- * FIXME consider throwing errors on non-lists as non-last arguments.
+ * will throw an error on non-lists as non-last arguments.
  *
  * (define (flatten list)
  *      (apply append list))
