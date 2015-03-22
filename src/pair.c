@@ -228,14 +228,11 @@ struct plot_value * plot_func_pair_length(struct plot_env *env, struct plot_valu
  * (append '(1 2 3) '(4 5 6))   ; => '(1 2 3 4 5 6)
  * (append '(1 2 3) '(4 5 6) 7) ; => '(1 2 3 4 5 6 . 7)
  *
- * results will be messy if any of the args except for the final one are not lists
- * (append 'a '(1 2 3) 'a '(4 5 6) 7 ) ; => '(1 2 3 4 5 6 . 7)
- * notice how both the 'a (s) are not present in the final output.
+ * as you can see a non-list as the last argument is fine
+ * (append '(1 2 3) '(4) 5) ; => '(1 2 3 4 5)
  *
- * you should not rely on this behavior as it is non-standard, in the future plot may
- * throw errors
- *
- * will throw an error on non-lists as non-last arguments.
+ * however a non-list as any non-last argument will throw an error
+ * (append '(1 2 3) 4 5)    ; => the 4 will raise an error
  *
  * (define (flatten list)
  *      (apply append list))
