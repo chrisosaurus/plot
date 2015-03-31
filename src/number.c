@@ -125,7 +125,7 @@ struct plot_value * plot_func_divide(struct plot_env *env, struct plot_value *ar
 
     quotient = car(args)->u.number.val;
 
-    for( arg = args; arg->type == plot_type_pair; arg = cdr(arg) ){
+    for( arg = cdr(args); arg->type == plot_type_pair; arg = cdr(arg) ){
         if( car(arg)->type != plot_type_number ){
             return plot_runtime_error(plot_error_bad_args, "argument is not a number", "plot_func_divide");
         }
