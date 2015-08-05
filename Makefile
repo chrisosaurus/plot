@@ -2,7 +2,7 @@
 
 include config.mk
 
-SRC = $(shell ls src/*.c | grep -v src/main.c)
+SRC = $(shell find src libs -iname '*.c' | grep -v src/main.c | grep -v '/test_')
 OBJ = ${SRC:.c=.o}
 
 EXTRAFLAGS =

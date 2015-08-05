@@ -115,20 +115,6 @@ void plot_env_decr(struct plot_env *e);
  */
 struct plot_env * plot_alloc_env(struct plot_env *parent);
 
-struct plot_hash_entry;
-
-/* increase reference count on plot_entry */
-void plot_he_incr(struct plot_hash_entry *he);
-
-/* decrease reference count on plot_entry
- * may trigger collection of the entry
- * (and the symbol and value stored within)
- */
-void plot_he_decr(struct plot_hash_entry *he);
-
-/* allocate new hash entry */
-struct plot_hash_entry * plot_alloc_hash_entry(void);
-
 /* allocate new string */
 char * plot_alloc_string(int len);
 

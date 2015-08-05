@@ -47,11 +47,6 @@ typedef struct plot {
     int num_env_used;
     struct plot_env *env_reclaimed;
 
-    struct plot_hash_entry *he_arena;
-    int num_he_allocated;
-    int num_he_used;
-    struct plot_hash_entry *he_reclaimed;
-
     /* optimisation to reduce waste
      */
     struct plot_value unspecified_constant;
@@ -92,7 +87,6 @@ static plot *plot_instance;
 static void plot_gc_incr(struct plot_gc *g);
 static void plot_gc_value_init(void);
 static void plot_gc_env_init(void);
-static void plot_gc_he_init(void);
 
 int plot_init(void){
     size_t i=0;
@@ -124,7 +118,6 @@ int plot_init(void){
     plot_instance->false_constant.u.boolean.val = 0;
 
     plot_gc_value_init();
-    plot_gc_he_init();
     plot_gc_env_init();
 
     plot_instance->env = plot_alloc_env(0);
@@ -263,14 +256,6 @@ void plot_cleanup(){
     printf("\tnum recycled '%d', reclaimed '%d'\n", plot_instance->num_env_recycled, plot_instance->num_env_reclaimed);
     printf("\tused - reclaimed = '%d'\n", plot_instance->num_env_used - plot_instance->num_env_reclaimed);
     printf("\tnon-reclaimed (still in use at cleanup) '%d'\n", (plot_instance->num_env_used + plot_instance->num_env_recycled) - plot_instance->num_env_reclaimed);
-
-    printf("##### plot_hash_entry stats #####\n");
-    printf("\tMax in use '%d'\n", plot_instance->num_he_used);
-    printf("\tStill had in the bank: '%d'\n", plot_instance->num_he_allocated - plot_instance->num_he_used );
-    printf("\tnum recycled '%d', reclaimed '%d'\n", plot_instance->num_he_recycled, plot_instance->num_he_reclaimed);
-    printf("\tused - reclaimed = '%d'\n", plot_instance->num_he_used - plot_instance->num_he_reclaimed);
-    printf("\tnon-reclaimed (still in use at cleanup) '%d'\n", (plot_instance->num_he_used + plot_instance->num_he_recycled) - plot_instance->num_he_reclaimed);
-
 
     printf("\n");
 
@@ -552,89 +537,6 @@ void plot_gc_env_init(void){
     }
 }
 
-/* increase reference count on plot_hash_entry */
-void plot_he_incr(struct plot_hash_entry *he){
-    plot_gc_incr( (struct plot_gc *) he);
-}
-
-/* decrease reference count on plot_hash_entry
- * may trigger collection of the he
- * (and the symbol and value stored within)
- */
-void plot_he_decr(struct plot_hash_entry *he){
-    if( !he )
-        return;
-
-    #if DEBUG
-    printf("inside plot_he_decr considering object '%p' with refcount '%d'\n",
-          (void*) he, he->gc.refcount);
-    #endif
-
-    if( he->gc.refcount < 0 ){
-        #if DEBUG
-        puts("\tthis object is not under GC control, leaving untouched");
-        #endif
-        /* object is NOT under control of gc, do not touch */
-        return;
-    }
-
-    if( he->gc.refcount > 0 ){
-        #if DEBUG
-        puts("\tdecrementing refcount");
-        #endif
-
-        --he->gc.refcount;
-        if( he->gc.refcount == 0 ){
-            #if DEBUG
-            puts("\treclaiming object");
-            #endif
-            #if GC_STATS
-            ++plot_instance->num_he_reclaimed;
-            #endif
-            /* time to reclaim */
-            //fprintf(stderr, "RECLAIMING\n"); // 2692537
-            he->gc.next = (struct plot_gc *) plot_instance->he_reclaimed;
-            plot_instance->he_reclaimed = he;
-        #if DEBUG
-        } else {
-            puts("\tsparing object");
-        #endif
-        }
-    } else {
-        /* this object already has a refcount of 0, ERROR */
-        plot_fatal_error("plot_he_decr: This object already has a refcount of 0, ERROR has occurred, terminating");
-        return; /* keep the compiler happy */
-    }
-
-    #if DEBUG
-    puts("\tleaving plot_he_decr");
-    #endif
-}
-
-
-/* initialise hash entr arena
- *
- * return on success
- * will cause fatal error and exit on failure
- */
-void plot_gc_he_init(void){
-    if( ! plot_instance ){
-        plot_fatal_error("plot_gc_he_init called without plot_instance being initialised");
-        return; /* keep the compiler happy */
-    }
-
-    plot_instance->num_he_used = 0;
-    #if GC_STATS
-    plot_instance->num_he_reclaimed = 0;
-    #endif
-    plot_instance->num_he_allocated = 2000;
-    plot_instance->he_arena = calloc( plot_instance->num_he_allocated, sizeof (struct plot_hash_entry) );
-    if( ! plot_instance->he_arena ){
-        plot_fatal_error("plot_gc_he_init ERROR: failed to calloc hv arena");
-        return; /* keep the compiler happy */
-    }
-}
-
 /* allocate new ref counted value */
 struct plot_value * plot_alloc_value(void){
     struct plot_value *p;
@@ -728,40 +630,6 @@ struct plot_env * plot_alloc_env(struct plot_env *parent){
         return e;
     }
 
-}
-
-/* allocate new hash entry */
-struct plot_hash_entry * plot_alloc_hash_entry(void){
-    struct plot_hash_entry *he;
-    if( ! plot_instance ){
-        plot_fatal_error("plot_alloc_hash_entry called without plot_instance being initialised");
-        return 0; /* keep the compiler happy */
-    }
-
-    if( plot_instance->he_reclaimed ){
-        #if GC_STATS
-        ++plot_instance->num_he_recycled;
-        #endif
-        he = plot_instance->he_reclaimed;
-        /* gc is the first element of plot_hash_value so this is safe */
-        plot_instance->he_reclaimed = (struct plot_hash_entry *) he->gc.next;
-        he->gc.refcount = 1;
-        he->gc.next = 0;
-        return he;
-    }
-    if( plot_instance->num_he_used >= plot_instance->num_he_allocated ){
-        /* FIXME realloc */
-        printf("THE BANK IS EMPTY; allocated all '%d' plot_he(s)\n", plot_instance->num_he_used);
-        plot_fatal_error("plot_alloc_hash_entry: the bank is empty");
-        return 0; /* keep the compiler happy */
-    } else {
-        /* hand out resources */
-        he = &(plot_instance->he_arena[ plot_instance->num_he_used ++]);
-        he->gc.next = 0;
-        he->gc.refcount = 1;
-        he->gc.next = 0;
-        return he;
-    }
 }
 
 /* allocate new string */

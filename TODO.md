@@ -3,6 +3,17 @@ TODO(s):
 
 Update code comments to reference r7rs.
 
+linear_hash migration:
+----------------------
+* migrate hash.[ch]
+* remove all traces of hash_entry
+* extend linear_hash to support running a function over every deleted item (so we can decr)
+* fix documentation in hash about copying/noncopying
+* consider whether or not to keep the old plot_hash_symbol(key) optimisation
+* consider string vs symbols
+* fix hash based tests (test_hash, test_garbage, test_env)
+* iron out bugs
+
 priorities:
 -----------
 * eval/assoc bug -> apply/eval refactor (see docs/func_call.md)

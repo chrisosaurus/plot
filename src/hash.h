@@ -2,35 +2,19 @@
 #define PLOT_HASH_H
 
 #include "plot.h" /* needed for plot_gc */
+#include "../libs/linear_hash/linear_hash.h"
 
 struct plot_symbol;
 struct plot_value;
 
-/* a plot_hash is a singly linked-list of plot_hash_entry (s)
+/* a plot_hash is a wrapper around linear_hash
+ * each key is a string
+ * each value is a void* which refers to a plot_value
  * and a count of the number of elements
- *
- * plot_hash_entry(s) are stored as a linked-list
- * in strcmp order of keys
  */
 typedef struct plot_hash {
-    struct plot_hash_entry *head;
-    int n_elems;
+    struct lh_table lht;
 } plot_hash;
-
-/* a plot_hash_entry is an entry inside a plot_hash
- * consisting of a key and value pair
- * and a pointer to the next item in the list
- * the last element will have null as it's next value
- *
- * plot_hash_entry(s) are stored as a linked-list
- * in strcmp order of keys
- */
-typedef struct plot_hash_entry {
-    struct plot_gc gc;
-    const struct plot_symbol * key;
-    struct plot_value *value;
-    struct plot_hash_entry *next;
-} plot_hash_entry;
 
 /* initialise a new hash
  * hashes are now part of plot_env
@@ -46,8 +30,8 @@ int plot_hash_init(plot_hash *hash);
  * plot_hash_cleanup will call decr on all values
  * stored within
  *
- * FIXME currently the hash and each hash_entry
- * are allocated on the heap, so this will also free them.
+ * FIXME currently the hash
+ * is allocated on the heap, so this will also free them.
  * Eventually they should also be gc-managed
  */
 void plot_hash_cleanup(plot_hash *hash);
@@ -61,13 +45,20 @@ struct plot_value * plot_hash_get(const plot_hash *hash, struct plot_symbol * ke
  * keys must be unique within the hash
  * and keys CAN be overwritten once set (local mutation is allowed)
  *
- * this hash will NOT make copies of either key or value
- * therefore both key and value must not be freed until
+ * the hash will make a strdup copy of key to use internally
+ * but this hash will NOT make copies of the value
+ * therefore both the value must not be freed until
  *  cleanup is called on this hash
+ *
  *
  * returns 1 on success, 0 on error
  */
 int plot_hash_set(plot_hash *hash, struct plot_symbol * key, struct plot_value *value);
+
+/* returns numbers of elements stored in hash
+ * returns 0 on error
+ */
+unsigned int plot_hash_nelems(plot_hash *hash);
 
 #endif
 
