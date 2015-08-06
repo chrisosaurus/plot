@@ -40,8 +40,11 @@ void plot_hash_cleanup(plot_hash *hash){
      * this requires exposing some new functionality in linear_hash
      */
 
-    /* lh_destroy(*table, free_table, free_data); */
-    if( lh_destroy(&(hash->lht), 1, 0) ){
+    /* lh_destroy(*table, free_table, free_data);
+     * do NOT free table as allocated as part of plot_hash
+     * do NOT free data (values) are they are inside plot gc
+     */
+    if( lh_destroy(&(hash->lht), 0, 0) ){
         /* FIXME success */
     } else {
         /* FIXME failure */
