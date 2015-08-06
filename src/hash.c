@@ -86,6 +86,11 @@ plot_value * plot_hash_get(const plot_hash *hash, plot_symbol * key){
     }
     #endif
 
+    if( result ) {
+        /* have to incr before returning */
+        plot_value_incr(result);
+    }
+
     return result;
 }
 
