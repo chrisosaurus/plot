@@ -21,17 +21,27 @@ START_TEST (test_hash){
     value.gc.refcount = 1;
 
     puts("\tTesting hash construction");
-    fail_if( 0 == plot_init() );
-    fail_if( 0 == (plot_hash_init(&hash)) );
+    ck_assert_int_ne( 0, plot_init() );
+    ck_assert_int_ne( 0 , (plot_hash_init(&hash)) );
 
     puts("\tTesting basic hash get and insert");
+    fail_if( plot_hash_get(&hash, &a) );
+    fail_unless( plot_hash_set(&hash, &a, &value) );
+    ck_assert_ptr_eq( plot_hash_get(&hash, &a), &value );
+    fail_if( plot_hash_get(&hash, &b) );
+    fail_if( plot_hash_get(&hash, &c) );
+
     fail_if( plot_hash_get(&hash, &b) );
     fail_unless( plot_hash_set(&hash, &b, &value) );
-    fail_if( plot_hash_get(&hash, &b) != &value );
-    fail_if( plot_hash_get(&hash, &a) );
+    ck_assert_ptr_eq( plot_hash_get(&hash, &b), &value );
+    fail_if( plot_hash_get(&hash, &c) );
+
+    fail_if( plot_hash_get(&hash, &c) );
+    fail_unless( plot_hash_set(&hash, &c, &value) );
+    ck_assert_ptr_eq( plot_hash_get(&hash, &c), &value );
 
     puts("\tTesting correct number of elements");
-    fail_unless( plot_hash_nelems(&hash) == 3);
+    ck_assert_int_eq( plot_hash_nelems(&hash), 3);
 
     puts("\tTesting mutation");
     fail_unless( plot_hash_set(&hash, &b, 0) );
