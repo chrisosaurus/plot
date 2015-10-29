@@ -82,7 +82,7 @@ static plot_value * plot_parse_expr_hash(const char *source, size_t *upto){
     size_t char_start = 0;
     plot_value *val;
 
-    if( ! source[*upto] == '#' ){
+    if( source[*upto] != '#' ){
         plot_fatal_error("plot_parse_expr_hash: first character was not '#'");
     }
 

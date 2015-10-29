@@ -129,7 +129,7 @@ struct plot_value * plot_func_ports_close_output_port(struct plot_env *env, stru
         return test;
     }
 
-    if( ! test->type == plot_type_boolean){
+    if( test->type != plot_type_boolean ){
         return plot_runtime_error(plot_error_internal, "call to plot_func_ports_output_port_test returned non-boolean result", "plot_func_ports_close_output_port");
     }
 
@@ -168,7 +168,7 @@ struct plot_value * plot_func_ports_close_input_port(struct plot_env *env, struc
         return test;
     }
 
-    if( ! test->type == plot_type_boolean){
+    if( test->type != plot_type_boolean ){
         return plot_runtime_error(plot_error_internal, "call to plot_func_ports_input_port_test returned non-boolean result", "plot_func_ports_close_input_port");
     }
 
