@@ -7,9 +7,6 @@ Plot is aiming for r7rs-small (WG1) compliance.
 Plot is only ever intended to be a toy language and a purely academic pursuit, I hope to eventually play around
 with writing simple applications in plot.
 
-Please note that I will most likely not be accepting pull requests as this project is primarily for my learning.
-I will also be force pushing here often, so no getting upset.
-
 naming
 -------
 plot - Noun; A plan made in secret by a group of people to do something illegal or harmful
