@@ -1,8 +1,7 @@
 plot
 run_tests
 a.out
-src/*.o
-t/*.o
 src/*.su
 src/bindings.h
+*.o
 
