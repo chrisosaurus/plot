@@ -1,22 +1,13 @@
-/*  gcc linear_hash.c test_linear_hash.c -Wall -Wextra -Werror -o test_sh
- * ./test_sh
+/*  gcc linear_hash.c test_linear_hash.c -Wall -Wextra -Werror -o test_lh
+ * ./test_lh
  */
 #include <assert.h> /* assert */
 #include <stdio.h> /* puts */
 #include <stdlib.h> /* calloc */
+#include <string.h> /* strlen */
 
 #include "linear_hash.h"
-
-/* headers for internal functions within linear_hash.c
- * that are not exposed via the header
- * these would be static but we want to be able to test them
- */
-unsigned int lh_entry_eq(struct lh_entry *cur, unsigned long int hash, unsigned long int key_len, char *key);
-char * lh_strdupn(char *str, size_t len);
-unsigned int lh_entry_init(struct lh_entry *entry, unsigned long int hash, char *key, size_t key_len, void *data);
-unsigned int lh_entry_destroy(struct lh_entry *entry, unsigned int free_data);
-struct lh_entry * lh_find_entry(struct lh_table *table, char *key);
-
+#include "linear_hash_internal.h"
 
 void new_insert_get_destroy(void){
     /* our simple hash table */
@@ -46,12 +37,15 @@ void new_insert_get_destroy(void){
     assert( 0 == lh_load(table) );
 
 
-    puts("testing insert and get");
+    puts("testing insert, exists, and get");
     puts("one insert");
     assert( lh_insert(table, key_1, &data_1) );
     assert( 1 == lh_nelems(table));
     assert( 0 == lh_get(table, key_2) );
     assert( 0 == lh_get(table, key_3) );
+
+    puts("one exists");
+    assert( lh_exists(table, key_1) );
 
     puts("one get");
     data = lh_get(table, key_1);
@@ -64,6 +58,9 @@ void new_insert_get_destroy(void){
     assert( 2 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_3) );
 
+    puts("two exists");
+    assert( lh_exists(table, key_2) );
+
     puts("two get");
     data = lh_get(table, key_2);
     assert(data);
@@ -74,10 +71,113 @@ void new_insert_get_destroy(void){
     assert( lh_insert(table, key_3, &data_3) );
     assert( 3 == lh_nelems(table) );
 
+    puts("three exists");
+    assert( lh_exists(table, key_3) );
+
     puts("three get");
     data = lh_get(table, key_3);
     assert(data);
     assert( data_3 == *data );
+
+
+    assert( lh_destroy(table, 1, 0) );
+    puts("success!");
+}
+
+void update(void){
+    /* our simple hash table */
+    struct lh_table *table = 0;
+
+    /* some keys */
+    char *key_1 = "rhubarb";
+    char *key_2 = "carrot";
+    char *key_3 = "potato";
+
+    /* some data */
+    int data_1 = 1;
+    int data_2 = 2;
+    int data_3 = 3;
+
+    /* some data we override with */
+    int new_data_1 = 14;
+    int new_data_2 = 15;
+    int new_data_3 = 16;
+
+
+    /* temporary data pointer used for testing get */
+    int *data = 0;
+
+    puts("\ntesting update functionality");
+
+    puts("creating table");
+    table = lh_new();
+    assert(table);
+    assert( 32 == table->size );
+    assert( 0 == lh_nelems(table) );
+
+
+    puts("inserting some data");
+    assert( lh_insert(table, key_1, &data_1) );
+    assert( 1 == lh_nelems(table) );
+    assert( 0 == lh_get(table, key_2) );
+    assert( 0 == lh_get(table, key_3) );
+
+    data = lh_get(table, key_1);
+    assert(data);
+    assert( data_1 == *data );
+
+
+    assert( lh_insert(table, key_2, &data_2) );
+    assert( 2 == lh_nelems(table) );
+    assert( 0 == lh_get(table, key_3) );
+
+    data = lh_get(table, key_2);
+    assert(data);
+    assert( data_2 == *data );
+
+
+    assert( lh_insert(table, key_3, &data_3) );
+    assert( 3 == lh_nelems(table) );
+
+    data = lh_get(table, key_3);
+    assert(data);
+    assert( data_3 == *data );
+
+
+    puts("testing update");
+    puts("testing update failure for non-existing key");
+    data = lh_update(table, "foobarr", &data_1);
+    assert( 0 == data );
+
+    puts("two update");
+    data = lh_update(table, key_2, &new_data_2);
+    assert(data);
+    assert( *data == data_2 );
+    assert( 3 == lh_nelems(table) );
+
+    data = lh_get(table, key_2);
+    assert(data);
+    assert( *data == new_data_2 );
+
+    puts("three update");
+    data = lh_update(table, key_3, &new_data_3);
+    assert(data);
+    assert( *data == data_3 );
+    assert( 3 == lh_nelems(table) );
+
+    data = lh_get(table, key_3);
+    assert(data);
+    assert( *data == new_data_3 );
+
+    puts("one update");
+    data = lh_update(table, key_1, &new_data_1);
+    assert(data);
+    assert( *data == data_1 );
+    assert( 3 == lh_nelems(table) );
+
+    data = lh_get(table, key_1);
+    assert(data);
+    assert( *data == new_data_1 );
 
 
     assert( lh_destroy(table, 1, 0) );
@@ -116,8 +216,8 @@ void set(void){
     assert( 0 == lh_nelems(table) );
 
 
-    puts("inserting some data");
-    assert( lh_insert(table, key_1, &data_1) );
+    puts("inserting some data with set");
+    assert( lh_set(table, key_1, &data_1) );
     assert( 1 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_2) );
     assert( 0 == lh_get(table, key_3) );
@@ -127,7 +227,7 @@ void set(void){
     assert( data_1 == *data );
 
 
-    assert( lh_insert(table, key_2, &data_2) );
+    assert( lh_set(table, key_2, &data_2) );
     assert( 2 == lh_nelems(table) );
     assert( 0 == lh_get(table, key_3) );
 
@@ -136,7 +236,7 @@ void set(void){
     assert( data_2 == *data );
 
 
-    assert( lh_insert(table, key_3, &data_3) );
+    assert( lh_set(table, key_3, &data_3) );
     assert( 3 == lh_nelems(table) );
 
     data = lh_get(table, key_3);
@@ -144,15 +244,13 @@ void set(void){
     assert( data_3 == *data );
 
 
-    puts("testing set");
-    puts("testing set failure for non-existing key");
-    data = lh_set(table, "foobarr", &data_1);
-    assert( 0 == data );
+    puts("testing update with set");
 
     puts("two set");
-    data = lh_set(table, key_2, &new_data_2);
+    assert( lh_set(table, key_2, &new_data_2) );
+    data = lh_get(table, key_2);
     assert(data);
-    assert( *data == data_2 );
+    assert( *data == new_data_2 );
     assert( 3 == lh_nelems(table) );
 
     data = lh_get(table, key_2);
@@ -160,9 +258,10 @@ void set(void){
     assert( *data == new_data_2 );
 
     puts("three set");
-    data = lh_set(table, key_3, &new_data_3);
+    assert( lh_update(table, key_3, &new_data_3) );
+    data = lh_get(table, key_3);
     assert(data);
-    assert( *data == data_3 );
+    assert( *data == new_data_3 );
     assert( 3 == lh_nelems(table) );
 
     data = lh_get(table, key_3);
@@ -170,9 +269,10 @@ void set(void){
     assert( *data == new_data_3 );
 
     puts("one set");
-    data = lh_set(table, key_1, &new_data_1);
+    assert( lh_update(table, key_1, &new_data_1) );
+    data = lh_get(table, key_1);
     assert(data);
-    assert( *data == data_1 );
+    assert( *data == new_data_1 );
     assert( 3 == lh_nelems(table) );
 
     data = lh_get(table, key_1);
@@ -183,6 +283,7 @@ void set(void){
     assert( lh_destroy(table, 1, 0) );
     puts("success!");
 }
+
 
 void delete(void){
     /* our simple hash table */
@@ -319,7 +420,10 @@ void collision(void){
     assert( lh_resize(table, 9) );
     assert( 9 == table->size );
     assert( 0 == lh_nelems(table) );
+
+    /* 0 * 100 / 9 = 0 % loading */
     assert( 0 == lh_load(table) );
+    assert( 9 == table->size );
 
 
     puts("inserting some data");
@@ -329,6 +433,9 @@ void collision(void){
     assert(data);
     assert( data_1 == *data );
 
+    /* 1 * 100 / 9 =  11% loading */
+    assert( 11 == lh_load(table) );
+    assert( 9 == table->size );
 
     assert( lh_insert(table, key_2, &data_2) );
     assert( 2 == lh_nelems(table) );
@@ -336,6 +443,9 @@ void collision(void){
     assert(data);
     assert( data_2 == *data );
 
+    /* 2 * 100 / 9 =  22% loading */
+    assert( 22 == lh_load(table) );
+    assert( 9 == table->size );
 
     assert( lh_insert(table, key_3, &data_3) );
     assert( 3 == lh_nelems(table) );
@@ -343,11 +453,19 @@ void collision(void){
     assert(data);
     assert( data_3 == *data );
 
+    /* 3 * 100 / 9 =  33% loading */
+    assert( 33 == lh_load(table) );
+    assert( 9 == table->size );
+
     assert( lh_insert(table, key_4, &data_4) );
     assert( 4 == lh_nelems(table) );
     data = lh_get(table, key_4);
     assert(data);
     assert( data_4 == *data );
+
+    /* 4 * 100 / 9 =  44% loading */
+    assert( 44 == lh_load(table) );
+    assert( 9 == table->size );
 
     assert( lh_insert(table, key_5, &data_5) );
     assert( 5 == lh_nelems(table) );
@@ -355,11 +473,20 @@ void collision(void){
     assert(data);
     assert( data_5 == *data );
 
+    /* 5 * 100 / 9 =  55% loading */
+    assert( 55 == lh_load(table) );
+    assert( 9 == table->size );
+
     assert( lh_insert(table, key_6, &data_6) );
     assert( 6 == lh_nelems(table) );
     data = lh_get(table, key_6);
     assert(data);
     assert( data_6 == *data );
+
+    /* 6 * 100 / 9 =  66% loading */
+    assert( 66 == lh_load(table) );
+    /* next insert should resize */
+    assert( 9 == table->size );
 
     assert( lh_insert(table, key_7, &data_7) );
     assert( 7 == lh_nelems(table) );
@@ -367,11 +494,20 @@ void collision(void){
     assert(data);
     assert( data_7 == *data );
 
+    /* that last insert should have triggered a resize */
+    /* 7 * 100 / 18 =  38% loading */
+    assert( 38 == lh_load(table) );
+    assert( 18 == table->size );
+
     assert( lh_insert(table, key_8, &data_8) );
     assert( 8 == lh_nelems(table) );
     data = lh_get(table, key_8);
     assert(data);
     assert( data_8 == *data );
+
+    /* 8 * 100 / 18 =  44% loading */
+    assert( 44 == lh_load(table) );
+    assert( 18 == table->size );
 
     assert( lh_insert(table, key_9, &data_9) );
     assert( 9 == lh_nelems(table) );
@@ -379,11 +515,11 @@ void collision(void){
     assert(data);
     assert( data_9 == *data );
 
+    /* 9 * 100 / 18 =  50% loading */
+    assert( 50 == lh_load(table) );
+    assert( 18 == table->size );
+
     assert( 9 == lh_nelems(table) );
-    /* assert that our resize succeeded and we
-     * are not full */
-    assert( 10 > lh_load(table) );
-    assert( 9 < table->size );
 
     puts("testing we can still get everything out");
 
@@ -705,6 +841,10 @@ void error_handling(void){
     puts("testing lh_resize");
     assert( 0 == lh_resize(0, 100) );
     assert( 0 == lh_resize(table, 0) );
+    /* resize should refuse if it is less than or equal
+     * to the number of elements we already have inserted
+     */
+    assert( 0 == lh_resize(table, 1) );
 
     /* lh_exists */
     puts("testing lh_exists");
@@ -719,12 +859,17 @@ void error_handling(void){
     /* cannot insert if already exists */
     assert( 0 == lh_insert(table, key_1, &data_1) );
 
+    /* lh_update */
+    puts("testing lh_update");
+    assert( 0 == lh_update(0, key_1, &data_1) );
+    assert( 0 == lh_update(table, 0, &data_1) );
+    /* cannot set if doesn't already exist */
+    assert( 0 == lh_update(table, key_3, &data_3) );
+
     /* lh_set */
     puts("testing lh_set");
     assert( 0 == lh_set(0, key_1, &data_1) );
     assert( 0 == lh_set(table, 0, &data_1) );
-    /* cannot set if doesn't already exist */
-    assert( 0 == lh_set(table, key_3, &data_3) );
 
     /* lh_get */
     puts("testing lh_get");
@@ -739,11 +884,18 @@ void error_handling(void){
     /* cannot delete a non-existent key */
     assert( 0 == lh_delete(table, key_3) );
 
+    /* lh_iterate */
+    puts("testing lh_iterate");
+    /* table undef */
+    assert( 0 == lh_iterate(0, 0, 0) );
+    /* user-function undef */
+    assert( 0 == lh_iterate(table, 0, 0) );
+
     /* lh_tune_threshold */
     puts("testing lh_tune_threshold");
     assert( 0 == lh_tune_threshold(0, 0) );
     assert( 0 == lh_tune_threshold(table, 0) );
-    assert( 0 == lh_tune_threshold(table, 11) );
+    assert( 0 == lh_tune_threshold(table, 101) );
 
     /* lh_destroy */
     assert( 0 == lh_destroy(0, 1, 0) );
@@ -758,6 +910,8 @@ void internal(void){
     struct lh_entry she;
     struct lh_entry static_she;
     char * str = 0;
+    enum lh_find_entry_state find_entry_state;
+    struct lh_entry *entry = 0;
 
     puts("\ntesting internal functions");
 
@@ -786,14 +940,38 @@ void internal(void){
     assert(  lh_entry_destroy(&static_she, 1) );
 
     /* lh_find_entry */
-    puts("testing lh_find_entry");
-    assert( 0 == lh_find_entry(0, "hello") );
-    assert( 0 == lh_find_entry(&table, 0) );
+    puts("testing lh_find_entry error handling");
+    /* null table */
+    find_entry_state = lh_find_entry(0, 0, "hello", 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_ERROR == find_entry_state );
+    /* null key */
+    find_entry_state = lh_find_entry(&table, 0, 0, 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_ERROR == find_entry_state );
+    /* null entry */
+    find_entry_state = lh_find_entry(&table, 0, "hello", 0, 0);
+    assert( LH_FIND_ENTRY_STATE_ERROR == find_entry_state );
+
+    /* hash 0 and key_len 0 but valid find
+     * need a valid table for this
+     */
+    assert( lh_init(&table, 10) );
+    find_entry_state = lh_find_entry(&table, 0, "hello", 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_SLOT == find_entry_state );
 
     /* lh_entry_eq */
     puts("testing lh_entry_eq");
     assert( 0 == lh_entry_eq(0, 0, 0, 0) );
     assert( 0 == lh_entry_eq(&she, 0, 0, 0) );
+
+    /* lh_insert_internal */
+    puts("testing lh_insert_internal");
+    /* insert_internal(table, entry, hash, key, key_len, data) */
+    assert( 0 == lh_insert_internal(0, 0, 0, 0, 0, 0) );
+    assert( 0 == lh_insert_internal(&table, 0, 0, 0, 0, 0) );
+    assert( 0 == lh_insert_internal(&table, entry, 0, 0, 0, 0) );
+
+    /* cleanup */
+    assert( lh_destroy(&table, 0, 0) );
 
     puts("success!");
 }
@@ -843,16 +1021,16 @@ void load_resize(void){
     assert( data_1 == *data );
 
     /* insert tests resize before inserting
-     * so from it's view at that time:
-     * 0 / 4 = 0 % loading
+     * so from its view at that time:
+     * 0 * 100 / 4 = 0 % loading
      * no resize
      */
     assert( 4 == table->size );
     assert( 1 == lh_nelems(table) );
     /* however the load now will be
-     * 1 / 4 = 25 %
+     * 1 * 100 / 4 = 25 %
      */
-    assert( 2 == lh_load(table) );
+    assert( 25 == lh_load(table) );
 
 
     assert( lh_insert(table, key_2, &data_2) );
@@ -864,15 +1042,15 @@ void load_resize(void){
 
     /* insert tests resize before inserting
      * so from it's view at that time:
-     * 1 / 4 = 25 % loading
+     * 1 * 100 / 4 = 25 % loading
      * no resize
      */
     assert( 4 == table->size );
     assert( 2 == lh_nelems(table) );
     /* however the load now will be
-     * 2 / 4 = 50 %
+     * 2 * 100 / 4 = 50 %
      */
-    assert( 5 == lh_load(table) );
+    assert( 50 == lh_load(table) );
 
 
     assert( lh_insert(table, key_3, &data_3) );
@@ -883,16 +1061,16 @@ void load_resize(void){
 
     /* insert tests resize before inserting
      * so from it's view at that time:
-     * 2 / 4 = 50 % loading
+     * 2 * 100 / 4 = 50 % loading
      * no resize
      */
     assert( 4 == table->size );
     assert( 3 == lh_nelems(table) );
     /* however the load now will be
-     * 3 / 4 = 70 %
-     * so this will trigger a resize (as 70 >= 60)
+     * 3 * 100 / 4 = 75 %
+     * so this will trigger a resize (as 75 >= 60, where 60 is default threshold)
      */
-    assert( 7 == lh_load(table) );
+    assert( 75 == lh_load(table) );
 
 
     assert( lh_insert(table, key_4, &data_4) );
@@ -903,15 +1081,15 @@ void load_resize(void){
 
     /* insert tests resize before inserting
      * so from it's view at that time:
-     * 3 / 4 = 75 % loading
+     * 3 * 100 / 4 = 75 % loading
      * so resize called to double
      */
     assert( 8 == table->size );
     assert( 4 == lh_nelems(table) );
     /* and after resizing the load now will be
-     * 4 / 8 = 50 %
+     * 4 * 100 / 8 = 50 %
      */
-    assert( 5 == lh_load(table) );
+    assert( 50 == lh_load(table) );
 
 
     assert( lh_destroy(table, 1, 0) );
@@ -994,8 +1172,8 @@ void threshold(void){
     assert( lh_resize(table, 4) );
 
     /* tune to only resize at 100% */
-    assert( lh_tune_threshold(table, 10) );
-    assert( 10 == table->threshold );
+    assert( lh_tune_threshold(table, 100) );
+    assert( 100 == table->threshold );
 
     /* insert 4 times checking there has been no resizing */
     assert( lh_insert(table, "a", &data) );
@@ -1018,7 +1196,7 @@ void threshold(void){
     assert( lh_insert(table, "e", &data) );
     assert( 5 == lh_nelems(table) );
     assert( 8 == table->size );
-    assert( 10 == table->threshold );
+    assert( 100 == table->threshold );
 
     assert( lh_destroy(table, 1, 0) );
     puts("success!");
@@ -1027,6 +1205,8 @@ void threshold(void){
 void artificial(void){
     struct lh_table *table = 0;
     int data = 1;
+    struct lh_entry *entry = 0;
+    enum lh_find_entry_state find_entry_state;
 
     puts("\ntesting artificial linear search failure");
 
@@ -1041,25 +1221,30 @@ void artificial(void){
     /* fill only positions */
     table->entries[0].state = LH_ENTRY_OCCUPIED;
     table->entries[1].state = LH_ENTRY_OCCUPIED;
-
-    /* this should trigger the final return 0 of lh_find_entry */
-    assert( 0 == lh_find_entry(table, "hello") );
-
-    /* likewise an insert should fail */
+    /* an insert should fail as this table is full */
     assert( 0 == lh_insert(table, "c", &data) );
 
     puts("further manipulation for lh_find_entry");
     table->entries[0].state = LH_ENTRY_DUMMY;
     table->entries[1].state = LH_ENTRY_DUMMY;
-    assert( 0 == lh_find_entry(table, "c") );
+    entry = 0;
+    find_entry_state = lh_find_entry(table, 0, "c", 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_SLOT == find_entry_state );
+    /* check that entry was changed */
+    assert( 0 != entry );
 
     table->entries[0].state   = LH_ENTRY_OCCUPIED;
     table->entries[0].hash    = 98; /* collide with b */
-    table->entries[0].key_len = 2;
+    table->entries[0].key_len = 2;  /* with different key_len */
     table->entries[1].state   = LH_ENTRY_OCCUPIED;
-    table->entries[0].hash    = 98;
-    table->entries[1].key_len = 2;
-    assert( 0 == lh_find_entry(table, "b") );
+    table->entries[0].hash    = 98; /* collide with b */
+    table->entries[1].key_len = 2;  /* with different key_len */
+    /* table full, no possible space, error */
+    entry = 0;
+    find_entry_state = lh_find_entry(table, 0, "b", 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_ERROR == find_entry_state );
+    /* check entry is unchanged */
+    assert( 0 == entry );
 
     table->entries[0].state   = LH_ENTRY_OCCUPIED;
     table->entries[0].hash    = 99; /* force hash collision with c */
@@ -1069,7 +1254,12 @@ void artificial(void){
     table->entries[1].hash    = 99; /* force hash collision with c */
     table->entries[1].key_len = 1;  /* with same len */
     table->entries[1].key     = "b"; /* but different key */
-    assert( 0 == lh_find_entry(table, "c") );
+    /* table is full, fail */
+    entry = 0;
+    find_entry_state = lh_find_entry(table, 0, "c", 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_ERROR == find_entry_state );
+    /* check entry is unchanged */
+    assert( 0 == entry );
 
     assert( lh_resize(table, 3) );
     table->entries[0].state   = LH_ENTRY_OCCUPIED;
@@ -1082,8 +1272,42 @@ void artificial(void){
     table->entries[1].key_len = 1;  /* with same len */
     table->entries[1].key     = "a"; /* but different key */
 
+    /* finally a place to insert */
     table->entries[2].state   = LH_ENTRY_DUMMY;
-    assert( 0 == lh_find_entry(table, "b") );
+    entry = 0;
+    find_entry_state = lh_find_entry(table, 0, "c", 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_SLOT == find_entry_state );
+    /* check entry was changed */
+    assert( 0 != entry );
+    assert( entry == &(table->entries[2]) );
+
+    /* we want to force wrap around
+     * and then encounter a dummy
+     */
+    assert( lh_resize(table, 4) );
+    table->entries[0].state   = LH_ENTRY_DUMMY;
+
+    table->entries[1].state   = LH_ENTRY_OCCUPIED;
+    table->entries[1].hash    = 99; /* hash collide with c */
+    table->entries[1].key_len = 2; /* different key len*/
+    table->entries[1].key     = "z"; /* different key */
+
+    table->entries[2].state   = LH_ENTRY_OCCUPIED;
+    table->entries[2].hash    = 99; /* hash collide with c */
+    table->entries[2].key_len = 2; /* different key len*/
+    table->entries[2].key     = "z"; /* different key */
+
+    table->entries[3].state   = LH_ENTRY_OCCUPIED;
+    table->entries[3].hash    = 99; /* hash collide with c */
+    table->entries[3].key_len = 2; /* different key len*/
+    table->entries[3].key     = "z"; /* different key */
+
+    entry = 0;
+    find_entry_state = lh_find_entry(table, 0, "c", 0, &entry);
+    assert( LH_FIND_ENTRY_STATE_SLOT == find_entry_state );
+    /* check entry was changed */
+    assert( 0 != entry );
+    assert( entry == &(table->entries[0]) );
 
     puts("manipulation to provoke lh_resize");
     assert( lh_resize(table, 5) );
@@ -1191,8 +1415,336 @@ void artificial(void){
     puts("success!");
 }
 
+/* function used by our iterate test below */
+unsigned int iterate_sum(void *state, const char *key, void **data){
+    unsigned int *state_sums = 0;
+    unsigned int **data_int = 0;
+
+    if( ! state ){
+        puts("iterate_each: state undef");
+        assert(0);
+    }
+
+    if( ! key ){
+        puts("iterate_each: key undef");
+        assert(0);
+    }
+
+    if( ! data ){
+        puts("iterate_each: data undef");
+        assert(0);
+    }
+
+    data_int = (unsigned int **) data;
+    state_sums = state;
+
+    state_sums[0] += strlen(key);
+    state_sums[1] += **data_int;
+    state_sums[2] += 1;
+
+    printf("iterate_sum: saw pair ('%s': '%u')\n", key, **data_int);
+
+    return 1;
+}
+
+/* function used by our iterate test below */
+unsigned int iterate_first(void *state, const char *key, void **data){
+    unsigned int *state_firsts = 0;
+    unsigned int **data_int = 0;
+
+    if( ! state ){
+        puts("iterate_each: state undef");
+        assert(0);
+    }
+
+    if( ! key ){
+        puts("iterate_each: key undef");
+        assert(0);
+    }
+
+    if( ! data ){
+        puts("iterate_each: data undef");
+        assert(0);
+    }
+
+    data_int = (unsigned int **) data;
+    state_firsts = state;
+
+    state_firsts[0] = strlen(key);
+    state_firsts[1] = **data_int;
+    state_firsts[2] += 1;
+
+    printf("iterate_first: saw pair ('%s': '%u')\n", key, **data_int);
+
+    return 0;
+}
+
+void iteration(void){
+    /* our simple hash table */
+    struct lh_table *table = 0;
+
+    /* some keys */
+    char *key_1 = "aa";
+    char *key_2 = "bbbb";
+    char *key_3 = "cccccc";
+
+    /* some data */
+    unsigned int data_1 = 3;
+    unsigned int data_2 = 5;
+    unsigned int data_3 = 7;
+
+    /* the value we pass to our iterate function
+     * the first element [0] is used for summing the length of keys
+     * the second element [1] is used for summing the data
+     * the third element [2] is used to count the number of times called
+     */
+    unsigned int sums[] = {0, 0, 0};
+    /* our expected answers */
+    unsigned int expected_sums[] = {
+        2 + 4 + 6, /* strlen(key_1) + strlen(key_2) + strlen(key_3) */
+        data_1 + data_2 + data_3,
+        3, /* called 3 times */
+    };
+
+    /* the value we pass to our iterate_first function
+     * first value [0] is key length of first item seen
+     * second value [1] is value of first data seen
+     * third value [2] is the number of times iterate_first is called
+     */
+    unsigned int firsts[] = { 0, 0, 0 };
+    unsigned int expected_firsts[] = {
+        2, /* strlen(key_1); */
+        data_1,
+        1, /* we should only be called once */
+    };
+
+    puts("\ntesting iteration functionality");
+
+    puts("creating table");
+    table = lh_new();
+    assert(table);
+    assert( 0 == lh_nelems(table) );
+
+
+    puts("inserting some data");
+    assert( lh_insert(table, key_1, &data_1) );
+    assert( 1 == lh_nelems(table) );
+    assert( lh_insert(table, key_2, &data_2) );
+    assert( 2 == lh_nelems(table) );
+    assert( lh_insert(table, key_3, &data_3) );
+    assert( 3 == lh_nelems(table) );
+
+    puts("testing iteration");
+    /* iterate through all 3 values
+     * sum up length of all keys
+     * sum up all data items
+     * record number of times called
+     */
+    assert( lh_iterate(table, sums, iterate_sum) );
+    if( sums[0] != expected_sums[0] ){
+        printf("iteration failed: expected key len sum '%u' but got '%u'\n",
+            expected_sums[0],
+            sums[0]);
+        assert( sums[0] == expected_sums[0] );
+    }
+    if( sums[1] != expected_sums[1] ){
+        printf("iteration failed: expected data sum '%u' but got '%u'\n",
+            expected_sums[1],
+            sums[1]);
+        assert( sums[1] == expected_sums[1] );
+    }
+    if( sums[2] != expected_sums[2] ){
+        printf("iteration failed: expected to be called '%u' times, but got '%u'\n",
+            expected_sums[2],
+            sums[2]);
+        assert( sums[2] == expected_sums[2] );
+    }
+
+    /* iterate and stop after first item (returning 0 to signal stop)
+     * record key length of last (and only) item seen
+     * record last (and only) data seen
+     * count number of times called
+     */
+    assert( lh_iterate(table, firsts, iterate_first) );
+    if( firsts[0] != expected_firsts[0] ){
+        printf("iteration failed: expected key len firsts '%u' but got '%u'\n",
+            expected_firsts[0],
+            firsts[0]);
+        assert( firsts[0] == expected_firsts[0] );
+    }
+    if( firsts[1] != expected_firsts[1] ){
+        printf("iteration failed: expected data firsts '%u' but got '%u'\n",
+            expected_firsts[1],
+            firsts[1]);
+        assert( firsts[1] == expected_firsts[1] );
+    }
+    if( firsts[2] != expected_firsts[2] ){
+        printf("iteration failed: expected to be called '%u' times, but got '%u'\n",
+            expected_firsts[2],
+            firsts[2]);
+        assert( firsts[2] == expected_firsts[2] );
+    }
+
+
+    assert( lh_destroy(table, 1, 0) );
+    puts("success!");
+}
+
+char * test_keys[] = {
+	"whether",
+	"urbane",
+	"unbiased",
+	"astern",
+	"belted",
+	"magic stream before him. Go visit the Prairies in June, when for scores",
+	"week",
+	"am",
+	"myself involuntarily pausing before coffin warehouses, and bringing up",
+	"there.",
+	"besides",
+	"any",
+	"tell",
+	"sea-sick--grow quarrelsome--don't sleep of nights--do not enjoy",
+	"slave?",
+	"doubtless,",
+	"place",
+	"island",
+	"waves,",
+	"constant surveillance of me, and secretly dogs me, and influences me",
+	"obey",
+	"deck.",
+	"in",
+	"atmosphere",
+	"hypos",
+	"dogs",
+	"ONE",
+	"all.",
+	"sand,",
+	"country;",
+	"offices",
+	"particularly",
+	"perils",
+	"leaves",
+	"grasshopper",
+	"Hook to Coenties Slip, and from thence, by Whitehall, northward. What",
+	"wholesome",
+	"Chief among these motives was the overwhelming idea of the great",
+	"Whenever",
+	"street,",
+	"prevalent",
+	"mole",
+	"doubtless, my going on this whaling voyage, formed part of the grand",
+	"rag",
+	"meaning.",
+	"meet;",
+	"looking",
+	"seated",
+	"coasts.",
+	"whenever",
+	"must",
+	"streets",
+	"dale, and leaves you there by a pool in the stream. There is magic",
+	"but",
+	"to",
+	"quarrelsome--don't",
+	"sleeps",
+	"Finally,",
+	"Deep",
+	"induced",
+	"world,",
+	"element",
+	"first",
+	"damp,",
+};
+
+void test_resize_insert(void){
+    /* our simple hash table */
+    struct lh_table *table = 0;
+
+    unsigned int i = 0;
+    char * key = 0;
+    unsigned int test_keys_len = sizeof(test_keys) / sizeof(test_keys[0]);
+
+    unsigned int data = 14;
+
+    puts("\ntesting resize on insert functionality");
+
+    puts("creating table");
+    table = lh_new();
+    assert(table);
+    assert( 0 == lh_nelems(table) );
+    /* current default size is 32 */
+    assert( 32 == table->size );
+
+    puts("testing sets and resize point");
+    for( i = 0; i < test_keys_len; ++i ){
+      key = test_keys[i];
+      assert( lh_insert(table, key, &data) );
+
+      /* threshold is currently 60%
+       *  32 * 0.6 = 19.2
+       *  64 * 0.6 = 38.4
+       * 128 * 0.6 = 76.8
+       */
+      if( i < 20 ){
+        assert( 32 == table->size );
+      } else if( i < 39 ) {
+        assert( 64 == table->size );
+      } else {
+        assert( 128 == table->size );
+      }
+    }
+
+    assert( lh_destroy(table, 1, 0) );
+    puts("success!");
+}
+
+void test_resize_set(void){
+    /* our simple hash table */
+    struct lh_table *table = 0;
+
+    unsigned int i = 0;
+    char * key = 0;
+    unsigned int test_keys_len = sizeof(test_keys) / sizeof(test_keys[0]);
+
+    unsigned int data = 14;
+
+    puts("\ntesting resize on set functionality");
+
+    puts("creating table");
+    table = lh_new();
+    assert(table);
+    assert( 0 == lh_nelems(table) );
+    /* current default size is 32 */
+    assert( 32 == table->size );
+
+    puts("testing sets and resize point");
+    for( i = 0; i < test_keys_len; ++i ){
+      key = test_keys[i];
+      assert( lh_set(table, key, &data) );
+
+      /* threshold is currently 60%
+       *  32 * 0.6 = 19.2
+       *  64 * 0.6 = 38.4
+       * 128 * 0.6 = 76.8
+       */
+      if( i < 20 ){
+        assert( 32 == table->size );
+      } else if( i < 39 ) {
+        assert( 64 == table->size );
+      } else {
+        assert( 128 == table->size );
+      }
+    }
+
+    assert( lh_destroy(table, 1, 0) );
+    puts("success!");
+}
+
 int main(void){
     new_insert_get_destroy();
+
+    update();
 
     set();
 
@@ -1215,6 +1767,12 @@ int main(void){
     threshold();
 
     artificial();
+
+    iteration();
+
+    test_resize_insert();
+
+    test_resize_set();
 
     puts("\noverall testing success!");
 

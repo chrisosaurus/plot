@@ -122,9 +122,9 @@ int plot_hash_set(plot_hash *hash, plot_symbol * key, plot_value *value){
         return 0;
     }
 
-    /* plot_hash_set is either an lh_insert or an lh_set */
+    /* plot_hash_set is either an lh_update or an lh_insert */
     if( lh_exists(&(hash->lht), key->val) ){
-        old = lh_set(&(hash->lht), key->val, value);
+        old = lh_update(&(hash->lht), key->val, value);
         if( old ){
             /* decr old value stored */
             plot_value_decr(old);

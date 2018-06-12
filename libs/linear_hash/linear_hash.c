@@ -31,6 +31,7 @@
 #include <stddef.h> /* size_t */
 
 #include "linear_hash.h"
+#include "linear_hash_internal.h"
 
 /* default number of slots */
 #define LH_DEFAULT_SIZE  32
@@ -38,17 +39,13 @@
 /* factor we grow the number of slots by each resize */
 #define LH_SCALING_FACTOR 2
 
-/* default loading factor we resize after in base 10
- * 0 through to 10
+/* default loading factor (percentage) we resize at
  *
- * default is 6 so 60 %
+ * 1 through to 100 (inclusive)
+ *
+ * default is 60%
  */
-#define LH_DEFAULT_THRESHOLD 6
-
-/* leaving this in place as we have some internal only helper functions
- * that we only exposed to allow for easy testing and extension
- */
-#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#define LH_DEFAULT_THRESHOLD 60
 
 /**********************************************
  **********************************************
@@ -58,12 +55,14 @@
  **********************************************
  ***********************************************/
 
-/* NOTE these helper functions are not exposed in our header
- * but are not static so as to allow easy unit testing
- * or extension
+/* NOTE these helper functions are not part of our public interface
+ * and so are not exposed in linear_hash.h
+ * instead these are exposed in linear_hash_internal.h
+ * to make testing easier
  */
 
 /* logic for testing if the current entry is eq to the
+ *
  * provided hash, key_len and key
  * this is to centralise the once scattered logic
  */
@@ -95,7 +94,7 @@ unsigned int lh_entry_eq(struct lh_entry *cur, unsigned long int hash, unsigned 
 /* internal strdup equivalent
  *
  * returns char* to new memory containing a strcpy on success
- * returns 0 on error
+ * returns 0 on failure
  */
 char * lh_strdupn(const char *str, size_t len){
     /* our new string */
@@ -135,10 +134,58 @@ char * lh_strdupn(const char *str, size_t len){
     return new_str;
 }
 
+/* update a given entry with the given data
+ *
+ * this is used by update, insert, and set
+ *
+ * if the entry already exists, and old_data is not-null,
+ * then old_data will be set to point at the previous entry->data
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int lh_insert_internal(struct lh_table *table, struct lh_entry *entry, unsigned long int hash, const char *key, size_t key_len, void *data){
+    /* iterator through table */
+    char *new_key = 0;
+
+    if( ! table ){
+        puts("lh_insert_internal: table undef");
+        return 0;
+    }
+
+    if( ! entry ){
+        puts("lh_insert_internal: entry undef");
+        return 0;
+    }
+
+    if( ! key ){
+        puts("lh_insert_internal: key undef");
+        return 0;
+    }
+
+    /* increment number of elems */
+    ++table->n_elems;
+
+    new_key = lh_strdupn(key, key_len);
+    if( ! new_key ){
+        puts("lh_insert_internal: call to lh_strdupn failed");
+        return 0;
+    }
+
+    entry->state = LH_ENTRY_OCCUPIED;
+    entry->hash = hash;
+    entry->key = new_key;
+    entry->key_len = key_len;
+    entry->data = data;
+
+    /* return success */
+    return 1;
+}
+
 /* initialise an existing lh_entry
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int lh_entry_init(struct lh_entry *entry,
                                        unsigned long int hash,
@@ -196,7 +243,7 @@ unsigned int lh_entry_init(struct lh_entry *entry,
  * will free all other values
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int lh_entry_destroy(struct lh_entry *entry, unsigned int free_data){
     if( ! entry ){
@@ -214,41 +261,54 @@ unsigned int lh_entry_destroy(struct lh_entry *entry, unsigned int free_data){
     return 1;
 }
 
-
-/* find the lh_entry that should be holding this key
+/* centralised searching logic
+ * will find where a key is *if* it exists
+ * otherwise will find where a key *should* be
  *
- * returns a pointer to it on success
- * return 0 on failure
+ * has 3 possible end states:
+ *
+ *  LH_FIND_ENTRY_STATE_ERROR
+ *
+ *  LH_FIND_ENTRY_STATE_EXISTS
+ *
+ *  LH_FIND_ENTRY_STATE_SLOT
  */
-struct lh_entry * lh_find_entry(const struct lh_table *table, const char *key){
+enum lh_find_entry_state lh_find_entry(const struct lh_table *table, unsigned long int hash, const char *key, size_t key_len, struct lh_entry **entry){
     /* our cur entry */
     struct lh_entry *cur = 0;
 
-    /* hash */
-    unsigned long int hash = 0;
     /* position in hash table */
     size_t pos = 0;
     /* iterator through entries */
     size_t i = 0;
-    /* cached strlen */
-    size_t key_len = 0;
 
+    struct lh_entry *entry_dum = 0;
+    struct lh_entry *entry_emp = 0;
 
     if( ! table ){
         puts("lh_find_entry: table undef");
-        return 0;
+        return LH_FIND_ENTRY_STATE_ERROR;
     }
 
     if( ! key ){
         puts("lh_find_entry: key undef");
-        return 0;
+        return LH_FIND_ENTRY_STATE_ERROR;
     }
 
-    /* cache strlen */
-    key_len = strlen(key);
+    if( ! entry ){
+        puts("lh_find_entry: entry undef");
+        return LH_FIND_ENTRY_STATE_ERROR;
+    }
 
-    /* calculate hash */
-    hash = lh_hash(key, key_len);
+    if( key_len == 0 ){
+        /* cache strlen */
+        key_len = strlen(key);
+    }
+
+    if( hash == 0 ){
+        /* calculate hash */
+        hash = lh_hash(key, key_len);
+    }
 
     /* calculate pos
      * we know table is defined here
@@ -262,15 +322,16 @@ struct lh_entry * lh_find_entry(const struct lh_table *table, const char *key){
 
         /* if this is an empty then we stop */
         if( cur->state == LH_ENTRY_EMPTY ){
-            /* failed to find element */
-#ifdef DEBUG
-            puts("lh_find_entry: failed to find key, encountered empty");
-#endif
-            return 0;
+            entry_emp = cur;
+            goto LH_FIND_STOP;
         }
 
         /* if this is a dummy then we skip but continue */
         if( cur->state == LH_ENTRY_DUMMY ){
+            /* if this is our first dummy, keep it */
+            if( ! entry_dum ){
+                entry_dum = cur;
+            }
             continue;
         }
 
@@ -278,7 +339,9 @@ struct lh_entry * lh_find_entry(const struct lh_table *table, const char *key){
             continue;
         }
 
-        return cur;
+        /* exact match found */
+        *entry = cur;
+        return LH_FIND_ENTRY_STATE_EXISTS;
     }
 
     /* search 0..pos */
@@ -287,15 +350,16 @@ struct lh_entry * lh_find_entry(const struct lh_table *table, const char *key){
 
         /* if this is an empty then we stop */
         if( cur->state == LH_ENTRY_EMPTY ){
-            /* failed to find element */
-#ifdef DEBUG
-            puts("lh_find_entry: failed to find key, encountered empty");
-#endif
-            return 0;
+            entry_emp = cur;
+            goto LH_FIND_STOP;
         }
 
         /* if this is a dummy then we skip but continue */
         if( cur->state == LH_ENTRY_DUMMY ){
+            /* if this is our first dummy, keep it */
+            if( ! entry_dum ){
+                entry_dum = cur;
+            }
             continue;
         }
 
@@ -303,16 +367,37 @@ struct lh_entry * lh_find_entry(const struct lh_table *table, const char *key){
             continue;
         }
 
-        return cur;
+        /* exact match found */
+        *entry = cur;
+        return LH_FIND_ENTRY_STATE_EXISTS;
     }
 
-    /* failed to find element */
-#ifdef DEBUG
-    puts("lh_find_entry: failed to find key");
-#endif
-    return 0;
-}
+LH_FIND_STOP:
 
+    /* we didn't find an exact entry
+     * this means the caller needs to know the item doens't exist
+     * and we will return the first non-null or:
+     *   entry_dum
+     *   entry_emp
+     * if both are null then we failed
+     */
+
+    if( entry_dum ){
+        *entry = entry_dum;
+        return LH_FIND_ENTRY_STATE_SLOT;
+    }
+
+    if( entry_emp ){
+        *entry = entry_emp;
+        return LH_FIND_ENTRY_STATE_SLOT;
+    }
+
+    /* otherwise we failed to find anything
+     * this should never happen
+     */
+
+    return LH_FIND_ENTRY_STATE_ERROR;
+}
 
 
 /**********************************************
@@ -326,7 +411,7 @@ struct lh_entry * lh_find_entry(const struct lh_table *table, const char *key){
 /* function to return number of elements
  *
  * returns number on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int lh_nelems(const struct lh_table *table){
     if( ! table ){
@@ -337,10 +422,10 @@ unsigned int lh_nelems(const struct lh_table *table){
     return table->n_elems;
 }
 
-/* function to calculate load
- * (table->n_elems * 10) / table->size
+/* function to calculate load percentage
+ * (table->n_elems * 100) / table->size
  *
- * returns loading factor 0 -> 10 on success
+ * returns loading factor 0 -> 100 on success
  * returns 0 on failure
  */
 unsigned int lh_load(const struct lh_table *table){
@@ -349,20 +434,17 @@ unsigned int lh_load(const struct lh_table *table){
         return 0;
     }
 
-    /* here we multiply by 10 to avoid floating point
-     * as we only care about the most significant figure
-     */
-    return (table->n_elems * 10) / table->size;
+    return (table->n_elems * 100) / table->size;
 }
 
 /* set the load that we resize at
- * load is (table->n_elems * 10) / table->size
+ * load is (table->n_elems * 100) / table->size
  *
  * this sets lh_table->threshold
  * this defaults to LH_DEFAULT_THRESHOLD in linear_hash.c
- * this is set to 6 (meaning 60% full) by default
+ * this is set to 60 (meaning 60% full) by default
  *
- * this will accept any value between 1 (10%) to 10 (100%)
+ * this will accept any value between 1 (1%) to 100 (100%) inclusive
  *
  * returns 1 on success
  * returns 0 on failure
@@ -373,8 +455,8 @@ unsigned int lh_tune_threshold(struct lh_table *table, unsigned int threshold){
         return 0;
     }
 
-    if( threshold < 1 || threshold > 10 ){
-        puts("lh_tune_threshold: threshold must be between 1 and 9 (inclusive)");
+    if( threshold < 1 || threshold > 100 ){
+        puts("lh_tune_threshold: threshold must be between 1 (1%%) and 100 (100%%) (inclusive)");
         return 0;
     }
 
@@ -388,7 +470,7 @@ unsigned int lh_tune_threshold(struct lh_table *table, unsigned int threshold){
  * will recalculate key_len if 0
  *
  * returns an unsigned long integer hash value on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned long int lh_hash(const char *key, size_t key_len){
     /* our hash value */
@@ -446,7 +528,7 @@ unsigned long int lh_hash(const char *key, size_t key_len){
 /* takes a table and a hash value
  *
  * returns the index into the table for this hash
- * returns 0 on error (if table is null)
+ * returns 0 on failure (if table is null)
  *
  * note the error value is indistinguishable from the 0th bucket
  * this function can only error if table is null
@@ -466,7 +548,7 @@ size_t lh_pos(unsigned long int hash, size_t table_size){
  * lh_insert detects the load factor is over table->threshold
  *
  * returns pointer on success
- * returns 0 on error
+ * returns 0 on failure
  */
 struct lh_table * lh_new(void){
     struct lh_table *sht = 0;
@@ -497,7 +579,7 @@ struct lh_table * lh_new(void){
  * this will only free the *data pointers if `free_data` is set to 1
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int lh_destroy(struct lh_table *table, unsigned int free_table, unsigned int free_data){
     /* iterator through table */
@@ -531,7 +613,7 @@ unsigned int lh_destroy(struct lh_table *table, unsigned int free_table, unsigne
 /* initialise an already allocated lh_table to size size
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int lh_init(struct lh_table *table, size_t size){
     if( ! table ){
@@ -564,7 +646,7 @@ unsigned int lh_init(struct lh_table *table, size_t size){
  * you can use this to make a hash larger or smaller
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int lh_resize(struct lh_table *table, size_t new_size){
     /* our new data area */
@@ -656,10 +738,13 @@ LH_RESIZE_FOUND:
 /* check if the supplied key already exists in this hash
  *
  * returns 1 on success (key exists)
- * returns 0 if key doesn't exist or on error
+ * returns 0 if key doesn't exist or on failure
  */
 unsigned int lh_exists(const struct lh_table *table, const char *key){
-    struct lh_entry *she = 0;
+    size_t key_len = 0;
+    unsigned long int hash = 0;
+    enum lh_find_entry_state find_entry_state = 0;
+    struct lh_entry *entry = 0;
 
     if( ! table ){
         puts("lh_exists: table undef");
@@ -675,34 +760,44 @@ unsigned int lh_exists(const struct lh_table *table, const char *key){
     printf("lh_exist: called with key '%s', dispatching to lh_find_entry\n", key);
 #endif
 
-    /* find entry */
-    she = lh_find_entry(table, key);
-    if( ! she ){
-        /* not found */
-        return 0;
-    }
+    key_len = strlen(key);
+    hash = lh_hash(key, key_len);
 
-    /* found */
-    return 1;
+    /* find entry */
+    find_entry_state = lh_find_entry(table, hash, key, key_len, &entry);
+    switch( find_entry_state ){
+      default:
+      case LH_FIND_ENTRY_STATE_ERROR:
+        puts("lh_exists: call to lh_find_entry failed");
+        return 0;
+        break;
+
+      case LH_FIND_ENTRY_STATE_EXISTS:
+        /* entry found */
+        return 1;
+        break;
+
+      case LH_FIND_ENTRY_STATE_SLOT:
+        /* no such entry found */
+        return 0;
+        break;
+    }
 }
 
 /* insert `data` under `key`
  * this will only success if !lh_exists(table, key)
  *
  * returns 1 on success
- * returns 0 on error
+ * returns 0 on failure
  */
 unsigned int lh_insert(struct lh_table *table, const char *key, void *data){
-    /* our new entry */
-    struct lh_entry *she = 0;
     /* hash */
     unsigned long int hash = 0;
-    /* position in hash table */
-    size_t pos = 0;
-    /* iterator through table */
-    size_t i = 0;
     /* cached strlen */
     size_t key_len = 0;
+
+    struct lh_entry *entry = 0;
+    enum lh_find_entry_state find_entry_state;
 
     if( ! table ){
         puts("lh_insert: table undef");
@@ -724,16 +819,8 @@ unsigned int lh_insert(struct lh_table *table, const char *key, void *data){
     puts("lh_insert: calling lh_exists");
 #endif
 
-    /* check for already existing key
-     * insert only works if the key is not already present
-     */
-    if( lh_exists(table, key) ){
-        puts("lh_insert: key already exists in table");
-        return 0;
-    }
-
     /* determine if we have to resize
-     * note we are checking the load before the insert
+     * note we are checking the load before the find OR insert
      */
     if( lh_load(table) >= table->threshold ){
         if( ! lh_resize(table, table->size * LH_SCALING_FACTOR) ){
@@ -744,87 +831,112 @@ unsigned int lh_insert(struct lh_table *table, const char *key, void *data){
 
     /* cache strlen */
     key_len = strlen(key);
-
-    /* calculate hash */
     hash = lh_hash(key, key_len);
 
-    /* calculate pos
-     * we know table is defined here
-     * so lh_pos cannot fail
-     */
-    pos = lh_pos(hash, table->size);
+    /* find entry */
+    find_entry_state = lh_find_entry(table, hash, key, key_len, &entry);
+    switch( find_entry_state ){
+      default:
+      case LH_FIND_ENTRY_STATE_ERROR:
+        puts("lh_insert: call to lh_find_entry failed");
+        return 0;
+        break;
 
-#ifdef DEBUG
-    printf("lh_insert: trying to insert key '%s', hash value '%zd', starting at pos '%zd'\n", key, hash, pos);
-#endif
+      case LH_FIND_ENTRY_STATE_EXISTS:
+        /* entry found */
+        puts("lh_insert: key already exists in table");
+        return 0;
+        break;
 
-    /* iterate from pos to size */
-    for( i=pos; i < table->size; ++i ){
-        she = &(table->entries[i]);
-        /* if taken keep searching */
-        if( she->state == LH_ENTRY_OCCUPIED ){
-            continue;
-        }
-
-        /* otherwise (empty or dummy) jump to found */
-        goto LH_INSERT_FOUND;
+      case LH_FIND_ENTRY_STATE_SLOT:
+        /* no such entry found,
+         * okay to insert */
+        break;
     }
-
-    /* iterate from 0 to pos */
-    for( i=0; i < pos; ++i ){
-        she = &(table->entries[i]);
-        /* if taken keep searching */
-        if( she->state == LH_ENTRY_OCCUPIED ){
-            continue;
-        }
-
-        /* otherwise (empty or dummy) jump to found */
-        goto LH_INSERT_FOUND;
-    }
-
-    /* no slot found */
-    puts("lh_insert: unable to find insertion slot");
-    return 0;
-
-LH_INSERT_FOUND:
-    /* she is already set! */
 
 #ifdef DEBUG
     printf("lh_insert: inserting insert key '%s', hash value '%zd', starting at pos '%zd', into '%zd'\n", key, hash, pos, i);
 #endif
 
-    /* construct our new lh_entry
-     * lh_entry_new(unsigned long int hash,
-     *              char *key,
-     *              size_t key_len,
-     *              void *data,
-     *              struct lh_entry *next){
-     *
-     * only key needs to be defined
-     *
-     */
-    /*                 (entry, hash, key, key_len, data) */
-    if( ! lh_entry_init(she,   hash, key, key_len, data) ){
-        puts("lh_insert: call to lh_entry_init failed");
+    if( ! lh_insert_internal(table, entry, hash, key, key_len, data) ){
+        puts("lh_insert: call to lh_insert_internal failed");
         return 0;
     }
-
-    /* increment number of elements */
-    ++table->n_elems;
 
     /* return success */
     return 1;
 }
 
-/* set `data` under `key`
+/* update `data` under `key`
  * this will only succeed if lh_exists(table, key)
  *
  * returns old data on success
- * returns 0 on error
+ * returns 0 on failure
  */
-void * lh_set(struct lh_table *table, const char *key, void *data){
-    struct lh_entry *she = 0;
+void * lh_update(struct lh_table *table, const char *key, void *data){
     void * old_data = 0;
+    size_t key_len = 0;
+    unsigned long int hash = 0;
+    enum lh_find_entry_state find_entry_state;
+    struct lh_entry *entry = 0;
+
+    if( ! table ){
+        puts("lh_update: table undef");
+        return 0;
+    }
+
+    if( ! key ){
+        puts("lh_update: key undef");
+        return 0;
+    }
+
+    key_len = strlen(key);
+    hash = lh_hash(key, key_len);
+
+    /* allow data to be null */
+
+    /* find entry */
+    find_entry_state = lh_find_entry(table, hash, key, key_len, &entry);
+    switch( find_entry_state ){
+      default:
+      case LH_FIND_ENTRY_STATE_ERROR:
+        puts("lh_update: call to lh_find_entry failed");
+        return 0;
+        break;
+
+      case LH_FIND_ENTRY_STATE_EXISTS:
+        /* entry found, continue update */
+        break;
+
+      case LH_FIND_ENTRY_STATE_SLOT:
+        /* no such entry found, update failed */
+        puts("lh_update: no such entry existed");
+        return 0;
+        break;
+    }
+
+    /* save old data */
+    old_data = entry->data;
+
+    /* overwrite */
+    entry->data = data;
+
+    /* return old data */
+    return old_data;
+}
+
+/* set `data` under `key`
+ *
+ * this will either insert or update depending on if key already exists
+ *
+ * returns 1 on success
+ * returns 0 on failure
+ */
+unsigned int lh_set(struct lh_table *table, const char *key, void *data){
+    size_t key_len = 0;
+    unsigned long int hash = 0;
+    struct lh_entry *entry = 0;
+    enum lh_find_entry_state find_entry_state;
 
     if( ! table ){
         puts("lh_set: table undef");
@@ -836,32 +948,58 @@ void * lh_set(struct lh_table *table, const char *key, void *data){
         return 0;
     }
 
-    /* allow data to be null */
-
-    /* find entry */
-    she = lh_find_entry(table, key);
-    if( ! she ){
-        /* not found */
-        return 0;
+    /* determine if we have to resize
+     * note we are checking the load before the find OR insert
+     */
+    if( lh_load(table) >= table->threshold ){
+        if( ! lh_resize(table, table->size * LH_SCALING_FACTOR) ){
+            puts("lh_insert: call to lh_resize failed");
+            return 0;
+        }
     }
 
-    /* save old data */
-    old_data = she->data;
+    key_len = strlen(key);
+    hash = lh_hash(key, key_len);
 
-    /* overwrite */
-    she->data = data;
+    find_entry_state = lh_find_entry(table, hash, key, key_len, &entry);
+    switch( find_entry_state ){
+      default:
+      case LH_FIND_ENTRY_STATE_ERROR:
+        puts("lh_set: call to lh_find_entry failed");
+        return 0;
+        break;
 
-    /* return old data */
-    return old_data;
+      case LH_FIND_ENTRY_STATE_EXISTS:
+        /* entry found
+         * update data
+         */
+        entry->data = data;
+        return 1;
+        break;
+
+      case LH_FIND_ENTRY_STATE_SLOT:
+        /* no such entry found
+         * pass off to insert
+         */
+        if( ! lh_insert_internal(table, entry, hash, key, key_len, data) ){
+            puts("lh_set: call to lh_insert_internal failed");
+            return 0;
+        }
+        return 1;
+        break;
+    }
 }
 
 /* get `data` stored under `key`
  *
  * returns data on success
- * returns 0 on error
+ * returns 0 on failure
  */
 void * lh_get(const struct lh_table *table, const char *key){
-    struct lh_entry *she = 0;
+    size_t key_len = 0;
+    unsigned long int hash = 0;
+    struct lh_entry *entry = 0;
+    enum lh_find_entry_state find_entry_state;
 
     if( ! table ){
         puts("lh_get: table undef");
@@ -873,21 +1011,36 @@ void * lh_get(const struct lh_table *table, const char *key){
         return 0;
     }
 
+    key_len = strlen(key);
+    hash = lh_hash(key, key_len);
+
     /* find entry */
-    she = lh_find_entry(table, key);
-    if( ! she ){
-        /* not found */
+    find_entry_state = lh_find_entry(table, hash, key, key_len, &entry);
+    switch( find_entry_state ){
+      default:
+      case LH_FIND_ENTRY_STATE_ERROR:
+        puts("lh_get: call to lh_find_entry failed");
         return 0;
+        break;
+
+      case LH_FIND_ENTRY_STATE_EXISTS:
+        /* entry found */
+        break;
+
+      case LH_FIND_ENTRY_STATE_SLOT:
+        /* no such entry found */
+        return 0;
+        break;
     }
 
     /* found */
-    return she->data;
+    return entry->data;
 }
 
 /* delete entry stored under `key`
  *
  * returns data on success
- * returns 0 on error
+ * returns 0 on failure
  */
 void * lh_delete(struct lh_table *table, const char *key){
     /* our cur entry */
@@ -1005,4 +1158,59 @@ LH_DELETE_FOUND:
         return old_data;
 }
 
+/* iterate through all key/value pairs in this hash table
+ * calling the provided function on each pair.
+ *
+ * the function is allowed to modify the value but cannot modify the key.
+ * the function should not access the hash table in anyway including:
+ *  modifying the hash table other than through the value pointer given
+ *  calling any other hash table functions
+ *
+ * the function will be given the value of the `state` pointer for each call,
+ * this is useful for passing state between calls to the function as well as
+ * for returning results
+ *
+ * the function should return
+ *  1 if it wants the iteration to continue
+ *  0 if it wants the iteration to stop
+ *
+ * returns 1 on success
+ * returns 0 on success
+ */
+unsigned int lh_iterate(struct lh_table *table, void *state, unsigned int (*each)(void *state, const char *key, void **data)){
+    /* index into table we are considering */
+    unsigned int i = 0;
+    unsigned int len = 0;
+    /* current entry we are considering */
+    struct lh_entry *entry = 0;
+    /* return value from user supplied function */
+    unsigned int ret = 0;
+
+    if( ! table ){
+        puts("lh_iterate: table undef");
+        return 0;
+    }
+
+    if( ! each ){
+        puts("lh_iterate: each undef");
+        return 0;
+    }
+
+    len = table->size;
+
+    for( i=0; i<len; ++i ){
+        entry = &(table->entries[i]);
+
+        if( entry->state == LH_ENTRY_OCCUPIED ){
+            ret = each(state, entry->key, &(entry->data));
+
+            /* if ret == 0 then user wants us to stop */
+            if( ret == 0 ){
+                return 1;
+            }
+        }
+    }
+
+    return 1;
+}
 
